@@ -1,0 +1,41 @@
+La autoro de esperanto Lazary Ludovik Zamenhof en 1878
+esan nel laste klaso de gimnazio endi et une projekto
+del lingo. Trastudan nel universiteto, Zamenhof dum
+plene sep yaros ad la yaro 1885 prosesari e sue lingo.
+Enden, nel yaro 1887 en Varshava aperi la une manuelo
+sub la titulo "Internacia Lingvo de Doktoro Esperanto". La
+autoro no eldoni e manuelo sub sue namo, bat sub la
+pseudonimo "D-ro Esperanto", s.e. "Kvele espera".
+Prezenten la lingo same es namate segun eze pseudonimo.
+
+montru dolaran cambion de rusia banko kaj ukraina banko
+
+>>> data_function
+{
+'name_argument':
+  [[
+      'currency', 1, {
+        u'rubl': 'RUB', u'grivn': 'UAH', u'dolar': 'USD',
+        u'e\u016dr': 'EUR'}],
+    ['country', 0, {
+        u'rusi': 'Russia', u'ukraini': 'Ukraine',
+        u'belarusi': 'Belarus'}]],
+'name': 'GetCourse'}
+
+
+>>> data_language
+{
+'bases': [[{
+      'case': 'accusative', 'word': u'dolaran',
+      'feature': [], 'POSpeech': 'adjective', 'base': u'dolar',
+      'link': [], 'homogeneous_link': [], 'number': 'singular',
+      'type': 'real'},
+    u'moner'],
+  [{
+      'case': 'nominative', 'word': u'rusia', 'POSpeech': 'adjective',
+      'feature': [], 'base': u'rusi', 'link': [],
+      'homogeneous_link': [], 'number': 'singular', 'type': 'real'},
+    u'land']],
+'sentence': <IMS.LangModules.ObjUnit.Sentence instance at 0x035F8EE0>} 
+
+{'func_name': u'GetCourse', 'args': {u'currency': {'table': {u'rubl': u'RUB', u'grivn': u'UAH', u'dolar': u'USD', u'e\u016dr': u'EUR'}, 'required': True, 'assoc': [[{'case': 'accusative', 'word': u'dolaran', 'feature': [], 'POSpeech': 'adjective', 'base': u'dolar', 'link': [], 'homogeneous_link': [], 'number': 'singular', 'type': 'real'}, u'moner']]}, u'country': {'table': {u'rusi': u'Russia', u'ukraini': u'Ukraine', u'belarusi': u'Belarus'}, 'required': False, 'assoc': [[{'case': 'nominative', 'word': u'rusia', 'POSpeech': 'adjective', 'feature': [], 'base': u'rusi', 'link': [], 'homogeneous_link': [], 'number': 'singular', 'type': 'real'}, u'land']]}}, 'sentence': <LangModules.ObjUnit.Sentence instance at 0x02CBE3F0>}
