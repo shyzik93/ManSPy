@@ -39,7 +39,11 @@ def set_action(settings, Action, funcdesc, Predicate, IL):
   module_name, function_name = funcdesc
   module = Action.getModule(module_name)
   if 'settings' in dir(module): module.settings = settings # т. е. в МД  доступны настройки ИСУ
-  IL['action']['function'] = getattr(module, function_name)
+  if hasattr(module, function_name): IL['action']['function'] = getattr(module, function_name)
+  else:
+    print "Function \"%s\" is absent in module \"%s\". Function will not run!" % (module_name, function_name)
+    print "You can rename the function in the module like in FASIF."
+    IL['action']['function'] = None
   # заодно добавим и наклонение глагола
   IL['action']['mood'] = Predicate.values()[0]['mood']
 
@@ -53,7 +57,6 @@ def join_arg_and_func(true_arg, IL):
 # разбиться на несколько предложений до вызова этой функции. То есть разбивка
 # должна происходить в модуле, в котором эта функция вызывается. 
 def Extraction2IL(settings, Action, Subject, Predicate, DirectSupplement, Supplement):
-  #arg0 = {'antonym': False}
   pattern_IL = {
     'arg0': {'antonym': False}, # передаётся первым аргументом в каждую функцию
     'action': {
@@ -77,7 +80,6 @@ def Extraction2IL(settings, Action, Subject, Predicate, DirectSupplement, Supple
     true_args = processing_arguments.checkArguments(found_args, argdesc, len(ILs), ErrorConvert['argument'])
 
     IL['arg0']['antonym'] = isantonym
-    #arg0['antonym'] = isantonym
     set_action(settings, Action, funcdesc, Predicate, IL)
     ILs.extend([join_arg_and_func(true_arg, IL) for true_arg in true_args]) # на случай нескольких дополнений
   return ILs, ErrorConvert

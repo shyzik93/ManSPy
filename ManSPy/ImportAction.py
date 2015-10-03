@@ -236,9 +236,6 @@ class ImportAction():
     module_names = _get_module_names(os.path.join(os.path.dirname(__file__), 'Action')) #Update
     for module_name in module_names: self._import(module_name)
 
-  def reimportCicle():
-    pass
-
 if __name__ == '__main__':
   settings = {'language': 'Esperanto', 'test': True}
 

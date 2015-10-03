@@ -76,13 +76,10 @@ class API():
   def print_errors(self, GrammarNazi, ErrorConvert):
     for analys, errors in GrammarNazi.items():
       if errors: sys.stderr.write(analys + ": ")
-      for error in errors:
-        sys.stderr.write("  " + error + "\n")
+      for error in errors: sys.stderr.write("  " + error + "\n")
     for part, errors in ErrorConvert.items():
       if errors: sys.stderr.write(part + ": ")
-      for error in errors:
-        for err in error:
-          sys.stderr.write("  " + err + "\n")
+      for error in errors: sys.stderr.write("  " + error + "\n")
 
   # Данная функция должна вызываться переодически, даже если ничего не вводится,
   # так как ИСУ может сама что-то сообщить, по своей инициативе.

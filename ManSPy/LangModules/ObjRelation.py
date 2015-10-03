@@ -232,8 +232,9 @@ class ObjRelation():
     self.version = version
     if version == 2: self.R = Relation_generated.Relation(language)
 
+  # к удалению во второй версии базы
   def _ids2words(self, list_ids):
-      return [self.LOWDB.selectWord(word_id) for word_id in list_ids]
+    return [self.LOWDB.selectWord(word_id) for word_id in list_ids]
 
   # Сделано!
   def isWordInAbstractGroup(self, word_base, group_base):
@@ -245,6 +246,7 @@ class ObjRelation():
       else: return False
     elif self.version == 2:
       pass
+      self.R.()
 
   # Сделано! Составная
   def areWordsAntonyms(self, POSpeech, word_base1, word_base2):
