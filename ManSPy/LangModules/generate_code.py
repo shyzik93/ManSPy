@@ -29,7 +29,7 @@ count_spaces = 2
 spaces = ' '*count_spaces
 level = 0
 
-with open('ObjRelation_new.py', 'r') as f:
+with open('Relation_new.py', 'r') as f:
   code = f.read().split('\n')
 
 print 'all strings:', len(code)
@@ -70,6 +70,7 @@ def proccess_function(start_level, code, start_i):
   i = start_i
   while level > start_level:
     i += 1
+    if len(code) == i: break
     s = code[i]
     level = get_level(s)
     s = s.strip()
@@ -92,6 +93,7 @@ def proccess_class(start_level, code, start_i):
   i = start_i
   while level > start_level:
     i += 1
+    if len(code) == i: break
     s = code[i]
     level = get_level(s)
     s = s.strip()
@@ -109,6 +111,7 @@ while i < len(code)-1:
 
 
 new_code = []
+names = {'idword': 'word', 'idgroup': 'group', 'idtype': 'type'}
 for function in functions:
   full_args = function['args']
   print function['rets']
@@ -128,7 +131,9 @@ for function in functions:
         full_args[full_args.index(full_arg)] = convert_arg
         convert_arg = convert_arg.split('=')[0]
         if convert_arg in convert_input_vars: _new_code.append('    ' + convert_input_vars[convert_arg] % convert_arg)
-  s = '  def %s(%s):' % (function['name'][1:], ', '.join(full_args))
+  name = function['name']
+  for name1, name2 in names.items(): name = name.replace(name1, name2)
+  s = '  def %s(%s):' % (name[1:], ', '.join(full_args))
   new_code.append(s)
   new_code.extend(_new_code)
   # генерируем строку вызова функции (возвращенеи аргументов)
@@ -137,6 +142,7 @@ for function in functions:
   for output_arg in output_args:
     if output_arg in ['True', 'False']: assignment_symbol = 'return '
   new_code.append('    '+assignment_symbol+'Relation.'+ function['name']+'(' +', '.join(input_args)+ ')')
+
   # генерируем возвращаемые переменные
   for output_arg in output_args:
     if output_arg in convert_output_vars.keys():
@@ -147,9 +153,9 @@ for function in functions:
 
   new_code.append('')
 
-with open('ObjRelation_generated.py', 'w') as f:
+with open('Relation_generated.py', 'w') as f:
   header ="""# -*- coding: utf-8 -*-
-from ObjRelation_new import _Relation
+from Relation_new import _Relation
 
 class Relation(_Relation):
   dct_types = {'synonym': 0, 'antonym': 1, 'abstract': 2}

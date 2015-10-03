@@ -27,8 +27,8 @@ class LangClass():
     OR = ObjRelation.ObjRelation(self.language, self.settings['test']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
     if self.settings['storage_version']==2:
       OR = ObjRelation.ObjRelation(self.language, self.settings['test'])
-      import ObjRelation_generated
-      R = ObjRelation_generated.Relation(self.language)
+      #import ObjRelation_generated
+      #R = ObjRelation_generated.Relation(self.language)
 
     levels = levels.split()
     if len(levels)==1: start_level = end_level = levels.pop()

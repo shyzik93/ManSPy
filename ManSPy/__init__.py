@@ -60,7 +60,7 @@ class API():
     t2 = time.time()
     print '  ', t2 - t1
     print u"Загрузка модуля естественного языка..."
-    if self.settings['storage_version'] == 2: from LangModules import generate_code
+    if self.settings['storage_version'] == 2: from LangModules import generate_code # генерирум модуль
     t1 = time.time()
     import Action
     self.LangClass = LangModules.LangClass(self.settings, Action)

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sqlite3 as sql, os, pickle
+import ObjRelation_generated
 
 def create_bd_file(language, name):
   if __name__ == '__main__': db_dir = 'F:\\SourceCode\\DATA_BASE'
@@ -222,92 +223,118 @@ class ObjRelation():
   """ Надкласс, реализующий высокий уровень работы с разными группами слов, абстрагируясь от БД.
       Другими словами, он задествует вышеуказанные классы для реализации своих
       функций."""
-  def __init__(self, language, test=0):
+  def __init__(self, language, test=0, version=1):
     self.LOWDB = ListOfWordsDB(language)
     self.AGDB = AbstractGroupsDB(language)
     self.SDB = SynonymsDB(language)
     self.ADB = AntonymsDB(language)
     self.PFASIF = ProcFASIF(language, test)
+    self.version = version
+    if version == 2: self.R = Relation_generated.Relation(language)
 
   def _ids2words(self, list_ids):
-    return [self.LOWDB.selectWord(word_id) for word_id in list_ids]
+      return [self.LOWDB.selectWord(word_id) for word_id in list_ids]
 
   # Сделано!
   def isWordInAbstractGroup(self, word_base, group_base):
-    word_id = self.LOWDB.selectId(word_base)
-    group_id = self.LOWDB.selectId(group_base)
-    words_in_group = self.AGDB.getWordsInGroup(group_id)
-    if word_id in words_in_group: return True
-    else: return False
+    if self.version == 1:
+      word_id = self.LOWDB.selectId(word_base)
+      group_id = self.LOWDB.selectId(group_base)
+      words_in_group = self.AGDB.getWordsInGroup(group_id)
+      if word_id in words_in_group: return True
+      else: return False
+    elif self.version == 2:
+      pass
 
   # Сделано! Составная
   def areWordsAntonyms(self, POSpeech, word_base1, word_base2):
-    word_id1 = self.LOWDB.selectId(word_base1)
-    word_id2 = self.LOWDB.selectId(word_base2)
-    id_synonym_group1 = self.SDB.get_id_group(POSpeech, word_id1)
-    id_synonym_group2 = self.ADB.get(POSpeech, id_synonym_group1)
-    synonym_group2 = self.SDB.get_synonyms(POSpeech, id_synonym_group2)
-    if word_id2 in synonym_group2: return True
-    else: return False
+    if self.version == 1:
+      word_id1 = self.LOWDB.selectId(word_base1)
+      word_id2 = self.LOWDB.selectId(word_base2)
+      id_synonym_group1 = self.SDB.get_id_group(POSpeech, word_id1)
+      id_synonym_group2 = self.ADB.get(POSpeech, id_synonym_group1)
+      synonym_group2 = self.SDB.get_synonyms(POSpeech, id_synonym_group2)
+      if word_id2 in synonym_group2: return True
+      else: return False
+    elif self.version == 2:
+      pass
 
   # Сделано!
   def getAntonyms(self, POSpeech, word_base):
-    word_id = self.LOWDB.selectId(word_base)
-    id_synonym_group = self.SDB.get_id_group(POSpeech, word_id)
-    id_synonym_group = self.ADB.get(POSpeech, id_synonym_group) # группа синонимов, являющихся анитонимаии относительно предыдущей группы синонимов
-    if not id_synonym_group: return []
-    list_ids = self.SDB.get_synonyms(POSpeech, id_synonym_group)
-    return self._ids2words(list_ids)
+    if self.version == 1:
+      word_id = self.LOWDB.selectId(word_base)
+      id_synonym_group = self.SDB.get_id_group(POSpeech, word_id)
+      id_synonym_group = self.ADB.get(POSpeech, id_synonym_group) # группа синонимов, являющихся анитонимаии относительно предыдущей группы синонимов
+      if not id_synonym_group: return []
+      list_ids = self.SDB.get_synonyms(POSpeech, id_synonym_group)
+      return self._ids2words(list_ids)
+    elif self.version == 2:
+      pass
 
   # Сделано!
   def getSynonyms(self, POSpeech, word_base):
-    word_id = self.LOWDB.selectId(word_base)
-    list_ids = self.SDB.get_synonyms(POSpeech, word_id)
-    if not list_ids: return []
-    return self._ids2words(list_ids)
+    if self.version == 1:
+      word_id = self.LOWDB.selectId(word_base)
+      list_ids = self.SDB.get_synonyms(POSpeech, word_id)
+      if not list_ids: return []
+      return self._ids2words(list_ids)
+    elif self.version == 2:
+      pass
 
   def get(self, relation, POSpeech, word_base):
-    if relation == 'antonyms': return self.getAntonyms(POSpeech, word_base)
-    elif relation == 'synonyms': return self.getSynonyms(POSpeech, word_base)
+    if self.version == 1:
+      if relation == 'antonyms': return self.getAntonyms(POSpeech, word_base)
+      elif relation == 'synonyms': return self.getSynonyms(POSpeech, word_base)
+    elif self.version == 2:
+      pass
 
   def procFASIF(self, verb_base, noun_base, procFASIF=None):
-    noun_id = self.LOWDB.selectId(noun_base)
-    verb_id = self.LOWDB.selectId(verb_base)
-    verb_synonym_group_id = self.SDB.get_id_group('verb', verb_id)
+    if self.version == 1:
+      noun_id = self.LOWDB.selectId(noun_base)
+      verb_id = self.LOWDB.selectId(verb_base)
+      verb_synonym_group_id = self.SDB.get_id_group('verb', verb_id)
 
-    print 'verb_synonym_group_id', verb_synonym_group_id
-    if procFASIF: self.PFASIF.add(verb_synonym_group_id, noun_id, procFASIF)
-    else:
-      isantonym = False
-      procFASIF = self.PFASIF.get(verb_synonym_group_id, noun_id)
-      if not procFASIF:
-        #  если ФАСИФ не найден, то пробуем извлечь по антониму
-        verb_synonym_group_id = self.ADB.get('verb', verb_synonym_group_id)
-        print 'verb_synonym_group_id (antonym)', verb_synonym_group_id
+      print 'verb_synonym_group_id', verb_synonym_group_id
+      if procFASIF: self.PFASIF.add(verb_synonym_group_id, noun_id, procFASIF)
+      else:
+        isantonym = False
         procFASIF = self.PFASIF.get(verb_synonym_group_id, noun_id)
-        isantonym = True
-      return procFASIF, isantonym
+        if not procFASIF:
+          #  если ФАСИФ не найден, то пробуем извлечь по антониму
+          verb_synonym_group_id = self.ADB.get('verb', verb_synonym_group_id)
+          print 'verb_synonym_group_id (antonym)', verb_synonym_group_id
+          procFASIF = self.PFASIF.get(verb_synonym_group_id, noun_id)
+          isantonym = True
+        return procFASIF, isantonym
+    elif self.version == 2:
+      pass
 
   def addWordsToDBFromDictSentence(self, dict_sentence):
-    if "dict" in str(type(dict_sentence)): indexes = dict_sentence.keys()
-    elif "list" in str(type(dict_sentence)): indexes = range(len(dict_sentence))
-    for index in indexes:
-      dword = dict_sentence[index]
-      # числительные в базу не добавляем
-      #if dict_sentence[index]['POSpeech'] == 'number': continue
-      word_id = self.LOWDB.selectId(dword['base'])
-      if len(dword['feature']) != 0: self.addWordsToDBFromDictSentence(dword['feature'])
+    if self.version == 1:
+      if "dict" in str(type(dict_sentence)): indexes = dict_sentence.keys()
+      elif "list" in str(type(dict_sentence)): indexes = range(len(dict_sentence))
+      for index in indexes:
+        dword = dict_sentence[index]
+        # числительные в базу не добавляем
+        #if dict_sentence[index]['POSpeech'] == 'number': continue
+        word_id = self.LOWDB.selectId(dword['base'])
+        if len(dword['feature']) != 0: self.addWordsToDBFromDictSentence(dword['feature'])
 
-      if dword['MOSentence'] == 'predicate' and dword['POSpeech'] == 'verb':
-        id_synonym_group = self.SDB.add(dword['POSpeech'], word_id)
+        if dword['MOSentence'] == 'predicate' and dword['POSpeech'] == 'verb':
+          id_synonym_group = self.SDB.add(dword['POSpeech'], word_id)
+    elif self.version == 2:
+      pass
 
   def addWordsInAbstractGroup(self, group_base, *word_bases):
     ''' Добавляем абстрактные группы. Новые слова также добавляются в базу слов. '''
-    group_id = self.LOWDB.selectId(group_base)
-    for word_base in word_bases:
-      if not word_base: continue
-      word_id = self.LOWDB.selectId(word_base)
-      self.AGDB.addGroup(group_id, word_id)
+    if self.version == 1:
+      group_id = self.LOWDB.selectId(group_base)
+      for word_base in word_bases:
+        if not word_base: continue
+        word_id = self.LOWDB.selectId(word_base)
+        self.AGDB.addGroup(group_id, word_id)
+    elif self.version == 2:
+      pass
 
 def toShowDB():
   lang = 'Esperanto'
