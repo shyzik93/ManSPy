@@ -19,7 +19,7 @@ def get_passwords(password_path, password_dict):
   for s in password_strings:
     if not s or s[0] == '#': continue
     name, value = s.split(':')
-    password_dict[name.strip()] = [v.strip() for v in value]
+    password_dict[name.strip()] = [v.strip() for v in value.strip().split(' ')]
 
 class Interfaces():
   interfaces = {}
@@ -41,7 +41,7 @@ class Interfaces():
       self.interfaces[IFName] = t"""
       IFModule = __import__('IFM_'+IFName)
       IFModule.IFName = IFName
-      if IFName in password_dict: IFModule.passwords = password_dict[IFName]
+      if IFName in self.password_dict: IFModule.passwords = self.password_dict[IFName]
       self.interfaces[IFName] = [None, None]
       if 'Interface' in dir(IFModule):
         IFClass = IFModule.Interface(self.API)

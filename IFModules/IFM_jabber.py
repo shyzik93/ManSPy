@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import xmpp, os, sys, codecs, IMS
+import xmpp, os, sys, codecs
 
 API = IFName = passwords = None
 
@@ -9,11 +9,11 @@ path_config = path + 'jabber.password'
 # Загружаем логин и пароль
 #f = open(path_config, 'r')
 #login, password = f.read().split(' ')
-login, password = passwords
+#login, password = passwords
 #f.close()
 # Соединение
-jid = xmpp.JID(login)
-bot = xmpp.Client(jid.getDomain(), debug=[])
+#jid = xmpp.JID(login)
+bot = None#xmpp.Client(jid.getDomain(), debug=[])
 
 white_list = ['ra93pol@jabber.ru']
 
@@ -40,6 +40,9 @@ def ToUser():
 
 def init():
   global API, IFName, bot
+  login, password = passwords
+  jid = xmpp.JID(login)
+  bot = xmpp.Client(jid.getDomain(), debug=[])
   # авторизация и запуск Jabber
   bot.connect()
   bot.auth(jid.getNode(), password, resource="Python Jabber Bot")

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import sqlite3 as sql, os, pickle
-import ObjRelation_generated
+import Relation_generated
 
 def create_bd_file(language, name):
   if __name__ == '__main__': db_dir = 'F:\\SourceCode\\DATA_BASE'
@@ -246,7 +246,7 @@ class ObjRelation():
       else: return False
     elif self.version == 2:
       pass
-      self.R.()
+      #self.R.()
 
   # Сделано! Составная
   def areWordsAntonyms(self, POSpeech, word_base1, word_base2):
