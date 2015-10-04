@@ -24,11 +24,7 @@ class LangClass():
         то в качестве первого аргумента передаётся список извлечений."""
     BeautySafe.fwrite('\n\n'+'#'*100+'\n')
     BeautySafe.fwrite(levels+'\n')
-    OR = ObjRelation.ObjRelation(self.language, self.settings['test']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
-    if self.settings['storage_version']==2:
-      OR = ObjRelation.ObjRelation(self.language, self.settings['test'])
-      #import ObjRelation_generated
-      #R = ObjRelation_generated.Relation(self.language)
+    OR = ObjRelation.ObjRelation(self.language, self.settings['test'], self.settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
 
     levels = levels.split()
     if len(levels)==1: start_level = end_level = levels.pop()
@@ -57,7 +53,7 @@ class LangClass():
     if start_level in self.levels:
       # конвертируем анализы во внутренний язык
       if start_level == self.levels[4]: Subject, Predicate, DirectSupplement, Supplement = sentence
-      ILs, ErrorConvert = Converter.Extraction2IL(self.settings, self.Action, Subject, Predicate, DirectSupplement, Supplement)
+      ILs, ErrorConvert = Converter.Extraction2IL(OR, self.settings, self.Action, Subject, Predicate, DirectSupplement, Supplement)
       for IL in ILs: BeautySafe.safe_IL(IL)
       if end_level == self.levels[4]: return ILs, GrammarNazi, ErrorConvert
 

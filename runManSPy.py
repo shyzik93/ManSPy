@@ -8,9 +8,9 @@ Settings = {
   'storage_version': 1
   }
 interfaces = {
-  'autofeed':    0,
+  'autofeed':    1,
   'TKinter':     1,
-  'jabber':      1,
+  'jabber':      0,
   'vkcom':       0, # с ошибками
   'Commandline': 0  # не имеет смысла
   }

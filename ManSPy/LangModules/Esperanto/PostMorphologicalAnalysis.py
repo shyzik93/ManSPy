@@ -110,7 +110,6 @@ def getPostMorphA(sentence):
   #TASK обстоятельства, выраженные существительным, обозначить как наречие
 
   procConj(GrammarNazi, sentence) # rapido kaj ankaux, dolaran kaj euxran, lampo kaj fortreno
-  #print sentence.getSentence('dict')
 
   # сворачиваем все наречия, даже многократно вложенные.
   while sentence.getByCharacteristic('POSpeech', 'adverb') != {}: checkAd(sentence)

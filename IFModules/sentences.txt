@@ -1,13 +1,18 @@
 montru dolaran kaj euxran cambion de rusia banko
 montru euxran kaj dolaran cambion de ukraina kaj rusia kaj belarusia banko
 
-# четыре числа
+# С‡РµС‚С‹СЂРµ С‡РёСЃР»Р°
 montru euxran kaj dolaran cambion de ukraina kaj rusia banko
-# если есть наречие "соответственно", то тут уже два числа
-#montru euxran kaj dolaran cambion de ukraina kaj rusia banko
+# РµСЃР»Рё РµСЃС‚СЊ РЅР°СЂРµС‡РёРµ "СЃРѕРѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕ", С‚Рѕ С‚СѓС‚ СѓР¶Рµ РґРІР° С‡РёСЃР»Р°
+montru euxran kaj dolaran cambion de ukraina kaj rusia banko
 
 montru dolaran cambion de ukraina banko kaj de rusia banko
 
 sxaltu tablan lampon en dormcxambro
 malsxaltu tablan lampon en dormcxambro kaj fermo
 malmontru dolaran cambion de rusia banko de mia domo
+
+montru adreson de komputo
+montru adreson de androido
+montru adreson de komputo kaj androido
+montru adreson de komputo kaj dolaran cambion

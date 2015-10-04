@@ -64,7 +64,7 @@ def make_user_version():
   edit_files()
 
 #edit_files()
-make_user_version()
+#make_user_version()
 #deleteCash()
 
 def olddeleteCash(start_path=main_path):

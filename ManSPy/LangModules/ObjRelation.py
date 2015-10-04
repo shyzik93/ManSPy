@@ -277,7 +277,7 @@ class ObjRelation():
       id_group = word_base # так как это антоним. Проверка должна происходить в ниженаписанной функции
       self.R.get_words_by_group(id_group, isword, 'antonym', POSpeech)
       #return self.R.get_commongroups('synonym', POSpeech, [word_base, 0])'''
-      syn_groups = self.R.get_groups_by_word(0, word_base, 'synonym', POSpeech) )
+      syn_groups = self.R.get_groups_by_word(0, word_base, 'synonym', POSpeech)
       if not syn_groups: return []
       syn_groups = self.R.get_words_from_samegroup('antonym', POSpeech, self.R.dct_types['synonym'], syn_groups[0])
       if not syn_groups: return []
@@ -331,7 +331,6 @@ class ObjRelation():
         self.R.add_word(dword['base'])
         word_id = self.R.convert(dword['base'])
       if len(dword['feature']) != 0: self.addWordsToDBFromDictSentence(dword['feature'])
-
       if dword['MOSentence'] == 'predicate' and dword['POSpeech'] == 'verb':
         if self.version == 1: id_synonym_group = self.SDB.add(dword['POSpeech'], word_id)
         elif self.version == 2: self.R.add_words2group('synonym', dword['POSpeech'], None, 0, dword['base'])

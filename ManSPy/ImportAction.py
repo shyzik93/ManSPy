@@ -35,7 +35,7 @@ def parse_assoccstring(assocstring):
   for assocsubstring in assocstring:
     assocsubstring = assocsubstring.strip().split(':')
     arg_word = assocsubstring[0].strip()
-    word_groups = assocsubstring[1].strip().split(' ') # применить рег. выражение
+    word_groups = assocsubstring[1].split()
     assoc[arg_word] = word_groups
   return assoc
 
@@ -216,7 +216,7 @@ def store_storedFASIF(fasif, storedFASIF, LangClass, OR):
 class ImportAction():
   def __init__(self, settings):
     self.settings = settings
-    self.OR = LangModules.ObjRelation.ObjRelation(settings['language'], settings['test'])
+    self.OR = LangModules.ObjRelation.ObjRelation(settings['language'], settings['test'], settings['storage_version'])
     self.LangClass = LangModules.LangClass(settings, Action)
 
   def _import(self, module_name):

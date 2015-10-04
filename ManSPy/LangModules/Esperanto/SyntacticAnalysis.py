@@ -21,7 +21,7 @@ def setMOS_ToSign(features, GrammarNazi):
   """ Определение члена предложения у признаков:
       прилагательного, наречия, """
   for feature in features:
-    if feature['POSpeech'] == 'adjective':
+    if feature['POSpeech'] == 'adjective' or (feature['POSpeech'] == 'pronoun' and feature['category'] == 'possessive'):
       feature['MOSentence'] = 'definition'
       if len(feature['feature']) > 0:
         setMOS_ToSign(feature['feature'], GrammarNazi)
@@ -97,16 +97,7 @@ def getSyntA(sentence):
 
   # определяет члены предложения
   sentence.forAllWords(0, setMOSentence, GrammarNazi)
-  #index = 0
-  #while index < sentence.getLen():
-  #  index = setMOSentence(index, sentence, GrammarNazi)
-  #  index += 1
-
   # устанавливает связи членов предложения
   sentence.forAllWords(0, setLinks, GrammarNazi)
-  #index = 0
-  #while index < sentence.getLen():
-  #  index = setLinks(index, sentence, GrammarNazi)
-  #  index += 1
 
   return sentence, GrammarNazi

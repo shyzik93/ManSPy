@@ -2,9 +2,8 @@
 """ Модуль конвертирует результат морфологического синтаксического анализа
     предложения на ЕЯ Эсперанто во ВЯ
 """
-#from IMS import Action
 #from StartValue import circumstanceDict
-import ObjRelation, processing_arguments
+import processing_arguments#, ObjRelation
 import copy
 
 def get_values(dictionary, MOSentence, ErrorConvert):
@@ -14,7 +13,7 @@ def get_values(dictionary, MOSentence, ErrorConvert):
     ErrorConvert.append(MOSentence+' is absent!')
     return None
 
-def get_procFASIFs(settings, Predicate, DirectSupplement, ErrorConvert):
+def get_procFASIFs(OR, settings, Predicate, DirectSupplement, ErrorConvert):
   """ Извлекаем ФАСИФ, разбиваем его на список имён фукции и модуля,
       а также на словаврь описания аргументов."""
 
@@ -25,7 +24,7 @@ def get_procFASIFs(settings, Predicate, DirectSupplement, ErrorConvert):
   if not DS or not P: return {}
 
   # Находим ФАСИФ
-  OR = ObjRelation.ObjRelation(settings['language'], settings['test'])
+  #OR = ObjRelation.ObjRelation(settings['language'], settings['test'])
   procFASIF, isantonym = OR.procFASIF(P['base'], DS['base'])
   # если глагол является антонимом только по приставке или только по корню.
   if 'antonym' in P and P['antonym'] != isantonym: isantonym = True
@@ -56,7 +55,7 @@ def join_arg_and_func(true_arg, IL):
 # если в предложении днесколько сказуемых или прямых дополнений, то оно должно
 # разбиться на несколько предложений до вызова этой функции. То есть разбивка
 # должна происходить в модуле, в котором эта функция вызывается. 
-def Extraction2IL(settings, Action, Subject, Predicate, DirectSupplement, Supplement):
+def Extraction2IL(OR, settings, Action, Subject, Predicate, DirectSupplement, Supplement):
   pattern_IL = {
     'arg0': {'antonym': False}, # передаётся первым аргументом в каждую функцию
     'action': {
@@ -69,9 +68,9 @@ def Extraction2IL(settings, Action, Subject, Predicate, DirectSupplement, Supple
     'subject': None
   }
   ILs = []
-  OR = ObjRelation.ObjRelation(settings['language'])
+  #OR = ObjRelation.ObjRelation(settings['language'], settings['storage_version'])
   ErrorConvert = {'function': [], 'argument': []}
-  procFASIFs = get_procFASIFs(settings, Predicate, DirectSupplement, ErrorConvert['function'])
+  procFASIFs = get_procFASIFs(OR, settings, Predicate, DirectSupplement, ErrorConvert['function'])
   for procFASIF, isantonym in procFASIFs:
     if not procFASIF: continue
     IL = copy.deepcopy(pattern_IL) # на случай нескольких дополнений, так как это разные ЯВ будут

@@ -14,7 +14,8 @@ def SmartHome(group, room, device, cond):
 def LightOn(arg0, room, device):
   if arg0['antonym']: cond="0%200%200"
   else: cond="1%201%201"
-  SmartHome("light", room, device, cond)
+  return cond
+  #SmartHome("light", room, device, cond)
 
 def showAddress(arg0, device):
   if arg0['antonym']: return

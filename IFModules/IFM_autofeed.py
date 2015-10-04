@@ -16,7 +16,8 @@ def init():
 
   for sentence in sentences:
     if sentence and sentence[0] != '#':
+      print 'sentence:', sentence
       API.write_text(IFName, sentence)
       ra = range(API.getlen_text(IFName))
-      for r in ra: API.read_text(IFName, 0)
+      for r in ra: print API.read_text(IFName, 0)
   print 'completed :)'
