@@ -259,9 +259,7 @@ class ObjRelation():
       if word_id2 in synonym_group2: return True
       else: return False
     elif self.version == 2:
-      antonyms = self.getAntonyms(POSpeech, word_base1)
-      if word_base2 in antonyms: return True
-      else: False
+      pass
 
   # Сделано!
   def getAntonyms(self, POSpeech, word_base):
@@ -273,15 +271,9 @@ class ObjRelation():
       list_ids = self.SDB.get_synonyms(POSpeech, id_synonym_group)
       return self._ids2words(list_ids)
     elif self.version == 2:
-      '''#is_word_in_group(self, id_group, word, isword, id_type=None, id_speech=None):
-      id_group = word_base # так как это антоним. Проверка должна происходить в ниженаписанной функции
+      #is_word_in_group(self, id_group, word, isword, id_type=None, id_speech=None):
+      id_group = woord_base # так как это антоним. Проверка должна происходить в ниженаписанной функции
       self.R.get_words_by_group(id_group, isword, 'antonym', POSpeech)
-      #return self.R.get_commongroups('synonym', POSpeech, [word_base, 0])'''
-      syn_groups = self.R.get_groups_by_word(0, word_base, 'synonym', POSpeech) )
-      if not syn_groups: return []
-      syn_groups = self.R.get_words_from_samegroup('antonym', POSpeech, self.R.dct_types['synonym'], syn_groups[0])
-      if not syn_groups: return []
-      return self.R.get_words_by_group(syn_group, 0, 'synonym', POSpeech)
 
   # Сделано!
   def getSynonyms(self, POSpeech, word_base):
@@ -291,13 +283,14 @@ class ObjRelation():
       if not list_ids: return []
       return self._ids2words(list_ids)
     elif self.version == 2:
-      return self.R.get_words_from_samegroup('synonym', POSpeech, 0, word_base)
+      pass
 
   def get(self, relation, POSpeech, word_base):
     if self.version == 1:
       if relation == 'antonyms': return self.getAntonyms(POSpeech, word_base)
       elif relation == 'synonyms': return self.getSynonyms(POSpeech, word_base)
-    if self.version == 2: pass
+    elif self.version == 2:
+      pass
 
   def procFASIF(self, verb_base, noun_base, procFASIF=None):
     if self.version == 1:
@@ -305,6 +298,7 @@ class ObjRelation():
       verb_id = self.LOWDB.selectId(verb_base)
       verb_synonym_group_id = self.SDB.get_id_group('verb', verb_id)
 
+      print 'verb_synonym_group_id', verb_synonym_group_id
       if procFASIF: self.PFASIF.add(verb_synonym_group_id, noun_id, procFASIF)
       else:
         isantonym = False
@@ -320,21 +314,20 @@ class ObjRelation():
       pass
 
   def addWordsToDBFromDictSentence(self, dict_sentence):
-    if "dict" in str(type(dict_sentence)): indexes = dict_sentence.keys()
-    elif "list" in str(type(dict_sentence)): indexes = range(len(dict_sentence))
-    for index in indexes:
-      dword = dict_sentence[index]
-      # числительные в базу не добавляем
-      #if dict_sentence[index]['POSpeech'] == 'number': continue
-      if self.version == 1: word_id = self.LOWDB.selectId(dword['base'])
-      elif self.version == 2:
-        self.R.add_word(dword['base'])
-        word_id = self.R.convert(dword['base'])
-      if len(dword['feature']) != 0: self.addWordsToDBFromDictSentence(dword['feature'])
+    if self.version == 1:
+      if "dict" in str(type(dict_sentence)): indexes = dict_sentence.keys()
+      elif "list" in str(type(dict_sentence)): indexes = range(len(dict_sentence))
+      for index in indexes:
+        dword = dict_sentence[index]
+        # числительные в базу не добавляем
+        #if dict_sentence[index]['POSpeech'] == 'number': continue
+        word_id = self.LOWDB.selectId(dword['base'])
+        if len(dword['feature']) != 0: self.addWordsToDBFromDictSentence(dword['feature'])
 
-      if dword['MOSentence'] == 'predicate' and dword['POSpeech'] == 'verb':
-        if self.version == 1: id_synonym_group = self.SDB.add(dword['POSpeech'], word_id)
-        elif self.version == 2: self.R.add_words2group('synonym', dword['POSpeech'], None, 0, dword['base'])
+        if dword['MOSentence'] == 'predicate' and dword['POSpeech'] == 'verb':
+          id_synonym_group = self.SDB.add(dword['POSpeech'], word_id)
+    elif self.version == 2:
+      pass
 
   def addWordsInAbstractGroup(self, group_base, *word_bases):
     ''' Добавляем абстрактные группы. Новые слова также добавляются в базу слов. '''

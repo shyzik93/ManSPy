@@ -111,6 +111,7 @@ while i < len(code)-1:
 
 
 new_code = []
+names = {'idword': 'word', 'idgroup': 'group', 'idtype': 'type'}
 for function in functions:
   full_args = function['args']
   print function['rets']
@@ -130,10 +131,11 @@ for function in functions:
         full_args[full_args.index(full_arg)] = convert_arg
         convert_arg = convert_arg.split('=')[0]
         if convert_arg in convert_input_vars: _new_code.append('    ' + convert_input_vars[convert_arg] % convert_arg)
-  s = '  def %s(%s):' % (function['name'][1:], ', '.join(full_args))
+  name = function['name']
+  for name1, name2 in names.items(): name = name.replace(name1, name2)
+  s = '  def %s(%s):' % (name[1:], ', '.join(full_args))
   new_code.append(s)
   new_code.extend(_new_code)
-
   # генерируем строку вызова функции (возвращенеи аргументов)
   if output_args: assignment_symbol = ', '.join(output_args) + ' = '
   else: assignment_symbol = ''
@@ -156,8 +158,8 @@ with open('Relation_generated.py', 'w') as f:
 from Relation_new import _Relation
 
 class Relation(_Relation):
-  dct_types = {'synonym': 1, 'antonym': 2, 'abstract': 3}
-  dct_speeches = {'noun': 1, 'verb': 2, 'adjective': 3, 'adverb': 4}
+  dct_types = {'synonym': 0, 'antonym': 1, 'abstract': 2}
+  dct_speeches = {'noun': 0, 'verb': 1, 'adjective': 2, 'adverb': 3}
   def __init__(self, language):
     _Relation.__init__(self, language)
 
