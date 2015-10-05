@@ -118,8 +118,9 @@ class _Relation():
   def _is_word_in_group(self, id_group, id_word, isword, id_type=None, id_speech=None):
     ''' Входит ли слово в группу? '''
     id_groups = self._get_words_by_group(id_group, isword, id_type, id_speech)
-    if id_word in id_groups: return True
-    else: return False
+    #if id_word in id_groups: return True
+    #else: return False
+    return True if id_word in id_groups else False #FORAUTO True
 
   def _get_commongroups(self, id_type, id_speech, *pairs):
     ''' Возвращает общие для всех слов группы '''
@@ -127,11 +128,17 @@ class _Relation():
     list_groups = []
     for pair in pairs:
       list_groups.append(self._get_groups_by_word(pair[1], pair[0], id_type, id_speech))
-    id_groups1 = list_groups.pop(0)
-    common_id_groups = []
-    for id_group in id_groups1:
-      matches = []
-      for id_groups in list_groups:
-        if id_group in id_groups: matches.append(True)
-      if len(matches) == len(list_groups): common_id_groups.append(id_group)
-    return common_id_groups #FORAUTO id_groups
+
+    common_id_groups = set(list_groups.pop(0))
+    for list_group in list_groups:
+      common_id_groups &= set(list_group)
+    return list(common_id_groups) #FORAUTO id_groups
+
+    #id_groups1 = list_groups.pop(0)
+    #common_id_groups = []
+    #for id_group in id_groups1:
+    #  matches = []
+    #  for id_groups in list_groups:
+    #    if id_group in id_groups: matches.append(True)
+    #  if len(matches) == len(list_groups): common_id_groups.append(id_group)
+    #return common_id_groups #FORAUTO id_groups

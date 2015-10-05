@@ -1,10 +1,10 @@
 montru dolaran kaj euxran cambion de rusia banko
-montru euxran kaj dolaran cambion de ukraina kaj rusia kaj belarusia banko
+montru euxran kaj dolaran cambion de ukrainia kaj rusia kaj belarusia banko
 
 # четыре числа
-montru euxran kaj dolaran cambion de ukraina kaj rusia banko
+montru euxran kaj dolaran cambion de ukrainia kaj rusia banko
 # если есть наречие "соответственно", то тут уже два числа
-montru euxran kaj dolaran cambion de ukraina kaj rusia banko
+montru euxran kaj dolaran cambion de ukrainia kaj rusia banko
 
 montru dolaran cambion de ukraina banko kaj de rusia banko
 
