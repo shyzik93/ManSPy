@@ -78,8 +78,9 @@ class API():
       if errors: sys.stderr.write(analys + ": ")
       for error in errors: sys.stderr.write("  " + error + "\n")
     for part, errors in ErrorConvert.items():
-      if errors: sys.stderr.write(part + ": ")
+      if errors: sys.stderr.write(part + ":\n")
       for error in errors:
+        if not error: continue
         if not (isinstance(error, str) or isinstance(error, unicode)): error = str(error)
         sys.stderr.write("  " + error + "\n")
 

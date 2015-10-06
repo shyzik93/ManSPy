@@ -22,30 +22,32 @@ def Extract(sentence):#, Recursion=0):
     ErrorConvert.append([0, 'Prediate is absent'])
     return Subject, Predicate, DirectSupplement, Supplement, ErrorConvert
 
-  # Поиск прямого дополнения
-  """for link in Predicate['link']:
-    if sentence.GetSet(link, 'MOSentence') == 'direct supplement':
-      DirectSupplement = sentence.GetAndDel(index)
-      break"""
-  DirectSupplement = sentence.getByCharacteristic('MOSentence', 'direct supplement')
+  # Поиск прямого дополнения (только для первого сказуемого)
+  for index_predic, predic in Predicate.items():
+    for link in predic['link']:
+      if sentence.GetSet(link, 'MOSentence') == 'direct supplement':
+        #DirectSupplement = sentence.GetAndDel(link)
+        DirectSupplement[link] = sentence.GetSet(link)
+    break
+  #DirectSupplement = sentence.getByCharacteristic('MOSentence', 'direct supplement') # не удалять пока!
   sentence.delByIndexWithoutSync(*DirectSupplement.keys())
-  if len(DirectSupplement) == 0: pass # отсутствует (бывает такое)
-  elif len(DirectSupplement) == 1: pass # присуствует, всё нормально
+  #if len(DirectSupplement) == 0: pass # отсутствует (бывает такое)
+  #elif len(DirectSupplement) == 1: pass # присуствует, всё нормально
   #else: pass # такое тоже бывает. Необходимо их проверить на однородность
 
   # Поиск подлежащего
   Subject = sentence.getByCharacteristic('MOSentence', 'subject')
   sentence.delByIndexWithoutSync(*Subject.keys())
-  if len(Predicate) == 0: pass # спросить, кто выполняет действие
-  elif len(Predicate) == 1: pass
-  else: pass
+  #if len(Predicate) == 0: pass # спросить, кто выполняет действие
+  #elif len(Predicate) == 1: pass
+  #else: pass
 
   # Все оставшиеся слова - косвенные дополнения
   #Supplement = sentence.getSentence("dict")
   Supplement = sentence.getByCharacteristic('MOSentence', 'supplement')
   sentence.delByIndexWithoutSync(*Supplement.keys())
 
-  print "-"*10, "\n            Необработанные остатки \n", sentence.getSentence("dict")
-  print "-"*30
+  print u"       Необработанные остатки \n", sentence.getSentence("dict")
+  print "-"*10
 
   return Subject, Predicate, DirectSupplement, Supplement, ErrorConvert

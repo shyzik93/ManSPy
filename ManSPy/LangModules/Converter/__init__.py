@@ -17,20 +17,24 @@ def get_procFASIFs(OR, settings, Predicate, DirectSupplement, ErrorConvert):
   """ Извлекаем ФАСИФ, разбиваем его на список имён фукции и модуля,
       а также на словаврь описания аргументов."""
 
+  procFASIFs = []
+
   # Вынимаем прямое дополнение (пока только одно)
-  DS = get_values(DirectSupplement, 'Direct supplement', ErrorConvert)
+  #DS = get_values(DirectSupplement, 'Direct supplement', ErrorConvert)
   # Вынимаем сказуемое
   P = get_values(Predicate, 'Predicate', ErrorConvert)
-  if not DS or not P: return {}
+  #if not DS or not P: return {}
 
-  # Находим ФАСИФ
-  procFASIF, isantonym = OR.procFASIF(P['base'], DS['base'])
-  # если глагол является антонимом только по приставке или только по корню.
-  if 'antonym' in P and P['antonym'] != isantonym: isantonym = True
-  #print P['base'], DS['base']
-  #print 'procFASIF:', procFASIF
-  if procFASIF == None: ErrorConvert.append("FASIF for \""+P['word']+"\" and \""+DS['word']+"\" is absent")
-  return [[procFASIF, isantonym]] # на случай нескольких прямых дополнений
+  for indexDS, DS in DirectSupplement.items():
+    # Находим ФАСИФ
+    procFASIF, isantonym = OR.procFASIF(P['base'], DS['base'])
+    # если глагол является антонимом только по приставке или только по корню.
+    if 'antonym' in P and P['antonym'] != isantonym: isantonym = True
+    #print P['base'], DS['base']
+    #print 'procFASIF:', procFASIF
+    if procFASIF == None: ErrorConvert.append("FASIF for \""+P['word']+"\" and \""+DS['word']+"\" is absent")
+    procFASIFs.append([procFASIF, isantonym]) # на случай нескольких прямых дополнений
+  return procFASIFs
 
 def set_action(settings, Action, funcdesc, Predicate, IL):
   # Вынимаем функцию из ФАСИФа и добавляем её в ЯВ
@@ -67,8 +71,12 @@ def Extraction2IL(OR, settings, Action, Subject, Predicate, DirectSupplement, Su
   }
   ILs = []
   ErrorConvert = {'function': [], 'argument': []}
+  #procFASIFs = {}
+  #for indexDS, DS in DirectSupplement.items():
+  #  procFASIFs[indexDS] = get_procFASIFs(OR, settings, Predicate, DS, ErrorConvert['function'])
   procFASIFs = get_procFASIFs(OR, settings, Predicate, DirectSupplement, ErrorConvert['function'])
   for procFASIF, isantonym in procFASIFs:
+    #procFASIF, isantonym = _procFASIF
     if not procFASIF: continue
     IL = copy.deepcopy(pattern_IL) # на случай нескольких дополнений, так как это разные ЯВ будут
     funcdesc, argdesc = procFASIF['function'], procFASIF['arguments_description']#, procFASIF['arguments_order']

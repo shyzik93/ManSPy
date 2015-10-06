@@ -27,6 +27,7 @@ def processingConjunction(GrammarNazi, index, sentence):
   #if conjunction['word'] == 'kaj': # заменить логическими символами (kaj = &)
   #print conjunction['base']
   if left['POSpeech'] == right['POSpeech']:
+  #if ('case' in left and 'case' in right) and left['case'] == right['case']:
     sentence.addHomogeneous(index-1, index+1) # для дополнений
     sentence.delByIndex(index)
     return index # the same right-1

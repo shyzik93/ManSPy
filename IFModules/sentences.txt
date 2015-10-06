@@ -1,18 +1,27 @@
+# Обычные предложения
 montru dolaran kaj euxran cambion de rusia banko
+sxaltu tablan lampon en dormcxambro
+montru adreson de komputo
+montru adreson de androido
+
+# Повторяющиеся аргументы (однородные слова)
+montru dolaran kaj dolaran cambion de rusia banko
+montru dolaran kaj dolaran cambion de rusia kaj rusia banko
+montru adreson de komputo kaj androido
+
+# Много аргументов (сложатся друг с другом поочерёдно)
 montru euxran kaj dolaran cambion de ukrainia kaj rusia kaj belarusia banko
-
-# четыре числа
-montru euxran kaj dolaran cambion de ukrainia kaj rusia banko
-# если есть наречие "соответственно", то тут уже два числа
 montru euxran kaj dolaran cambion de ukrainia kaj rusia banko
 
+# сложатся соответственно (не реализовано пока)
+#montru euxran kaj dolaran cambion de ukrainia kaj rusia banko соответсвенно
+
+# однородные слова-посредники (не реализовано пока)
 montru dolaran cambion de ukrainia banko kaj de rusia banko
 
-sxaltu tablan lampon en dormcxambro
+# антонимия. Можно через приставку, которая антонимирует значение, а можно через глагол-антоним
 malsxaltu tablan lampon en dormcxambro kaj fermo
 malmontru dolaran cambion de rusia banko de mia domo
 
-montru adreson de komputo
-montru adreson de androido
-montru adreson de komputo kaj androido
+# однородные прямые дополнения, по сути - две разных функции (два разных действия) в одном предложении.
 montru adreson de komputo kaj dolaran cambion

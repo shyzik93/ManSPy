@@ -1,7 +1,19 @@
 # -*- coding: utf-8 -*-
 """
 """
-import multiply_lists
+import multiply_lists, os
+
+def write_log(*texts):
+  path = os.path.join(os.path.abspath(''), 'DATA_BASE', 'args.txt')
+  if not os.path.exists(path):
+    with open(path, 'w'): pass
+  f = open(path, 'a')
+  for text in texts:
+    if not (isinstance(text, str) or isinstance(text, unicode)): text = str(text)
+    f.write(text)
+    f.write(' ')
+  f.write('\n')
+  f.close()
 
 def matchDefinitonsAndCircumstances(AM, data, OR, true_bases):
   for feature in AM['feature']:
@@ -60,34 +72,36 @@ def getArguments(OR, Subject, Predicate, DirectSupplement, Supplement, argdesc):
   for name, desc in argdesc.items():
     if 'int' in str(type(name)): continue # Слова-посредники - пропускаем.
     AM = findArguments(Subject, Predicate, DirectSupplement, Supplement, desc, argdesc)
-    print '00. Candidates for true bases:', AM
+    write_log('00. Candidates for true bases:', AM)
     true_bases = matchArgument(OR, AM, Supplement, desc)
-    print '01. True bases:', true_bases
-    _found_args[name] = true_bases
+    write_log('01. True bases:', true_bases)
+    _found_args[name] = list(set(true_bases))
 
-  print '02. Found arguments: ', _found_args
+  write_log('02. Found arguments: ', _found_args)
   # умножение
   found_args = multiply_lists.dmultiply(_found_args)
   # соответствие, если в предложении указано наречие "соответственно"
   # здесь должен быть этот код  
-  print '02.1. Found arguments: ', found_args
+  write_log('02.1. Found arguments: ', found_args)
   return found_args
 
 def checkArguments(found_args, argdesc, index_IL, ErrorConvert):
   # Проверяем аргументы на наличие в абстр. группе, заменяем по таблице и добавляем в ЯВ
   true_args = []
+  #index = 0
   for found_arg in found_args:
-    true_args.append([])
+    #true_args.append([])
     ErrorConvert.append([])
     for name, desc in argdesc.items():
       if 'int' in str(type(name)): continue
       if name not in found_arg:
-        if desc['required']: ErrorConvert[index_IL].append("Required argument \"%s\" is absent!" % name)
+        if desc['required']: ErrorConvert[-1].append("Required argument \"%s\" is absent!" % name)
         continue
       if desc['argtable']:
         if found_arg[name] in desc['argtable']: found_arg[name] = desc['argtable'][found_arg[name]]
-        else: ErrorConvert.append("Argument \"%s\" (found value \"%s\") is absent in argtable!" % (name, found_arg[name]))
-    true_args[index_IL] = found_arg
-    index_IL += 1
-  print '03. True args:', true_args, '\n'
+        else: print u"Argument \"%s\" (found value \"%s\") is absent in argtable!" % (name, found_arg[name])
+    true_args.append(found_arg)
+    #true_args[index] = found_arg
+    #index += 1
+  write_log('03. True args:', true_args, '\n')
   return true_args

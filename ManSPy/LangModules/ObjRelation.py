@@ -57,9 +57,9 @@ class SynonymsDB():
         в которой находится id второго глагола."""
     if id_group == None:
       res = self.cu.execute("SELECT id_group FROM %s WHERE id_word=?" % POSpeech, (id_word,)).fetchall()
-      print "#"*10, "\n", res
+      #print "#"*10, "\n", res
       if len(res) == 1: return res[0][0] # если глагол уже есть, то вернём его группу
-      print POSpeech
+      #print POSpeech
       id_group = max_increment(self.cu, self.c, POSpeech)
     if type_id == "word":
       id_group = self.cu.execute(" SELECT id_group FROM %s WHERE id_word=?;" % POSpeech, (id_word,)).fetchall()[0][0]

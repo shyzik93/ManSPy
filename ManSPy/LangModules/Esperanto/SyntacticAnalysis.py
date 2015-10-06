@@ -69,7 +69,7 @@ def setLinks(index, sentence, GrammarNazi):
     while index2 < sentence.getLen():
       if sentence.GetSet(index2, 'MOSentence') == 'direct supplement':
         sentence.addLink(index, index2)
-        break
+      elif sentence.GetSet(index2, 'MOSentence') == 'predicate': break
       index2 += 1
 
   #TASK если у прямого дополнения нескеолько дополнений, то они проигнорируются

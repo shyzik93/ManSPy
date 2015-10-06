@@ -12,6 +12,8 @@ def deleteCash(rec=0, _path=None, names=None):
     os.path.walk(main_path, deleteCash, 1)
     return
   for name in names:
+    #print name[0] == '.', name
+    #if name[0] == '.': continue
     path = os.path.join(_path, name)
     if os.path.isfile(path) and (path[-4:] == '.pyc' or path[-1] == '_'):
       printOut(path)
