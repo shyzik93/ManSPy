@@ -16,4 +16,6 @@ class LogicShell():
     if IL == None: return
 
     if IFName not in self.list_answers: self_list_answers[IFName] = []
-    self.LogicKernel.LogicKernel(IL, IFName)
+    IL['arg0']['forread'] = self.list_answers[IFName]
+    IL['arg0']['IFName'] = IFName
+    self.LogicKernel.LogicKernel(IL)
