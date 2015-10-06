@@ -24,7 +24,6 @@ def get_procFASIFs(OR, settings, Predicate, DirectSupplement, ErrorConvert):
   if not DS or not P: return {}
 
   # Находим ФАСИФ
-  #OR = ObjRelation.ObjRelation(settings['language'], settings['test'])
   procFASIF, isantonym = OR.procFASIF(P['base'], DS['base'])
   # если глагол является антонимом только по приставке или только по корню.
   if 'antonym' in P and P['antonym'] != isantonym: isantonym = True
@@ -48,7 +47,6 @@ def set_action(settings, Action, funcdesc, Predicate, IL):
 
 def join_arg_and_func(true_arg, IL):
   _IL = copy.deepcopy(IL)
-  #true_arg['arg0'] = arg0
   _IL['argument'] = true_arg
   return _IL
 
@@ -68,7 +66,6 @@ def Extraction2IL(OR, settings, Action, Subject, Predicate, DirectSupplement, Su
     'subject': None
   }
   ILs = []
-  #OR = ObjRelation.ObjRelation(settings['language'], settings['storage_version'])
   ErrorConvert = {'function': [], 'argument': []}
   procFASIFs = get_procFASIFs(OR, settings, Predicate, DirectSupplement, ErrorConvert['function'])
   for procFASIF, isantonym in procFASIFs:
