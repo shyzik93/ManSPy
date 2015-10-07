@@ -41,9 +41,9 @@ Russian
 """, """
 showAddress
 device y; Esperanto
-  computer; komput
+  computer; komputil
 
 Esperanto
-komputo: aparato
-montru adreson de komputo
+komputilo: aparato
+montru adreson de komputilo
 """]
