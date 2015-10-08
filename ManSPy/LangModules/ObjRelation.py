@@ -224,13 +224,14 @@ class ObjRelation():
       Другими словами, он задествует вышеуказанные классы для реализации своих
       функций."""
   def __init__(self, language, test=0, version=1):
-    self.LOWDB = ListOfWordsDB(language)
-    self.AGDB = AbstractGroupsDB(language)
-    self.SDB = SynonymsDB(language)
-    self.ADB = AntonymsDB(language)
-    self.PFASIF = ProcFASIF(language, test)
     self.version = version
-    if version == 2: self.R = Relation_new.Relation(language)
+    if version == 1:
+      self.LOWDB = ListOfWordsDB(language)
+      self.AGDB = AbstractGroupsDB(language)
+      self.SDB = SynonymsDB(language)
+      self.ADB = AntonymsDB(language)
+      self.PFASIF = ProcFASIF(language, test)
+    elif version == 2: self.R = Relation_new.Relation(language, test)
 
   # к удалению во второй версии базы
   def _ids2words(self, list_ids):
@@ -245,6 +246,7 @@ class ObjRelation():
       if word_id in words_in_group: return True
       else: return False
     elif self.version == 2:
+      #print 'isWordInAbstractGroup', group_base, word_base
       return self.R.is_word_in_group('abstract', group_base, word_base, 0, None)
 
   # Сделано! Составная
@@ -314,22 +316,7 @@ class ObjRelation():
           isantonym = True
         return procFASIF, isantonym
     elif self.version == 2:
-      noun_id = self.R.convert(noun_base)
-      verb_id = self.R.convert(verb_base)
-      verb_synonym_group_id = self.R.get_groups_by_word('synonym', 0, verb_base, 'verb')
-
-      if procFASIF: self.PFASIF.add(verb_synonym_group_id, noun_id, procFASIF)
-      else:
-        isantonym = False
-        procFASIF = self.PFASIF.get(verb_synonym_group_id, noun_id)
-        if not procFASIF:
-          #  если ФАСИФ не найден, то пробуем извлечь по антониму
-          verb_synonym_group_id = self.R.get_words_from_samegroup('antonym', 'verb', 'synonym', verb_synonym_group_id)
-          #self.ADB.get('verb', verb_synonym_group_id)
-          print 'verb_synonym_group_id (antonym)', verb_synonym_group_id
-          procFASIF = self.PFASIF.get(verb_synonym_group_id, noun_id)
-          isantonym = True
-        return procFASIF, isantonym
+      return self.R.procFASIF(verb_base, noun_base, procFASIF)
 
   def addWordsToDBFromDictSentence(self, dict_sentence):
     if "dict" in str(type(dict_sentence)): indexes = dict_sentence.keys()
@@ -356,7 +343,8 @@ class ObjRelation():
         word_id = self.LOWDB.selectId(word_base)
         self.AGDB.addGroup(group_id, word_id)
     elif self.version == 2:
-      self.R.add_words2group('abstract', None, group_base, 0, *id_words)
+      print group_base, word_bases
+      self.R.add_words2group('abstract', None, group_base, 0, *word_bases)
 
 def toShowDB():
   lang = 'Esperanto'

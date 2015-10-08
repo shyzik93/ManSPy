@@ -19,11 +19,8 @@ def get_procFASIFs(OR, settings, Predicate, DirectSupplement, ErrorConvert):
 
   procFASIFs = []
 
-  # Вынимаем прямое дополнение (пока только одно)
-  #DS = get_values(DirectSupplement, 'Direct supplement', ErrorConvert)
   # Вынимаем сказуемое
   P = get_values(Predicate, 'Predicate', ErrorConvert)
-  #if not DS or not P: return {}
 
   for indexDS, DS in DirectSupplement.items():
     # Находим ФАСИФ

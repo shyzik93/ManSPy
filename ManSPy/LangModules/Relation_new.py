@@ -17,8 +17,10 @@ def create_bd_file(language, name):
 class Relation():
   dct_types = {'synonym': 1, 'antonym': 2, 'abstract': 3}
   dct_speeches = {'noun': 1, 'verb': 2, 'adjective': 3, 'adverb': 4}
-  def __init__(self, language):
-    self.c, self.cu = create_bd_file(language, 'words.db')
+  
+  def __init__(self, language, test=0):
+    self.test = test
+    self.c, self.cu = create_bd_file(language, 'main_data.db')
     self.cu.executescript('''
       CREATE TABLE IF NOT EXISTS words (
         word TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,
@@ -28,7 +30,17 @@ class Relation():
         id_speech INTEGER,
         id_group INTEGER,
         id_word INTEGER,
-        isword INTEGER );''')
+        isword INTEGER );
+      CREATE TABLE IF NOT EXISTS procFASIF (
+        id_group_verb INTEGER,
+        id_group_noun INTEGER,
+        function_data TEXT,
+        date TEXT DEFAULT CURRENT_TIMESTAMP
+      );''')
+    self.dct_typesR = {}
+    for k, v in self.dct_types.items(): self.dct_typesR[v] = k
+    self.dct_speechesR = {}
+    for k, v in self.dct_speeches.items(): self.dct_speechesR[v] = k
 
   ### Работа с таблицей words
 
@@ -47,12 +59,18 @@ class Relation():
       else: query = 'SELECT id_word FROM words WHERE word=?;'
       res = self.cu.execute(query, (el,)).fetchall()
       if res: outlist.append(res[0][0])
-      else: outlist.append(None)
+      else: # если слово отсутствует, то добавим его
+        self.add_word(el)
+        outlist.append(*convert(el))
     return outlist
 
   def _word2id(self, word):
     if isinstance(word, str) or isinstance(word, unicode):
-      return self.cu.execute('SELECT id_word FROM words WHERE word=?;', (word,)).fetchall()[0][0]
+      res = self.cu.execute('SELECT id_word FROM words WHERE word=?;', (word,)).fetchall()
+      if res: return res[0][0]
+      else: # если слово отсутствует, то добавим его
+        self.add_word(word) 
+        return self._word2id(word)
     else: return word
   def _type2id(self, _type): return self.dct_types[_type] if isinstance(_type, str) or isinstance(_type, unicode) else _type
   def _speech2id(self, speech): return self.dct_speeches[speech] if isinstance(speech, str) or isinstance(speech, unicode) else speech
@@ -88,10 +106,10 @@ class Relation():
     ''' Возвращает слова, входящие в группу '''
     if id_speech != None:
       res = self.cu.execute('SELECT id_word FROM relations WHERE id_type=? AND id_speech=? AND id_group=? AND isword=?;',
-                      (self._type2id(id_type), self._speech2id(id_speech), id_group, self._type2id(isword))).fetchall()
+                      (self._type2id(id_type), self._speech2id(id_speech), self._word2id(id_group), self._type2id(isword))).fetchall()
     else:
       res = self.cu.execute('SELECT id_word FROM relations WHERE id_type=? AND id_group=? AND isword=?',
-                      (self._type2id(id_type), id_group, self._type2id(isword))).fetchall()
+                      (self._type2id(id_type), self._word2id(id_group), self._type2id(isword))).fetchall()
     return [_id[0] for _id in res]
 
   ### Составные функции для таблицы relations (работают с идентификаторами)
@@ -119,7 +137,7 @@ class Relation():
   def is_word_in_group(self, id_type, id_group, id_word, isword, id_speech=None):
     ''' Входит ли слово в группу? '''
     id_words = self.get_words_by_group(id_type, id_group, isword, id_speech)
-    return True if self._word2id(word) in id_words else False
+    return True if self._word2id(id_word) in id_words else False
 
   def get_commongroups(self, id_type, id_speech, *pairs):
     ''' Возвращает общие для всех слов группы '''
@@ -133,9 +151,69 @@ class Relation():
       common_id_groups &= set(list_group)
     return list(common_id_groups)
 
+  # Работа с таблицей procFASIF
+
+  def _add_pFASIF(self, id_verb_group, id_noun, function_data):
+    # проверяем наличие записи. Если она уже есть, то добавляять её тогда не следует.
+    res = self.cu.execute("SELECT function_data FROM procFASIF WHERE id_group_verb=? AND id_group_noun=?;",
+                          (id_verb_group, self._word2id(id_noun)))
+    if res.fetchall(): return
+    function_data = str(function_data) if self.test else pickle.dumps(function_data)
+    self.cu.execute("INSERT INTO procFASIF (id_group_verb, id_group_noun, function_data) VALUES (?,?,?)",
+                    (id_verb_group, self._word2id(id_noun), function_data))
+    self.c.commit()
+
+  def _get_pFASIF(self, id_verb_group, id_noun):
+    #print 'get FASIF', id_verb_group, id_noun
+    res = self.cu.execute(" SELECT function_data FROM procFASIF WHERE id_group_verb=? AND id_group_noun=?;",
+                          (id_verb_group, self._word2id(id_noun)))
+    res = res.fetchall()
+    if not res: return
+    return eval(res[0][0]) if self.test else pickle.loads(res[0][0])
+
+  def _update_pFASIF(self, id_group_verb, id_noun, function_data):
+    self.cu.execute("UPDATE procFACIF SET function_data=? WHERE id_group_verb=? AND id_group_noun=?;", (function_data, id_group_verb, self._word2id(id_noun)))
+    self.c.commit()
+
+  def procFASIF(self, id_verb, id_noun, procFASIF=None, update=None):
+    ''' Извлечение, добавление, обновление хранимого ФАСИФа. '''
+    verb_synonym_group_id = self.get_groups_by_word('synonym', 0, id_verb, 'verb')[0] # подумать
+
+    if procFASIF:
+      self._add_pFASIF(verb_synonym_group_id, id_noun, procFASIF)
+      return
+    elif update:
+      self._update_pFASIF(verb_synonym_group_id, id_noun, function_data)
+      return
+
+    isantonym = False
+    procFASIF = self._get_pFASIF(verb_synonym_group_id, id_noun)
+    if not procFASIF:
+      #  если ФАСИФ не найден, то пробуем извлечь по антониму
+      verb_synonym_group_id = self._get_words_from_samegroup('antonym', 'verb', 'synonym', verb_synonym_group_id)
+      #print 'verb_synonym_group_id (antonym)', verb_synonym_group_id
+      procFASIF = self._get_pFASIF(verb_synonym_group_id, id_noun)
+      if not procFASIF: return None, isantonym
+      isantonym = True
+    return procFASIF, isantonym
+
 if __name__ == '__main__':
   R = Relation('Esperanto')
-  list_words = ['dom', 'kot', 'kosxar', 'aparat', 'montr', 'sobak', 'peos']
+
+  rng = range(1, R.get_max_id('id_type')+1)
+  for id_type in rng:
+    print R.dct_typesR[id_type]
+    res = R.cu.execute('SELECT id_group, id_word, isword FROM relations WHERE id_type=? ORDER BY id_group;', (id_type,)).fetchall()
+    #res = list(set(res))
+    #print len(res)
+    for id_group, id_word, isword in res:
+      if R.dct_typesR[id_type] in ('abstract'): id_group = R.convert(id_group)[0]
+      if isword == 0: id_word = R.convert(id_word)[0]
+      if isword > 0: isword = R.dct_typesR[isword]
+      else: isword = u'слово'
+      print '  ', id_group, id_word, isword
+  
+  """list_words = ['dom', 'kot', 'kosxar', 'aparat', 'montr', 'sobak', 'peos']
   R.add_word(list_words)
   print u"Добавили слова в базу. Их id:", R.convert(*list_words)
 
@@ -153,4 +231,4 @@ if __name__ == '__main__':
   print u"Все слова в группе %s" % id_group, R.convert(*R.get_words_by_group('synonym', id_group, 0, 'noun'))
   print u"Все группы, куда входит слово %s:" % word, R.get_groups_by_word('synonym', 0, word, 'noun')
   print u"Слово %s в группе %s?" % (word, id_group), R.is_word_in_group('synonym', id_group, word, 0, 'noun')
-  print R.get_commongroups('synonym', 'noun', [word, 0], [lst[1],0], [R.convert('aparat')[0], 0])
+  print R.get_commongroups('synonym', 'noun', [word, 0], [lst[1],0], [R.convert('aparat')[0], 0])"""

@@ -19,6 +19,7 @@ def matchDefinitonsAndCircumstances(AM, data, OR, true_bases):
   for feature in AM['feature']:
     if feature['POSpeech'] != data['POSpeech']: continue # так как могут быть и прилагательные, и притяж. местоимения.
     for descr_base in data['base']:
+      #print 'matchDefinitonsAndCircumstances\n', feature['base'], descr_base
       if OR.isWordInAbstractGroup(feature['base'], descr_base):
         true_bases.append(feature['base'])
         break
