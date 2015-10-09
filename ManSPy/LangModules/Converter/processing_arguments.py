@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 """
-import multiply_lists, os
+import mymath, os
 
 def write_log(*texts):
   path = os.path.join(os.path.abspath(''), 'DATA_BASE', 'args.txt')
@@ -79,8 +79,8 @@ def getArguments(OR, Subject, Predicate, DirectSupplement, Supplement, argdesc):
     _found_args[name] = list(set(true_bases))
 
   write_log('02. Found arguments: ', _found_args)
-  # умножение
-  found_args = multiply_lists.dmultiply(_found_args)
+  # декартово умножение
+  found_args = mymath.dproduct(_found_args)
   # соответствие, если в предложении указано наречие "соответственно"
   # здесь должен быть этот код  
   write_log('02.1. Found arguments: ', found_args)

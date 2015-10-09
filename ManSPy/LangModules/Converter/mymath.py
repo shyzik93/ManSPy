@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
-"""
 
-def copy(resl, addl):
+def _product(resl, addl):
   n = len(addl)
   #_resl = list(resl)
   _resl = []
@@ -15,14 +13,15 @@ def copy(resl, addl):
   #print len(_resl), _resl, '\n'
   return _resl
 
-def multiply(parentl):
+def product(parentl):
+  ''' Выполняет декартово (прямое) произведение над списками в списке parent1 '''
   prevchildl = [[]]
   for childl in parentl:
-    prevchildl = copy(prevchildl, childl)
+    prevchildl = _product(prevchildl, childl)
   #print len(prevchildl), prevchildl
   return prevchildl
 
-def dcopy(resl, addl, name):
+def _dproduct(resl, addl, name):
   n = len(addl)
   _resl = list(resl)
   for i, el in enumerate(resl, 0):
@@ -34,10 +33,13 @@ def dcopy(resl, addl, name):
   #print len(_resl), _resl, '\n'
   return _resl
 
-def dmultiply(dparentl):
+def dproduct(dparentl):
+  ''' Выполняет декартово (прямое) произведение над словарями в списке dparent1
+      {'a': [1,2], 'b': [5,6]} -> [{'a': 1, 'b':5}, {'a': 1, 'b':6}, {'a': 2, 'b':5}, {'a': 2, 'b':6}]
+  '''
   prevchildl = [{}]
   for name, childl in dparentl.items():
-    prevchildl = dcopy(prevchildl, childl, name)
+    prevchildl =_dproduct(prevchildl, childl, name)
   #print len(prevchildl), prevchildl
   return prevchildl
 
@@ -47,16 +49,16 @@ if __name__ == '__main__':
   parentl = [[1, 2, 3, 4],
        [10, 20, 30, 40],
        [100, 200, 300, 400]]
-  resl = multiply(parentl)
+  resl = product(parentl)
   print len(resl), resl
 
   dparentl = {'a': [1, 2, 3, 4],
        'b': [10, 20, 30, 40],
        'c': [100, 200, 300, 400]}
-  resl = dmultiply(dparentl)
+  resl = dproduct(dparentl)
   print len(resl), resl
 
   parentl = ['a', 'b', 'c']
   parentl = [parentl] * len(parentl)
-  resl = multiply(parentl)
+  resl = product(parentl)
   print len(resl), [''.join(r) for r in resl]

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import sqlite3 as sql, os, pickle
-import Relation_new
+import Relation
 
 def create_bd_file(language, name):
   if __name__ == '__main__': db_dir = 'F:\\SourceCode\\DATA_BASE'
@@ -231,7 +231,7 @@ class ObjRelation():
       self.SDB = SynonymsDB(language)
       self.ADB = AntonymsDB(language)
       self.PFASIF = ProcFASIF(language, test)
-    elif version == 2: self.R = Relation_new.Relation(language, test)
+    elif version == 2: self.R = Relation.Relation(language, test)
 
   # к удалению во второй версии базы
   def _ids2words(self, list_ids):

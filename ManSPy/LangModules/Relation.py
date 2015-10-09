@@ -82,13 +82,39 @@ class Relation():
     else: res = self.cu.execute('SELECT MAX(%s) FROM relations WHERE id_type=?;'%name, (id_type, )).fetchall()[0][0]
     return res if res != None else 0
 
+  def check_copy_row(self, id_type, id_speech, id_group, id_word, isword, _exists):
+    if id_speech != None: id_speech = self._speech2id(id_speech)
+    #else: id_speech = 'NULL'
+    # если id_speech = None, то база это не считает за NULL. Это нужно исправить и раскомментировать три строки
+    groups = False
+    if self._type2id(id_type) in [3]:
+      #groups = self.cu.execute('SELECT id_group FROM relations WHERE id_type=? AND id_speech=? AND id_group=? AND id_word=? AND isword=?',
+      #                (self._type2id(id_type), id_speech, self._word2id(id_group), self._word2id(id_word), self._type2id(isword))).fetchall()
+      groups = self.cu.execute('SELECT id_group FROM relations WHERE id_type=? AND id_group=? AND id_word=? AND isword=?',
+                      (self._type2id(id_type), self._word2id(id_group), self._word2id(id_word), self._type2id(isword))).fetchall()
+    elif self._type2id(id_type) in [1,2]:
+      if _exists != None:
+        groups = self.cu.execute('SELECT id_group FROM relations WHERE id_type=? AND id_speech=? AND id_group=? AND id_word=? AND isword=?',
+                      (self._type2id(id_type), id_speech, self._word2id(id_group), self._word2id(id_word), self._type2id(isword))).fetchall()
+      else:
+        groups = self.cu.execute('SELECT id_group FROM relations WHERE id_type=? AND id_speech=? AND id_word=? AND isword=?',
+                      (self._type2id(id_type), id_speech, self._word2id(id_word), self._type2id(isword))).fetchall() 
+    return [_id[0] for _id in groups] if groups else False
+
   def add_words2group(self, id_type, id_speech, id_group, isword, *id_words):
     ''' Добавляет слова в существующую группу.
         Если id_group = None, то создастся новая группа'''
+    id_groups = []
+    _exists = id_group
     if id_group==None: id_group = self.get_max_id('id_group', self._type2id(id_type)) + 1
     for id_word in id_words:
-      self.cu.execute('INSERT INTO relations (id_type, id_speech, id_group, id_word, isword) VALUES (?,?,?,?,?);',
+      _id_group = self.check_copy_row(id_type, id_speech, id_group, id_word, isword, _exists)
+      print _id_group
+      if _id_group == False:
+        self.cu.execute('INSERT INTO relations (id_type, id_speech, id_group, id_word, isword) VALUES (?,?,?,?,?);',
                       (self._type2id(id_type), self._speech2id(id_speech), self._word2id(id_group), self._word2id(id_word), self._type2id(isword)))
+        id_groups.append(id_group)
+      else: id_groups.append(_id_group)
     self.c.commit()
     return id_group
 
