@@ -16,7 +16,7 @@ if not os.path.exists(db_path) or not os.path.isdir(db_path):
 
 import Logic, ImportAction, LangModules, API_ForDB, time, codecs, sys
 
-class IMS_Exception(Exception): pass
+class MainException(Exception): pass
 
 def _save_history(text, Type, IFName):
   if text:
@@ -42,12 +42,12 @@ class API():
     keys = self.settings.keys()
     for user_key in NewSettings.keys():
       if user_key not in keys:
-        raise IMS_Exception('error2: Wrong name of key in settings: %s' % str(user_key))
+        raise MainException('error2: Wrong name of key in settings: %s' % str(user_key))
     # Обновляем настройки
     self.settings.update(NewSettings)
     self.settings['language'] = self.settings['language'].capitalize()
     # Сохраняем настройки для доступа из других частей ИСУ
-    API_ForDB.WriteSettings(self.settings)
+    #API_ForDB.WriteSettings(self.settings)
     
   def __init__(self, UserSettings={}):
     """ Инициализация ИСУ """

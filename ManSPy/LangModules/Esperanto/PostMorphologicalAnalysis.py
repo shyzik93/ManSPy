@@ -28,11 +28,17 @@ def processingConjunction(GrammarNazi, index, sentence):
   #print conjunction['base']
   if left['POSpeech'] == right['POSpeech']:
   #if ('case' in left and 'case' in right) and left['case'] == right['case']:
+    if ('case' in right and right['case'] == 'accusative') and ('case' in left and left['case'] != 'accusative'):
+      sentence.delByIndex(index)
+      return index+1
+    # устанавливаем однородность
     sentence.addHomogeneous(index-1, index+1) # для дополнений
-    sentence.delByIndex(index)
+    #if 'case' in left: sentence.GetSet(index-1, 'case', sentence.GetSet(index+1, 'case')) # копируем характеристики с первого однородного на второе
+    sentence.delByIndex(index) # удаляем союз
     return index # the same right-1
   return index + 1
   #elif left['POSpeech'] == 'noun' and right['POSpeech'] == 'preposition':
+  # Однородности нужны лишь для дополнения связей. В коверторе должны фигурировать лишь связи, но не однородности!
 
 def findDefinitions(GrammarNazi, index, sentence, indexes=[]):
   """ Поиск определений. Аргумент index - это индекс первого определения """
@@ -104,6 +110,18 @@ def checkAd(sentence):
       #Error print index бесконечный цикл, если в предложении одни только наречия. Решение - сделать добавление мнимых слов.
     else: index += 1
 
+def exchangeDataBetweenHomo(sentence):
+  index = -1
+  done_indexes = []
+  while index < sentence.getLen()-1:
+    index += 1
+    if index in done_indexes: continue
+    word = sentence.GetSet(index)
+    index_homos = word['homogeneous_link']
+    for index_homo in index_homos:
+      if 'case' in word: sentence.GetSet(index_homo, 'case', word['case'])
+      done_indexes.append(index_homo)
+
 def getPostMorphA(sentence):
   ''' Обёртка '''
   GrammarNazi = []
@@ -123,12 +141,11 @@ def getPostMorphA(sentence):
   # вот здесь нужно свернуть найденные однородные существительные
   procConj(GrammarNazi, sentence) # cxambro kaj [mia] domo
 
-  # Корректируем падежи
-  procPrep(GrammarNazi, sentence)
-  # удаляем предлоги
-  sentence.delByCharacteristic('POSpeech', 'preposition')
+  procPrep(GrammarNazi, sentence) # Корректируем падежи
+  sentence.delByCharacteristic('POSpeech', 'preposition') # удаляем предлоги
 
   procConj(GrammarNazi, sentence) # cxambro [en] domo
+  exchangeDataBetweenHomo(sentence) # копируем характеристики с первого однородного ко последующим ему однородным.
 
   # здесь нужно найти однородные косвенные дополнения, чтобы им установить однородность.
   # При синтаксическом анализе на них будет ссылаться их родитель.

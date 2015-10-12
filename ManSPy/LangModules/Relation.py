@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-import sqlite3 as sql, os, pickle
+#import sqlite3 as sql, os
+import pickle
+from ManSPy import GeneralForDB
 
-def create_bd_file(language, name):
+"""def create_bd_file(language, name):
   if __name__ == '__main__': db_dir = 'F:\\SourceCode\\DATA_BASE'
   else: db_dir = os.path.abspath('DATA_BASE')
   if not os.path.exists(db_dir) or not os.path.isdir(db_dir):
@@ -12,7 +14,7 @@ def create_bd_file(language, name):
   name = os.path.join(db_dir, name)
   c = sql.connect(name)
   cu = c.cursor()
-  return c, cu
+  return c, cu"""
 
 class Relation():
   dct_types = {'synonym': 1, 'antonym': 2, 'abstract': 3}
@@ -20,7 +22,7 @@ class Relation():
   
   def __init__(self, language, test=0):
     self.test = test
-    self.c, self.cu = create_bd_file(language, 'main_data.db')
+    self.c, self.cu = GeneralForDB.create_bd_file(language, 'main_data.db')
     self.cu.executescript('''
       CREATE TABLE IF NOT EXISTS words (
         word TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,
@@ -35,8 +37,7 @@ class Relation():
         id_group_verb INTEGER,
         id_group_noun INTEGER,
         function_data TEXT,
-        date TEXT DEFAULT CURRENT_TIMESTAMP
-      );''')
+        date TEXT DEFAULT CURRENT_TIMESTAMP);''')
     self.dct_typesR = {}
     for k, v in self.dct_types.items(): self.dct_typesR[v] = k
     self.dct_speechesR = {}

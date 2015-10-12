@@ -9,7 +9,7 @@ Settings = {
   }
 interfaces = {
   'autofeed':    1,
-  'TKinter':     1,
+  'TKinter':     0,
   'jabber':      0,
   'vkcom':       0, # с ошибками
   'Commandline': 0  # не имеет смысла
