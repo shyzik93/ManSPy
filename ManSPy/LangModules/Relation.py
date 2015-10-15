@@ -3,19 +3,6 @@
 import pickle
 from ManSPy import GeneralForDB
 
-"""def create_bd_file(language, name):
-  if __name__ == '__main__': db_dir = 'F:\\SourceCode\\DATA_BASE'
-  else: db_dir = os.path.abspath('DATA_BASE')
-  if not os.path.exists(db_dir) or not os.path.isdir(db_dir):
-    os.mkdir(db_dir)
-  db_dir = os.path.join(db_dir, language)
-  if not os.path.exists(db_dir) or not os.path.isdir(db_dir):
-    os.mkdir(db_dir)
-  name = os.path.join(db_dir, name)
-  c = sql.connect(name)
-  cu = c.cursor()
-  return c, cu"""
-
 class Relation():
   dct_types = {'synonym': 1, 'antonym': 2, 'abstract': 3}
   dct_speeches = {'noun': 1, 'verb': 2, 'adjective': 3, 'adverb': 4}
@@ -223,6 +210,61 @@ class Relation():
       if not procFASIF: return None, isantonym
       isantonym = True
     return procFASIF, isantonym
+
+class _ObjRelation(object):
+  """ Надкласс, реализующий высокий уровень работы с разными группами слов, абстрагируясь от БД.
+      Другими словами, он задествует вышеуказанные классы для реализации своих
+      функций."""
+  def __init__(self, language, test=0):
+    self.R = Relation(language, test)
+
+  def isWordInAbstractGroup(self, word_base, group_base):
+    #print 'isWordInAbstractGroup', group_base, word_base
+    return self.R.is_word_in_group('abstract', group_base, word_base, 0, None)
+
+  def areWordsAntonyms(self, POSpeech, word_base1, word_base2):
+    antonyms = self.getAntonyms(POSpeech, word_base1)
+    if word_base2 in antonyms: return True
+    else: False
+
+  def getAntonyms(self, POSpeech, word_base):
+    '''#is_word_in_group(self, id_group, word, isword, id_type=None, id_speech=None):
+    id_group = word_base # так как это антоним. Проверка должна происходить в ниженаписанной функции
+    self.R.get_words_by_group(id_group, isword, 'antonym', POSpeech)
+    #return self.R.get_commongroups('synonym', POSpeech, [word_base, 0])'''
+    syn_groups = self.R.get_groups_by_word('synonym', 0, word_base, POSpeech)
+    if not syn_groups: return []
+    syn_groups = self.R.get_words_from_samegroup('antonym', POSpeech, self.R.dct_types['synonym'], syn_groups[0])
+    if not syn_groups: return []
+    return self.R.convert(self.R.get_words_by_group('synonym', syn_group, 0, POSpeech))
+
+  def getSynonyms(self, POSpeech, word_base):
+    return self.R.convert(self.R.get_words_from_samegroup('synonym', POSpeech, 0, word_base))
+
+  def get(self, relation, POSpeech, word_base):
+    if relation == 'antonyms': return self.getAntonyms(POSpeech, word_base)
+    elif relation == 'synonyms': return self.getSynonyms(POSpeech, word_base)
+
+  def procFASIF(self, verb_base, noun_base, procFASIF=None):
+    return self.R.procFASIF(verb_base, noun_base, procFASIF)
+
+  def addWordsToDBFromDictSentence(self, dict_sentence):
+    if "dict" in str(type(dict_sentence)): indexes = dict_sentence.keys()
+    elif "list" in str(type(dict_sentence)): indexes = range(len(dict_sentence))
+    for index in indexes:
+      dword = dict_sentence[index]
+      # числительные в базу не добавляем
+      #if dict_sentence[index]['POSpeech'] == 'number': continue
+      self.R.add_word(dword['base'])
+      #word_id = self.R.convert(dword['base'])
+      if len(dword['feature']) != 0: self.addWordsToDBFromDictSentence(dword['feature'])
+      if dword['MOSentence'] == 'predicate' and dword['POSpeech'] == 'verb':
+        self.R.add_words2group('synonym', dword['POSpeech'], None, 0, dword['base'])
+
+  def addWordsInAbstractGroup(self, group_base, *word_bases):
+    ''' Добавляем абстрактные группы. Новые слова также добавляются в базу слов. '''
+    print group_base, word_bases
+    self.R.add_words2group('abstract', None, group_base, 0, *word_bases)
 
 if __name__ == '__main__':
   R = Relation('Esperanto')

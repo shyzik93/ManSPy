@@ -1,5 +1,26 @@
 # -*- coding: utf-8 -*-
 
+class c1(object):
+  def __init__(self):
+    return self
+  def f1(self): pass
+  def fp(self): print 1
+
+class c2(object):
+  def __init__(self):
+    return self
+  def f2(self): pass
+  def fp(self): print 2
+
+class c3(c2, c1):
+  def __init__(self):
+    c2.__init__(c1.__init__(self))
+  def f3(self): pass
+
+C3 = c3()
+C3.fp()
+print dir(C3)
+
 def match_dicts(dict1, dict2, level=0):
   ''' Показывает отличия dict2 от dict1 '''
   keys1 = dict1.keys()

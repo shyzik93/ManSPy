@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import sqlite3 as sql, os, pickle
 import Relation
+from ManSPy import GeneralForDB
 
 def create_bd_file(language, name):
   if __name__ == '__main__': db_dir = 'F:\\SourceCode\\DATA_BASE'
@@ -38,7 +39,7 @@ class SynonymsDB():
   c = cu = None
   exist_tables = ['verb', 'noun', 'adverb', 'adjective']
   def __init__(self, language):
-    self.c, self.cu = create_bd_file(language, 'synonym.db')
+    self.c, self.cu = GeneralForDB.create_bd_file(language, 'synonym.db')
     for name_table in self.exist_tables:
       self.cu.execute("""
         CREATE TABLE IF NOT EXISTS %s (
@@ -89,7 +90,7 @@ class AntonymsDB:
   base = ['noun', 'adjective', 'adverb']
   exist_tables = ['verb', 'base'] # verb - для глаголов, base - для существительных, прилагательных и наречий.
   def __init__(self, language):
-    self.c, self.cu = create_bd_file(language, 'antonym.db')
+    self.c, self.cu = GeneralForDB.create_bd_file(language, 'antonym.db')
     for name_table in self.exist_tables:
       self.cu.execute("""
         CREATE TABLE IF NOT EXISTS %s (
@@ -120,7 +121,7 @@ class ListOfWordsDB:
   """
   c = cu = None
   def __init__(self, language):
-    self.c, self.cu = create_bd_file(language, "list_words.db")
+    self.c, self.cu = GeneralForDB.create_bd_file(language, "list_words.db")
     self.cu.execute("""
       CREATE TABLE IF NOT EXISTS words (
         word TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,
@@ -163,7 +164,7 @@ class ListOfWordsDB:
 class AbstractGroupsDB():
   """ База абстрактных групп существительных """
   def __init__(self, language):
-    self.c, self.cu = create_bd_file(language, "abstract_groups.db")
+    self.c, self.cu = GeneralForDB.create_bd_file(language, "abstract_groups.db")
     self.cu.execute("""CREATE TABLE IF NOT EXISTS groups (
       id_group INTEGER,
       id INTEGER,
@@ -188,7 +189,7 @@ class ProcFASIF():
   """ База хранимых ФАСИФов """
   def __init__(self, language, test=0):
     self.test = test
-    self.c, self.cu = create_bd_file(language, "procFASIF.db")
+    self.c, self.cu = GeneralForDB.create_bd_file(language, "procFASIF.db")
     self.cu.execute("""
       CREATE TABLE IF NOT EXISTS procFASIF (
         id_group_verb INTEGER,
@@ -219,104 +220,70 @@ class ProcFASIF():
     self.cu.execute("UPDATE procFACIF SET function_data=? WHERE id_group_verb=? AND id_group_noun=?;", (function_data, id_group_verb, id_group))
     self.c.commit()
 
-class ObjRelation():
+class _ObjRelation(object):
   """ Надкласс, реализующий высокий уровень работы с разными группами слов, абстрагируясь от БД.
       Другими словами, он задествует вышеуказанные классы для реализации своих
       функций."""
-  def __init__(self, language, test=0, version=1):
-    self.version = version
-    if version == 1:
-      self.LOWDB = ListOfWordsDB(language)
-      self.AGDB = AbstractGroupsDB(language)
-      self.SDB = SynonymsDB(language)
-      self.ADB = AntonymsDB(language)
-      self.PFASIF = ProcFASIF(language, test)
-    elif version == 2: self.R = Relation.Relation(language, test)
+  def __init__(self, language, test=0):
+    self.LOWDB = ListOfWordsDB(language)
+    self.AGDB = AbstractGroupsDB(language)
+    self.SDB = SynonymsDB(language)
+    self.ADB = AntonymsDB(language)
+    self.PFASIF = ProcFASIF(language, test)
 
-  # к удалению во второй версии базы
   def _ids2words(self, list_ids):
     return [self.LOWDB.selectWord(word_id) for word_id in list_ids]
 
-  # Сделано!
   def isWordInAbstractGroup(self, word_base, group_base):
-    if self.version == 1:
-      word_id = self.LOWDB.selectId(word_base)
-      group_id = self.LOWDB.selectId(group_base)
-      words_in_group = self.AGDB.getWordsInGroup(group_id)
-      if word_id in words_in_group: return True
-      else: return False
-    elif self.version == 2:
-      #print 'isWordInAbstractGroup', group_base, word_base
-      return self.R.is_word_in_group('abstract', group_base, word_base, 0, None)
+    word_id = self.LOWDB.selectId(word_base)
+    group_id = self.LOWDB.selectId(group_base)
+    words_in_group = self.AGDB.getWordsInGroup(group_id)
+    if word_id in words_in_group: return True
+    else: return False
 
-  # Сделано! Составная
   def areWordsAntonyms(self, POSpeech, word_base1, word_base2):
-    if self.version == 1:
-      word_id1 = self.LOWDB.selectId(word_base1)
-      word_id2 = self.LOWDB.selectId(word_base2)
-      id_synonym_group1 = self.SDB.get_id_group(POSpeech, word_id1)
-      id_synonym_group2 = self.ADB.get(POSpeech, id_synonym_group1)
-      synonym_group2 = self.SDB.get_synonyms(POSpeech, id_synonym_group2)
-      if word_id2 in synonym_group2: return True
-      else: return False
-    elif self.version == 2:
-      antonyms = self.getAntonyms(POSpeech, word_base1)
-      if word_base2 in antonyms: return True
-      else: False
+    word_id1 = self.LOWDB.selectId(word_base1)
+    word_id2 = self.LOWDB.selectId(word_base2)
+    id_synonym_group1 = self.SDB.get_id_group(POSpeech, word_id1)
+    id_synonym_group2 = self.ADB.get(POSpeech, id_synonym_group1)
+    synonym_group2 = self.SDB.get_synonyms(POSpeech, id_synonym_group2)
+    if word_id2 in synonym_group2: return True
+    else: return False
 
-  # Сделано!
   def getAntonyms(self, POSpeech, word_base):
-    if self.version == 1:
-      word_id = self.LOWDB.selectId(word_base)
-      id_synonym_group = self.SDB.get_id_group(POSpeech, word_id)
-      id_synonym_group = self.ADB.get(POSpeech, id_synonym_group) # группа синонимов, являющихся анитонимаии относительно предыдущей группы синонимов
-      if not id_synonym_group: return []
-      list_ids = self.SDB.get_synonyms(POSpeech, id_synonym_group)
-      return self._ids2words(list_ids)
-    elif self.version == 2:
-      '''#is_word_in_group(self, id_group, word, isword, id_type=None, id_speech=None):
-      id_group = word_base # так как это антоним. Проверка должна происходить в ниженаписанной функции
-      self.R.get_words_by_group(id_group, isword, 'antonym', POSpeech)
-      #return self.R.get_commongroups('synonym', POSpeech, [word_base, 0])'''
-      syn_groups = self.R.get_groups_by_word('synonym', 0, word_base, POSpeech)
-      if not syn_groups: return []
-      syn_groups = self.R.get_words_from_samegroup('antonym', POSpeech, self.R.dct_types['synonym'], syn_groups[0])
-      if not syn_groups: return []
-      return self.R.convert(self.R.get_words_by_group('synonym', syn_group, 0, POSpeech))
+    word_id = self.LOWDB.selectId(word_base)
+    id_synonym_group = self.SDB.get_id_group(POSpeech, word_id)
+    id_synonym_group = self.ADB.get(POSpeech, id_synonym_group) # группа синонимов, являющихся анитонимаии относительно предыдущей группы синонимов
+    if not id_synonym_group: return []
+    list_ids = self.SDB.get_synonyms(POSpeech, id_synonym_group)
+    return self._ids2words(list_ids)
 
-  # Сделано!
   def getSynonyms(self, POSpeech, word_base):
-    if self.version == 1:
-      word_id = self.LOWDB.selectId(word_base)
-      list_ids = self.SDB.get_synonyms(POSpeech, word_id)
-      if not list_ids: return []
-      return self._ids2words(list_ids)
-    elif self.version == 2:
-      return self.R.convert(self.R.get_words_from_samegroup('synonym', POSpeech, 0, word_base))
+    word_id = self.LOWDB.selectId(word_base)
+    list_ids = self.SDB.get_synonyms(POSpeech, word_id)
+    if not list_ids: return []
+    return self._ids2words(list_ids)
 
   def get(self, relation, POSpeech, word_base):
     if relation == 'antonyms': return self.getAntonyms(POSpeech, word_base)
     elif relation == 'synonyms': return self.getSynonyms(POSpeech, word_base)
 
   def procFASIF(self, verb_base, noun_base, procFASIF=None):
-    if self.version == 1:
-      noun_id = self.LOWDB.selectId(noun_base)
-      verb_id = self.LOWDB.selectId(verb_base)
-      verb_synonym_group_id = self.SDB.get_id_group('verb', verb_id)
+    noun_id = self.LOWDB.selectId(noun_base)
+    verb_id = self.LOWDB.selectId(verb_base)
+    verb_synonym_group_id = self.SDB.get_id_group('verb', verb_id)
 
-      if procFASIF: self.PFASIF.add(verb_synonym_group_id, noun_id, procFASIF)
-      else:
-        isantonym = False
+    if procFASIF: self.PFASIF.add(verb_synonym_group_id, noun_id, procFASIF)
+    else:
+      isantonym = False
+      procFASIF = self.PFASIF.get(verb_synonym_group_id, noun_id)
+      if not procFASIF:
+        #  если ФАСИФ не найден, то пробуем извлечь по антониму
+        verb_synonym_group_id = self.ADB.get('verb', verb_synonym_group_id)
+        print 'verb_synonym_group_id (antonym)', verb_synonym_group_id
         procFASIF = self.PFASIF.get(verb_synonym_group_id, noun_id)
-        if not procFASIF:
-          #  если ФАСИФ не найден, то пробуем извлечь по антониму
-          verb_synonym_group_id = self.ADB.get('verb', verb_synonym_group_id)
-          print 'verb_synonym_group_id (antonym)', verb_synonym_group_id
-          procFASIF = self.PFASIF.get(verb_synonym_group_id, noun_id)
-          isantonym = True
-        return procFASIF, isantonym
-    elif self.version == 2:
-      return self.R.procFASIF(verb_base, noun_base, procFASIF)
+        isantonym = True
+      return procFASIF, isantonym
 
   def addWordsToDBFromDictSentence(self, dict_sentence):
     if "dict" in str(type(dict_sentence)): indexes = dict_sentence.keys()
@@ -325,26 +292,28 @@ class ObjRelation():
       dword = dict_sentence[index]
       # числительные в базу не добавляем
       #if dict_sentence[index]['POSpeech'] == 'number': continue
-      if self.version == 1: word_id = self.LOWDB.selectId(dword['base'])
-      elif self.version == 2:
-        self.R.add_word(dword['base'])
-        #word_id = self.R.convert(dword['base'])
+      word_id = self.LOWDB.selectId(dword['base'])
       if len(dword['feature']) != 0: self.addWordsToDBFromDictSentence(dword['feature'])
       if dword['MOSentence'] == 'predicate' and dword['POSpeech'] == 'verb':
-        if self.version == 1: id_synonym_group = self.SDB.add(dword['POSpeech'], word_id)
-        elif self.version == 2: self.R.add_words2group('synonym', dword['POSpeech'], None, 0, dword['base'])
+        id_synonym_group = self.SDB.add(dword['POSpeech'], word_id)
 
   def addWordsInAbstractGroup(self, group_base, *word_bases):
     ''' Добавляем абстрактные группы. Новые слова также добавляются в базу слов. '''
-    if self.version == 1:
-      group_id = self.LOWDB.selectId(group_base)
-      for word_base in word_bases:
-        if not word_base: continue
-        word_id = self.LOWDB.selectId(word_base)
-        self.AGDB.addGroup(group_id, word_id)
-    elif self.version == 2:
-      print group_base, word_bases
-      self.R.add_words2group('abstract', None, group_base, 0, *word_bases)
+    group_id = self.LOWDB.selectId(group_base)
+    for word_base in word_bases:
+      if not word_base: continue
+      word_id = self.LOWDB.selectId(word_base)
+      self.AGDB.addGroup(group_id, word_id)
+
+class ObjRelation(object):
+  """ Надкласс, реализующий высокий уровень работы с разными группами слов, абстрагируясь от БД.
+      Другими словами, он задествует вышеуказанные классы для реализации своих
+      функций."""
+  ORs = {1: _ObjRelation, 2: Relation._ObjRelation}
+  def __init__(self, language, test=0, version=1):
+    self.OR = self.ORs[version](language, test)
+  def __getattr__(self, name):
+    return self.OR.__getattribute__(name)
 
 def toShowDB():
   lang = 'Esperanto'
@@ -353,7 +322,7 @@ def toShowDB():
   #SDB = SynonymsDB(lang)
   #AGDB = AbstractGroupsDB(lang)
   #PFASIF = ProcFASIF(lang, 1)
-  OR = ObjRelation(lang, 1)
+  OR = _ObjRelation(lang, 1)
   print '\n', '--' * 10, 'Abstract groups'
   res = OR.AGDB.cu.execute('SELECT MAX(id_group) FROM groups WHERE type_id="word"').fetchall()[0][0]
   if not res: res= 0
