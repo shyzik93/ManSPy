@@ -4,11 +4,12 @@
     разбить сложные предложения на простые, ориентируясь по союзам.
 """
 
-def Prepearing(text):
+def getGraphmathA(sentence, Sentenceclass):
   # Заменяем символы
   letters = {u'cx' :u'ĉ', u'gx': u'ĝ', u'hx': u'ĥ',
              u'jx': u'ĵ', u'sx': u'ŝ', u'ux': u'ŭ',
              u'\t': u'', u'\n': u''}
-  for k, v in letters.items(): text = text.replace(k, v)
+  for k, v in letters.items(): sentence = sentence.replace(k, v)
 
-  return text.split() # должен возвращать список предложений, но пока - список слов
+  sentence = sentence.split() # должен возвращать список предложений, но пока - список слов
+  return Sentenceclass(sentence)

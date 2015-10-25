@@ -91,14 +91,14 @@ def parseFASIF(FASIF, language):
 
 def proccess_lang_data(fasif, LangClass, R, module_name):
   ''' Обработка лингвистических данных: анализ, внесение в БД '''
-  fasif['sentence'], GrammarNazi = LangClass.NL2IL(fasif['sentence'], "morph synt")
+  fasif['sentence'], GrammarNazi = LangClass.NL2IL(fasif['sentence'], ":synt")
   for arg_name in fasif['args']:
     assoc = fasif['args'][arg_name]['assoc']
     #print 'assoc:', assoc
     fasif['args'][arg_name]['assoc'] = []
     for word, groups in assoc.items():
-      word = LangClass.NL2IL(word, "morph post_morph")[0].GetSet(0)
-      groups = [LangClass.NL2IL(group, "morph")[0].GetSet(0)['base'] for group in groups]
+      word = LangClass.NL2IL(word, ":postmorph")[0].GetSet(0)
+      groups = [LangClass.NL2IL(group, ":morph")[0].GetSet(0)['base'] for group in groups]
       for group in groups:
         R.addWordsInAbstractGroup(group, word['base'])
         if fasif['args'][arg_name]['table']:
