@@ -10,7 +10,7 @@ from SyntacticAnalysis import getSyntA
 
 # у следующих функций и переменных - одинаковые имена для всех ЯЕ!
 
-def AnalyseNLSentence(sentence, start_level, end_level, levels, sentenceclass, log_func=None):
+"""def AnalyseNLSentence(sentence, start_level, end_level, levels, sentenceclass, log_func=None):
   ''' Принимает объект предложения и возвращает его, но уже с анализами '''
   GrammarNazi = {}
 
@@ -36,7 +36,7 @@ def AnalyseNLSentence(sentence, start_level, end_level, levels, sentenceclass, l
   if start_level in levels:
     sentence, GrammarNazi['synt'] = getSyntA(sentence)
     if log_func != None: log_func(sentence, 'Syntactic analysis')
-    return sentence, GrammarNazi
+    return sentence, GrammarNazi"""
 
 # Синтез предложения:
 # 1. Формируем анализы на основе ЯВ
