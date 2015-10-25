@@ -5,7 +5,8 @@ Settings = {
   'logic': 1,
   'convert2IL': 1,
   'test': 1,
-  'storage_version': 2
+  'storage_version': 2,
+  'converter_version': 1
   }
 interfaces = {
   'autofeed':    1,

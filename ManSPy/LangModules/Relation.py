@@ -151,7 +151,7 @@ class Relation():
   def is_word_in_group(self, id_type, id_group, id_word, isword, id_speech=None):
     ''' Входит ли слово в группу? '''
     id_words = self.get_words_by_group(id_type, id_group, isword, id_speech)
-    return True if self._word2id(id_word) in id_words else False
+    return self._word2id(id_word) in id_words
 
   def get_commongroups(self, id_type, id_speech, *pairs):
     ''' Возвращает общие для всех слов группы '''
@@ -224,8 +224,7 @@ class _ObjRelation(object):
 
   def areWordsAntonyms(self, POSpeech, word_base1, word_base2):
     antonyms = self.getAntonyms(POSpeech, word_base1)
-    if word_base2 in antonyms: return True
-    else: False
+    return word_base2 in antonyms
 
   def getAntonyms(self, POSpeech, word_base):
     '''#is_word_in_group(self, id_group, word, isword, id_type=None, id_speech=None):

@@ -27,3 +27,6 @@ malmontru dolaran cambion de rusia banko de mia domo
 montru adreson de komputilo kaj dolaran cambion
 montru adreson de komputilo kaj dolaran cambion de belarusia banko
 montru dolaran cambion kaj adreson de komputilo
+
+# пока не поддерживаются
+montru dolaran cambion, kiu estas dolara

@@ -30,7 +30,7 @@ list_keys = ['POSpeech', 'MOSentence', 'category', 'feature', 'mood', 'tense', '
              'definition', 'definition', 'coordinating', 'subordinating', 'article', 'particle', 'infinitive',
              'imperative', 'indicative', 'subjunctive', 'end']
 
-def edit_files(rec=0, _path=None, names=None):
+"""def edit_files(rec=0, _path=None, names=None):
   if not rec:
     os.path.walk(main_path+'_user', edit_files, 1)
     return
@@ -52,18 +52,17 @@ def edit_files(rec=0, _path=None, names=None):
       f = open(path, 'w')
       f.write(u'# -*- coding: utf-8 -*-\n')
       f.write(text)
-      f.close()
+      f.close()"""
 
-def make_user_version():
+"""def make_user_version():
   user_path = main_path+'_user'
   orig_path = main_path
   # копируем
   if os.path.exists(user_path):
     shutil.rmtree(user_path)
-    print "bl"
   shutil.copytree(orig_path, user_path)
   # редактируем файлы (обфускация)
-  edit_files()
+  edit_files()"""
 
 #edit_files()
 #make_user_version()
