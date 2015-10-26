@@ -97,8 +97,8 @@ def proccess_lang_data(fasif, LangClass, R, module_name):
     #print 'assoc:', assoc
     fasif['args'][arg_name]['assoc'] = []
     for word, groups in assoc.items():
-      word = LangClass.NL2IL(word, ":postmorph")[0].GetSet(0)
-      groups = [LangClass.NL2IL(group, ":morph")[0].GetSet(0)['base'] for group in groups]
+      word = LangClass.NL2IL(word, ":postmorph")[0](0)
+      groups = [LangClass.NL2IL(group, ":morph")[0](0)['base'] for group in groups]
       for group in groups:
         R.addWordsInAbstractGroup(group, word['base'])
         if fasif['args'][arg_name]['table']:
@@ -112,7 +112,7 @@ def proccess_lang_data(fasif, LangClass, R, module_name):
 def find_mediators(sentence, word, index, args, max_link_arg):
   parent_indexes = sentence.getControl(index)
   for parent_index in parent_indexes:
-    parent_word = sentence.GetSet(parent_index)
+    parent_word = sentence(parent_index)
     arg = {}
     if word.has_key('case'): arg['case'] = word['case']
     arg['MOSentence'] = word['MOSentence']
@@ -164,7 +164,7 @@ def make_args_descr(fasif, arg_name, args, max_link_arg):
 
   # определяем родителя и его индекс
   if word['MOSentence'] in ['definition', 'circumstance']:
-    parent = sentence.GetSet(parent_index)
+    parent = sentence(parent_index)
   else:
     parent_index = sentence.getControl(parent_index)
     if len(parent_index) > 1:
@@ -173,7 +173,7 @@ def make_args_descr(fasif, arg_name, args, max_link_arg):
       print "error6: Word \""+word['word']+"\" hasn't parents. It's not right."
       return 3
     parent_index = parent_index[0]
-    parent = sentence.GetSet(parent_index)
+    parent = sentence(parent_index)
 
   arg = {}
   if word.has_key('case'): arg['case'] = word['case']
@@ -238,6 +238,5 @@ class ImportAction():
 
 if __name__ == '__main__':
   settings = {'language': 'Esperanto', 'test': True}
-
   MA = ImportAction(settings)
   MA._import('CurrencyLoader')

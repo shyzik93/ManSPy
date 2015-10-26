@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 # Author: Ra93POL
 # Date: 2.12.2014
-""" Модуль, содержащий объекты предложения и текста. Не зависимы от ЕЯ.
-    Объекты предоставляют удобный интерфейс,
-    что позволяет разгрузить модули ЕЯ от руктинного и отвлекающего кода.
-"""
 
 """ Функции для работы со стандартными структурами данных """
 
@@ -41,10 +37,10 @@ def dictOrder(d, old_index=None):
 
 class Sentence():
   """ Класс объекта предложения. Индексы списка и ключи словаря должны совпадать.
-      При инициализации класса ему передаётся предложение в виде списка слов.
-  """
+      При инициализации класса ему передаётся предложение в виде списка слов.  """
   old_index = None
   new_index = None
+  sentence_info = {}
 
   def __init__(self, list_sentence):
     self.dict_sentence = {index: {} for index in range(len(list_sentence))}
@@ -76,22 +72,18 @@ class Sentence():
     self._syncLinks(self.dict_sentence.values(), deleted, 'link')
     self._syncLinks(self.dict_sentence.values(), deleted, 'homogeneous_link')
 
-  def __getlen__(self): return len(self.dict_sentence)
-
-  def __getitem__(self, index):
-    if index in self.dict_sentence: return self.dict_sentence[index]
-    else: return None
-
-  def GetSet(self, index, parametr_name=None, parametr_value=None): # Get or Set Data
-    """ Получение информации о слове по имени слова или по его порядковому номеру.
-        Данные возвращаются все или только один параметр.
-        Или же изменение данных, если указаны все три параметра."""
-    if parametr_name == None:
-      return self.dict_sentence[index]
-    elif parametr_value == None:
-      return self.dict_sentence[index][parametr_name]
+  def __call__(self, index, name=None, value=None):
+    """ Если индекс - это строка, то: получаем характеристику или изменяем.
+        Иначе: возвращаем слово или возвращаем характеристику слова или изменяем характеристику слова"""
+    if not isinstance(index, str) and not isinstance(index, unicode):
+      # Работа с информацией о слове
+      if name == None: return self.dict_sentence[index]
+      elif value == None: return self.dict_sentence[index][name]
+      self.dict_sentence[index][name] = value
     else:
-      self.dict_sentence[index][parametr_name] = parametr_value
+      # Работа с информацией о предложении
+      if name == None: return self.sentence_info[index]
+      self.sentence_info[index] = name
   
   def getByCharacteristic(self, name, value):
     """ Извлекает слова, соответствующие характеристике.
@@ -234,9 +226,9 @@ class Sentence():
   def getSurroundingNeighbours(self, index):
     """ Возвращает двух соседей, то есть просто два окружающих слова,
         но не братьев. """
-    if index != 0: left = self.GetSet(index-1)
+    if index != 0: left = self.dict_sentence[index-1]
     else: left = None
-    if index != len(self.dict_sentence)-1: right = self.GetSet(index+1)
+    if index != len(self.dict_sentence)-1: right = self.dict_sentence[index+1]
     else: right = None
     return left, right
 

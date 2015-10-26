@@ -121,7 +121,7 @@ def _getMorphA(word, GrammarNazi):
   elif ends[0] in dct['verb']['end'].keys() or ends[1] in dct['verb']['end'].keys():
     word['POSpeech'] = 'verb'
     for i in range(2):
-      if dct['verb']['end'].has_key(ends[i]):
+      if ends[i] in dct['verb']['end']:
         word.update(dct['verb']['end'][ends[i]])
         word['base'] = words[i]
 

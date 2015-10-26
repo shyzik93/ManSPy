@@ -32,7 +32,7 @@ def setMOS_ToSign(features, GrammarNazi):
         setMOS_ToSign(feature['feature'], GrammarNazi)
 
 def setMOSentence(index, sentence, GrammarNazi):
-  word = sentence.GetSet(index)
+  word = sentence(index)
 
   if word['POSpeech'] == 'verb':
     word['MOSentence'] = 'predicate'
@@ -61,15 +61,15 @@ def setLinks(index, sentence, GrammarNazi):
   ''' Устанавливает связи членов предложения. Обстоятельства и определения
       спрятаны в тех, к кому они относятся. Работаем лишь со сказуемым,
       подлежащим и дополнением. '''
-  word = sentence.GetSet(index)
+  word = sentence(index)
 
   if word['MOSentence'] == 'predicate':
     # линкуем сказуемое и прямое дополнение
     index2 = index+1
     while index2 < sentence.getLen():
-      if sentence.GetSet(index2, 'MOSentence') == 'direct supplement':
+      if sentence(index2, 'MOSentence') == 'direct supplement':
         sentence.addLink(index, index2)
-      elif sentence.GetSet(index2, 'MOSentence') == 'predicate': break
+      elif sentence(index2, 'MOSentence') == 'predicate': break
       index2 += 1
 
   #TASK если у прямого дополнения нескеолько дополнений, то они проигнорируются
@@ -78,11 +78,11 @@ def setLinks(index, sentence, GrammarNazi):
     index2 = index+1
     case = None
     while index2 < sentence.getLen():
-      word2 = sentence.GetSet(index2)
+      word2 = sentence(index2)
       if word2['MOSentence'] == 'supplement' and word2['case'] != "":
         """# остальные падежи, вероятно, будут означать, что косв. дополнение -
         # это обстоятельство, то есть относится к сказуемому.
-        #if sentence.GetSet(index2, 'case') in ['genetive']: sentence.addLink(index, index2)#word['link'].append(index2)"""
+        #if sentence(index2, 'case') in ['genetive']: sentence.addLink(index, index2)#word['link'].append(index2)"""
         if not case:
           case = word['case']
           sentence.addLink(index, index2)

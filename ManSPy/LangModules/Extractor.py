@@ -25,9 +25,9 @@ def Extract(sentence):#, Recursion=0):
   # Поиск прямого дополнения (только для первого сказуемого)
   for index_predic, predic in Predicate.items():
     for link in predic['link']:
-      if sentence.GetSet(link, 'MOSentence') == 'direct supplement':
+      if sentence(link, 'MOSentence') == 'direct supplement':
         #DirectSupplement = sentence.GetAndDel(link)
-        DirectSupplement[link] = sentence.GetSet(link)
+        DirectSupplement[link] = sentence(link)
     break
   #DirectSupplement = sentence.getByCharacteristic('MOSentence', 'direct supplement') # не удалять пока!
   sentence.delByIndexWithoutSync(*DirectSupplement.keys())

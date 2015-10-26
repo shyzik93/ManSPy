@@ -6,17 +6,17 @@
     '''
 
 def processingPreposition(GrammarNazi, index, sentence):
-  preposition = sentence.GetSet(index)
+  preposition = sentence(index)
   if preposition['POSpeech'] != 'preposition': return
   left, right = sentence.getSurroundingNeighbours(index)
   if right == None: sentence.delByIndex(index)
   elif right['POSpeech'] in ['noun', 'pronoun']:
-    sentence.GetSet(index+1, 'case', preposition['give_case'])
+    sentence(index+1, 'case', preposition['give_case'])
   else:
     GrammarNazi.append('After preposition "'+preposition['word']+'" must be a noun or a pronoun!')
 
 def processingConjunction(GrammarNazi, index, sentence):
-  conjunction = sentence.GetSet(index)
+  conjunction = sentence(index)
   if conjunction['POSpeech'] != 'conjunction' or conjunction['value'] != 'coordinating':
     return index + 1
   left, right = sentence.getSurroundingNeighbours(index)
@@ -33,7 +33,7 @@ def processingConjunction(GrammarNazi, index, sentence):
       return index+1
     # устанавливаем однородность
     sentence.addHomogeneous(index-1, index+1) # для дополнений
-    #if 'case' in left: sentence.GetSet(index-1, 'case', sentence.GetSet(index+1, 'case')) # копируем характеристики с первого однородного на второе
+    #if 'case' in left: sentence(index-1, 'case', sentence(index+1, 'case')) # копируем характеристики с первого однородного на второе
     sentence.delByIndex(index) # удаляем союз
     return index # the same right-1
   return index + 1
@@ -42,7 +42,7 @@ def processingConjunction(GrammarNazi, index, sentence):
 
 def findDefinitions(GrammarNazi, index, sentence, indexes=[]):
   """ Поиск определений. Аргумент index - это индекс первого определения """
-  word = sentence.GetSet(index)
+  word = sentence(index)
   #print 'findDefinition:', word['word'], index, sentence.getLen()
   if word['POSpeech'] == 'adjective' or (word['POSpeech'] == 'pronoun' and word['category'] == 'possessive'):
     indexes.append(index)
@@ -72,14 +72,10 @@ def findDef(GrammarNazi, sentence):
 def checkAdverbBefore(index, sentence):
   if index+1 >= sentence.getLen(): return False# т. е. является последним
   #if adverb['base'] == u'ankaŭ': # стоит перед словом, к которому относится
-  if sentence.GetSet(index+1, 'POSpeech') in ['verb', 'adjective', 'adverb']:
-    return True
-  else: return False
+  return sentence(index+1, 'POSpeech') in ['verb', 'adjective', 'adverb']
 def checkAdverbAfter(index, sentence):
   if index == 0: return False
-  if sentence.GetSet(index-1, 'POSpeech') in ['verb', 'adjective', 'adverb']:
-    return True
-  else: return False
+  return sentence(index-1, 'POSpeech') in ['verb', 'adjective', 'adverb']
 def checkAdverb(index, sentence):
   if checkAdverbBefore(index, sentence): # порядок менять не рекомендуется: покажи ОЧЕНЬ СИНИЙ цвет.
     # ПОКАЖИ БЫСТРО синий цвет - а вот здесь необходимо расставлять приоритеты для прилагательных и глаголов.
@@ -96,7 +92,7 @@ def checkAdverb(index, sentence):
   else:
     index2 = 0 # "свободноплавающее" нарчие. Добавим его к глаголу.
     while index2 < sentence.getLen():
-      if sentence.GetSet(index2, 'POSpeech') == 'verb':
+      if sentence(index2, 'POSpeech') == 'verb':
         sentence.addFeature(index2, index) #EX_ERROR если последний  index2, то возникает интересная рекурсивная ошибка.
         break
       index2 += 1
@@ -105,7 +101,7 @@ def checkAdverb(index, sentence):
 def checkAd(sentence):
   index = 0
   while index < sentence.getLen():
-    if sentence.GetSet(index, 'POSpeech') == 'adverb':
+    if sentence(index, 'POSpeech') == 'adverb':
       index = checkAdverb(index, sentence)
       #Error print index бесконечный цикл, если в предложении одни только наречия. Решение - сделать добавление мнимых слов.
     else: index += 1
@@ -116,10 +112,10 @@ def exchangeDataBetweenHomo(sentence):
   while index < sentence.getLen()-1:
     index += 1
     if index in done_indexes: continue
-    word = sentence.GetSet(index)
+    word = sentence(index)
     index_homos = word['homogeneous_link']
     for index_homo in index_homos:
-      if 'case' in word: sentence.GetSet(index_homo, 'case', word['case'])
+      if 'case' in word: sentence(index_homo, 'case', word['case'])
       done_indexes.append(index_homo)
 
 def getPostMorphA(sentence):
