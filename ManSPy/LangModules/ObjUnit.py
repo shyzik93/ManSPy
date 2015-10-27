@@ -2,6 +2,38 @@
 # Author: Ra93POL
 # Date: 2.12.2014
 
+class Word():
+  """ Класс объекта слова.
+      При инициализации класса ему передаётся слово в виде строки.
+      word(index) - извлечение символа (словарь)
+      word(index, name) - извлечение характеристики символа
+      word(index, name, value) - изменение характеристики символа
+      word[name] - извлечение характеристики слова
+      word[name] = value - изменение характеристики слова"""
+  def __init__(self, str_word):
+    self.str_word = str_word
+    self.dict_word = {}
+    for index in range(len(str_word)):
+      self.dict_word[index] = {}
+      self.dict_word[index]['symbol'] = self.str_word[index]
+      self.dict_word[index]['type'] = ''
+    self.word_info = {'word': self.str_word}
+
+  # Работа с информацией о слове
+  def __setitem__(self, key, value): self.word_info[key] = value
+  def __getitem__(self, key): return self.word_info[key]
+  # Работа с информацией о символе
+  def __call__(self, index, name, value):
+    if name == None: return self.dict_word[index]
+    elif value == None: return self.dict_word[index][name]
+    self.dict_word[index][name] = value
+
+  def items(self): return self.word_info.items()
+  def update(self, _dict): self.word_info.update(_dict)
+  def __contains__(self, name): return name in self.word_info
+  def __len__(self): return len(self.word_info)
+  def __str__(self): return str(self.word_info)
+
 """ Функции для работы со стандартными структурами данных """
 
 def dictOrder(d, old_index=None):
@@ -37,19 +69,31 @@ def dictOrder(d, old_index=None):
 
 class Sentence():
   """ Класс объекта предложения. Индексы списка и ключи словаря должны совпадать.
-      При инициализации класса ему передаётся предложение в виде списка слов.  """
+      При инициализации класса ему передаётся предложение в виде списка слов.
+      sentence(index) - извлечение слова (объект)
+      sentence(index, name) - извлечение характеристики слова
+      sentence(index, name, value) - изменение характеристики слова
+      sentence[name] - извлечение характеристики предложения
+      sentence[name] = value - изменение характеристики предложения"""
   old_index = None
   new_index = None
   sentence_info = {}
 
-  def __init__(self, list_sentence):
-    self.dict_sentence = {index: {} for index in range(len(list_sentence))}
-    for index in range(len(list_sentence)):
-      self.dict_sentence[index]['word'] = list_sentence[index]
-      self.dict_sentence[index]['feature'] = []
-      self.dict_sentence[index]['link'] = []
-      self.dict_sentence[index]['homogeneous_link'] = [] # ссылки на однородные члены
-      self.dict_sentence[index]['type'] = 'real' # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
+  def __init__(self, words):
+    self.dict_sentence = {}
+    for index in range(len(words)):
+      word = words[index]
+      word['feature'] = []
+      word['link'] = []
+      word['homogeneous_link'] = [] # ссылки на однородные члены
+      word['type'] = 'real' # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
+      self.dict_sentence[index] = word
+      #self.dict_sentence[index] = {}
+      #self.dict_sentence[index]['word'] = words[index]
+      #self.dict_sentence[index]['feature'] = []
+      #self.dict_sentence[index]['link'] = []
+      #self.dict_sentence[index]['homogeneous_link'] = [] # ссылки на однородные члены
+      #self.dict_sentence[index]['type'] = 'real' # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
 
   def _syncLinks(self, words, deleted, parametr_name):
     """ Синхронизирует ссылки в словах """
@@ -72,18 +116,14 @@ class Sentence():
     self._syncLinks(self.dict_sentence.values(), deleted, 'link')
     self._syncLinks(self.dict_sentence.values(), deleted, 'homogeneous_link')
 
+  # Работа с информацией о предложении
+  def __setitem__(self, key, value): self.sentence_info[key] = value
+  def __getitem__(self, key): return self.sentence_info[key]
+  # Работа с информацией о слове
   def __call__(self, index, name=None, value=None):
-    """ Если индекс - это строка, то: получаем характеристику или изменяем.
-        Иначе: возвращаем слово или возвращаем характеристику слова или изменяем характеристику слова"""
-    if not isinstance(index, str) and not isinstance(index, unicode):
-      # Работа с информацией о слове
-      if name == None: return self.dict_sentence[index]
-      elif value == None: return self.dict_sentence[index][name]
-      self.dict_sentence[index][name] = value
-    else:
-      # Работа с информацией о предложении
-      if name == None: return self.sentence_info[index]
-      self.sentence_info[index] = name
+    if name == None: return self.dict_sentence[index]
+    elif value == None: return self.dict_sentence[index][name]
+    self.dict_sentence[index][name] = value
   
   def getByCharacteristic(self, name, value):
     """ Извлекает слова, соответствующие характеристике.

@@ -114,7 +114,7 @@ def find_mediators(sentence, word, index, args, max_link_arg):
   for parent_index in parent_indexes:
     parent_word = sentence(parent_index)
     arg = {}
-    if word.has_key('case'): arg['case'] = word['case']
+    if 'case' in word: arg['case'] = word['case']
     arg['MOSentence'] = word['MOSentence']
     arg['POSpeech'] = word['POSpeech']
     arg['base'] = word['base']
@@ -176,7 +176,7 @@ def make_args_descr(fasif, arg_name, args, max_link_arg):
     parent = sentence(parent_index)
 
   arg = {}
-  if word.has_key('case'): arg['case'] = word['case']
+  if 'case' in word: arg['case'] = word['case']
   arg['MOSentence'] = word['MOSentence']
   arg['POSpeech'] = word['POSpeech']
   arg['base'] = arg_word[1:] # если список - то это абстрактные группы, как в данном случае.
@@ -184,7 +184,7 @@ def make_args_descr(fasif, arg_name, args, max_link_arg):
   arg['argtable'] = arg_dict['table']
   arg['parentBase'] = parent['base'] # а вот здесь именно корень, так как пока ещё мы не можем использовать переменного посредника или родителя
   arg['parentMOSentence'] = parent['MOSentence']
-  if parent.has_key('case'): arg['parentCase'] = parent['case']
+  if 'case' in parent: arg['parentCase'] = parent['case']
   #print 'Arguments before checking:', arg_name, arg
   #print '...and his parent:', parent['word'], parent
   if parent['MOSentence'] not in ['direct supplement', 'subject', 'predicate']:

@@ -40,7 +40,7 @@ class LangClass():
     # Графематический анализ
     if start_level in self.levels[:1]:
       BeautySafe.safe_NL(sentence)
-      sentence = self.LangModule.getGraphmathA(sentence, ObjUnit.Sentence)
+      sentence = self.LangModule.getGraphmathA(sentence, ObjUnit)
       BeautySafe.safe_sentence(sentence, 'GraphemathicAnalysis analysis')
       if end_level == self.levels[0]: return sentence, GrammarNazi
 

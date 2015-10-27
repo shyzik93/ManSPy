@@ -1,7 +1,22 @@
 # -*- coding: utf-8 -*-
 """
 """
-import mymath, os
+import mymath, os, copy
+
+def walk(o, func, parent=None, key=None):
+  if isinstance(o, dict): keys = o.keys()
+  elif isinstance(o, list): keys = range(len(o))
+  else:
+    if parent != None: parent[key] = func(o)
+    return
+
+  for key in keys:
+    walk(o[key], func, parent=o, key=key)
+
+def func(o):
+  #print type(o), o
+  if hasattr(o, '__str__') and hasattr(o, 'items'): return str(o)
+  return o
 
 def write_log(*texts):
   path = os.path.join(os.path.abspath(''), 'DATA_BASE', 'args.txt')
@@ -9,7 +24,11 @@ def write_log(*texts):
     with open(path, 'w'): pass
   f = open(path, 'a')
   for text in texts:
-    if not (isinstance(text, str) or isinstance(text, unicode)): text = str(text)
+    if not (isinstance(text, str) or isinstance(text, unicode)):
+      #if isinstance(text, dict):
+      text = copy.deepcopy(text)
+      walk(text, func)
+      text = str(text)
     f.write(text)
     f.write(' ')
   f.write('\n')
