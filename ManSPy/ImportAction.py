@@ -216,7 +216,7 @@ def store_storedFASIF(fasif, storedFASIF, LangClass, OR):
 class ImportAction():
   def __init__(self, settings):
     self.settings = settings
-    self.OR = LangModules.ObjRelation.ObjRelation(settings['language'], settings['test'], settings['storage_version'])
+    self.OR = LangModules.relation.ObjRelation(settings['language'], settings['test'], settings['storage_version'])
     self.LangClass = LangModules.LangClass(settings, Action)
 
   def _import(self, module_name):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Author: Ra93POL
-# Date: 2.12.2014
+# Date: 2.12.2014 - nowdays
 
 class Word():
   """ Класс объекта слова.
@@ -23,7 +23,7 @@ class Word():
   def __setitem__(self, key, value): self.word_info[key] = value
   def __getitem__(self, key): return self.word_info[key]
   # Работа с информацией о символе
-  def __call__(self, index, name, value):
+  def __call__(self, index, name=None, value=None):
     if name == None: return self.dict_word[index]
     elif value == None: return self.dict_word[index][name]
     self.dict_word[index][name] = value
@@ -88,12 +88,6 @@ class Sentence():
       word['homogeneous_link'] = [] # ссылки на однородные члены
       word['type'] = 'real' # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
       self.dict_sentence[index] = word
-      #self.dict_sentence[index] = {}
-      #self.dict_sentence[index]['word'] = words[index]
-      #self.dict_sentence[index]['feature'] = []
-      #self.dict_sentence[index]['link'] = []
-      #self.dict_sentence[index]['homogeneous_link'] = [] # ссылки на однородные члены
-      #self.dict_sentence[index]['type'] = 'real' # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
 
   def _syncLinks(self, words, deleted, parametr_name):
     """ Синхронизирует ссылки в словах """
@@ -176,17 +170,7 @@ class Sentence():
     word = self.dict_sentence[index]
     self._syncLinks([word], [index])
     self.delByIndex(index)
-    return word
-    #for indexLink in word["link"]:
-    #  t = 0
-    #  if indexLink < index:
-    #    index2 = word["link"].index(indexLink)
-    #    word["link"][index2] = indexLink - t
-    #  elif indexLink == indexDel:
-    #    index2 = word["link"].index(indexLink)
-    #    del word["link"][index2]
-    #  t =+ 1
-    
+    return word    
 
   def addFeature(self, index, *indexes):
     """ Добавляет к слову определения и обстоятельства как его характеристику

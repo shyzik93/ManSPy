@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ManSPy.LangModules import ObjRelation
+from ManSPy.LangModules import relation
 
 settings = None
 

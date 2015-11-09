@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
-""" 
-"""
 import sys, os
 
 _path = os.path.dirname(__file__)
 sys.path.append(_path)
 
-import Extractor, Converter, ObjUnit, ObjRelation
+import Extractor, Converter, ObjUnit, relation
 import BeautySafe
 
 class LangClass():
@@ -24,7 +22,7 @@ class LangClass():
         то в качестве первого аргумента передаётся список извлечений."""
     BeautySafe.fwrite('\n\n'+'#'*100+'\n')
     BeautySafe.fwrite(levels+'\n')
-    OR = ObjRelation.ObjRelation(self.language, self.settings['test'], self.settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
+    OR = relation.ObjRelation(self.language, self.settings['test'], self.settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
     GrammarNazi = {}
     ErrorConvert = []
 
@@ -61,12 +59,6 @@ class LangClass():
       sentence, GrammarNazi['synt'] = self.LangModule.getSyntA(sentence)
       BeautySafe.safe_sentence(sentence, 'Syntactic analysis')
       if end_level == self.levels[3]: return sentence, GrammarNazi
-
-    # делаем полный морфологический и синтаксический анализы
-    #if start_level in self.levels[0:4]:
-    #  BeautySafe.safe_NL(sentence)
-    #  sentence, GrammarNazi = self.LangModule.AnalyseNLSentence(sentence, start_level, end_level, self.levels, ObjUnit.Sentence, BeautySafe.safe_sentence)
-    #  if end_level in self.levels[0:4]: return sentence, GrammarNazi
 
     # извлекаем прямое доп, подл, сказуемое, косв. доп
     if start_level in self.levels[:5]:
