@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #import sqlite3 as sql, os
 import pickle
-from ManSPy import GeneralForDB
+import common
 
 class Relation():
   dct_types = {'synonym': 1, 'antonym': 2, 'abstract': 3}
@@ -9,7 +9,7 @@ class Relation():
   
   def __init__(self, language, test=0):
     self.test = test
-    self.c, self.cu = GeneralForDB.create_bd_file(language, 'main_data.db')
+    self.c, self.cu = common.create_bd_file(language, 'main_data.db')
     self.cu.executescript('''
       CREATE TABLE IF NOT EXISTS words (
         word TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,

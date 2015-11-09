@@ -2,6 +2,7 @@
 """
 """
 import mymath, os, copy
+import common
 
 def walk(o, func, parent=None, key=None):
   if isinstance(o, dict): keys = o.keys()
@@ -19,7 +20,7 @@ def func(o):
   return o
 
 def write_log(*texts):
-  path = os.path.join(os.path.abspath(''), 'DATA_BASE', 'args.txt')
+  path = os.path.join(common.RSettings('dir_db'), 'args.txt')#os.path.join(os.path.abspath(''), 'args.txt')
   if not os.path.exists(path):
     with open(path, 'w'): pass
   f = open(path, 'a')

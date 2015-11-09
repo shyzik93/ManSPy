@@ -3,8 +3,9 @@
     выявления ошибок и неточностей.
 '''
 import os, datetime, codecs
+import common
 
-db_dir = os.path.abspath('').split(os.path.sep)
+'''db_dir = os.path.abspath('').split(os.path.sep)
 db_dir.reverse() # нижний код для того, чторбы запускать файлы из любой нижней директории
 for i in db_dir:
   if i == 'IMS':
@@ -13,10 +14,13 @@ for i in db_dir:
 db_dir.reverse()
 db_dir[0] = db_dir[0] + os.sep
 db_dir = os.path.join(*db_dir)
-db_dir = os.path.join(db_dir, 'DATA_BASE', 'log_analysis_')
+#db_dir = os.path.join(db_dir, 'DATA_BASE', 'log_analysis_')
+print os.path.abspath('')
+db_dir = os.path.join(os.path.abspath(''), 'log_analysis_')'''
 
 def fwrite(data):
-  global db_dir
+  #global db_dir
+  db_dir = os.path.join(common.RSettings('dir_db'), 'analysis.txt')
   if not os.path.exists(db_dir):
     f = open(db_dir, 'w')
     f.close()

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import sqlite3 as sql, os, pickle
-from ManSPy import GeneralForDB
+import common
 
 def max_create(cu, c, name_table='None'):
   name_table = 'max_' + name_table
@@ -25,7 +25,7 @@ class SynonymsDB():
   c = cu = None
   exist_tables = ['verb', 'noun', 'adverb', 'adjective']
   def __init__(self, language):
-    self.c, self.cu = GeneralForDB.create_bd_file(language, 'synonym.db')
+    self.c, self.cu = common.create_bd_file(language, 'synonym.db')
     for name_table in self.exist_tables:
       self.cu.execute("""
         CREATE TABLE IF NOT EXISTS %s (
@@ -76,7 +76,7 @@ class AntonymsDB:
   base = ['noun', 'adjective', 'adverb']
   exist_tables = ['verb', 'base'] # verb - для глаголов, base - для существительных, прилагательных и наречий.
   def __init__(self, language):
-    self.c, self.cu = GeneralForDB.create_bd_file(language, 'antonym.db')
+    self.c, self.cu = common.create_bd_file(language, 'antonym.db')
     for name_table in self.exist_tables:
       self.cu.execute("""
         CREATE TABLE IF NOT EXISTS %s (
@@ -107,7 +107,7 @@ class ListOfWordsDB:
   """
   c = cu = None
   def __init__(self, language):
-    self.c, self.cu = GeneralForDB.create_bd_file(language, "list_words.db")
+    self.c, self.cu = common.create_bd_file(language, "list_words.db")
     self.cu.execute("""
       CREATE TABLE IF NOT EXISTS words (
         word TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,
@@ -150,7 +150,7 @@ class ListOfWordsDB:
 class AbstractGroupsDB():
   """ База абстрактных групп существительных """
   def __init__(self, language):
-    self.c, self.cu = GeneralForDB.create_bd_file(language, "abstract_groups.db")
+    self.c, self.cu = common.create_bd_file(language, "abstract_groups.db")
     self.cu.execute("""CREATE TABLE IF NOT EXISTS groups (
       id_group INTEGER,
       id INTEGER,
@@ -175,7 +175,7 @@ class ProcFASIF():
   """ База хранимых ФАСИФов """
   def __init__(self, language, test=0):
     self.test = test
-    self.c, self.cu = GeneralForDB.create_bd_file(language, "procFASIF.db")
+    self.c, self.cu = common.create_bd_file(language, "procFASIF.db")
     self.cu.execute("""
       CREATE TABLE IF NOT EXISTS procFASIF (
         id_group_verb INTEGER,

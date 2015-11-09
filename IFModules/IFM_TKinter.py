@@ -1,4 +1,4 @@
-# -*- coding: cp1251 -*-
+# -*- coding: utf-8 -*-
 import Tkinter, time, os
 
 IFName = API = None
@@ -9,16 +9,18 @@ class Interface():
 
   def FromUser(self, event=None):
     w_text = self.Text_In.get('1.0', Tkinter.END)
+    #print 'write', type(w_text)
     #if event == None: return
     self.API.write_text(IFName, w_text)
     self.Text_In.delete('1.0', Tkinter.END)
-    self.Text_Out.insert(Tkinter.END, u'ß: ' + w_text + u'\n')
+    self.Text_Out.insert(Tkinter.END, u'Ð¯: ' + w_text + u'\n')
     self.root1.after(50, self.ToUser)
 
   def ToUser(self):
     r_text = self.API.read_text(IFName, 0)
+    #if r_text: print 'read', type(r_text)
     if r_text:
-      self.Text_Out.insert(Tkinter.END, u'ÈÑÓ: ' + r_text + u'\n')
+      self.Text_Out.insert(Tkinter.END, u'Ð˜Ð¡Ð£: ' + r_text + u'\n')
       time.sleep(1)
     self.root1.after(50, self.ToUser)
 
@@ -32,7 +34,7 @@ class Interface():
     #self.Text_In.bind("<Enter>", FromUser)
     self.Text_In.pack()
 
-    Button_Send = Tkinter.Button(self.root1, text=u'Îòïðàâèòü', command=self.FromUser)
+    Button_Send = Tkinter.Button(self.root1, text=u'ÐžÑ‚Ð¿Ñ€Ð°Ð²Ð¸Ñ‚ÑŒ', command=self.FromUser)
     Button_Send.pack()
 
     self.root1.after(50, self.ToUser)

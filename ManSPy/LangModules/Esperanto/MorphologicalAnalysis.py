@@ -50,7 +50,7 @@ def getNumberAndCase(word_l):
     word_l = word_l[:-1]
     temp_word['case'] = 'accusative'
   if word_l[-1] == 'j':
-    word_l = l_word[:-1]
+    word_l = word_l[:-1]
     temp_word['number'] = 'plural'
   temp_word['base'] = word_l
   return temp_word

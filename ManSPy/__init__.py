@@ -9,12 +9,8 @@
     Примеры возможных интерфейсов: текстовый чат, распознаватель речи,
     мессенджеры, интерфейс мозг-компьютер, приёмник звонков и SMS и так далее.
 """
-import os
-db_path = os.path.abspath('DATA_BASE')
-if not os.path.exists(db_path) or not os.path.isdir(db_path):
-  os.mkdir(db_path)
-
-import Logic, ImportAction, LangModules, API_ForDB, time, codecs, sys
+import repper, simpletools
+import Logic, ImportAction, LangModules, common, time, codecs, sys, os
 
 class MainException(Exception): pass
 
@@ -22,7 +18,8 @@ def _save_history(text, Type, IFName):
   if text:
     Time = time.strftime('%c', time.gmtime(time.time()-time.altzone))
     text = "* %s  %s  %s: %s\n" % (Type, Time, IFName, text)
-    API_ForDB.WriteToFile(text, 'history', 'a')
+    #print type(text)
+    simpletools.fopen(os.path.join(common.RSettings('dir_db'),'history.txt'), 'ab', bytearray(text, 'utf-8'))
 
 class API():
   # настройки задаются один раз. Но можно написать модуль для изменения
@@ -35,8 +32,10 @@ class API():
               'language': 'Esperanto',
               'storage_version': 2,
               'converter_version': 1,
-              'test': 1 # тестовый режим, включаемый в процессе отладки и разработки
-              }
+              'test': True, # тестовый режим, включаемый в процессе отладки и разработки
+              'dir_db': None
+  }
+  # настройки для модулей интерфейсов
   # 'module_settings': {ИмяМодуля: СловарьНастроекМодуля_ИлиОбъектУправления}
   def ChangeSettings(self, NewSettings):
     # Проверяем правильность ключей
@@ -47,9 +46,18 @@ class API():
     # Обновляем настройки
     self.settings.update(NewSettings)
     self.settings['language'] = self.settings['language'].capitalize()
-    # Сохраняем настройки для доступа из других частей ИСУ
-    #API_ForDB.WriteSettings(self.settings)
-    
+
+    if self.settings['dir_db'] == None: db_path = os.path.dirname(os.path.abspath(''))
+    else: db_path = self.settings['dir_db']
+    db_path = os.path.join(db_path, 'DATA_BASE')
+    if not os.path.exists(db_path) or not os.path.isdir(db_path):
+      os.mkdir(db_path)
+    #os.chdir(db_path)
+    self.settings['dir_db'] = db_path
+
+    common.WSettings(self.settings)
+    #print db_path, sys.path
+
   def __init__(self, UserSettings={}):
     """ Инициализация ИСУ """
     # Меняем настройки по умолчанию на пользовательские
@@ -87,6 +95,7 @@ class API():
   # Данная функция должна вызываться переодически, даже если ничего не вводится,
   # так как ИСУ может сама что-то сообщить, по своей инициативе.
   def write_text(self, IFName, w_text):
+    #print 'write', type(w_text)
     if IFName not in self.LogicShell.list_answers: self.LogicShell.list_answers[IFName] = []
     if w_text:
       if self.settings['history']: _save_history(w_text, "W", IFName)
@@ -115,6 +124,7 @@ class API():
         _r_text = self.LangClass.IL2NL(self.LogicShell.list_answers[IFName].pop(index))
         if _r_text: r_text = _r_text
     if self.settings['history']: _save_history(r_text, "R", IFName)
+    #if r_text: print 'read', type(r_text)
     return r_text
 
   def getlen_text(self, IFName):
