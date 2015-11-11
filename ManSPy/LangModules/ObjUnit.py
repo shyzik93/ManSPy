@@ -9,7 +9,8 @@ class Word():
       word(index, name) - извлечение характеристики символа
       word(index, name, value) - изменение характеристики символа
       word[name] - извлечение характеристики слова
-      word[name] = value - изменение характеристики слова"""
+      word[name] = value - изменение характеристики слова
+      name in word - проверка наличия ключа характеристики слова"""
   def __init__(self, str_word):
     self.str_word = str_word
     self.dict_word = {}
@@ -17,7 +18,7 @@ class Word():
       self.dict_word[index] = {}
       self.dict_word[index]['symbol'] = self.str_word[index]
       self.dict_word[index]['type'] = ''
-    self.word_info = {'word': self.str_word}
+    self.word_info = {'word': self.str_word, 'symbol_map': {}}
 
   # Работа с информацией о слове
   def __setitem__(self, key, value): self.word_info[key] = value
@@ -33,6 +34,9 @@ class Word():
   def __contains__(self, name): return name in self.word_info
   def __len__(self): return len(self.word_info)
   def __str__(self): return str(self.word_info)
+
+  def hasSymbol(self, symbol):
+    return symbol in self.str_word
 
 """ Функции для работы со стандартными структурами данных """
 

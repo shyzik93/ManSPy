@@ -20,16 +20,32 @@ def define_type_symbol(word):
     if symbol['symbol'] in letters: symbol['type'] = 'letter'
     elif symbol['symbol'] in punctuation_marks: symbol['type'] = 'pmark'
 
-def getGraphmathA(sentence, ObjUnit):
+def getGraphmathA(text, ObjUnit):
   # Заменяем символы
-  for k, v in ReplacedLetters.items(): sentence = sentence.replace(k, v)
-  sentence = sentence.split() # должен возвращать список предложений, но пока - список слов
-  sentence = [ObjUnit.Word(word) for word in sentence]
+  for k, v in ReplacedLetters.items(): text = text.replace(k, v)
+  text = text.split()
+  text = [ObjUnit.Word(word) for word in text]
 
-  for word in sentence:
+  for word in text:
     define_type_symbol(word)
 
-  return ObjUnit.Sentence(sentence)
+  # Разбиваем текст на ВОЗМОЖНЫЕ предложения, то есть это необходимо корректировать в следующих анализах
+  sentences = [[]]
+  index = 0
+  for word in text:
+    str_word = word['word']
+    if str_word[-1] == '.':
+      sentences.append([])
+      index += 1
+      word['symbol_map']['.'] = str_word.index('.') # эту строку нужно сделать нормально: точек может быть несколько в слове (то есть список), определение индкса должно быть иначе
+      word['word'] = str_word[:-1]
+    sentences[index].append(word)
+  print sentences
+
+  for index in range(len(sentences)):
+    sentences[index] = ObjUnit.Sentence(sentences[index])
+
+  return ObjUnit.Sentence(text)
 
 """word = Word("montru")
 print word.str_word, '\n'
