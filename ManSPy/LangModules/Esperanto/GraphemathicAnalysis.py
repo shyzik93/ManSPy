@@ -34,12 +34,16 @@ def getGraphmathA(text, ObjUnit):
   index = 0
   for word in text:
     str_word = word['word']
-    if str_word[-1] == '.':
+    end_symbol = str_word[-1]
+    if end_symbol in '.!?':
       sentences.append([])
       index += 1
-      word['symbol_map']['.'] = str_word.index('.') # эту строку нужно сделать нормально: точек может быть несколько в слове (то есть список), определение индкса должно быть иначе
+      word['symbol_map'][end_symbol] = str_word.index(end_symbol) # эту строку нужно сделать нормально: точек может быть несколько в слове (то есть список), определение индкса должно быть иначе
       word['word'] = str_word[:-1]
-    sentences[index].append(word)
+    if end_symbol in ',':
+      word['symbol_map'][end_symbol] = str_word.index(end_symbol) # эту строку нужно сделать нормально: точек может быть несколько в слове (то есть список), определение индкса должно быть иначе
+      word['word'] = str_word[:-1]
+    sentences[index].append(word)    
   print sentences
 
   for index in range(len(sentences)):
