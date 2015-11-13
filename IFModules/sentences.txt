@@ -30,3 +30,5 @@ montru dolaran cambion kaj adreson de komputilo
 
 # пока не поддерживаются
 montru dolaran cambion, kiu estas dolara
+
+Montru dolaran cambion. Montru euxran cambion de belarusia banko

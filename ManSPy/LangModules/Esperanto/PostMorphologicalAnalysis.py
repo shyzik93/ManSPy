@@ -118,32 +118,31 @@ def exchangeDataBetweenHomo(sentence):
       if 'case' in word: sentence(index_homo, 'case', word['case'])
       done_indexes.append(index_homo)
 
-def getPostMorphA(sentence):
+def getPostMorphA(sentences, GrammarNazi):
   ''' Обёртка '''
-  GrammarNazi = []
+  for sentence in sentences:
+    #TASK обстоятельства, выраженные существительным, обозначить как наречие
 
-  #TASK обстоятельства, выраженные существительным, обозначить как наречие
+    procConj(GrammarNazi, sentence) # rapido kaj ankaux, dolaran kaj euxran, lampo kaj fortreno
 
-  procConj(GrammarNazi, sentence) # rapido kaj ankaux, dolaran kaj euxran, lampo kaj fortreno
+    # сворачиваем все наречия, даже многократно вложенные.
+    while sentence.getByCharacteristic('POSpeech', 'adverb') != {}: checkAd(sentence)
 
-  # сворачиваем все наречия, даже многократно вложенные.
-  while sentence.getByCharacteristic('POSpeech', 'adverb') != {}: checkAd(sentence)
+    procConj(GrammarNazi, sentence) # montru [rapido] kaj inkludu
 
-  procConj(GrammarNazi, sentence) # montru [rapido] kaj inkludu
+    # "Сворачиваем" признак предмета: прилагательные и притяжательные местоимения -
+    findDef(GrammarNazi, sentence)
 
-  # "Сворачиваем" признак предмета: прилагательные и притяжательные местоимения -
-  findDef(GrammarNazi, sentence)
+    # вот здесь нужно свернуть найденные однородные существительные
+    procConj(GrammarNazi, sentence) # cxambro kaj [mia] domo
 
-  # вот здесь нужно свернуть найденные однородные существительные
-  procConj(GrammarNazi, sentence) # cxambro kaj [mia] domo
+    procPrep(GrammarNazi, sentence) # Корректируем падежи
+    sentence.delByCharacteristic('POSpeech', 'preposition') # удаляем предлоги
 
-  procPrep(GrammarNazi, sentence) # Корректируем падежи
-  sentence.delByCharacteristic('POSpeech', 'preposition') # удаляем предлоги
+    procConj(GrammarNazi, sentence) # cxambro [en] domo
+    exchangeDataBetweenHomo(sentence) # копируем характеристики с первого однородного ко последующим ему однородным.
 
-  procConj(GrammarNazi, sentence) # cxambro [en] domo
-  exchangeDataBetweenHomo(sentence) # копируем характеристики с первого однородного ко последующим ему однородным.
+    # здесь нужно найти однородные косвенные дополнения, чтобы им установить однородность.
+    # При синтаксическом анализе на них будет ссылаться их родитель.
 
-  # здесь нужно найти однородные косвенные дополнения, чтобы им установить однородность.
-  # При синтаксическом анализе на них будет ссылаться их родитель.
-
-  return sentence, GrammarNazi
+  return sentences

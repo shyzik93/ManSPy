@@ -15,7 +15,7 @@ class LangClass():
     self.LangModule = __import__(self.language)
     self.Action = Action
 
-  def NL2IL(self, sentence, levels="graphmath convert"):
+  def NL2IL(self, sentences, levels="graphmath convert"):
     """ Второй аргумент - диапазон конвертирования от первого до последнего
         включительно через пробел. Если требуется сделать лишь один уровень,
         то можно указать только одно слово. Если указан только 'convert',
@@ -23,7 +23,7 @@ class LangClass():
     BeautySafe.fwrite('\n\n'+'#'*100+'\n')
     BeautySafe.fwrite(levels+'\n')
     OR = relation.ObjRelation(self.language, self.settings['test'], self.settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
-    GrammarNazi = {}
+    GrammarNazi = {'morph': [], 'postmorph': [], 'synt': []}
     ErrorConvert = []
 
     # Парсим строку диапазона
@@ -37,41 +37,53 @@ class LangClass():
 
     # Графематический анализ
     if start_level in self.levels[:1]:
-      BeautySafe.safe_NL(sentence)
-      sentence = self.LangModule.getGraphmathA(sentence, ObjUnit)
-      BeautySafe.safe_sentence(sentence, 'GraphemathicAnalysis analysis')
+      BeautySafe.safe_NL(sentences)
+      sentences = self.LangModule.getGraphmathA(sentences, ObjUnit)
+      BeautySafe.safe_sentences(sentences, 'GraphemathicAnalysis analysis')
       if end_level == self.levels[0]: return sentence, GrammarNazi
 
     # Морфологический анализ
     if start_level in self.levels[:2]:
-      sentence, GrammarNazi['morph'] = self.LangModule.getMorphA(sentence)
-      BeautySafe.safe_sentence(sentence, 'Morphological analysis')
-      if end_level == self.levels[1]: return sentence, GrammarNazi
+      sentences = self.LangModule.getMorphA(sentences, GrammarNazi['morph'])
+      BeautySafe.safe_sentences(sentences, 'Morphological analysis')
+      if end_level == self.levels[1]: return sentences, GrammarNazi
 
     # Постморфологичесий
     if start_level in self.levels[:3]: 
-     sentence, GrammarNazi['postmorph'] = self.LangModule.getPostMorphA(sentence)
-     BeautySafe.safe_sentence(sentence, 'Postmorphological analysis')
-     if end_level == self.levels[2]: return sentence, GrammarNazi
+     sentences = self.LangModule.getPostMorphA(sentences, GrammarNazi['postmorph'])
+     BeautySafe.safe_sentences(sentences, 'Postmorphological analysis')
+     if end_level == self.levels[2]: return sentences, GrammarNazi
 
     # Синтаксический
     if start_level in self.levels[:4]:
-      sentence, GrammarNazi['synt'] = self.LangModule.getSyntA(sentence)
-      BeautySafe.safe_sentence(sentence, 'Syntactic analysis')
-      if end_level == self.levels[3]: return sentence, GrammarNazi
+      sentences = self.LangModule.getSyntA(sentences, GrammarNazi['synt'])
+      BeautySafe.safe_sentences(sentences, 'Syntactic analysis')
+      if end_level == self.levels[3]: return sentences, GrammarNazi
 
     # извлекаем прямое доп, подл, сказуемое, косв. доп
     if start_level in self.levels[:5]:
-      OR.addWordsToDBFromDictSentence(sentence.getSentence('dict'))
-      Subject, Predicate, DirectSupplement, Supplement, ErrorConvert = Extractor.Extract(sentence)
-      if end_level == self.levels[4]: return Subject, Predicate, DirectSupplement, Supplement, GrammarNazi, ErrorConvert
+      if not isinstance(sentences, list): sentences = [sentences]
+      for index in range(len(sentences)):
+        sentence = sentences[index]
+        OR.addWordsToDBFromDictSentence(sentence.getSentence('dict'))
+        #Subject, Predicate, DirectSupplement, Supplement, ErrorConvert = Extractor.Extract(sentence)
+        sentences[index] = Extractor.Extract(sentence)
+      if end_level == self.levels[4]: return sentences#return Subject, Predicate, DirectSupplement, Supplement, GrammarNazi, ErrorConvert
 
     # конвертируем анализы во внутренний язык
     if start_level in self.levels:
-      if start_level == self.levels[5]: Subject, Predicate, DirectSupplement, Supplement = sentence
-      ILs, ErrorConvert = Converter.Extraction2IL(OR, self.settings, self.Action, Subject, Predicate, DirectSupplement, Supplement)
-      for IL in ILs: BeautySafe.safe_IL(IL)
-      if end_level == self.levels[5]: return ILs, GrammarNazi, ErrorConvert
+      if start_level == self.levels[:6]: Subject, Predicate, DirectSupplement, Supplement = sentence
+      _ILs = []
+      _ErrorConvert = {}
+      for sentence in sentences:
+        #ILs, ErrorConvert = Converter.Extraction2IL(OR, self.settings, self.Action, Subject, Predicate, DirectSupplement, Supplement)
+        ILs, ErrorConvert = Converter.Extraction2IL(OR, self.settings, self.Action, *sentence[:-1])
+        for IL in ILs: BeautySafe.safe_IL(IL)
+        _ILs.extend(ILs)
+        for key in ErrorConvert:
+          if not key in _ErrorConvert: _ErrorConvert[key] = []
+          _ErrorConvert[key].extend(ErrorConvert[key])
+      if end_level == self.levels[5]: return _ILs, GrammarNazi, _ErrorConvert
 
   def IL2NL(self, IL):
     #IL = Synthesizer.IL2resultA(IL)

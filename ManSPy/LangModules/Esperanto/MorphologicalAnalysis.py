@@ -173,12 +173,12 @@ def _getMorphA(word, GrammarNazi):
       defaultNoun(word_l, word)
     else: word['POSpeech'] = ''
 
-def getMorphA(sentence):
+def getMorphA(sentences, GrammarNazi):
   ''' Обёртка '''
-  GrammarNazi = []
-  for word in sentence.getSentence('listDict'):
-    _getMorphA(word, GrammarNazi)
-  return sentence, GrammarNazi
+  for sentence in sentences:
+    for word in sentence.getSentence('listDict'):
+      _getMorphA(word, GrammarNazi)
+  return sentences
 
 #sentence = 'vi montru kursojn de mia dolaro'
 #sentence = '1444 123.78654 345,976 0.7 9,8'

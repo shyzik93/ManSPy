@@ -92,12 +92,11 @@ def setLinks(index, sentence, GrammarNazi):
 
   return index
 
-def getSyntA(sentence):
-  GrammarNazi = []
+def getSyntA(sentences, GrammarNazi):
+  for sentence in sentences:
+    # определяет члены предложения
+    sentence.forAllWords(0, setMOSentence, GrammarNazi)
+    # устанавливает связи членов предложения
+    sentence.forAllWords(0, setLinks, GrammarNazi)
 
-  # определяет члены предложения
-  sentence.forAllWords(0, setMOSentence, GrammarNazi)
-  # устанавливает связи членов предложения
-  sentence.forAllWords(0, setLinks, GrammarNazi)
-
-  return sentence, GrammarNazi
+  return sentences

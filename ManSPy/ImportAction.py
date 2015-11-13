@@ -91,14 +91,14 @@ def parseFASIF(FASIF, language):
 
 def proccess_lang_data(fasif, LangClass, R, module_name):
   ''' Обработка лингвистических данных: анализ, внесение в БД '''
-  fasif['sentence'], GrammarNazi = LangClass.NL2IL(fasif['sentence'], ":synt")
+  fasif['sentence'] = LangClass.NL2IL(fasif['sentence'], ":synt")[0][0]
   for arg_name in fasif['args']:
     assoc = fasif['args'][arg_name]['assoc']
     #print 'assoc:', assoc
     fasif['args'][arg_name]['assoc'] = []
     for word, groups in assoc.items():
-      word = LangClass.NL2IL(word, ":postmorph")[0](0)
-      groups = [LangClass.NL2IL(group, ":morph")[0](0)['base'] for group in groups]
+      word = LangClass.NL2IL(word, ":postmorph")[0][0](0)
+      groups = [LangClass.NL2IL(group, ":morph")[0][0](0)['base'] for group in groups]
       for group in groups:
         R.addWordsInAbstractGroup(group, word['base'])
         if fasif['args'][arg_name]['table']:
@@ -205,7 +205,7 @@ def make_storedFASIF(fasif, module_name):
   return storedFASIF
 
 def store_storedFASIF(fasif, storedFASIF, LangClass, OR):
-  Subject, Predicate, DirectSupplement, Supplement, GrammarNazi, ErrorConvert = LangClass.NL2IL(fasif['sentence'], "extract")
+  Subject, Predicate, DirectSupplement, Supplement, ErrorConvert = LangClass.NL2IL(fasif['sentence'], "extract")[0]
   DS = DirectSupplement.values()
   if len(DS) == 0:
     print 'FASIF wasn\'t writen. Direct supplement is absent'

@@ -86,4 +86,7 @@ def safe_sentence(sentence, title):
 
   safeResults(list_res, title)
 
+def safe_sentences(sentences, title):
+  for sentence in sentences: safe_sentence(sentence, title)
+
 def safe_IL(IL): fwrite('IL-sentence: '+str(IL)+'\n')
