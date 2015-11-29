@@ -39,8 +39,8 @@ class _Unit():
     else: return func(len(self.dict_unit))
 
   def _go_depth(self, el, info1, info2):
-    if isinstance(el, Sentence): return el.getSentence('dict', info1)
-    elif isinstance(el, Word): return el.getWord('dict', info2)
+    if isinstance(el, Sentence): return el.getUnit('dict', info1, info2)
+    elif isinstance(el, Word): return el.getUnit('dict', info1, info2)
     elif isinstance(el, dict):
       _el = {}
       for k, v in el.items(): _el[k] = self._go_depth(v, info1, info2)
@@ -52,10 +52,14 @@ class _Unit():
     else: return el
 
   def getUnit(self, Type, info1='members', info2='info'):
+    info = {'Sentence': info1, 'Word': info2}[self.__class__.__name__]
     if Type == 'dict':
-      if info2 == 'info': dct = self.unit_info
-      elif info2 == 'members': dct = self.dict_unit
-      elif info2 == 'all': dct = self.full_info
+      if info == 'info': dct = self.unit_info
+      elif info == 'members': dct = self.dict_unit
+      elif info == 'all': dct = self.full_info
+      else:
+        print "the argument '%s' of Unit.getUint is wrong!" % info
+        return
       dct = copy.deepcopy(dct)
       return self._go_depth(dct, info1, info2)
     elif Type == 'listSubUnits': # возвращает список подюнитв
