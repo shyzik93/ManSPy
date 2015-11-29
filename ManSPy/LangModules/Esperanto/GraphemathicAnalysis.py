@@ -44,7 +44,7 @@ def getGraphmathA(text, ObjUnit):
     if end_symbol in ',':
       word['symbol_map'][end_symbol] = str_word.index(end_symbol) # эту строку нужно сделать нормально: точек может быть несколько в слове (то есть список), определение индкса должно быть иначе
       word['word'] = str_word[:-1]
-  print sentences
+  #print sentences
 
   for index in range(len(sentences)):
     sentences[index] = ObjUnit.Sentence(sentences[index])

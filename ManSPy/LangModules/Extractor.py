@@ -38,16 +38,14 @@ def Extract(sentence):#, Recursion=0):
   # Поиск подлежащего
   Subject = sentence.getByCharacteristic('MOSentence', 'subject')
   sentence.delByIndexWithoutSync(*Subject.keys())
-  #if len(Predicate) == 0: pass # спросить, кто выполняет действие
-  #elif len(Predicate) == 1: pass
-  #else: pass
 
   # Все оставшиеся слова - косвенные дополнения
   #Supplement = sentence.getSentence("dict")
   Supplement = sentence.getByCharacteristic('MOSentence', 'supplement')
   sentence.delByIndexWithoutSync(*Supplement.keys())
 
-  print u"       Необработанные остатки \n", sentence.getSentence("dict")
-  print "-"*10
+  if sentence.getUnit("dict"):
+    print u"       Необработанные остатки \n", sentence.getUnit("dict")
+    print "-"*10
 
   return Subject, Predicate, DirectSupplement, Supplement, ErrorConvert

@@ -4,6 +4,7 @@
 '''
 import os, datetime, codecs
 import common
+from pprint import pprint
 
 '''db_dir = os.path.abspath('').split(os.path.sep)
 db_dir.reverse() # нижний код для того, чторбы запускать файлы из любой нижней директории
@@ -77,7 +78,8 @@ def getTime():
 def safe_NL(NL): fwrite('NL-sentence: '+NL+'\n')
 
 def safe_sentence(sentence, title):
-  list_res = sentence.getSentence('dict')
+  list_res = sentence.getUnit('dict')
+  #pprint(list_res)
   fwrite('----'+getTime()+'\n')
 
   sentence = ''

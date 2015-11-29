@@ -97,7 +97,6 @@ class Relation():
     if id_group==None: id_group = self.get_max_id('id_group', self._type2id(id_type)) + 1
     for id_word in id_words:
       _id_group = self.check_copy_row(id_type, id_speech, id_group, id_word, isword, _exists)
-      print _id_group
       if _id_group == False:
         self.cu.execute('INSERT INTO relations (id_type, id_speech, id_group, id_word, isword) VALUES (?,?,?,?,?);',
                       (self._type2id(id_type), self._speech2id(id_speech), self._word2id(id_group), self._word2id(id_word), self._type2id(isword)))
@@ -262,7 +261,7 @@ class _ObjRelation(object):
 
   def addWordsInAbstractGroup(self, group_base, *word_bases):
     ''' Добавляем абстрактные группы. Новые слова также добавляются в базу слов. '''
-    print group_base, word_bases
+    #print group_base, word_bases
     self.R.add_words2group('abstract', None, group_base, 0, *word_bases)
 
 if __name__ == '__main__':

@@ -65,7 +65,7 @@ class LangClass():
       if not isinstance(sentences, list): sentences = [sentences]
       for index in range(len(sentences)):
         sentence = sentences[index]
-        OR.addWordsToDBFromDictSentence(sentence.getSentence('dict'))
+        OR.addWordsToDBFromDictSentence(sentence.getUnit('dict'))
         #Subject, Predicate, DirectSupplement, Supplement, ErrorConvert = Extractor.Extract(sentence)
         sentences[index] = Extractor.Extract(sentence)
       if end_level == self.levels[4]: return sentences#return Subject, Predicate, DirectSupplement, Supplement, GrammarNazi, ErrorConvert

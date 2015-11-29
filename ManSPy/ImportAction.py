@@ -205,6 +205,7 @@ def make_storedFASIF(fasif, module_name):
   return storedFASIF
 
 def store_storedFASIF(fasif, storedFASIF, LangClass, OR):
+  #print fasif['sentence'].getSentence('dict')
   Subject, Predicate, DirectSupplement, Supplement, ErrorConvert = LangClass.NL2IL(fasif['sentence'], "extract")[0]
   DS = DirectSupplement.values()
   if len(DS) == 0:

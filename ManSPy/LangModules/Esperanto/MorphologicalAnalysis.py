@@ -176,7 +176,7 @@ def _getMorphA(word, GrammarNazi):
 def getMorphA(sentences, GrammarNazi):
   ''' Обёртка '''
   for sentence in sentences:
-    for word in sentence.getSentence('listDict'):
+    for word in sentence.getUnit('listSubUnits'):
       _getMorphA(word, GrammarNazi)
   return sentences
 
