@@ -2,7 +2,7 @@
 import LangModules, Action
 import os, re
 
-template = re.compile(r"[^_][a-zA-Z0-9_]+\.pyc?")
+template = re.compile(r"[^_][a-zA-Z0-9_]+\.py[cd]?")
 
 def _get_module_names(modules_path):
   ''' Функция возвращает мимена МУ '''

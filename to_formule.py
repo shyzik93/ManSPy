@@ -16,6 +16,10 @@ settings = {'history': 1,
   }
 LC = LangModules.LangClass(settings, Action)
 
+######### Разбивка предложения
+
+######### Получение хеша словосочетания
+
 def copy_word(dct_word, absent=[]):
   _dct_word = {}
   for characteristic, value in dct_word.items():
@@ -31,15 +35,12 @@ def copy_word(dct_word, absent=[]):
 def to_hash(dct_sentence):
   dct_sentence = word_combination.getUnit('dict', 'members', 'info')
   _dct_sentence = {}
-
   # падеж и член предложения первого чдена не учитывается (они могут иметь разные падежи членства)
   _dct_sentence[0] = copy_word(dct_sentence[0], ['case', 'MOSentence'])
 
   for index, dct_word in dct_sentence.items()[1:]:
     _dct_sentence[index] = copy_word(dct_word)
-
   #pprint(_dct_sentence, indent=4)
-
   json_sentence = json.dumps(_dct_sentence,  sort_keys=True)
   return hash(json_sentence), json_sentence
 '''
@@ -51,7 +52,11 @@ word_combinations = [
   "dolara cambio de rusia kaj ukrainia banko",
   "dolara cambio de rusia banko",
   "dolaran cambion de rusia kaj ukrainia banko"]
-for word_combination in word_combinations:
-  word_combination = LC.NL2IL(word_combination, ":synt")[0][0]
+db = {}
+for _word_combination in word_combinations:
+  word_combination = LC.NL2IL(_word_combination, ":synt")[0][0]
   #pprint(word_combination.getSentence('dict'), indent=4)
-  print to_hash(word_combination.getUnit('dict', 'members', 'info'))[0]
+  wc_hash = to_hash(word_combination.getUnit('dict', 'members', 'info'))[0]
+  print wc_hash, _word_combination
+  db[wc_hash] = [_word_combination, word_combination]
+print db

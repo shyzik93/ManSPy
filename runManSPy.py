@@ -3,14 +3,14 @@ import ManSPy, IFModules, sys
 sys.dont_write_bytecode = True # можно удалить для ускорения работы
 
 Settings = {
-  'logic': 1,
-  'convert2IL': 1,
-  'test': 1,
-  'storage_version': 2,
-  'converter_version': 1
+  'logic': True,
+  'convert2IL': True,
+  'test': True,
+  'storage_version': 2, # версия хранилища данных (слова, их отношения, ФАСИФы)
+  'assoc_version': 1 # версия способа ассоциирования лингвистических и технических данных (ФАСИФа)
   }
 interfaces = {
-  'autofeed':    1,
+  'autofeed':    1, # Автоподатчик предложений - для теста, но можно писать "скрипты"
   'TKinter':     1,
   'jabber':      0,
   'vkcom':       0, # с ошибками
