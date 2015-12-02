@@ -4,7 +4,7 @@ import sys, os
 _path = os.path.dirname(__file__)
 sys.path.append(_path)
 
-import Extractor, Converter, ObjUnit, relation
+import extractor, Converter, ObjUnit, relation
 import BeautySafe
 
 class LangClass():
@@ -67,17 +67,18 @@ class LangClass():
         sentence = sentences[index]
         OR.addWordsToDBFromDictSentence(sentence.getUnit('dict'))
         #Subject, Predicate, DirectSupplement, Supplement, ErrorConvert = Extractor.Extract(sentence)
-        sentences[index] = Extractor.Extract(sentence)
+        Extract = extractor.Extract(self.settings['assoc_version'])
+        sentences[index] = Extract(sentence)
       if end_level == self.levels[4]: return sentences#return Subject, Predicate, DirectSupplement, Supplement, GrammarNazi, ErrorConvert
 
     # конвертируем анализы во внутренний язык
     if start_level in self.levels:
-      if start_level == self.levels[:6]: Subject, Predicate, DirectSupplement, Supplement = sentence
+      #if start_level == self.levels[:6]: Subject, Predicate, DirectSupplement, Supplement = sentence
       _ILs = []
       _ErrorConvert = {}
       for sentence in sentences:
         #ILs, ErrorConvert = Converter.Extraction2IL(OR, self.settings, self.Action, Subject, Predicate, DirectSupplement, Supplement)
-        ILs, ErrorConvert = Converter.Extraction2IL(OR, self.settings, self.Action, *sentence[:-1])
+        ILs, ErrorConvert = Converter.Extraction2IL(OR, self.settings, self.Action, *sentence)
         for IL in ILs: BeautySafe.safe_IL(IL)
         _ILs.extend(ILs)
         for key in ErrorConvert:
