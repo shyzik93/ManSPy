@@ -206,7 +206,7 @@ def make_storedFASIF(fasif, module_name):
 
 def store_storedFASIF(fasif, storedFASIF, LangClass, OR):
   #print fasif['sentence'].getUnit('dict')
-  Subject, Predicate, DirectSupplement, Supplement, ErrorConvert = LangClass.NL2IL(fasif['sentence'], "extract")[0]
+  Subject, Predicate, DirectSupplement, Supplement = LangClass.NL2IL(fasif['sentence'], "extract")[0]
   DS = DirectSupplement.values()
   if len(DS) == 0:
     print 'FASIF wasn\'t writen. Direct supplement is absent'

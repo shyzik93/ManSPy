@@ -21,7 +21,9 @@ class _Unit():
 
   #def __repr__(self): return self.__class__.__name__ + "(" + str(self.full_info) + ")"
   def __repr__(self): return self.__class__.__name__ + "(" + str(self.unit_info) + ")"
-  def items(self): return self.unit_info.items()
+  def itemsInfo(self): return self.unit_info.items()
+  def itemsUnit(self, index=None):
+    return self.dict_unit.items() if index == None else self.dict_unit[index].items()
   def update(self, _dict): self.unit_info.update(_dict)
 
   # Работа с информацией о составляющих юнит (подюнитов)
@@ -67,6 +69,17 @@ class _Unit():
       listDict = []
       for index in range(l): listDict.append(self.dict_unit[index])
       return listDict
+    elif Type == 'str': # Только для предложений!!!
+      str_s = {'words': '', 'bases': '', 'fwords': '', 'fbases': ''}
+      for index, sunit in self.dict_unit.items():
+        str_s['words'] += ' ' + sunit['word']
+        str_s['bases'] += ' ' + sunit['base']
+        for feature in sunit['feature']:
+          str_s['fwords'] += ' ' + feature['word']
+          str_s['fbases'] += ' ' + feature['base']
+        str_s['fwords'] += ' ' + sunit['word']
+        str_s['fbases'] += ' ' + sunit['base']
+      return str_s
 
 class Word(_Unit):
   """ Класс объекта слова.
