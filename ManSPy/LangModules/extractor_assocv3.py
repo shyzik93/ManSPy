@@ -20,10 +20,8 @@ def Extract(sentence):
   for w_combin in w_combins:
     sentence.delByIndexWithoutSync(*w_combin.keys())
 
-  print w_combins
-
   if sentence.getUnit("dict"):
-    print u"       Необработанные остатки \n", sentence.getUnit("dict")
+    print u"       Необработанные остатки 3 ФАСИФ \n", sentence.getUnit("dict")
     print "-"*10
 
   return predicates, w_combins

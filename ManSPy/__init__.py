@@ -10,7 +10,7 @@
     мессенджеры, интерфейс мозг-компьютер, приёмник звонков и SMS и так далее.
 """
 import repper, simpletools
-import Logic, ImportAction, LangModules, common, time, codecs, sys, os
+import Action, Logic, ImportAction, LangModules, common, time, codecs, sys, os
 
 class MainException(Exception): pass
 
@@ -62,24 +62,23 @@ class API():
     """ Инициализация ИСУ """
     # Меняем настройки по умолчанию на пользовательские
     self.ChangeSettings(UserSettings)
-    print u"Загрузка модулей действий..."
-    t1 = time.time()
+    print(u"Загрузка модулей действий...")
+    t1 = int(time.time())
     Import = ImportAction.ImportAction(self.settings)
     Import.importAll()
-    t2 = time.time()
-    print '  ', t2 - t1
-    print u"Загрузка модуля естественного языка..."
-    t1 = time.time()
-    import Action
+    t2 = int(time.time())
+    print'  ', t2 - t1
+    print(u"Загрузка модуля естественного языка...")
+    t1 = int(time.time())
     self.LangClass = LangModules.LangClass(self.settings, Action)
-    t2 = time.time()
+    t2 = int(time.time())
     print '  ', t2 - t1
-    print u"Инициализация модуля логики..."
-    t1 = time.time()
+    print(u"Инициализация модуля логики...")
+    t1 = int(time.time())
     self.LogicShell = Logic.LogicShell(self.settings)
-    t2 = time.time()
+    t2 = int(time.time())
     print '  ', t2 - t1
-    print u"Готово!"
+    print(u"Готово!")
 
   def print_errors(self, GrammarNazi, ErrorConvert):
     for analys, errors in GrammarNazi.items():

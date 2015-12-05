@@ -1,0 +1,64 @@
+#:Verb
+
+$ToUser
+Esperanto: montri # глаголы в начальной форме, через запятую, чтобы программа сама выделила корень
+Englsh: to print
+Russian: показывать
+
+#:WordCombination
+
+getCondition: CurrencyLoader/GetCourse # Назначение: ИмяМодуляБезРасширения/ИмяФункции
+currency y ;  Esperanto
+# пробелы в начале строки обязательны
+  USD      ;  dolar
+  RUB      ;  rubl
+  EUR      ;  eur
+  UAH      ;  grivn
+country n ;  Esperanto
+  Russia  ;  rusi
+  Belarus ;  belarusi
+  Ukraine ;  ukraini
+#argument n - если не требуется замена значения аргумента
+
+Esperanto
+dolaran: monero # аргументное слова: абстрактные группы через запятую
+rusia: lando
+dolara cambio de rusia banko
+
+Russian
+доллара, валюта
+русскому, страна, национальность
+курс доллара согласно русскому банку
+
+#:WordCombination
+
+changeCondition: smart_home/LightOn # это назначение требует глаголов
+  Esperanto: sxalti
+  English: to turn on
+  Russian: включать
+room y; Esperanto
+  bedroom; dormĉambr
+device y; Esperanto
+  0; tabl
+
+getCondition: - # пока нет(
+
+Esperanto
+en dormcxambro:  cxambro
+tablan: meblaro
+tabla lampo en dormcxambro
+
+Russian
+спальне, комната
+настольный, мебель, местонахождение
+настольный свет в спальне
+
+#:WordCombination
+
+getCondition: smart_home/showAddress
+device y; Esperanto
+  computer; komputil
+
+Esperanto
+komputilo: aparato
+adreso de komputilo

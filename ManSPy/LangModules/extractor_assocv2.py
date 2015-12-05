@@ -44,7 +44,7 @@ def Extract(sentence):#, Recursion=0):
   sentence.delByIndexWithoutSync(*Supplement.keys())
 
   if sentence.getUnit("dict"):
-    print u"       Необработанные остатки \n", sentence.getUnit("dict")
+    print u"       Необработанные остатки 2 ФАСИФ\n", sentence.getUnit("dict")
     print "-"*10
 
   return Subject, Predicate, DirectSupplement, Supplement
