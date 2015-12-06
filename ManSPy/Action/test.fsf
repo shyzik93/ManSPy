@@ -1,3 +1,5 @@
+#FASIF-Version: 3.00
+
 #:Verb
 
 $ToUser
@@ -7,58 +9,58 @@ Russian: показывать
 
 #:WordCombination
 
-getCondition: CurrencyLoader/GetCourse # Назначение: ИмяМодуляБезРасширения/ИмяФункции
-currency y ;  Esperanto
+getCondition: CurrencyLoader/GetCourse  # Назначение: ИмяМодуляБезРасширения/ИмяФункции
+
+currency y ;  Esperanto ; Russian
 # пробелы в начале строки обязательны
-  USD      ;  dolar
-  RUB      ;  rubl
-  EUR      ;  eur
-  UAH      ;  grivn
+    USD      ;  dolara   ; доллара
+    RUB      ;  rubla    ;
+    EUR      ;  eura     ;
+    UAH      ;  grivna   ;
 country n ;  Esperanto
-  Russia  ;  rusi
-  Belarus ;  belarusi
-  Ukraine ;  ukraini
+    Russia  ;  rusi
+    Belarus ;  belarusi
+    Ukraine ;  ukraini
 #argument n - если не требуется замена значения аргумента
 
 Esperanto
-dolaran: monero # аргументное слова: абстрактные группы через запятую
-rusia: lando
-dolara cambio de rusia banko
-
+    dolaran: monero # аргументное слова: абстрактные группы через запятую
+    rusia: lando
+    dolara cambio de rusia banko
 Russian
-доллара, валюта
-русскому, страна, национальность
-курс доллара согласно русскому банку
+    доллара: валюта
+    русскому: страна, национальность
+    курс доллара согласно русскому банку
 
 #:WordCombination
 
 changeCondition: smart_home/LightOn # это назначение требует глаголов
-  Esperanto: sxalti
-  English: to turn on
-  Russian: включать
-room y; Esperanto
-  bedroom; dormĉambr
-device y; Esperanto
-  0; tabl
+    Esperanto: sxalti
+    English: to turn on
+    Russian: включать
+#getCondition: - # пока нет(
 
-getCondition: - # пока нет(
+room y; Esperanto
+    bedroom; dormĉambr
+device y; Esperanto
+    0; tabl
 
 Esperanto
-en dormcxambro:  cxambro
-tablan: meblaro
-tabla lampo en dormcxambro
-
+    en dormcxambro:  cxambro
+    tablan: meblaro
+    tabla lampo en dormcxambro
 Russian
-спальне, комната
-настольный, мебель, местонахождение
-настольный свет в спальне
+    спальне: комната
+    настольный: мебель, местонахождение
+    настольный свет в спальне
 
 #:WordCombination
 
 getCondition: smart_home/showAddress
+
 device y; Esperanto
-  computer; komputil
+    computer; komputil
 
 Esperanto
-komputilo: aparato
-adreso de komputilo
+    komputilo: aparato
+    adreso de komputilo
