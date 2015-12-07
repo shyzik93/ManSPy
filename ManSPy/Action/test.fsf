@@ -3,9 +3,9 @@
 #:Verb
 
 $ToUser
-Esperanto: montri # глаголы в начальной форме, через запятую, чтобы программа сама выделила корень
-Englsh: to print
-Russian: показывать
+    Esperanto: montri # глаголы в начальной форме, через запятую, чтобы программа сама выделила корень
+    Englsh: to print # добавить возможность указания нескольких глаголов через запятую
+    Russian: показывать
 
 #:WordCombination
 
@@ -18,10 +18,10 @@ currency y ;  Esperanto ; Russian
     EUR      ;  eura     ;
     UAH      ;  grivna   ;
 country n ;  Esperanto
-    Russia  ;  rusi
-    Belarus ;  belarusi
-    Ukraine ;  ukraini
-#argument n - если не требуется замена значения аргумента
+    Russia  ;  rusia
+    Belarus ;  belarusia
+    Ukraine ;  ukrainia
+#country n #- если не требуется замена значения аргумента
 
 Esperanto
     dolaran: monero # аргументное слова: абстрактные группы через запятую
@@ -41,9 +41,9 @@ changeCondition: smart_home/LightOn # это назначение требует
 #getCondition: - # пока нет(
 
 room y; Esperanto
-    bedroom; dormĉambr
+    bedroom; dormĉambro
 device y; Esperanto
-    0; tabl
+    0; tabla
 
 Esperanto
     en dormcxambro:  cxambro
@@ -59,7 +59,7 @@ Russian
 getCondition: smart_home/showAddress
 
 device y; Esperanto
-    computer; komputil
+    computer; komputilo
 
 Esperanto
     komputilo: aparato
