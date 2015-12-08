@@ -133,7 +133,7 @@ def parseWordCombination(_fasif): # подформат состоит из тр�
     # АргументноеСлово: АбстрактнаяГруппа1, АбстрактнаяГруппа2     Необходимо заменитиь на: # АргументноеСлово: ВходитАбстрГруппа1, ВходитАбстрГруппа2; НеВХодитАбстрГрупп, НеВХодитАбстрГрупп
     elif re.findall(STRING_WCOMB_ARGWORD.decode('utf-8'), string):
       arg_words = string.strip().split(';')
-      print arg_index, string
+      #print arg_index, string
       arg_word, hyperonyms = arg_words.pop(0).split(':')
       args[arg_indexes[arg_index]]['argwords'][lang]['in_wcomb']['name'] = arg_word
       for hyperonym in hyperonyms.split(','):
@@ -167,15 +167,47 @@ def siftoutWordCombination(fasif, lang):
     if lang in argwords: _args['argwords'] = argwords[lang]
     else: return None
 
+  for destination, value in fasif['functions'].items():
+    if lang in value['verbs']: value['verbs'] = value['verbs'][lang]
+    elif not value['verbs']: continue
+    else: return None
+
   if lang in fasif['wcomb']: fasif['wcomb'] = fasif['wcomb'][lang]
   else: return None
 
   return fasif
 
-def proccess_lingvo_dataVerb(fasif, lang):
+def get_dword(word, LangClass):
+  return LangClass.NL2IL(word, ':postmorph')[0][0].getUnit('dict')[0]
+def proccess_argword(argwords, LangClass):
+  argwords['name'] = get_dword(argwords['name'], LangClass)
+  for index, argword in enumerate(argwords['hyperonyms']):
+    argwords['hyperonyms'][index] = get_dword(argword, LangClass)
+
+def proccess_lingvo_dataVerb(fasif, LangClass, OR):
+  fasif['verbs'] = get_dword(fasif['verbs'], LangClass)['base']
   return fasif
 
-def proccess_lingvo_dataWordCombination(fasif, lang):
+def proccess_lingvo_dataWordCombination(fasif, LangClass, OR):
+  for arg_name, data in fasif['args'].items():
+    #_data = {'argtable':{}}
+    _data = data['argtable'].copy().items()
+    for arg_word, argtable in _data:
+      _arg_word = arg_word
+      arg_word = get_dword(arg_word, LangClass)['base']
+      del data['argtable'][_arg_word]
+      data['argtable'][arg_word] = argtable
+    #fasif['args'][arg_name] = _data
+
+    proccess_argword(data['argwords']['in_wcomb'], LangClass)
+    for argword in data['argwords']['another']:
+      proccess_argword(argword, LangClass)
+
+  for destination, value in fasif['functions'].items():
+    if value['verbs']: value['verbs'] = get_dword(value['verbs'], LangClass)['base']
+
+  fasif['wcomb'] = LangClass.NL2IL(fasif['wcomb'], ':synt')[0][0].getUnit('dict')
+
   return fasif
 
 def selector_of_function(dict_assoc_types, _func_name, *func_args):
@@ -208,14 +240,9 @@ class ImportAction(object):
     dict_assoc_types = selector_of_function(dict_assoc_types, 'parse')
     # Отсеиваем ненужные языки
     dict_assoc_types = selector_of_function(dict_assoc_types, 'siftout', self.settings['language'])
-    dict_assoc_types = selector_of_function(dict_assoc_types, 'proccess_lingvo_data', self.settings['language'])
+    dict_assoc_types = selector_of_function(dict_assoc_types, 'proccess_lingvo_data', self.LangClass, self.OR)
     pprint.pprint(dict_assoc_types)
 
-    #storedFASIF = make_storedFASIF(fasif, module_name)
-    #store_storedFASIF(fasif, storedFASIF, self.LangClass, self.OR)
-    #print '--------Import MA'
-    #print fasif, '\n\n', storedFASIF
-    #print '--------Import MA end'
 
   def importAll(self):
     fasif_dir = os.path.join(os.path.dirname(__file__), 'Action')
