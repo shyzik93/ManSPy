@@ -4,7 +4,7 @@ import sys, os
 _path = os.path.dirname(__file__)
 sys.path.append(_path)
 
-import extractor, Converter, ObjUnit, relation
+import extractor, converter, ObjUnit, relation
 import BeautySafe
 
 class LangClass():
@@ -78,7 +78,8 @@ class LangClass():
       _ErrorConvert = {}
       for sentence in sentences:
         #ILs, ErrorConvert = Converter.Extraction2IL(OR, self.settings, self.Action, Subject, Predicate, DirectSupplement, Supplement)
-        ILs, ErrorConvert = Converter.Extraction2IL(OR, self.settings, self.Action, *sentence)
+        Extraction2IL = converter.Extraction2IL(self.settings['assoc_version'])
+        ILs, ErrorConvert = Extraction2IL(OR, self.settings, self.Action, *sentence)
         for IL in ILs: BeautySafe.safe_IL(IL)
         _ILs.extend(ILs)
         for key in ErrorConvert:

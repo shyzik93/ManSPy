@@ -81,6 +81,16 @@ class _Unit():
         str_s['fbases'] += ' ' + sunit['base']
       return str_s
 
+  # Функция пока не задействована
+  def changeByValues(self, name, value, **properties):
+    ''' Устанавлвает значение value свойства name тех слов, имеющие одниаковые значения свойств properties '''
+    for index, subunit in self.dict_unit.items():
+      counter = len(properties)
+      for _name, _value in properties.items():
+        if not isinstance(_value, tuple): _value = (_value,)
+        if _name in subunit and subunit[_name] in _value: counter -= 1
+      if counter == 0: subunit[name] = value
+
 class Word(_Unit):
   """ Класс объекта слова.
       При инициализации класса ему передаётся слово в виде строки. """  

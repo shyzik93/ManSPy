@@ -4,16 +4,19 @@ import os, sys, re, pprint
 
 NAME_LANG = r'[A-Z][a-z]+'
 WORD = r'[a-zа-яёĉĝĥĵŝŭ]+'
-WORD_WITH_PREPOSITION = '('+WORD+')?[ \t]*'+WORD
+WORD_WITH_PREPOSITION = '(?:'+WORD+')?[ \t]*'+WORD
 
 NAME_PYTHON_OBJ = r'[_a-zA-Z][_0-9a-zA-Z]*'
-NAME_INTERNAL_OBJ = r'^\$'+NAME_PYTHON_OBJ
+NAME_INTERNAL_OBJ = r'\$'+NAME_PYTHON_OBJ
 PATH_FUNCTION = NAME_PYTHON_OBJ+'/'+NAME_PYTHON_OBJ
-ALL_NAMES_FUNCTION = r'^('+NAME_PYTHON_OBJ+'|'+NAME_INTERNAL_OBJ+')$'
+ALL_NAMES_FUNCTION = r'(?:'+PATH_FUNCTION+'|'+NAME_INTERNAL_OBJ+')'
 
 # Парсинг Verbs
-STRING_TITLE = ALL_NAMES_FUNCTION
-STRING_BODY =  r'^ {4}'+NAME_LANG+'[ \t]*:[ \t]*'+WORD_WITH_PREPOSITION+'[ \t]*$'
+STRING_VERBS_TITLE = r'^'+ALL_NAMES_FUNCTION+'$'
+STRING_VERBS_BODY = r'^ {4}'+NAME_LANG+'[ \t]*:[ \t]*'+WORD_WITH_PREPOSITION+'[ \t]*$'
+
+STRING_VERBS_TITLE2 = r'^('+ALL_NAMES_FUNCTION+')$'
+STRING_VERBS_BODY2 = r'^ {4}('+NAME_LANG+')[ \t]*:[ \t]*('+WORD_WITH_PREPOSITION+')[ \t]*$'
 
 # Парсинг WordCombination
 
@@ -26,6 +29,8 @@ STRING_WCOMB_TITLE = r'^'+NAME_LANG+'$'
 #STRING_WCOMB_ARGWORD = r'^ {4}'+WORD_WITH_PREPOSITION+'[ \t]*:[ \t]*'+WORD+'[ \t]*(,[ \t]*'+WORD+'[ \t]*)*$' # первое слово - предлог (иногда нужен)
 STRING_WCOMB_ARGWORD = r'^ {4}('+WORD_WITH_PREPOSITION+'[ \t]*:[ \t]*'+WORD+'[ \t]*(,[ \t]*'+WORD+'[ \t]*)*;*)+$' # первое слово - предлог (иногда нужен)
 STRING_WCOMB = r'^ {4}('+WORD+')?([ \t]+'+WORD+')*[ \t]*$' # Не должо совпадать с названием языка!
+
+
 
 def get_fasif_files(modules_path):
   ''' Функция возвращает мимена МУ '''
@@ -58,13 +63,35 @@ def separate_fasifs(fasif):
   return dict_assoc_types
 
 def parseVerb(_fasif):
+  '''fasif = {'verbs':{}}
+
+  for string in _fasif:
+    for string_type, string_regexp in STRING_VERBS.items():
+      print '  ', string, string_regexp
+      res = re.findall(string_regexp.decode('utf-8'), string)
+      print res
+      if string_type == 'STRING_VERBS_TITLE':
+        if not len(res):
+          print 'Error of string >>> ', string
+          return
+        fasif['function'] = res[0][0]
+        break
+      elif string_type == 'STRING_VERBS_BODY':
+        if not len(res):
+          print 'Error of string >>> ', string
+          return
+        fasif['verbs'][res[0][0]] = res[0][1]
+        break
+
+  return fasif'''
+
   function = None
   verbs = {}
   for string in _fasif:
-    if re.findall(STRING_TITLE.decode('utf-8'), string):
-      function = string.strip()
-    elif re.findall(STRING_BODY.decode('utf-8'), string):
-      lang, verb = string.split(':')
+    if re.findall(STRING_VERBS_TITLE.decode('utf-8'), string):
+      function = re.findall(STRING_VERBS_TITLE2.decode('utf-8'), string)[0]#string.strip()
+    elif re.findall(STRING_VERBS_BODY.decode('utf-8'), string):
+      lang, verb = re.findall(STRING_VERBS_BODY2.decode('utf-8'), string)[0]#string.split(':')
       verbs[lang.strip()] = verb.strip()
   return {'function': function, 'verbs': verbs}
 
@@ -240,7 +267,7 @@ class ImportAction(object):
     dict_assoc_types = selector_of_function(dict_assoc_types, 'parse')
     # Отсеиваем ненужные языки
     dict_assoc_types = selector_of_function(dict_assoc_types, 'siftout', self.settings['language'])
-    dict_assoc_types = selector_of_function(dict_assoc_types, 'proccess_lingvo_data', self.LangClass, self.OR)
+    #dict_assoc_types = selector_of_function(dict_assoc_types, 'proccess_lingvo_data', self.LangClass, self.OR)
     pprint.pprint(dict_assoc_types)
 
 
