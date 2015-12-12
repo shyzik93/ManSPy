@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ManSPy.LangModules import relation
+from ManSPy import relation
 
 settings = None
 

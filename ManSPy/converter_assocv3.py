@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-def Extraction2IL(OR, settings, Action, Subject, Predicate, DirectSupplement, Supplement):
+def Extraction2IL(OR, settings, Action, predficates, w_combins):
+  print '    predficates ::', predficates, '\n'
+  print '    w_combins ::', w_combins, '\n'
   pattern_IL = {
     'arg0': {'antonym': False}, # передаётся первым аргументом в каждую функцию
     'action': {

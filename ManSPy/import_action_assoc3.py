@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import LangModules, Action
+import analyse_text, Action, relation
 import os, sys, re, pprint
 
 NAME_LANG = r'[A-Z][a-z]+'
@@ -254,8 +254,8 @@ def selector_of_function(dict_assoc_types, _func_name, *func_args):
 class ImportAction(object):
   def __init__(self, settings):
     self.settings = settings
-    self.OR = LangModules.relation.ObjRelation(settings['language'], settings['test'], settings['storage_version'])
-    self.LangClass = LangModules.LangClass(settings, Action)
+    self.OR = relation.ObjRelation(settings['language'], settings['test'], settings['storage_version'])
+    self.LangClass = analyse_text.LangClass(settings)
 
   def proccess(self, fasif_file, fasif_dir):
     ''' Импортирует МД, извлекает и преобразует ФАСИФ  словарь. '''
@@ -267,8 +267,8 @@ class ImportAction(object):
     dict_assoc_types = selector_of_function(dict_assoc_types, 'parse')
     # Отсеиваем ненужные языки
     dict_assoc_types = selector_of_function(dict_assoc_types, 'siftout', self.settings['language'])
-    #dict_assoc_types = selector_of_function(dict_assoc_types, 'proccess_lingvo_data', self.LangClass, self.OR)
-    pprint.pprint(dict_assoc_types)
+    dict_assoc_types = selector_of_function(dict_assoc_types, 'proccess_lingvo_data', self.LangClass, self.OR)
+    #pprint.pprint(dict_assoc_types)
 
 
   def importAll(self):

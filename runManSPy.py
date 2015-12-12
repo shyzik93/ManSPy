@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import ManSPy, IFModules, sys
-sys.dont_write_bytecode = True # можно удалить для ускорения работы
+import ManSPy, IFModules#, sys
+#sys.dont_write_bytecode = True # можно удалить для ускорения работы
 
 Settings = {
   'logic': True,

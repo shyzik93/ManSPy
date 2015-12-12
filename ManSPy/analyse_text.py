@@ -1,19 +1,13 @@
 # -*- coding: utf-8 -*-
 import sys, os
-
-_path = os.path.dirname(__file__)
-sys.path.append(_path)
-
-import extractor, converter, ObjUnit, relation
-import BeautySafe
+import NLModules, Action, relation, extractor, converter, BeautySafe
 
 class LangClass():
   levels = ["graphmath", "morph", "postmorph", "synt", "extract", "convert"]
-  def __init__(self, settings, Action): # импорт модулей и выдача финуций.
+  def __init__(self, settings): # импорт модулей и выдача финуций.
     self.settings = settings
     self.language = settings['language']
-    self.LangModule = __import__(self.language)
-    self.Action = Action
+    self.LangModule = NLModules.getModule(self.language)
 
   def NL2IL(self, sentences, levels="graphmath convert"):
     """ Второй аргумент - диапазон конвертирования от первого до последнего
@@ -38,7 +32,7 @@ class LangClass():
     # Графематический анализ
     if start_level in self.levels[:1]:
       BeautySafe.safe_NL(sentences)
-      sentences = self.LangModule.getGraphmathA(sentences, ObjUnit)
+      sentences = self.LangModule.getGraphmathA(sentences, NLModules.ObjUnit)
       BeautySafe.safe_sentences(sentences, 'GraphemathicAnalysis analysis')
       if end_level == self.levels[0]: return sentence, GrammarNazi
 
@@ -79,7 +73,7 @@ class LangClass():
       for sentence in sentences:
         #ILs, ErrorConvert = Converter.Extraction2IL(OR, self.settings, self.Action, Subject, Predicate, DirectSupplement, Supplement)
         Extraction2IL = converter.Extraction2IL(self.settings['assoc_version'])
-        ILs, ErrorConvert = Extraction2IL(OR, self.settings, self.Action, *sentence)
+        ILs, ErrorConvert = Extraction2IL(OR, self.settings, Action, *sentence)
         for IL in ILs: BeautySafe.safe_IL(IL)
         _ILs.extend(ILs)
         for key in ErrorConvert:

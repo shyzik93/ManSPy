@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import LangModules, Action
+import analyse_text, Action, relation
 import os, re
 
 template = re.compile(r"[^_][a-zA-Z0-9_]+\.py[cd]?")
@@ -217,8 +217,8 @@ def store_storedFASIF(fasif, storedFASIF, LangClass, OR):
 class ImportAction(object):
   def __init__(self, settings):
     self.settings = settings
-    self.OR = LangModules.relation.ObjRelation(settings['language'], settings['test'], settings['storage_version'])
-    self.LangClass = LangModules.LangClass(settings, Action)
+    self.OR = relation.ObjRelation(settings['language'], settings['test'], settings['storage_version'])
+    self.LangClass = analyse_text.LangClass(settings)
 
   def _import(self, module_name):
     ''' Импортирует МД, извлекает и преобразует ФАСИФ  словарь. '''
