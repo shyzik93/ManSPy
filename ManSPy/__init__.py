@@ -10,7 +10,7 @@
     мессенджеры, интерфейс мозг-компьютер, приёмник звонков и SMS и так далее.
 """
 import repper, simpletools
-import Action, Logic, ImportAction, common, time, codecs, sys, os
+import Action, Logic, import_action, common, time, codecs, sys, os
 from analyse_text import LangClass
 
 class MainException(Exception): pass
@@ -65,7 +65,7 @@ class API():
     self.ChangeSettings(UserSettings)
     print(u"Загрузка модулей действий...")
     t1 = int(time.time())
-    Import = ImportAction.ImportAction(self.settings)
+    Import = import_action.ImportAction(self.settings)
     Import.importAll()
     t2 = int(time.time())
     print'  ', t2 - t1

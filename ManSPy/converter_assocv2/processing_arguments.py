@@ -2,7 +2,7 @@
 """
 """
 import mymath, os, copy
-import common
+from .. import common
 
 def walk(o, func, parent=None, key=None):
   if isinstance(o, dict): keys = o.keys()

@@ -4,8 +4,8 @@ def Extract(sentence):
   predicate = {} # сказуемые
   w_combins = []  # ловосочетания
 
-  for name, str_s in sentence.getUnit('str').items():
-    print name, ':', str_s
+  #for name, str_s in sentence.getUnit('str').items():
+  #  print name, ':', str_s
 
   # Поиск сказуемого
   predicates = sentence.getByCharacteristic('MOSentence', 'predicate')

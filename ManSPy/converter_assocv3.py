@@ -1,9 +1,21 @@
 # -*- coding: utf-8 -*-
 
-def Extraction2IL(OR, settings, Action, predficates, w_combins):
-  print '    predficates ::', predficates, '\n'
+import to_formule, NLModules
+
+def Extraction2IL(OR, settings, Action, predicates, w_combins):
+  print '    predficates ::', predicates, '\n'
   print '    w_combins ::', w_combins, '\n'
-  pattern_IL = {
+
+  fdb = to_formule.FasifDB(settings)
+
+  w_combin = NLModules.ObjUnit.Sentence([])
+  w_combin.dict_unit = w_combins[0]
+  w_combin = w_combin.getUnit('dict')
+  
+  fwcomb = to_formule.to_formule(w_combin)
+  print fdb.get_hashWComb(fwcomb)
+
+  '''pattern_IL = {
     'arg0': {'antonym': False}, # передаётся первым аргументом в каждую функцию
     'action': {
       'function': None,
@@ -31,4 +43,5 @@ def Extraction2IL(OR, settings, Action, predficates, w_combins):
     IL['arg0']['antonym'] = isantonym
     set_action(settings, Action, funcdesc, Predicate, IL)
     ILs.extend([join_arg_and_func(true_arg, IL) for true_arg in true_args]) # на случай нескольких дополнений
-  return ILs, ErrorConvert
+  return ILs, ErrorConvert'''
+  return [], {'function': [], 'argument': []}

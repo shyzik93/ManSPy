@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import analyse_text, Action, relation
-import os, sys, re, pprint
+from pprint import pprint
+import analyse_text, Action, relation, to_formule
+import os, sys, re
 
 NAME_LANG = r'[A-Z][a-z]+'
 WORD = r'[a-zа-яёĉĝĥĵŝŭ]+'
@@ -211,11 +212,11 @@ def proccess_argword(argwords, LangClass):
   for index, argword in enumerate(argwords['hyperonyms']):
     argwords['hyperonyms'][index] = get_dword(argword, LangClass)
 
-def proccess_lingvo_dataVerb(fasif, LangClass, OR):
+def proccess_lingvo_dataVerb(fasif, LangClass, OR, fdb):
   fasif['verbs'] = get_dword(fasif['verbs'], LangClass)['base']
   return fasif
 
-def proccess_lingvo_dataWordCombination(fasif, LangClass, OR):
+def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):
   for arg_name, data in fasif['args'].items():
     #_data = {'argtable':{}}
     _data = data['argtable'].copy().items()
@@ -233,7 +234,15 @@ def proccess_lingvo_dataWordCombination(fasif, LangClass, OR):
   for destination, value in fasif['functions'].items():
     if value['verbs']: value['verbs'] = get_dword(value['verbs'], LangClass)['base']
 
-  fasif['wcomb'] = LangClass.NL2IL(fasif['wcomb'], ':synt')[0][0].getUnit('dict')
+  print '----------------- to formule start'
+  print fasif['wcomb']
+  sentence = LangClass.NL2IL(fasif['wcomb'], ':synt')[0][0]
+  fasif['wcomb'] = sentence.getUnit('dict')
+
+  fwcomb = to_formule.to_formule(fasif['wcomb'])
+  pprint(fwcomb)
+  fdb.add_hashWComb(fwcomb, {'bl':4}, sentence.getUnit('str')['fwords'], '')
+  print '----------------- to formule end'
 
   return fasif
 
@@ -256,6 +265,7 @@ class ImportAction(object):
     self.settings = settings
     self.OR = relation.ObjRelation(settings['language'], settings['test'], settings['storage_version'])
     self.LangClass = analyse_text.LangClass(settings)
+    self.fdb = to_formule.FasifDB(settings)
 
   def proccess(self, fasif_file, fasif_dir):
     ''' Импортирует МД, извлекает и преобразует ФАСИФ  словарь. '''
@@ -263,12 +273,15 @@ class ImportAction(object):
     with open(os.path.join(fasif_dir, fasif_file)) as f:
       fasif = f.read()
     if isinstance(fasif, str): fasif = fasif.decode('utf-8')
+    # Отделяем ФАСИФы друг от друга
     dict_assoc_types = separate_fasifs(fasif)
+    # Превращаем текст ФАСИФов в словарь
     dict_assoc_types = selector_of_function(dict_assoc_types, 'parse')
     # Отсеиваем ненужные языки
     dict_assoc_types = selector_of_function(dict_assoc_types, 'siftout', self.settings['language'])
-    dict_assoc_types = selector_of_function(dict_assoc_types, 'proccess_lingvo_data', self.LangClass, self.OR)
-    #pprint.pprint(dict_assoc_types)
+    # Обрабатываем лингвистическую информацию
+    dict_assoc_types = selector_of_function(dict_assoc_types, 'proccess_lingvo_data', self.LangClass, self.OR, self.fdb)
+    #pprint(dict_assoc_types)
 
 
   def importAll(self):

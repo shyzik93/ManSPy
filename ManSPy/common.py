@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pickle, os, sqlite3 as sql
 
-settings_path = os.path.join(os.path.dirname(__file__), 'settings.pckl')
+settings_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'settings.pckl')
 
 ''' Функции-обёртки для удобства '''
 def _toDump(path, data):
