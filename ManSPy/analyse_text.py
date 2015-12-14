@@ -39,6 +39,7 @@ class LangClass():
     # Морфологический анализ
     if start_level in self.levels[:2]:
       sentences = self.LangModule.getMorphA(sentences, GrammarNazi['morph'])
+      for sentence in sentences: print '----', sentence.getUnit('str')['fwords']
       BeautySafe.safe_sentences(sentences, 'Morphological analysis')
       if end_level == self.levels[1]: return sentences, GrammarNazi
 

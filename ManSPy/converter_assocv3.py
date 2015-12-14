@@ -3,17 +3,22 @@
 import to_formule, NLModules
 
 def Extraction2IL(OR, settings, Action, predicates, w_combins):
-  print '    predficates ::', predicates, '\n'
-  print '    w_combins ::', w_combins, '\n'
+  #print '    predficates ::', predicates, '\n'
+  #print '    w_combins ::', w_combins, '\n'
 
   fdb = to_formule.FasifDB(settings)
 
-  w_combin = NLModules.ObjUnit.Sentence([])
-  w_combin.dict_unit = w_combins[0]
-  w_combin = w_combin.getUnit('dict')
+  x = 0
+  for _w_combin in w_combins:
+    w_combin = NLModules.ObjUnit.Sentence([])
+    w_combin.dict_unit = _w_combin
+    print x, w_combin.getUnit('str')['fwords']
+    w_combin = w_combin.getUnit('dict')
   
-  fwcomb = to_formule.to_formule(w_combin)
-  print fdb.get_hashWComb(fwcomb)
+    fwcomb = to_formule.to_formule(w_combin, False)
+    print x, fdb.get_hashWComb(fwcomb)
+    x += 1
+  print 
 
   '''pattern_IL = {
     'arg0': {'antonym': False}, # передаётся первым аргументом в каждую функцию

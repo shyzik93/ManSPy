@@ -14,7 +14,7 @@ def forPronounAndNoun(case):
   ''' Определяет член предложения для имени существительного
       и притяжательного местоимепния по падежу '''
   if case == 'accusative': return 'direct supplement'
-  elif case == 'nominative': return 'object'
+  elif case == 'nominative': return 'subject'
   else: return 'supplement'
 
 def setMOS_ToSign(features, GrammarNazi):
@@ -53,8 +53,9 @@ def setMOSentence(index, sentence, GrammarNazi):
       word['MOSentence'] = forPronounAndNoun(word['case'])
     else: word['MOSentence'] = '' # не притяжательное и не личное местоимение
 
+  # прилагательное без существительного
+  elif word['POSpeech'] == 'adjective': word['MOSentence'] = 'definition'  
   else: word['MOSentence'] = ''
-
   return index
 
 def setLinks(index, sentence, GrammarNazi):

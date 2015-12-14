@@ -239,7 +239,8 @@ def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):
   sentence = LangClass.NL2IL(fasif['wcomb'], ':synt')[0][0]
   fasif['wcomb'] = sentence.getUnit('dict')
 
-  fwcomb = to_formule.to_formule(fasif['wcomb'])
+  #pprint(fasif['args']) 
+  fwcomb = to_formule.to_formule(fasif['wcomb'], True, fasif['args'])
   pprint(fwcomb)
   fdb.add_hashWComb(fwcomb, {'bl':4}, sentence.getUnit('str')['fwords'], '')
   print '----------------- to formule end'

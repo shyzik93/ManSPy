@@ -3,6 +3,7 @@
 def Extract(sentence):
   predicate = {} # сказуемые
   w_combins = []  # ловосочетания
+  print sentence.getUnit('str')['fwords']
 
   #for name, str_s in sentence.getUnit('str').items():
   #  print name, ':', str_s

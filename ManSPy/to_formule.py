@@ -7,7 +7,8 @@ string = None
 
 def iseq(pattern):
   global string
-  print len(pattern), len(string)
+  #print len(pattern), len(string)
+  #print 'pattern:', pattern, '\nstring:',  string
   res = re.findall(pattern, string)
   return 1 if res else 0
 
@@ -67,13 +68,20 @@ def return_features(dict_wcomb):
     _index += 1
   return _dict_wcomb
 
-def copy_word(dict_word, *usefull_properties):
+'''def copy_word(dict_word, *usefull_properties):
   _dict_word = {}
   for _property, value in dict_word.items(): # падежей и фичей не должно быть! Падежи удаляются из фичей в постморфологическом анализе.
     if _property not in usefull_properties: continue
     _dict_word[_property] = value
     if _property == 'feature':
       for index, feature in enumerate(value): _dict_word[_property][index] = copy_word(feature, *usefull_properties)
+  return _dict_word'''
+
+def copy_word(dict_word, *usefull_properties):
+  _dict_word = {}
+  for _property in usefull_properties: # падежей и фичей не должно быть! Падежи удаляются из фичей в постморфологическом анализе.
+    if _property not in dict_word: continue
+    _dict_word[_property] = dict_word[_property]
   return _dict_word
 
 def word2formule(dword):
@@ -83,32 +91,64 @@ def word2formule(dword):
   fword = []
   for key in keys:
     value = dword[key]
-    fword.append(key+':'+value)
+    fword.append(key+u':'+value)
   return ','.join(fword)
 
-def wcomb2formule(dict_wcomb):
+ANY_DEFINITION = r'POSpeech:adjective,base:'
+
+def wcomb2formule(dict_wcomb, isreg):
   keys = dict_wcomb.keys() # для сортировки словаря # ля Питон3 - list(dict_wcomb.keys())
   keys.sort()
 
   fwcomb = []
   for key in keys:
     dword = dict_wcomb[key]
-    fwcomb.append(word2formule(dword))
-  return ';'.join(fwcomb)
+    if isreg:
+      fwcomb.append('(?:'+word2formule(dword)+';)')
+    else: fwcomb.append(word2formule(dword)+';')
+  #print fwcomb
+  return ''.join(fwcomb)
 
-def to_formule(dict_wcomb):
-  #dict_wcomb = wcomb.getUnit('dict', 'members', 'info')
-  # копируем словосочетание с нужными свойствами слов
-  _min = min(dict_wcomb.keys())
-  dict_wcomb[_min] = copy_word(dict_wcomb[_min], 'POSpeech', 'base', 'feature') # падеж и член предложения первого чдена не учитывается (они могут иметь разные падежи членства)
-  for index, dict_word in dict_wcomb.items()[1:]:
-    dict_wcomb[index] = copy_word(dict_word, 'POSpeech', 'base', 'case', 'feature')
+def to_formule(_dict_wcomb, isreg=True, _args=None): # третий аргумент передаём, если второй = True
   # возвращаем определения и обстоятельства из свойств слова в предложение
-  dict_wcomb = return_features(dict_wcomb)
-  pprint(dict_wcomb)
+  _dict_wcomb = return_features(_dict_wcomb)
+  # копируем словосочетание с нужными свойствами слов
+  '''_min = min(_dict_wcomb.keys())
+  _dict_wcomb[_min] = copy_word(_dict_wcomb[_min], 'POSpeech', 'base', 'feature') # падеж и член предложения первого чдена не учитывается (они могут иметь разные падежи членства)
+  for index, _dict_word in _dict_wcomb.items()[1:]:
+    _dict_wcomb[index] = copy_word(_dict_word, 'POSpeech', 'base', 'case', 'feature')'''
+  first = True
+  for index, _dict_word in _dict_wcomb.items():
+    if _dict_word['MOSentence'] in ['definition', 'circumstance']: _dict_wcomb[index] = copy_word(_dict_word, 'MOSentence', 'base')
+    elif first == True and _dict_word['MOSentence'] in ['direct supplement', 'supplement', 'subject']:
+      _dict_wcomb[index] = copy_word(_dict_word, 'POSpeech', 'base')
+      first = False
+    elif first == False and _dict_word['MOSentence'] in ['direct supplement', 'supplement', 'subject']: _dict_wcomb[index] = copy_word(_dict_word, 'MOSentence', 'base', 'case')
+  #pprint(_dict_wcomb)
+
+  if isreg:
+    args = {}
+    for argname, data in _args.items():
+      dword = data['argwords']['in_wcomb']['name']
+      dword['isreq'] = data['isreq']
+      args[dword['base']] = dword
+
+    dict_wcomb = {}
+    index = 0
+    for _index, dword in _dict_wcomb.items():
+      if dword['base'] in args:
+        #if 'case' in keys and dword['case'] != args[value]['case']: continue # если есть падеж, то учитываем его
+        dword['base'] = ur'[a-zа-яёĉĝĥĵŝŭ]+'
+      dict_wcomb[index] = dword
+      index += 1
+
+  else:
+    args = None
+    dict_wcomb = _dict_wcomb
+
   # составляем регулярное выражение
-  fwcomb = wcomb2formule(dict_wcomb)
-  return fwcomb
+  fwcomb = wcomb2formule(dict_wcomb, isreg)
+  return r'^'+fwcomb+'$' if isreg else fwcomb
 
 ######### Получение хеша словосочетания
 
