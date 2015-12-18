@@ -85,12 +85,32 @@ def dict_word2formule_word(dict_word):
     formule_word.append(key+u':'+value)
   return ','.join(formule_word)
 
-def dict_wcomb2formule_wcomb(dict_wcomb, args):
-  pass
+ANY_DEFINITION = r'MOSentence:definition,base:[a-zа-яёĉĝĥĵŝŭ]+'.decode('utf-8')
+MORE_ZERO = r'(?:%s;)*'
+MORE_ONE = r'(?:%s;)+'
+ONLY_ONE = r'(?:%s;)'
+MAX_ONE = r'(?:%s;)?'
 
-ANY_DEFINITION = r'POSpeech:adjective,base:'
+def dict_wcomb2formule_wcomb(dict_wcomb, args):
+  ''' Преобразует в регулярку простое именное словосочетание (определения + дополнение (субъект, прям. доп.)) '''
+  formule_wcomb = MORE_ZERO % ANY_DEFINITION
+  count_req = 0
+  if len(dict_wcomb)==1:
+    keys = dict_wcomb.keys()
+    return formule_wcomb + ONLY_ONE % dict_word2formule_word(dict_wcomb[keys[0]])
+  for index, dict_word in dict_wcomb.items():
+    if dict_word['MOSentence'] == 'definition':
+      if dict_word['base'] in args: # нужно проверять знаменательное слово для повышения точности, то есть сохранять его в args. ## нужно прекратить удалять падеж из прилагательных в пост. морф анализе для получения возможности использования однокоренных прилагательных ннесколько раз в предложении (например, одно - аргумент, другое - константа)
+        _MORE = MORE_ZERO if args[dict_word['base']][isreq] == 'n' else MORE_ONE
+        if args[dict_word['base']][isreq] == 'n': count_req += 1
+        formule_wcomb += _MORE % dict_word2formule_word(dict_word) + MORE_ZERO % ANY_DEFINITION
+    elif 'supplement' in dict_word['MOSentence'] or 'subject' in dict_word['MOSentence']:
+      formule_wcomb += ONLY_ONE % dict_word2formule_word(dict_word)
+  # додумать с учётом констант
+  return r'(?:%s)+' % formule_wcomb if count_req == 0 else ONLY_ONE % formule_wcomb
 
 def dict_argument2formule_argument(dict_argument, isreg):
+  ''' реобразует весь актант сразу (для предолжений от пользователя) '''
   keys = dict_argument.keys() # для сортировки словаря # ля Питон3 - list(dict_wcomb.keys())
   keys.sort()
 
@@ -137,19 +157,21 @@ def to_formule(_dict_argument, isreg=True, _args=None): # третий аргу�
       dict_argument[index] = dword
       index += 1
 
-    dict_wcomb = {} # простое словосочетание с типом связи "согласование"
+    formule_argument = ''
+    dict_wcomb = {} # простое словосочетание с типом связи "согласование" (именное)
     for index, dict_word in dict_argument.items():
       dict_wcomb[index] = dict_word
-      if dict_word['MOSentence'] in ['direct supplement', 'supplement', 'subject']:
-        formule_wcomb = dict_wcomb2formule_wcomb(dict_wcomb, args)
+      if 'supplement' in dict_word['MOSentence'] or 'subject' in dict_word['MOSentence']:#in ['direct supplement', 'supplement', 'subject']:
+        formule_argument += dict_wcomb2formule_wcomb(dict_wcomb, args)
         dict_wcomb = {}
 
   else:
     args = None
     dict_argument = _dict_argument
 
-  # составляем регулярное выражение
-  formule_argument = dict_argument2formule_argument(dict_argument, isreg)
+    # составляем регулярное выражение
+    formule_argument = dict_argument2formule_argument(dict_argument, isreg)
+    print formule_argument
   #print '.....', fwcomb
   return r'^'+formule_argument+'$' if isreg else formule_argument
 
