@@ -2,23 +2,30 @@
 
 import to_formule, NLModules
 
-def Extraction2IL(OR, settings, Action, predicates, w_combins):
+def Extraction2IL(OR, settings, Action, predicates, arguments):
   #print '    predficates ::', predicates, '\n'
-  #print '    w_combins ::', w_combins, '\n'
+  #print '    arguments ::', arguments, '\n'
 
   fdb = to_formule.FasifDB(settings)
 
+  # Вынимаем Фасиф
   x = 0
-  for _w_combin in w_combins:
-    w_combin = NLModules.ObjUnit.Sentence([])
-    w_combin.dict_unit = _w_combin
-    print x, w_combin.getUnit('str')['fwords']
-    w_combin = w_combin.getUnit('dict')
-  
-    fwcomb = to_formule.to_formule(w_combin, False)
-    print x, fdb.get_hashWComb(fwcomb)
+  for _argument in arguments:
+    #argument = NLModules.ObjUnit.Sentence([])
+    #argument.dict_unit = _argument
+    argument = NLModules.ObjUnit.Sentence(_argument)
+    print x, argument.getUnit('str')['fwords']
+    #argument = argument.getUnit('dict')
+
+    fasifs = fdb.getFASIF('WordCombination', argument)
+    print  fasifs
+    #fwcomb = to_formule.to_formule(argument, False)
+    #print x, fdb.get_hashWComb(fwcomb)
     x += 1
   print 
+
+  # Составляем слооварь аргументов
+  # Определяем функции и сотавляем ВЯ.
 
   '''pattern_IL = {
     'arg0': {'antonym': False}, # передаётся первым аргументом в каждую функцию

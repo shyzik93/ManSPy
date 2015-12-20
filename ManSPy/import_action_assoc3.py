@@ -237,12 +237,18 @@ def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):
   print '----------------- to formule start'
   print fasif['wcomb']
   sentence = LangClass.NL2IL(fasif['wcomb'], ':synt')[0][0]
-  fasif['wcomb'] = sentence.getUnit('dict')
+  wcomb = sentence
+  for argname, data in fasif['args'].items():
+    argword = data['argwords']['in_wcomb']['name']
+    wcomb.chmanyByValues({'argname':argname, 'isreq':data['isreq'], 'argtable':data['argtable'], 'argwords_another':data['argwords']['another'], 'hyperonyms':data['argwords']['in_wcomb']['hyperonyms']}, setstring='subiv:noignore', base=argword['base'], case=argword['case'])
+    del fasif['args'][argname]
+  fasif['wcomb'] = wcomb.getUnit('dict')
 
   #pprint(fasif['args']) 
-  fwcomb = to_formule.to_formule(fasif['wcomb'], True, fasif['args'])
-  pprint(fwcomb)
-  fdb.add_hashWComb(fwcomb, {'bl':4}, sentence.getUnit('str')['fwords'], '')
+  #fwcomb = to_formule.to_formule(fasif['wcomb'], True, fasif['args'])
+  #pprint(fwcomb)
+  #fdb.add_hashWComb(fwcomb, {'bl':4}, sentence.getUnit('str')['fwords'], '')
+
   print '----------------- to formule end'
 
   return fasif
@@ -282,6 +288,10 @@ class ImportAction(object):
     dict_assoc_types = selector_of_function(dict_assoc_types, 'siftout', self.settings['language'])
     # Обрабатываем лингвистическую информацию
     dict_assoc_types = selector_of_function(dict_assoc_types, 'proccess_lingvo_data', self.LangClass, self.OR, self.fdb)
+
+    for assoc_type, fasifs in dict_assoc_types.items():
+      for fasif in fasifs: self.fdb.safeFASIF(assoc_type, fasif)
+
     #pprint(dict_assoc_types)
 
 

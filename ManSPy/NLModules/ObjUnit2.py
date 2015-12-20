@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 # Author: Ra93POL
 # Date: 2.12.2014 - nowdays
-import copy, re
+import copy
 
 class _Unit():
-  ''' unit(index) - извлечение подъюнита
-      unit(index, name) - извлечение характеристики подъюнита
-      unit(index, name, value) - изменение характеристики подъюнита
+  ''' unit(index) - извлечение подюнита
+      unit(index, name) - извлечение характеристики подюнита
+      unit(index, name, value) - изменение характеристики подюнита
       unit[name] - извлечение характеристики юнита
       unit[name] = value - изменение характеристики юнита
       name in unit - проверка наличия ключа характеристики юнита
       len(unit) - извлечение длины юнита
 
-      Юнит - это предложение или слово. Подъюнит - их составляющие:
+      Юнита - это предложение или слово. Подюнит - их составляющие:
       для предложения - это слова, для слов - это символы'''
   # Работа с информацией о юните в целом
   def __setitem__(self, key, value): self.unit_info[key] = value
@@ -33,39 +33,12 @@ class _Unit():
     elif value == None: return self.dict_unit[index][name]
     self.dict_unit[index][name] = value
 
-  # Итератор
-  def __iter__(self):
-    self.current = 0
-    self.keys = self.dict_unit.keys()
-    while self.current < len(self.keys) and self.current >= 0:
-      key = self.keys[self.current]
-      yield self.dict_unit[key]
-  def jump(self, step=1): self.current += step
-  def delete(self, step=0, count=1):
-    for c in range(count): del self.dict_unit[keys[self.current+step]]
-    self.keys = self.dict_unit.keys()
-  '''def __iter__(self):
-    self.current = 0
-    return self
-  def next(self, step=1):
-    keys = self.dict_unit.keys()
-    self.current += step
-    if self.current >= len(keys): raise StopIteration
-    else: return self.dict_unit[keys[self.current]]
-  def delete(self, step=None, count=1):
-    keys = self.dict_unit.keys()
-    if step==None:
-      del self.dict_unit[keys[self.current]]
-      return
-    for c in range(count):
-      del self.dict_unit[keys[step]], keys[step]
-      step += 1'''
-
   # Прочее
   def getLen(self, func=None):
     """ Возвращает длину юнита (кол-во подюнитов). Может применить к длине функцию,
         например range, после этого возвратится список """
-    return func(len(self.dict_unit)) if func else len(self.dict_unit)
+    if func == None: return len(self.dict_unit)
+    else: return func(len(self.dict_unit))
 
   def _go_depth(self, el, info1, info2):
     if isinstance(el, Sentence): return el.getUnit('dict', info1, info2)
@@ -108,84 +81,31 @@ class _Unit():
         str_s['fbases'] += ' ' + sunit['base']
       return str_s
 
-  def _parseSettingsString(self, setstring):
-    ''' Функция обработки строки настройки функции массовой обработки подъюнитов
-       Пример строки:
-       "subiv:ignore" - обрабатывать юниты как обычно.
-       "subiv:noignore-feature" - обрабатывать юниты как обычно, но ещё и в значениях с ключом feature.
-       "subiv:noignore-^feature" - обрабатывать юниты как обычно, но ещё и во всех значениях, кроме ключа feature.
-       "subiv:only-feature" - обрабатывать юниты только в значениях с ключом feature.
-       "subiv:only-^feature" - обрабатывать юниты только в значениях, кроме ключа feature.
-       "list:eq" - списки, кортежи и словари сравнивать.
-       "list:in" - проверять вхождение значений в список, кортеж и словарь. '''
-    setdict = {'list': {'setvalue':'in', 'negative':False, 'names':[]},
-                     'subiv': {'setvalue':'ignore', 'negative':False, 'names':[]}, }
-    setstring = re.split(r' *; *', setstring.lower())
-    for _setstring in setstring:
-      #print setstring, re.findall(r'([a-z]+) *: *([a-z]+) *(?:- *(\^[a-z]+(?: *, *[a-z]+)?))?', _setstring)
-      if not _setstring: continue
-      setname, setvalue, names = re.findall(r'([a-z]+) *: *([a-z]+) *(?:- *(\^[a-z]+(?: *, *[a-z]+)?))?', _setstring)[0]
-      negative = False if not names or names[0] != '^' else True
-      names = names[1:] if negative else names
-      names = re.split(r' *, *', names)
-      names = [] if not names[0] else names
-      setdict[setname] = {'setvalue':setvalue, 'negative':negative, 'names':names}
-    #print 'setdict:', setdict
-    return setdict
-
-  # Коллекция функций для массовой работы с подъюнитами, имеющих одинаковые значения свойств.
-  def _compare_subunit(self, subunit, properties, setdict):
-    counter = len(properties)
-    for name, value in properties.items():
-      if not isinstance(value, tuple): value = (value,)
-      if isinstance(value[0], (list, tuple, dict)) and setdict['setvalue'] == 'in':
-        if name not in subunit: continue
-        _counter = len(value)
-        for _value in value:
-          if _value in subunit[name]: _counter -= 1
-        if not _counter: counter -= 1
-      else:
-        if name in subunit and subunit[name] in value: counter -= 1
-        #if 'index' in subunit: print '  ;;;;', subunit['word'], counter
-    if not counter: return True
-
-  def _compare_subunits_in_values(self, subunit, properties, setdict):
-    _subunits = []
-    for name, value in subunit.itemsInfo():
-      if not isinstance(value, list): continue
-      for _subunit in value:
-        #print '  ;;;;', subunit['word'], _subunit['word'], isinstance(_subunit, type(subunit))
-        if not isinstance(_subunit, type(subunit)): continue
-        if self._compare_subunit(_subunit, properties, setdict): _subunits.append(_subunit)
-    #print '     ---subunits: ', _subunits
-    return _subunits
-
-  def getByValues(self, setstring='', **properties):
+  # Коллекция для массовой работы с подъюнитами, имеющих одинаковые значения свойств.
+  def getByValues(self, **properties):
     ''' Возвращает слова, имеющие одниаковые значения свойств properties '''
-    setdict = self._parseSettingsString(setstring)
     for index, subunit in self.dict_unit.items():
-      _subunits = []
-      if setdict['subiv']['setvalue'] in ('noignore', 'only'):
-        _subunits = self._compare_subunits_in_values(subunit, properties, setdict)
-        if setdict['subiv']['setvalue'] == 'only' and _subunits:
-          yield index, None, _subunits
-          continue
-      if self._compare_subunit(subunit, properties, setdict):
-        yield index, subunit, _subunits
-      else: yield index, None, _subunits
-  def changeByValues(self, name, value, setstring='', **properties):
+      counter = len(properties)
+      for name, value in properties.items():
+        if not isinstance(value, tuple): value = (value,)
+        if name in subunit and subunit[name] in value: counter -= 1
+      if counter == 0: yield index, subunit
+  def changeByValues(self, name, value, **properties):
     ''' Устанавлвает значение value свойства name слов, имеющих одниаковые значения свойств properties '''
-    for index, subunit, _subunits in self.getByValues(setstring, **properties):
-      for _subunit in _subunits: _subunit[name] = value
-      if subunit: subunit[name] = value
-  def chmanyByValues(self, new_properties, setstring='', **properties):
+    for index, subunit in self.getByValues(**properties):
+      subunit[name] = value
+    #for index, subunit in self.dict_unit.items():
+    #  counter = len(properties)
+    #  for _name, _value in properties.items():
+    #    if not isinstance(_value, tuple): _value = (_value,)
+    #    if _name in subunit and subunit[_name] in _value: counter -= 1
+    #  if counter == 0: subunit[name] = value
+  def changeByValues(self, new_properties, **properties):
     ''' Устанавлвает значения свойств new_prperties слов, имеющих одниаковые значения свойств **properties '''
-    for index, subunit, _subunits in self.getByValues(setstring, **properties):
-      #print '     subunit:', subunit
-      #print '     _subunits:', _subunits
-      for _subunit in _subunits: _subunit.update(new_properties)
-      if subunit: subunit.update(new_properties)
-
+    subunits = {index:subunit for index, subunit in self.getByValues(**properties)}
+    for index, subunit in subunits.items():
+      subunit.update(new_properties)
+      #for name, value in new_prperties.items(): subunit[name] = value
 
 class Word(_Unit):
   """ Класс объекта слова.
@@ -195,15 +115,11 @@ class Word(_Unit):
     self.dict_unit = {}    # не перемещать!
     self.full_info = {'unit_info': self.unit_info, 'unit': self.dict_unit}    # не перемещать!
     self.str_word = str_word
-    self.unit_info = {'word': self.str_word, 'symbol_map': {}}
-    if isinstance(str_word, dict):
-      self.unit_info = str_word
-      self.str_word = str_word['word']
-      self.unit_info['word'] = self.str_word
-    for index in range(len(self.str_word)):
+    for index in range(len(str_word)):
       self.dict_unit[index] = {}
       self.dict_unit[index]['symbol'] = self.str_word[index]
       self.dict_unit[index]['type'] = ''
+    self.unit_info = {'word': self.str_word, 'symbol_map': {}}
 
   def hasSymbol(self, symbol):
     return symbol in self.str_word
@@ -251,14 +167,6 @@ class Sentence(_Unit):
     self.unit_info = {}    # не перемещать!
     self.dict_unit = {}    # не перемещать!
     self.full_info = {'unit_info': self.unit_info, 'unit': self.dict_unit}    # не перемещать!
-    if isinstance(words, dict):
-      for index, word in words.items():
-        if isinstance(word, dict): word = Word(word)
-        if isinstance(index, (unicode, str)): index = int(index)
-        self.dict_unit[index] = word
-      self._sync()
-      return
-
     for index in range(len(words)):
       word = words[index]
       word['feature'] = []
@@ -346,12 +254,16 @@ class Sentence(_Unit):
         Первый аргумент - индекс главного слова, следующие аргументы -
         индексы обстоятельств и определений.
         Порядок значений второго аргумента может быть произвольным. """
-    indexes = list(set(indexes))
+    indexes = list(indexes)
+    # удаляем повторяющиеся индексы
+    i = 0
+    while i < len(indexes):
+      if indexes.count(indexes[i]) > 1: del indexes[i]
+      else: i += 1
     word = self.dict_unit[index]
     # добавляем определения или обстоятельства
     for index_feature in indexes:
       feature = self.dict_unit[index_feature]
-      feature['index'] = index
       word['feature'].append(feature)
     # удаляем из предложения
     self.old_index = index
@@ -435,3 +347,25 @@ class Text():
   """
   def __init__(self):
     pass
+
+if __name__ == '__main__':
+  s = "Hello0 my1 smarControl2 t3 home4 I5 createdObient6 your7 intellect8"
+  s = Sentence(s.split())
+
+  #s.GetSet(1, "bl", "gggg")
+  #s.GetSet(2, "bl", "gggg")
+  s.GetSet(7, "bl", "gggg")
+
+  s.delByCharacteristic("bl", "gggg")
+  print("111111111111111111")
+  #s.delByWI(0)
+  #s.delByWI("your7")
+
+  s.addLink(2, 6)
+  s.delByIndex(0)
+  s.delByIndex(4)
+
+  print s.getSentence("str"), '\n'
+  print s.getSentence("list"), '\n'
+  print s.getSentence("dict"), '\n'
+  print s.getSentence("beautyDict"), '\n'

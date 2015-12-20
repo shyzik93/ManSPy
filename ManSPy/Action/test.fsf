@@ -24,8 +24,8 @@ country n ;  Esperanto
 #country n #- если не требуется замена значения аргумента
 
 Esperanto
-    dolaran: monero # аргументное слова: абстрактные группы через запятую
-    rusia: lando
+    dolara: monero # аргументное слова: абстрактные группы через запятую
+    rusia: lando # нужно решить вопрос об изменении падежей у прилагательных, ну а пока мы не можем написать de rusia.
     dolara cambio de rusia banko
 Russian
     доллара: валюта
@@ -47,7 +47,7 @@ device y; Esperanto
 
 Esperanto
     en dormcxambro:  cxambro
-    tablan: meblaro
+    tabla: meblaro
     tabla lampo en dormcxambro
 Russian
     спальне: комната
@@ -62,5 +62,5 @@ device y; Esperanto
     computer; komputilo
 
 Esperanto
-    komputilo: aparato
+    de komputilo: aparato
     adreso de komputilo
