@@ -14,6 +14,7 @@ class _Unit():
 
       Юнит - это предложение или слово. Подъюнит - их составляющие:
       для предложения - это слова, для слов - это символы'''
+
   # Работа с информацией о юните в целом
   def __setitem__(self, key, value): self.unit_info[key] = value
   def __getitem__(self, key): return self.unit_info[key]
@@ -21,6 +22,7 @@ class _Unit():
 
   #def __repr__(self): return self.__class__.__name__ + "(" + str(self.full_info) + ")"
   def __repr__(self): return self.__class__.__name__ + "(" + str(self.unit_info) + ")"
+  def items(self): return self.dict_unit.items() # аналогично itemsUnit() без индекса. Не рекомендуется. Только для внутреннего использования.
   def itemsInfo(self): return self.unit_info.items()
   def itemsUnit(self, index=None):
     return self.dict_unit.items() if index == None else self.dict_unit[index].items()
@@ -34,32 +36,18 @@ class _Unit():
     self.dict_unit[index][name] = value
 
   # Итератор
-  def __iter__(self):
-    self.current = 0
+  def __iter__(self): # # аналогично itemsUnit() без индекса, но с возможностью управления текущей позицией. Для цикла for.
+    self.position = 0
     self.keys = self.dict_unit.keys()
-    while self.current < len(self.keys) and self.current >= 0:
-      key = self.keys[self.current]
-      yield self.dict_unit[key]
-  def jump(self, step=1): self.current += step
-  def delete(self, step=0, count=1):
-    for c in range(count): del self.dict_unit[keys[self.current+step]]
+    while self.position < len(self.keys) and self.position >= 0:
+      index = self.keys[self.position]
+      yield index, self.dict_unit[index]
+      self.position += 1
+  def jump(self, step=1): self.position += step
+  def jumpByIndex(self, index): self.position = self.keys.index(index)
+  def delete(self, count=1, step=0):
+    for c in range(count): del self.dict_unit[self.keys[self.position+step]]
     self.keys = self.dict_unit.keys()
-  '''def __iter__(self):
-    self.current = 0
-    return self
-  def next(self, step=1):
-    keys = self.dict_unit.keys()
-    self.current += step
-    if self.current >= len(keys): raise StopIteration
-    else: return self.dict_unit[keys[self.current]]
-  def delete(self, step=None, count=1):
-    keys = self.dict_unit.keys()
-    if step==None:
-      del self.dict_unit[keys[self.current]]
-      return
-    for c in range(count):
-      del self.dict_unit[keys[step]], keys[step]
-      step += 1'''
 
   # Прочее
   def getLen(self, func=None):
@@ -205,6 +193,9 @@ class Word(_Unit):
       self.dict_unit[index]['symbol'] = self.str_word[index]
       self.dict_unit[index]['type'] = ''
 
+    self.position = 0
+    self.keys = self.dict_unit.keys()
+
   def hasSymbol(self, symbol):
     return symbol in self.str_word
 
@@ -257,6 +248,8 @@ class Sentence(_Unit):
         if isinstance(index, (unicode, str)): index = int(index)
         self.dict_unit[index] = word
       self._sync()
+      self.position = 0
+      self.keys = self.dict_unit.keys()
       return
 
     for index in range(len(words)):
@@ -266,6 +259,9 @@ class Sentence(_Unit):
       word['homogeneous_link'] = [] # ссылки на однородные члены
       word['type'] = 'real' # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
       self.dict_unit[index] = word
+
+    self.position = 0
+    self.keys = self.dict_unit.keys()
 
   def _syncLinks(self, words, deleted, parametr_name):
     """ Синхронизирует ссылки в словах """

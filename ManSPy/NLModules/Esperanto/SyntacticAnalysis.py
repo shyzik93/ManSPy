@@ -89,6 +89,7 @@ def setLinks(index, sentence, GrammarNazi):
           sentence.addLink(index, index2)
         elif case :
           sentence.addLink(index, index2)
+      elif word2['MOSentence'] == 'direct supplement': return index # это другой актант уже пойдёт.
       index2 += 1
 
   return index

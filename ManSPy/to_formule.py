@@ -25,32 +25,50 @@ import copy, time, json
 from pprint import pprint
 import common, NLModules
 
-def compare_word(word, _index, worddescr):
-  if worddescr['MOSentence'] not in ['direct supplement', 'supplement', 'supplement'] or \
-     worddescr['POSpeech'] != word['POSpeech'] and \
-     worddescr['case'] != word['case']: return False
-  if worddescr['type'] == 'const' and worddescr['base'] != word['base']: return False
-  if worddescr['type'] == 'argword':
+def compare_word(word, position, worddescr):
+  #print word['base'], worddescr['base'], worddescr['type']
+  if word['MOSentence'] not in ['direct supplement', 'supplement', 'subject'] or \
+     worddescr['POSpeech'] != word['POSpeech'] or \
+     not (position == 0 or worddescr['case'] == word['case']): return False
+  #print word['base'], worddescr['base'], 'argname' not in worddescr
+  if 'argname' not in worddescr: # если константное слово
+    if worddescr['base'] != word['base']: return False
+    return True
+  else:
     # проверяем вхождение корня в гиперонимы из описания
-    pass#return False
-  return True
+    return True
 
 def compare_fasif_WordCombination(fasif, argument):
   functions = fasif['functions']
   _argument = NLModules.ObjUnit.Sentence(fasif['wcomb'])
   _argument_iter = NLModules.ObjUnit.Sentence(fasif['wcomb']).__iter__()
-  _index = 0
+
+  '''_index = 0
   prev_index = None
   for index, word in argument.itemsUnit():
     controls = argument.getControl(index)
-    if not controls or controls[0] != prev_index: continue
+    if prev_index != None and (not controls or controls[0] != prev_index): continue
     isright = compare_word(word, _index, _argument)
     if not isright:
       if word['homogeneous_link']: pass # обработать так, как будто это продолжение актанта
       else: return False
     _argument.next()
     prev_index = index
-    _index += 1
+    _index += 1'''
+
+  #for i in argument: print i
+
+  for index, word in argument:
+    try: isright = compare_word(word, argument.position, _argument_iter.next()[1])
+    except StopIteration: break
+    if not isright: return False
+    indexes = argument.getObient(index)
+    if indexes:
+      argument.jumpByIndex(indexes[0])
+      argument.jump(-1)
+    else: break
+
+  return True
 
 argument = None
 def iseq(_type, fasif):
