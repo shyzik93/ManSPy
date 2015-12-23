@@ -17,8 +17,8 @@ def Extraction2IL(OR, settings, Action, predicates, arguments):
     print x, argument.getUnit('str')['fwords']
     #argument = argument.getUnit('dict')
 
-    fasifs = fdb.getFASIF('WordCombination', argument)
-    print  fasifs
+    finded_args, fasifs = fdb.getFASIF('WordCombination', argument)
+    print  finded_args, fasifs
     #fwcomb = to_formule.to_formule(argument, False)
     #print x, fdb.get_hashWComb(fwcomb)
     x += 1

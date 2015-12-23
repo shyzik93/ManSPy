@@ -43,7 +43,7 @@ class _Unit():
       index = self.keys[self.position]
       yield index, self.dict_unit[index]
       self.position += 1
-  def jump(self, step=1): self.position += step
+  def jumpByStep(self, step=1): self.position += step
   def jumpByIndex(self, index): self.position = self.keys.index(index)
   def delete(self, count=1, step=0):
     for c in range(count): del self.dict_unit[self.keys[self.position+step]]

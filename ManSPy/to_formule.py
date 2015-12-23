@@ -38,63 +38,65 @@ def compare_word(word, position, worddescr):
     # проверяем вхождение корня в гиперонимы из описания
     return True
 
-def compare_fasif_WordCombination(fasif, argument):
+def compare_fasif_WordCombination(fasif, argument, finded_args):
   functions = fasif['functions']
   _argument = NLModules.ObjUnit.Sentence(fasif['wcomb'])
   _argument_iter = NLModules.ObjUnit.Sentence(fasif['wcomb']).__iter__()
 
-  '''_index = 0
-  prev_index = None
-  for index, word in argument.itemsUnit():
-    controls = argument.getControl(index)
-    if prev_index != None and (not controls or controls[0] != prev_index): continue
-    isright = compare_word(word, _index, _argument)
-    if not isright:
-      if word['homogeneous_link']: pass # обработать так, как будто это продолжение актанта
-      else: return False
-    _argument.next()
-    prev_index = index
-    _index += 1'''
-
-  #for i in argument: print i
+  _index, _word = _argument_iter.next() # new
 
   for index, word in argument:
-    try: isright = compare_word(word, argument.position, _argument_iter.next()[1])
-    except StopIteration: break
+    #isright = compare_word(word, argument.position, _word) # new
+    try: isright = compare_word(word, argument.position, _argument_iter.next()[1]) # old
+    except StopIteration: break # игнорируем лишние косвенные дополнения (на хвосте) #old
     if not isright: return False
     indexes = argument.getObient(index)
     if indexes:
       argument.jumpByIndex(indexes[0])
-      argument.jump(-1)
+      argument.jumpByStep(-1)
     else: break
+    #_indexes = _argument.getObient(_index)
+    #if _indexes: # new
+    #  _argument.jumpByIndex(_indexes[0]) # new
+    #  _argument.jumpByStep(-1) # new
+    #else: break # new
 
   return True
 
-argument = None
+'''argument = None
 def iseq(_type, fasif):
   global argument
   #print 'fasif:', fasif, '\nargument:',  argument
   fasif = json.loads(fasif)
   if _type == 'WordCombination': isright = compare_fasif_WordCombination(fasif, argument)
-  return 1 if isright else 0
+  return 1 if isright else 0'''
 
 class FasifDB():
+  def iseq(self, id_fasif, type_fasif, fasif):
+    #print 'fasif:', fasif, '\nargument:',  argument
+    fasif = json.loads(fasif)
+    finded_args = {}
+    if type_fasif == 'WordCombination': isright = compare_fasif_WordCombination(fasif, self.argument, finded_args)
+    if isright: self.finded_args[id_fasif] = finded_args
+    return 1 if isright else 0
+
   def __init__(self, settings):
     self.settings = settings
     self.c, self.cu = common.create_bd_file(settings['language'], 'main_data.db')
-    self.c.create_function('iseq', 2, iseq)
+    self.c.create_function('iseq', 3, self.iseq)
     self.cu.execute('''
       CREATE TABLE IF NOT EXISTS fasifs (
-        _type TEXT,
-        fasif TEXT); ''')
+        id_fasif INTEGER PRIMARY KEY AUTOINCREMENT,
+        type_fasif TEXT,
+        fasif TEXT UNIQUE ON CONFLICT IGNORE); ''')
 
   def safeFASIF(self, _type, fasif):
-    self.cu.execute('INSERT INTO fasifs (_type, fasif) VALUES (?,?)',
+    self.cu.execute('INSERT INTO fasifs (type_fasif, fasif) VALUES (?,?)',
                     (_type, json.dumps(fasif, sort_keys=True)))
     self.c.commit()
 
-  def getFASIF(self, _type, _argument):
-    global argument
-    argument = _argument
-    res = self.cu.execute('SELECT fasif FROM fasifs WHERE _type=? AND iseq(_type, fasif)=1', (_type,)).fetchall()
-    return res[0] if res else None
+  def getFASIF(self, _type, argument):
+    self.argument = argument
+    self.finded_args = {}
+    res = self.cu.execute('SELECT id_fasif, fasif FROM fasifs WHERE type_fasif=? AND iseq(id_fasif, type_fasif, fasif)=1', (_type,)).fetchall()
+    return self.finded_args, res
