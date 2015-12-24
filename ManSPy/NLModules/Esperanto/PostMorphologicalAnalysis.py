@@ -26,7 +26,10 @@ def processingConjunction(GrammarNazi, index, sentence):
   # сочинительный союз
   #if conjunction['word'] == 'kaj': # заменить логическими символами (kaj = &)
   #print conjunction['base']
-  if left['POSpeech'] == right['POSpeech']:
+  if left['POSpeech'] == right['POSpeech'] or \
+     (left['POSpeech'] == 'noun' and right['POSpeech'] == 'pronoun' and right['category'] != 'possessive') or (right['POSpeech'] == 'noun' and left['POSpeech'] == 'pronoun' and left['category'] != 'possessive') or \
+     ((left['POSpeech'] == 'pronoun' and left['category'] == 'possessive') and right['POSpeech'] == 'adjective') or ((right['POSpeech'] == 'pronoun' and right['category'] == 'possessive') and left['POSpeech'] == 'adjective'):
+     #((left['POSpeech'] in ['pronoun', 'adjective'] and ('category' in left and left['category'] == 'possessive')) and right['POSpeech'] in ['pronoun', 'adjective']):
   #if ('case' in left and 'case' in right) and left['case'] == right['case']:
     if ('case' in right and right['case'] == 'accusative') and ('case' in left and left['case'] != 'accusative'):
       sentence.delByIndex(index)

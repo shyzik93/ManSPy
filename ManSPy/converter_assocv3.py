@@ -1,6 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import to_formule, NLModules
+import to_formule, NLModules, mymath
+
+def check_args(finded_args, fasif):
+  checked_args = []
+  for finded_arg in finded_args:
+    isright = True
+    for argname, argdescr in fasif['argdescr'].items():
+      if argname not in finded_arg and argdescr['isreq']: # если отсутствует обязательный аргумент
+        isright = False
+        break
+    if isright: checked_args.append(finded_arg)
+  return checked_args
 
 def Extraction2IL(OR, settings, Action, predicates, arguments):
   #print '    predficates ::', predicates, '\n'
@@ -17,8 +28,15 @@ def Extraction2IL(OR, settings, Action, predicates, arguments):
     print x, argument.getUnit('str')['fwords']
     #argument = argument.getUnit('dict')
 
-    finded_args, fasifs = fdb.getFASIF('WordCombination', argument)
-    print  finded_args, fasifs
+    compared_fasifs = fdb.getFASIF('WordCombination', argument)
+    for id_fasif, data in compared_fasifs.items():
+      finded_args, fasif = data
+      for argname, args in finded_args.items(): finded_args[argname] = list(set(args))
+      finded_args = mymath.dproduct(finded_args)
+      finded_args = check_args(finded_args, fasif)
+      compared_fasifs[id_fasif] = (finded_args, fasif)
+      print finded_args, fasif['functions']
+      
     #fwcomb = to_formule.to_formule(argument, False)
     #print x, fdb.get_hashWComb(fwcomb)
     x += 1

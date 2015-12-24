@@ -7,7 +7,7 @@ montru adreson de androido
 # Повторяющиеся аргументы (однородные слова)
 montru dolaran kaj dolaran cambion de rusia banko
 montru dolaran kaj dolaran cambion de rusia kaj rusia banko
-# Это предложение выдаёт курс доллара только по росбанку (украинский не замечает)
+# Это предложение выдаёт курс доллара только по росбанку (украинский не замечает). Как вариант решения: проверять каждоый однородный член у дополнений (кроме первого)
 montru dolaran cambion de rusia banko kaj ukraina banko
 montru adreson de komputilo kaj androido
 

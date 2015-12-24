@@ -238,10 +238,15 @@ def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):
   print fasif['wcomb']
   sentence = LangClass.NL2IL(fasif['wcomb'], ':synt')[0][0]
   wcomb = sentence
+  fasif['argdescr'] = {}
   for argname, data in fasif['args'].items():
     argword = data['argwords']['in_wcomb']['name']
-    wcomb.chmanyByValues({'argname':argname, 'isreq':data['isreq'], 'argtable':data['argtable'], 'argwords_another':data['argwords']['another'], 'hyperonyms':data['argwords']['in_wcomb']['hyperonyms']}, setstring='subiv:noignore', base=argword['base'], case=argword['case'])
-    del fasif['args'][argname]
+    #wcomb.chmanyByValues({'argname':argname, 'isreq':data['isreq'], 'argtable':data['argtable'], 'argwords_another':data['argwords']['another'], 'hyperonyms':data['argwords']['in_wcomb']['hyperonyms']}, setstring='subiv:noignore', base=argword['base'], case=argword['case'])
+    wcomb.chmanyByValues({'argname':argname}, setstring='subiv:noignore', base=argword['base'], case=argword['case'])
+    isreq = True if data['isreq'] == 'y' else False
+    fasif['argdescr'][argname] = {'isreq':isreq, 'argtable':data['argtable'], 'argwords_another':data['argwords']['another'], 'hyperonyms':data['argwords']['in_wcomb']['hyperonyms']}
+    #del fasif['args'][argname]
+  del fasif['args']
   fasif['wcomb'] = wcomb.getUnit('dict')
 
   #pprint(fasif['args']) 

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 """
-import mymath, os, copy
-from .. import common
+import os, copy
+from .. import common, mymath
 
 def walk(o, func, parent=None, key=None):
   if isinstance(o, dict): keys = o.keys()

@@ -25,16 +25,21 @@ import copy, time, json
 from pprint import pprint
 import common, NLModules
 
-def compare_word(word, position, worddescr):
+def compare_word(word, position, argworddescr, finded_args):
   #print word['base'], worddescr['base'], worddescr['type']
-  if word['MOSentence'] not in ['direct supplement', 'supplement', 'subject'] or \
-     worddescr['POSpeech'] != word['POSpeech'] or \
-     not (position == 0 or worddescr['case'] == word['case']): return False
+  if word['MOSentence'] in ['direct supplement', 'supplement', 'subject']:
+     if argworddescr['POSpeech'] != word['POSpeech'] or \
+        not (position == 0 or argworddescr['case'] == word['case']): return False # для первого дополнения падеж не учитывается
+  elif word['MOSentence'] in ['definition', 'circumstance']:
+     if argworddescr['POSpeech'] != word['POSpeech']: return False # для первого дополнения падеж не учитывается
+  else: return False
   #print word['base'], worddescr['base'], 'argname' not in worddescr
-  if 'argname' not in worddescr: # если константное слово
-    if worddescr['base'] != word['base']: return False
-    return True
+  if 'argname' not in argworddescr: # если константное слово
+    if argworddescr['base'] == word['base']: return True
+    return False
   else:
+    if argworddescr['argname'] not in finded_args: finded_args[argworddescr['argname']] = []
+    finded_args[argworddescr['argname']].append(word['base'])
     # проверяем вхождение корня в гиперонимы из описания
     return True
 
@@ -43,23 +48,38 @@ def compare_fasif_WordCombination(fasif, argument, finded_args):
   _argument = NLModules.ObjUnit.Sentence(fasif['wcomb'])
   _argument_iter = NLModules.ObjUnit.Sentence(fasif['wcomb']).__iter__()
 
-  #_index, _word = _argument_iter.next() # new
-
   for index, word in argument:
-    #isright = compare_word(word, argument.position, _word) # new
-    try: isright = compare_word(word, argument.position, _argument_iter.next()[1]) # old
-    except StopIteration: break # игнорируем лишние косвенные дополнения (на хвосте) #old
-    if not isright: return False
+    _index, _word = _argument_iter.next() # new
+
+    # "Проходимся" по дополнениям (прямые, косвенные, а также подлежащие)
+    isright = compare_word(word, argument.position, _word, finded_args) # new
+    #try: isright = compare_word(word, argument.position, _argument_iter.next()[1]) # old
+    #except StopIteration: break # игнорируем лишние косвенные дополнения (на хвосте) #old
+    #if not isright and 'argname' not in _word: return False # если отсутствует контсантное слово - актант не соответсвует фасифу
+    if not isright: return False # если посреди свезей чужой член - актант не соответсвует фасифу
     indexes = argument.getObient(index)
     if indexes:
       argument.jumpByIndex(indexes[0])
       argument.jumpByStep(-1)
-    else: break
-    #_indexes = _argument.getObient(_index) # new
-    #if _indexes: # new
-    #  _argument.jumpByIndex(_indexes[0]) # new
-    #  _argument.jumpByStep(-1) # new
+    #else: break
+    _indexes = _argument.getObient(_index) # new
+    if _indexes: # new
+      _argument.jumpByIndex(_indexes[0]) # new
+      _argument.jumpByStep(-1) # new
     #else: break # new
+
+    # "Проходимся" по обстоятельствам и определениям
+    features = word['feature']
+    _features = _word['feature']
+    for feature in features:
+      for _feature in _features:
+        isright = compare_word(feature, argument.position, _feature, finded_args)
+        # не проверяем на верность.
+
+    # "Проходимся" по однородным дополнениям (прямые, косвенные, а также подлежащие), если это не первый член
+
+    # игнорируем лишние косвенные дополнения (на хвосте)
+    if not (indexes and _indexes): break
 
   return True
 
@@ -77,7 +97,7 @@ class FasifDB():
     fasif = json.loads(fasif)
     finded_args = {}
     if type_fasif == 'WordCombination': isright = compare_fasif_WordCombination(fasif, self.argument, finded_args)
-    if isright: self.finded_args[id_fasif] = finded_args
+    if isright: self.compared_fasifs[id_fasif] = (finded_args, fasif)
     return 1 if isright else 0
 
   def __init__(self, settings):
@@ -97,6 +117,6 @@ class FasifDB():
 
   def getFASIF(self, _type, argument):
     self.argument = argument
-    self.finded_args = {}
-    res = self.cu.execute('SELECT id_fasif, fasif FROM fasifs WHERE type_fasif=? AND iseq(id_fasif, type_fasif, fasif)=1', (_type,)).fetchall()
-    return self.finded_args, res
+    self.compared_fasifs = {}
+    res = self.cu.execute('SELECT id_fasif FROM fasifs WHERE type_fasif=? AND iseq(id_fasif, type_fasif, fasif)=1', (_type,)).fetchall()
+    return self.compared_fasifs
