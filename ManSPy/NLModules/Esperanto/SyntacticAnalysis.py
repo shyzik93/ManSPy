@@ -74,7 +74,7 @@ def setLinks(index, sentence, GrammarNazi):
       index2 += 1
 
   #TASK если у прямого дополнения нескеолько дополнений, то они проигнорируются
-  elif word['MOSentence'] in ['direct supplement', 'supplement']:
+  elif word['MOSentence'] in ['direct supplement', 'supplement', 'subject']:
     # линкуем прямое дополнение и следующее после него косвенное дополнение
     index2 = index+1
     case = None
@@ -89,7 +89,7 @@ def setLinks(index, sentence, GrammarNazi):
           sentence.addLink(index, index2)
         elif case :
           sentence.addLink(index, index2)
-      elif word2['MOSentence'] == 'direct supplement': return index # это другой актант уже пойдёт.
+      elif word2['MOSentence'] in ['direct supplement', 'subject']: return index # это другой актант уже пойдёт.
       index2 += 1
 
   return index

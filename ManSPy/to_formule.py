@@ -43,7 +43,7 @@ def compare_fasif_WordCombination(fasif, argument, finded_args):
   _argument = NLModules.ObjUnit.Sentence(fasif['wcomb'])
   _argument_iter = NLModules.ObjUnit.Sentence(fasif['wcomb']).__iter__()
 
-  _index, _word = _argument_iter.next() # new
+  #_index, _word = _argument_iter.next() # new
 
   for index, word in argument:
     #isright = compare_word(word, argument.position, _word) # new
@@ -55,7 +55,7 @@ def compare_fasif_WordCombination(fasif, argument, finded_args):
       argument.jumpByIndex(indexes[0])
       argument.jumpByStep(-1)
     else: break
-    #_indexes = _argument.getObient(_index)
+    #_indexes = _argument.getObient(_index) # new
     #if _indexes: # new
     #  _argument.jumpByIndex(_indexes[0]) # new
     #  _argument.jumpByStep(-1) # new
