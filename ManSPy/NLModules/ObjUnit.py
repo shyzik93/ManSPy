@@ -160,7 +160,8 @@ class _Unit():
           continue
       if self._compare_subunit(subunit, properties, setdict):
         yield index, subunit, _subunits
-      else: yield index, None, _subunits
+      else:
+        if _subunits: yield index, None, _subunits
   def changeByValues(self, name, value, setstring='', **properties):
     ''' Устанавлвает значение value свойства name слов, имеющих одниаковые значения свойств properties '''
     for index, subunit, _subunits in self.getByValues(setstring, **properties):

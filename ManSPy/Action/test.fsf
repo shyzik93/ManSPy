@@ -1,6 +1,7 @@
 #FASIF-Version: 3.00
 
 #:Verb
+# ################################################
 
 $ToUser
     Esperanto: montri # глаголы в начальной форме, через запятую, чтобы программа сама выделила корень
@@ -8,6 +9,7 @@ $ToUser
     Russian: показывать
 
 #:WordCombination
+# ################################################
 
 getCondition: CurrencyLoader/GetCourse  # Назначение: ИмяМодуляБезРасширения/ИмяФункции
 
@@ -33,6 +35,7 @@ Russian
     курс доллара согласно русскому банку
 
 #:WordCombination
+# ################################################
 
 changeCondition: smart_home/LightOn # это назначение требует глаголов
     Esperanto: sxalti
@@ -55,6 +58,7 @@ Russian
     настольный свет в спальне
 
 #:WordCombination
+# ################################################
 
 getCondition: smart_home/showAddress
 

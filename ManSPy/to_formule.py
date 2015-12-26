@@ -21,11 +21,11 @@
 
 '''
 
-import copy, time, json
+import copy, time, json, codecs
 from pprint import pprint
 import common, NLModules
 
-def compare_word(word, position, argworddescr, finded_args):
+def compare_word(word, position, argworddescr, finded_args, flog):
   #print word['base'], worddescr['base'], worddescr['type']
   if word['MOSentence'] in ['direct supplement', 'supplement', 'subject']:
      if argworddescr['POSpeech'] != word['POSpeech'] or \
@@ -33,17 +33,20 @@ def compare_word(word, position, argworddescr, finded_args):
   elif word['MOSentence'] in ['definition', 'circumstance']:
      if argworddescr['POSpeech'] != word['POSpeech']: return False # для первого дополнения падеж не учитывается
   else: return False
-  #print word['base'], worddescr['base'], 'argname' not in worddescr
+  #print word['base'], argworddescr['base'], 'argname' not in argworddescr
+  flog.write(u'Example: "%s". Found: "%s"\n' % (argworddescr['base'], word['base']))
   if 'argname' not in argworddescr: # если константное слово
-    if argworddescr['base'] == word['base']: return True
+    flog.write(u'    type: constant word\n')
+    if argworddescr['base'] == word['base']:return True
     return False
   else:
+    flog.write('    type: argument word\n    argname: "%s".\n' % argworddescr['argname'])
     if argworddescr['argname'] not in finded_args: finded_args[argworddescr['argname']] = []
     finded_args[argworddescr['argname']].append(word['base'])
     # проверяем вхождение корня в гиперонимы из описания
     return True
 
-def compare_fasif_WordCombination(fasif, argument, finded_args):
+def compare_fasif_WordCombination(fasif, argument, finded_args, flog):
   functions = fasif['functions']
   _argument = NLModules.ObjUnit.Sentence(fasif['wcomb'])
   _argument_iter = NLModules.ObjUnit.Sentence(fasif['wcomb']).__iter__()
@@ -52,11 +55,11 @@ def compare_fasif_WordCombination(fasif, argument, finded_args):
     _index, _word = _argument_iter.next() # new
 
     # "Проходимся" по дополнениям (прямые, косвенные, а также подлежащие)
-    isright = compare_word(word, argument.position, _word, finded_args) # new
-    #try: isright = compare_word(word, argument.position, _argument_iter.next()[1]) # old
-    #except StopIteration: break # игнорируем лишние косвенные дополнения (на хвосте) #old
-    #if not isright and 'argname' not in _word: return False # если отсутствует контсантное слово - актант не соответсвует фасифу
-    if not isright: return False # если посреди свезей чужой член - актант не соответсвует фасифу
+    isright = compare_word(word, argument.position, _word, finded_args, flog) # new
+    if not isright:
+      flog.write('    "%s" is not native between native members. Not native members can only be in the end of sentence.\n' % word['base'])
+      return False # если посреди связей чужой член - актант не соответсвует фасифу
+    flog.write('    Result of comparing word is right: index - %i, base - "%s".\n' % (index, word['base']))
     indexes = argument.getObient(index)
     if indexes:
       argument.jumpByIndex(indexes[0])
@@ -67,36 +70,31 @@ def compare_fasif_WordCombination(fasif, argument, finded_args):
       _argument.jumpByIndex(_indexes[0]) # new
       _argument.jumpByStep(-1) # new
     #else: break # new
-
     # "Проходимся" по обстоятельствам и определениям
     features = word['feature']
     _features = _word['feature']
     for feature in features:
       for _feature in _features:
-        isright = compare_word(feature, argument.position, _feature, finded_args)
+        isright = compare_word(feature, argument.position, _feature, finded_args, flog)
+        flog.write('    Result of comparing word is %s: index - %i, base - "%s".\n' % (str(isright), index, word['base']))
         # не проверяем на верность.
 
     # "Проходимся" по однородным дополнениям (прямые, косвенные, а также подлежащие), если это не первый член
 
     # игнорируем лишние косвенные дополнения (на хвосте)
-    if not (indexes and _indexes): break
+    if not (indexes and _indexes): 
+      flog.write('    "%s" - has %i obients. "%s" - has %i obients.\n' % (word['base'], len(indexes), _word['base'], len(_indexes)))
+      break
 
   return True
-
-'''argument = None
-def iseq(_type, fasif):
-  global argument
-  #print 'fasif:', fasif, '\nargument:',  argument
-  fasif = json.loads(fasif)
-  if _type == 'WordCombination': isright = compare_fasif_WordCombination(fasif, argument)
-  return 1 if isright else 0'''
 
 class FasifDB():
   def iseq(self, id_fasif, type_fasif, fasif):
     #print 'fasif:', fasif, '\nargument:',  argument
     fasif = json.loads(fasif)
     finded_args = {}
-    if type_fasif == 'WordCombination': isright = compare_fasif_WordCombination(fasif, self.argument, finded_args)
+    self.flog.write('\n')
+    if type_fasif == 'WordCombination': isright = compare_fasif_WordCombination(fasif, self.argument, finded_args, self.flog)
     if isright: self.compared_fasifs[id_fasif] = (finded_args, fasif)
     return 1 if isright else 0
 
@@ -118,5 +116,10 @@ class FasifDB():
   def getFASIF(self, _type, argument):
     self.argument = argument
     self.compared_fasifs = {}
+    self.flog = codecs.open('comparing_fasif.txt', 'a', 'utf-8') # file log
+    self.flog.write('\n--- %s\n' % _type)
+    for key, value in argument.getUnit('str').items():
+      self.flog.write('--- %s: %s\n' % (key, value))
     res = self.cu.execute('SELECT id_fasif FROM fasifs WHERE type_fasif=? AND iseq(id_fasif, type_fasif, fasif)=1', (_type,)).fetchall()
+    self.flog.close()
     return self.compared_fasifs

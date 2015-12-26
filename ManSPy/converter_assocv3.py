@@ -1,8 +1,23 @@
 # -*- coding: utf-8 -*-
 
+import codecs
 import to_formule, NLModules, mymath
 
-def check_args(finded_args, fasif):
+def check_args(finded_args, fasif, R):
+  # Проверка на наличие в абстрактной группе
+  hyperonyms = {}
+  for argname, data in fasif['argdescr'].items():
+    # пока только основные гиперонимы вытягиваем
+    hyperonyms[argname] = [word['base'] for word in data['hyperonyms']]
+  for finded_arg in finded_args:
+    for argname, argvalue in finded_arg.items():
+      isright = False
+      for hyperonym in hyperonyms[argname]:
+        if R.isWordInAbstractGroup(argvalue, hyperonym):
+          isright = True
+          break
+      if not isright: del finded_arg[argname]
+  # Проверка на отсутствие обязательных аргументных слов
   checked_args = []
   for finded_arg in finded_args:
     isright = True
@@ -11,35 +26,30 @@ def check_args(finded_args, fasif):
         isright = False
         break
     if isright: checked_args.append(finded_arg)
+
   return checked_args
 
-def Extraction2IL(OR, settings, Action, predicates, arguments):
+def Extraction2IL(R, settings, Action, predicates, arguments):
   #print '    predficates ::', predicates, '\n'
   #print '    arguments ::', arguments, '\n'
 
   fdb = to_formule.FasifDB(settings)
 
   # Вынимаем Фасиф
-  x = 0
   for _argument in arguments:
-    #argument = NLModules.ObjUnit.Sentence([])
-    #argument.dict_unit = _argument
     argument = NLModules.ObjUnit.Sentence(_argument)
-    print x, argument.getUnit('str')['fwords']
-    #argument = argument.getUnit('dict')
-
     compared_fasifs = fdb.getFASIF('WordCombination', argument)
     for id_fasif, data in compared_fasifs.items():
       finded_args, fasif = data
       for argname, args in finded_args.items(): finded_args[argname] = list(set(args))
       finded_args = mymath.dproduct(finded_args)
-      finded_args = check_args(finded_args, fasif)
+      finded_args = check_args(finded_args, fasif, R)
       compared_fasifs[id_fasif] = (finded_args, fasif)
-      print finded_args, fasif['functions']
+      with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
+        flog.write('\n%s\n%s\n' % (str(finded_args), str(fasif['functions'])))
       
     #fwcomb = to_formule.to_formule(argument, False)
     #print x, fdb.get_hashWComb(fwcomb)
-    x += 1
   print 
 
   # Составляем слооварь аргументов

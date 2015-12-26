@@ -64,20 +64,20 @@ class API():
     # Меняем настройки по умолчанию на пользовательские
     self.ChangeSettings(UserSettings)
     print(u"Загрузка модулей действий...")
-    t1 = int(time.time())
+    t1 = time.time()
     Import = import_action.ImportAction(self.settings)
     Import.importAll()
-    t2 = int(time.time())
+    t2 = time.time()
     print'  ', t2 - t1
     print(u"Загрузка модуля естественного языка...")
-    t1 = int(time.time())
+    t1 = time.time()
     self.LangClass = LangClass(self.settings)
-    t2 = int(time.time())
+    t2 = time.time()
     print '  ', t2 - t1
     print(u"Инициализация модуля логики...")
-    t1 = int(time.time())
+    t1 = time.time()
     self.LogicShell = Logic.LogicShell(self.settings)
-    t2 = int(time.time())
+    t2 = time.time()
     print '  ', t2 - t1
     print(u"Готово!")
 

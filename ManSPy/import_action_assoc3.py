@@ -249,6 +249,15 @@ def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):
   del fasif['args']
   fasif['wcomb'] = wcomb.getUnit('dict')
 
+  for argname, data in fasif['argdescr'].items():
+    for hyperonym in data['hyperonyms']:
+      argword = [argword for argword in wcomb.getByValues(setstring='subiv:noignore', argname=argname)][0]
+      print argname, argword
+      if argword[1]: base = argword[1]['base']
+      else: base = argword[2][0]['base']
+      bases = data['argtable'].keys()
+      OR.addWordsInAbstractGroup(hyperonym['base'], base, *bases)
+
   #pprint(fasif['args']) 
   #fwcomb = to_formule.to_formule(fasif['wcomb'], True, fasif['args'])
   #pprint(fwcomb)

@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
-import sys, os
+import sys, os, codecs
 import NLModules, Action, relation, extractor, converter, BeautySafe
+
+if not os.path.exists('comparing_fasif.txt'):
+  f = open('comparing_fasif.txt', 'w')
+  f.close()
 
 class LangClass():
   levels = ["graphmath", "morph", "postmorph", "synt", "extract", "convert"]
@@ -39,7 +43,10 @@ class LangClass():
     # Морфологический анализ
     if start_level in self.levels[:2]:
       sentences = self.LangModule.getMorphA(sentences, GrammarNazi['morph'])
-      for sentence in sentences: print '----', sentence.getUnit('str')['fwords']
+      with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
+        flog.write('\n')
+        for sentence in sentences: flog.write('sentence: %s\n' % sentence.getUnit('str')['fwords'])
+        flog.write('\n')
       BeautySafe.safe_sentences(sentences, 'Morphological analysis')
       if end_level == self.levels[1]: return sentences, GrammarNazi
 
