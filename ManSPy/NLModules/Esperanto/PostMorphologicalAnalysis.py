@@ -4,6 +4,14 @@
     По завершению удаляются все служебные части речи.
     Можно приступать к синтаксичекому анализу предложения.
     '''
+from pprint import pprint
+
+def processingArticle(GrammarNazi, index, sentence):
+  article = sentence(index)
+  if article['POSpeech'] == 'article':
+    sentence.delByIndex(index) # пока только удаляем
+    return index
+  else: return index + 1
 
 def processingPreposition(GrammarNazi, index, sentence):
   preposition = sentence(index)
@@ -13,7 +21,7 @@ def processingPreposition(GrammarNazi, index, sentence):
   elif right['POSpeech'] in ['noun', 'pronoun']:
     sentence(index+1, 'case', preposition['give_case'])
   else:
-    GrammarNazi.append('After preposition "'+preposition['word']+'" must be a noun or a pronoun!')
+    GrammarNazi.append('After preposition "'+preposition['word']+'" must be a noun or a pronoun! Found '+str(sentence(index+1)))
 
 def processingConjunction(GrammarNazi, index, sentence):
   conjunction = sentence(index)
@@ -50,10 +58,16 @@ def findDefinitions(GrammarNazi, index, sentence, indexes=[]):
   if word['POSpeech'] == 'adjective' or (word['POSpeech'] == 'pronoun' and word['category'] == 'possessive'):
     indexes.append(index)
     if index == sentence.getLen()-1: return index + 1 # завершаем цикл, ибо прилагательные без существительного. Их мы не удаляем, так как они могут следовать после глагола esti
-    return findDefinitions(GrammarNazi, index+1, sentence, indexes) + 1
+    return findDefinitions(GrammarNazi, index+1, sentence, indexes)
   elif word['POSpeech'] in ['noun'] and len(indexes) > 0: # если перед существительным стояли прилагательные
-    return sentence.addFeature(index, *indexes)
+    sentence.addFeature(index, *indexes)
+    return index - len(indexes) + 1
   else: return index + 1
+
+def procArt(GrammarNazi, sentence):
+  index = 0
+  while index < sentence.getLen():
+    index = processingArticle(GrammarNazi, index, sentence)
 
 def procPrep(GrammarNazi, sentence):
   index = 0
@@ -126,23 +140,30 @@ def getPostMorphA(sentences, GrammarNazi):
   for sentence in sentences:
     #TASK обстоятельства, выраженные существительным, обозначить как наречие
 
+    #pprint(sentence.getUnit('dict'))
     procConj(GrammarNazi, sentence) # rapido kaj ankaux, dolaran kaj euxran, lampo kaj fortreno
+    #pprint(sentence.getUnit('dict'))
 
     # сворачиваем все наречия, даже многократно вложенные.
     while sentence.getByCharacteristic('POSpeech', 'adverb') != {}: checkAd(sentence)
 
     procConj(GrammarNazi, sentence) # montru [rapido] kaj inkludu
+    #pprint(sentence.getUnit('dict'))
 
     # "Сворачиваем" признак предмета: прилагательные и притяжательные местоимения -
     findDef(GrammarNazi, sentence)
+    #pprint(sentence.getUnit('dict'))
 
     # вот здесь нужно свернуть найденные однородные существительные
     procConj(GrammarNazi, sentence) # cxambro kaj [mia] domo
+    #pprint(sentence.getUnit('dict'))
 
     procPrep(GrammarNazi, sentence) # Корректируем падежи
     sentence.delByCharacteristic('POSpeech', 'preposition') # удаляем предлоги
+    #pprint(sentence.getUnit('dict'))
 
     procConj(GrammarNazi, sentence) # cxambro [en] domo
+    #pprint(sentence.getUnit('dict'))
     exchangeDataBetweenHomo(sentence) # копируем характеристики с первого однородного ко последующим ему однородным.
 
     # здесь нужно найти однородные косвенные дополнения, чтобы им установить однородность.

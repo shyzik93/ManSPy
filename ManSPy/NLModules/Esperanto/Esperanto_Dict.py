@@ -44,7 +44,7 @@ dct = {
 
   'particle': [u'jes', u'ne', u'nur'],
 
-  'article': [u'la'],
+  'article_d': {u'la':'defined'},
 
   'prefix': {'mal': {'antonym': True}},
 
@@ -59,6 +59,7 @@ dct = {
 
 dct['preposition'] = dct['preposition_d'].keys()
 dct['conjunction'] = dct['conjunction_d']['coordinating'] + dct['conjunction_d']['subordinating']
+dct['article'] = dct['article_d'].keys()
 
 ''' ĉ ĝ ĥ ĵ ŝ ŭ '''
 

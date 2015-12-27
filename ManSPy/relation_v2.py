@@ -249,15 +249,16 @@ class _ObjRelation(object):
   def addWordsToDBFromDictSentence(self, dict_sentence):
     if "dict" in str(type(dict_sentence)): indexes = dict_sentence.keys()
     elif "list" in str(type(dict_sentence)): indexes = range(len(dict_sentence))
+    words = []
     for index in indexes:
       dword = dict_sentence[index]
       # числительные в базу не добавляем
-      #if dict_sentence[index]['POSpeech'] == 'number': continue
-      self.R.add_word(dword['base'])
-      #word_id = self.R.convert(dword['base'])
+      if dict_sentence[index]['POSpeech'] == 'number': continue
+      words.append(dword['base'])
       if len(dword['feature']) != 0: self.addWordsToDBFromDictSentence(dword['feature'])
       if dword['MOSentence'] == 'predicate' and dword['POSpeech'] == 'verb':
         self.R.add_words2group('synonym', dword['POSpeech'], None, 0, dword['base'])
+    self.R.add_word(*words)
 
   def addWordsInAbstractGroup(self, group_base, *word_bases):
     ''' Добавляем абстрактные группы. Новые слова также добавляются в базу слов. '''

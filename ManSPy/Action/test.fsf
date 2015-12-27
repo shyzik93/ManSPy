@@ -17,7 +17,7 @@ currency y ;  Esperanto ; Russian
 # пробелы в начале строки обязательны
     USD      ;  dolara   ; доллара
     RUB      ;  rubla    ;
-    EUR      ;  eura     ;
+    EUR      ;  euxra     ;
     UAH      ;  grivna   ;
 country n ;  Esperanto
     Russia  ;  rusia

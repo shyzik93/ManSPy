@@ -235,7 +235,7 @@ def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):
     if value['verbs']: value['verbs'] = get_dword(value['verbs'], LangClass)['base']
 
   print '----------------- to formule start'
-  print fasif['wcomb']
+  #print fasif['wcomb']
   sentence = LangClass.NL2IL(fasif['wcomb'], ':synt')[0][0]
   wcomb = sentence
   fasif['argdescr'] = {}
@@ -252,7 +252,7 @@ def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):
   for argname, data in fasif['argdescr'].items():
     for hyperonym in data['hyperonyms']:
       argword = [argword for argword in wcomb.getByValues(setstring='subiv:noignore', argname=argname)][0]
-      print argname, argword
+      #print argname, argword
       if argword[1]: base = argword[1]['base']
       else: base = argword[2][0]['base']
       bases = data['argtable'].keys()

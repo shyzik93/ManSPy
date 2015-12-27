@@ -25,6 +25,19 @@ import copy, time, json, codecs
 from pprint import pprint
 import common, NLModules
 
+def compare_fasif_Verb(fasif, verb_base, finded_args, flog):
+  if verb_base != fasif['verbs']: return False
+  finded_args[0] = fasif['function']
+  return True
+
+def count_wordargs(constwordexample, fasif):
+  req = noreq = 0
+  for feature in constwordexample['feature']:
+    if 'argname' not in feature: continue
+    if fasif['argdescr'][feature['argname']]['isreq']: req += 1
+    else: noreq += 1
+  return req, noreq
+
 def compare_word(word, position, argworddescr, finded_args, flog):
   #print word['base'], worddescr['base'], worddescr['type']
   if word['MOSentence'] in ['direct supplement', 'supplement', 'subject']:
@@ -46,6 +59,13 @@ def compare_word(word, position, argworddescr, finded_args, flog):
     # проверяем вхождение корня в гиперонимы из описания
     return True
 
+def jumpToObient(sentence, indexWord, indexObient):
+    indexes = sentence.getObient(indexWord)
+    if indexes:
+      sentence.jumpByIndex(indexes[indexObient])
+      sentence.jumpByStep(-1)
+    return True if indexes else False
+
 def compare_fasif_WordCombination(fasif, argument, finded_args, flog):
   functions = fasif['functions']
   _argument = NLModules.ObjUnit.Sentence(fasif['wcomb'])
@@ -57,19 +77,31 @@ def compare_fasif_WordCombination(fasif, argument, finded_args, flog):
     # "Проходимся" по дополнениям (прямые, косвенные, а также подлежащие)
     isright = compare_word(word, argument.position, _word, finded_args, flog) # new
     if not isright:
-      flog.write('    "%s" is not native between native members. Not native members can only be in the end of sentence.\n' % word['base'])
-      return False # если посреди связей чужой член - актант не соответсвует фасифу
+      # Если инородная константа, то проверяем, не пропущен ли необязательный аргумент среди фичей константы.
+      req, noreq = count_wordargs(_word, fasif)
+      #print word['base'], _word['base'], req, noreq
+      if (not req and not noreq) or req: # если это константное слово без аргументных слов среди определений или есть обязательные аргументный слова среди определений
+        flog.write('    "%s" is not native between native members. Not native members can only be in the end of sentence.\n' % word['base'])
+        return False # если посреди связей чужой член - актант не соответсвует фасифу
+      else: # если всен аргументные слова - необязательные, то константа может быть пропущена
+        argument.jumpByStep(-1)
+        _indexes = jumpToObient(_argument, _index, 0)
+        if not _indexes: 
+          flog.write('    "%s" - has %s obients. \n' % (_word['base'], str(_indexes)))
+          break
     flog.write('    Result of comparing word is right: index - %i, base - "%s".\n' % (index, word['base']))
-    indexes = argument.getObient(index)
-    if indexes:
-      argument.jumpByIndex(indexes[0])
-      argument.jumpByStep(-1)
-    #else: break
-    _indexes = _argument.getObient(_index) # new
-    if _indexes: # new
-      _argument.jumpByIndex(_indexes[0]) # new
-      _argument.jumpByStep(-1) # new
-    #else: break # new
+    #indexes = argument.getObient(index)
+    #if indexes:
+    #  argument.jumpByIndex(indexes[0])
+    #  argument.jumpByStep(-1)
+    ##else: break
+    #_indexes = _argument.getObient(_index) # new
+    #if _indexes: # new
+    #  _argument.jumpByIndex(_indexes[0]) # new
+    #  _argument.jumpByStep(-1) # new
+    ##else: break # new
+    indexes = jumpToObient(argument, index, 0)
+    _indexes = jumpToObient(_argument, _index, 0)
     # "Проходимся" по обстоятельствам и определениям
     features = word['feature']
     _features = _word['feature']
@@ -83,7 +115,7 @@ def compare_fasif_WordCombination(fasif, argument, finded_args, flog):
 
     # игнорируем лишние косвенные дополнения (на хвосте)
     if not (indexes and _indexes): 
-      flog.write('    "%s" - has %i obients. "%s" - has %i obients.\n' % (word['base'], len(indexes), _word['base'], len(_indexes)))
+      flog.write('    "%s" - has %s obients. "%s" - has %s obients.\n' % (word['base'], str(indexes), _word['base'], str(_indexes)))
       break
 
   return True
@@ -95,6 +127,7 @@ class FasifDB():
     finded_args = {}
     self.flog.write('\n')
     if type_fasif == 'WordCombination': isright = compare_fasif_WordCombination(fasif, self.argument, finded_args, self.flog)
+    if type_fasif == 'Verb': isright = compare_fasif_Verb(fasif, self.argument, finded_args, self.flog)
     if isright: self.compared_fasifs[id_fasif] = (finded_args, fasif)
     return 1 if isright else 0
 
@@ -114,12 +147,15 @@ class FasifDB():
     self.c.commit()
 
   def getFASIF(self, _type, argument):
-    self.argument = argument
-    self.compared_fasifs = {}
     self.flog = codecs.open('comparing_fasif.txt', 'a', 'utf-8') # file log
     self.flog.write('\n--- %s\n' % _type)
-    for key, value in argument.getUnit('str').items():
-      self.flog.write('--- %s: %s\n' % (key, value))
+    if _type=='WordCombination':
+      for key, value in argument.getUnit('str').items():
+        self.flog.write('--- %s: %s\n' % (key, value))
+    elif _type=='Verb': self.flog.write('--- %s\n' % argument)
+
+    self.argument = argument
+    self.compared_fasifs = {}
     res = self.cu.execute('SELECT id_fasif FROM fasifs WHERE type_fasif=? AND iseq(id_fasif, type_fasif, fasif)=1', (_type,)).fetchall()
     self.flog.close()
     return self.compared_fasifs

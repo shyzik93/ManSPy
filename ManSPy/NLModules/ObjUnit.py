@@ -202,7 +202,8 @@ class Word(_Unit):
 
 """ Функции для работы со стандартными структурами данных """
 
-def dictOrder(d, old_index=None):
+#def dictOrder(d, old_index=None):
+def dictOrder(d):
   """ Синхронизирует числовые ключи словаря, то есть смещает их.
       Возвращает список индексов, которые отсутствовали во входном словаре.
       Значения словаря сохраняют прежний порядок.
@@ -226,12 +227,12 @@ def dictOrder(d, old_index=None):
       d[index-sdvig] = d[index]
       del d[index]
     #print "sdvig: ", sdvig
-    if old_index == index: old_index = index-sdvig
+    #if old_index == index: old_index = index-sdvig
     prev_index = index-sdvig
     prev_sdvig = sdvig
   #print deleted
   #print d
-  return deleted, old_index
+  return deleted#, old_index
 
 class Sentence(_Unit):
   """ Класс объекта предложения. Индексы списка и ключи словаря должны совпадать.
@@ -280,7 +281,8 @@ class Sentence(_Unit):
   def _sync(self):
     """ Синхронизирует ключи словаря, то есть смещает их.
         Используется после удаления слов. """
-    deleted, self.old_index = dictOrder(self.dict_unit, self.old_index)
+    #deleted, self.old_index = dictOrder(self.dict_unit, self.old_index)
+    deleted = dictOrder(self.dict_unit)
     # синхронизируем ссылки
     self._syncLinks(self.dict_unit.values(), deleted, 'link')
     self._syncLinks(self.dict_unit.values(), deleted, 'homogeneous_link')
@@ -351,9 +353,9 @@ class Sentence(_Unit):
       feature['index'] = index
       word['feature'].append(feature)
     # удаляем из предложения
-    self.old_index = index
+    #self.old_index = index
     self.delByIndex(*indexes)
-    return self.old_index
+    #return self.old_index
 
   def getFeature(self, index):
     return self.dict_unit[index]['feature']

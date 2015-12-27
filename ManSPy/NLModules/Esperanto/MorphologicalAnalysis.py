@@ -18,7 +18,8 @@ def checkByDict(word_l, word):
   ''' Определяет часть речи по словарю
       для неизменяемых или почти неизменяемых частей речи'''
   global dct
-  if word_l in dct['article']: word['POSpeech'] = 'article'             # артикль
+  if word_l in dct['article']:              # артикль
+    word['POSpeech'] = 'article'
   elif word_l in dct['particle']: word['POSpeech'] = 'particle'         # частица
   elif word_l in dct['conjunction']:
     word['POSpeech'] = 'conjunction'      # союз

@@ -13,10 +13,12 @@ def check_args(finded_args, fasif, R):
     for argname, argvalue in finded_arg.items():
       isright = False
       for hyperonym in hyperonyms[argname]:
+        print argvalue, 'is hyponym of', hyperonym, R.isWordInAbstractGroup(argvalue, hyperonym)
         if R.isWordInAbstractGroup(argvalue, hyperonym):
           isright = True
           break
       if not isright: del finded_arg[argname]
+
   # Проверка на отсутствие обязательных аргументных слов
   checked_args = []
   for finded_arg in finded_args:
@@ -27,6 +29,12 @@ def check_args(finded_args, fasif, R):
         break
     if isright: checked_args.append(finded_arg)
 
+  # Конвертирование аргументных слов по таблице из фасифа
+  for checked_arg in checked_args:
+    for argname, value in checked_arg.items():
+      if value not in fasif['argdescr'][argname]['argtable']: continue
+      checked_arg[argname] = fasif['argdescr'][argname]['argtable'][value]
+
   return checked_args
 
 def Extraction2IL(R, settings, Action, predicates, arguments):
@@ -34,6 +42,11 @@ def Extraction2IL(R, settings, Action, predicates, arguments):
   #print '    arguments ::', arguments, '\n'
 
   fdb = to_formule.FasifDB(settings)
+  patternIL = {}
+  ILs = []
+  predicate = predicates.values()[0]
+
+  praIL = {'common_function': None, 'wcomb_function': None}
 
   # Вынимаем Фасиф
   for _argument in arguments:
@@ -47,7 +60,23 @@ def Extraction2IL(R, settings, Action, predicates, arguments):
       compared_fasifs[id_fasif] = (finded_args, fasif)
       with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
         flog.write('\n%s\n%s\n' % (str(finded_args), str(fasif['functions'])))
-      
+
+      function = None
+      for destination, data in fasif['functions'].items():
+        if predicate['base'] not in data['verbs']: continue # в фасифе должна сохранять синонимичная группа глаола
+        function = data['function']
+        break
+      if function: praIL['wcomb_function'] = {'args': finded_args, 'function': function}
+      else:
+        function = fasif['functions']['getCondition']['function']
+        praIL['wcomb_function'] = {'args': finded_args, 'function': function}
+        compared_fasifs = fdb.getFASIF('Verb', predicate['base'])
+        if not compared_fasifs: print 'Fasif for "%s" wasn\'t found!' % predicate['base']
+        praIL['common_function'] = compared_fasifs.values()[0][0][0]
+
+      with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
+        flog.write('\npraIL: %s\n' % str(praIL))
+
     #fwcomb = to_formule.to_formule(argument, False)
     #print x, fdb.get_hashWComb(fwcomb)
   print 
@@ -84,4 +113,4 @@ def Extraction2IL(R, settings, Action, predicates, arguments):
     set_action(settings, Action, funcdesc, Predicate, IL)
     ILs.extend([join_arg_and_func(true_arg, IL) for true_arg in true_args]) # на случай нескольких дополнений
   return ILs, ErrorConvert'''
-  return [], {'function': [], 'argument': []}
+  return ILs, {'function': [], 'argument': []}

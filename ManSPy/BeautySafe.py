@@ -19,9 +19,9 @@ db_dir = os.path.join(*db_dir)
 print os.path.abspath('')
 db_dir = os.path.join(os.path.abspath(''), 'log_analysis_')'''
 
-def fwrite(data):
+def fwrite(data, name='analysis.txt'):
   #global db_dir
-  db_dir = os.path.join(common.RSettings('dir_db'), 'analysis.txt')
+  db_dir = os.path.join(common.RSettings('dir_db'), name)
   if not os.path.exists(db_dir):
     f = open(db_dir, 'w')
     f.close()
