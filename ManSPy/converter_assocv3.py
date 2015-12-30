@@ -70,7 +70,8 @@ def Extraction2IL(R, settings, Action, predicates, arguments):
       else:
         function = fasif['functions']['getCondition']['function']
         praIL['wcomb_function'] = {'args': finded_args, 'function': function}
-        compared_fasifs = fdb.getFASIF('Verb', predicate['base'])
+        id_group =  R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')[0]
+        compared_fasifs = fdb.getFASIF('Verb', id_group)
         if not compared_fasifs: print 'Fasif for "%s" wasn\'t found!' % predicate['base']
         praIL['common_function'] = compared_fasifs.values()[0][0][0]
 

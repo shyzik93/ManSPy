@@ -10,7 +10,7 @@
     мессенджеры, интерфейс мозг-компьютер, приёмник звонков и SMS и так далее.
 """
 import repper, simpletools
-import Action, Logic, import_action, common, time, codecs, sys, os
+import Action, FCModule, import_action, common, time, codecs, sys, os
 from analyse_text import LangClass
 
 class MainException(Exception): pass
@@ -76,7 +76,7 @@ class API():
     print '  ', t2 - t1
     print(u"Инициализация модуля логики...")
     t1 = time.time()
-    self.LogicShell = Logic.LogicShell(self.settings)
+    self.LogicShell = FCModule.LogicShell(self.settings)
     t2 = time.time()
     print '  ', t2 - t1
     print(u"Готово!")

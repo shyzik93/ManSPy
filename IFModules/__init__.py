@@ -13,20 +13,14 @@ _path = os.path.dirname(__file__)
 sys.path.append(_path)
 
 password_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(''))), 'IFM_passwords.txt')
-#def get_passwords(password_path, password_dict):
-#  with open(password_path, 'r') as f:
-#    password_strings = f.read().split('\n')
-#  for s in password_strings:
-#    if not s or s[0] == '#': continue
-#    name, value = s.split(':')
-#    password_dict[name.strip()] = [v.strip() for v in value.strip().split(' ')]
 
 class Interfaces():
   interfaces = {}
   def __init__(self, API, *IFNames):
-    self.conf = conftools.loadconf(password_path)
-    #self.password_dict = {}
-    #get_passwords(password_path, self.password_dict)
+    if not os.path.exists(password_path):
+      sys.stderr.write('Warning! The config file is absent! Some interfaces can have exceptions!\nThe config file: %s' % password_path)
+      self.conf = {}
+    else: self.conf = conftools.loadconf(password_path)
     self.API = API
     self.turnOnInterface(*IFNames)
 

@@ -205,15 +205,15 @@ def siftoutWordCombination(fasif, lang):
 
   return fasif
 
-def get_dword(word, LangClass):
-  return LangClass.NL2IL(word, ':postmorph')[0][0].getUnit('dict')[0]
+def get_dword(word, LangClass): return LangClass.NL2IL(word, ':postmorph')[0][0].getUnit('dict')[0]
 def proccess_argword(argwords, LangClass):
   argwords['name'] = get_dword(argwords['name'], LangClass)
   for index, argword in enumerate(argwords['hyperonyms']):
     argwords['hyperonyms'][index] = get_dword(argword, LangClass)
 
 def proccess_lingvo_dataVerb(fasif, LangClass, OR, fdb):
-  fasif['verbs'] = get_dword(fasif['verbs'], LangClass)['base']
+  base_verb = get_dword(fasif['verbs'], LangClass)['base']
+  fasif['verbs'] = OR.R.add_words2group('synonym', 'verb', None, 0, base_verb) #OR.R.get_groups_by_word('synonym', 0, base_verb, 'verb')[0]
   return fasif
 
 def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):

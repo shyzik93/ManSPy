@@ -12,7 +12,7 @@ S'F:\\DATA_BASE'
 p5
 sS'assoc_version'
 p6
-I3
+I2
 sS'logic'
 p7
 I01
@@ -24,7 +24,7 @@ p9
 I01
 sS'storage_version'
 p10
-I1
+I2
 sS'history'
 p11
 I01

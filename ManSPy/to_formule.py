@@ -90,16 +90,6 @@ def compare_fasif_WordCombination(fasif, argument, finded_args, flog):
           flog.write('    "%s" - has %s obients. \n' % (_word['base'], str(_indexes)))
           break
     flog.write('    Result of comparing word is right: index - %i, base - "%s".\n' % (index, word['base']))
-    #indexes = argument.getObient(index)
-    #if indexes:
-    #  argument.jumpByIndex(indexes[0])
-    #  argument.jumpByStep(-1)
-    ##else: break
-    #_indexes = _argument.getObient(_index) # new
-    #if _indexes: # new
-    #  _argument.jumpByIndex(_indexes[0]) # new
-    #  _argument.jumpByStep(-1) # new
-    ##else: break # new
     indexes = jumpToObient(argument, index, 0)
     _indexes = jumpToObient(_argument, _index, 0)
     # "Проходимся" по обстоятельствам и определениям
