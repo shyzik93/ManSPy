@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import codecs
-import to_formule, NLModules, mymath
+import codecs, sys, copy
+import to_formule, NLModules, mymath, Action
 
 def check_args(finded_args, fasif, R):
   # Проверка на наличие в абстрактной группе
@@ -37,22 +37,40 @@ def check_args(finded_args, fasif, R):
 
   return checked_args
 
+def parseFunction(function_str):
+  if function_str[0] == '$': return function_str[1:]
+  module_name, func_name = function_str.split('/')
+  module_obj = Action.getModule(module_name)
+  return getattr(module_obj, func_name)
+
 def Extraction2IL(R, settings, Action, predicates, arguments):
   #print '    predficates ::', predicates, '\n'
   #print '    arguments ::', arguments, '\n'
 
   fdb = to_formule.FasifDB(settings)
-  patternIL = {}
+  pattern_IL = {
+    'arg0': {'antonym': False}, # передаётся первым аргументом в каждую функцию
+    'action': {
+      'wcomb_function': None,
+      'wcomb_verb_function': None,
+      'common_verb_function': None,
+      'mood': '',
+      'circumstance': '',
+      'type circumstance': ''
+      },
+    'argument': [],
+    'subject': None
+  }
   ILs = []
   predicate = predicates.values()[0]
-
-  praIL = {'common_function': None, 'wcomb_function': None}
 
   # Вынимаем Фасиф
   for _argument in arguments:
     argument = NLModules.ObjUnit.Sentence(_argument)
     compared_fasifs = fdb.getFASIF('WordCombination', argument)
+    IL = copy.deepcopy(pattern_IL)
     for id_fasif, data in compared_fasifs.items():
+      # Вынимаем фасиф словосочетания
       finded_args, fasif = data
       for argname, args in finded_args.items(): finded_args[argname] = list(set(args))
       finded_args = mymath.dproduct(finded_args)
@@ -61,57 +79,29 @@ def Extraction2IL(R, settings, Action, predicates, arguments):
       with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
         flog.write('\n%s\n%s\n' % (str(finded_args), str(fasif['functions'])))
 
+      # Определяем функцию (через фасиф словосочетания или глагола)
       function = None
       for destination, data in fasif['functions'].items():
         if predicate['base'] not in data['verbs']: continue # в фасифе должна сохранять синонимичная группа глаола
         function = data['function']
         break
-      if function: praIL['wcomb_function'] = {'args': finded_args, 'function': function}
+      if function:
+        IL['action']['wcomb_verb_function'] = parseFunction(function)
+        IL['argument'] = finded_args
       else:
         function = fasif['functions']['getCondition']['function']
-        praIL['wcomb_function'] = {'args': finded_args, 'function': function}
+        IL['action']['wcomb_function'] = parseFunction(function)
         id_group =  R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')[0]
         compared_fasifs = fdb.getFASIF('Verb', id_group)
-        if not compared_fasifs: print 'Fasif for "%s" wasn\'t found!' % predicate['base']
-        praIL['common_function'] = compared_fasifs.values()[0][0][0]
+        if not compared_fasifs: sys.stderr.write('Fasif for "%s" wasn\'t found!' % predicate['base'])
+        IL['action']['common_verb_function'] = parseFunction(compared_fasifs.values()[0][0][0])
 
       with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
-        flog.write('\npraIL: %s\n' % str(praIL))
+        flog.write('\npraIL: %s\n' % str(IL))
 
+    IL['action']['mood'] = predicate['mood']
+    ILs.append(IL)
     #fwcomb = to_formule.to_formule(argument, False)
     #print x, fdb.get_hashWComb(fwcomb)
   print 
-
-  # Составляем слооварь аргументов
-  # Определяем функции и сотавляем ВЯ.
-
-  '''pattern_IL = {
-    'arg0': {'antonym': False}, # передаётся первым аргументом в каждую функцию
-    'action': {
-      'function': None,
-      'mood': '',
-      'circumstance': '',
-      'type circumstance': ''
-      },
-    'argument': {},
-    'subject': None
-  }
-  ILs = []
-  ErrorConvert = {'function': [], 'argument': []}
-  #procFASIFs = {}
-  #for indexDS, DS in DirectSupplement.items():
-  #  procFASIFs[indexDS] = get_procFASIFs(OR, settings, Predicate, DS, ErrorConvert['function'])
-  procFASIFs = get_procFASIFs(OR, settings, Predicate, DirectSupplement, ErrorConvert['function'])
-  for procFASIF, isantonym in procFASIFs:
-    #procFASIF, isantonym = _procFASIF
-    if not procFASIF: continue
-    IL = copy.deepcopy(pattern_IL) # на случай нескольких дополнений, так как это разные ЯВ будут
-    funcdesc, argdesc = procFASIF['function'], procFASIF['arguments_description']#, procFASIF['arguments_order']
-    found_args = processing_arguments.getArguments(OR, Subject, Predicate, DirectSupplement, Supplement, argdesc)
-    true_args = processing_arguments.checkArguments(found_args, argdesc, len(ILs), ErrorConvert['argument'])
-
-    IL['arg0']['antonym'] = isantonym
-    set_action(settings, Action, funcdesc, Predicate, IL)
-    ILs.extend([join_arg_and_func(true_arg, IL) for true_arg in true_args]) # на случай нескольких дополнений
-  return ILs, ErrorConvert'''
   return ILs, {'function': [], 'argument': []}

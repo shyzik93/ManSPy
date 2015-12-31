@@ -38,18 +38,19 @@ def set_action(settings, Action, funcdesc, Predicate, IL):
   module_name, function_name = funcdesc
   module = Action.getModule(module_name)
   if 'settings' in dir(module): module.settings = settings # т. е. в МД  доступны настройки ИСУ
-  if hasattr(module, function_name): IL['action']['function'] = getattr(module, function_name)
+  if hasattr(module, function_name): IL['action']['wcomb_verb_function'] = getattr(module, function_name)
   else:
     print "Function \"%s\" is absent in module \"%s\". Function will not run!" % (module_name, function_name)
     print "You can rename the function in the module like in FASIF."
-    IL['action']['function'] = None
+    IL['action']['wcomb_verb_function'] = None
   # заодно добавим и наклонение глагола
   IL['action']['mood'] = Predicate.values()[0]['mood']
 
-def join_arg_and_func(true_arg, IL):
-  _IL = copy.deepcopy(IL)
-  _IL['argument'] = true_arg
-  return _IL
+# Уалено с целью совместимости с третьей версией
+#def join_arg_and_func(true_arg, IL):
+#  _IL = copy.deepcopy(IL)
+#  _IL['argument'] = true_arg
+#  return _IL
 
 # если в предложении днесколько сказуемых или прямых дополнений, то оно должно
 # разбиться на несколько предложений до вызова этой функции. То есть разбивка
@@ -58,12 +59,13 @@ def Extraction2IL(OR, settings, Action, Subject, Predicate, DirectSupplement, Su
   pattern_IL = {
     'arg0': {'antonym': False}, # передаётся первым аргументом в каждую функцию
     'action': {
-      'function': None,
+      'wcomb_verb_function': None,
+      'common_verb_function': None, # для совместимости с третьей версией
       'mood': '',
       'circumstance': '',
       'type circumstance': ''
       },
-    'argument': {},
+    'argument': [],
     'subject': None
   }
   ILs = []
@@ -82,7 +84,9 @@ def Extraction2IL(OR, settings, Action, Subject, Predicate, DirectSupplement, Su
 
     IL['arg0']['antonym'] = isantonym
     set_action(settings, Action, funcdesc, Predicate, IL)
-    ILs.extend([join_arg_and_func(true_arg, IL) for true_arg in true_args]) # на случай нескольких дополнений
+    #ILs.extend([join_arg_and_func(true_arg, IL) for true_arg in true_args]) # на случай нескольких дополнений
+    IL['argument'] = true_args
+    ILs.append(IL)
   return ILs, ErrorConvert
 
 # montru dolaran cambion de ukraina banko kaj de rusia banko
