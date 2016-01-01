@@ -70,7 +70,7 @@ def Extraction2IL(R, settings, Action, predicates, arguments):
     compared_fasifs = fdb.getFASIF('WordCombination', argument)
     IL = copy.deepcopy(pattern_IL)
     for id_fasif, data in compared_fasifs.items():
-      # Вынимаем фасиф словосочетания
+      # Вынимаем фасиф словосочетания  # здевсь же отсеиваем неподходящие фасифы (через continue)
       finded_args, fasif = data
       for argname, args in finded_args.items(): finded_args[argname] = list(set(args))
       finded_args = mymath.dproduct(finded_args)
@@ -85,9 +85,9 @@ def Extraction2IL(R, settings, Action, predicates, arguments):
         if predicate['base'] not in data['verbs']: continue # в фасифе должна сохранять синонимичная группа глаола
         function = data['function']
         break
+      IL['argument'] = finded_args
       if function:
         IL['action']['wcomb_verb_function'] = parseFunction(function)
-        IL['argument'] = finded_args
       else:
         function = fasif['functions']['getCondition']['function']
         IL['action']['wcomb_function'] = parseFunction(function)
@@ -104,4 +104,4 @@ def Extraction2IL(R, settings, Action, predicates, arguments):
     #fwcomb = to_formule.to_formule(argument, False)
     #print x, fdb.get_hashWComb(fwcomb)
   print 
-  return ILs, {'function': [], 'argument': []}
+  return ILs, {'function': [], 'argument': [[] for i in range(len(ILs))]}
