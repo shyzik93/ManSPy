@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+''' Модуль математической лингвистии '''
 
 def _product(resl, addl):
   n = len(addl)
@@ -14,7 +15,8 @@ def _product(resl, addl):
   return _resl
 
 def product(parentl):
-  ''' Выполняет декартово (прямое) произведение над списками в списке parent1 '''
+  ''' Выполняет декартово (прямое) произведение над списками в списке parent1
+      В стандартной библиотеке Python есть модуль, в котором уже есть реализация данного алгоритма. '''
   prevchildl = [[]]
   for childl in parentl:
     prevchildl = _product(prevchildl, childl)
@@ -36,12 +38,17 @@ def _dproduct(resl, addl, name):
 def dproduct(dparentl):
   ''' Выполняет декартово (прямое) произведение над словарями в списке dparent1
       {'a': [1,2], 'b': [5,6]} -> [{'a': 1, 'b':5}, {'a': 1, 'b':6}, {'a': 2, 'b':5}, {'a': 2, 'b':6}]
+      В стандартной библиотеке Python я этой функции не нашёл.
+      Функция необходима для аргументных слов.
   '''
   prevchildl = [{}]
   for name, childl in dparentl.items():
     prevchildl =_dproduct(prevchildl, childl, name)
   #print len(prevchildl), prevchildl
   return prevchildl
+
+#def is_antonym(is_antonym, has_antonym_prefix):
+#  return is_antonym != has_antonym_prefix
 
 if __name__ == '__main__':
   #resl = copy([[10], [20], [30], [40]], [1,2,3,4])

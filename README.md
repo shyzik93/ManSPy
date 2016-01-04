@@ -3,7 +3,7 @@ Management System (universal and interactive)
 
 # Техническая информация
 
-- Python 2.7.10. Пишу на ОС Windows, но может запуститься и на Linux (случайно запустил на ОС Raspbian)  
+- Python 2.7.11. Пишу на ОС Windows, но может запуститься и на Linux (случайно запустил на ОС Raspbian)  
 - Начало написания: 27.04.2014 год - от примитивного бота к настоящим результатам.  
 - Вода, нытьё и сомнения первых месяцев в статье на хабре от 07.08.2014- http://habrahabr.ru/post/232263/  
 - Подробно об алгоритмах, планах, возможностях текущей реализации: http://just-idea.ru (запущен в конце января 2015-го)
@@ -13,6 +13,7 @@ Management System (universal and interactive)
 - lxml - для парсинга страниц при авторизации во "ВКонтакте" и для парсинга страниц с курсами валют от ЦБ. (для ОС Windows: http://www.lfd.uci.edu/~gohlke/pythonlibs/)  
 - cssselect - может проситься модулем lxml (https://codeload.github.com/SimonSapin/cssselect/zip/master, https://github.com/SimonSapin/cssselect/)
 - xmpp - реализация протокола для jabber (http://xmpppy.sourceforge.net/, http://sourceforge.net/projects/xmpppy/files/, https://raw.githubusercontent.com/freebsd/freebsd-ports/master/net-im/py-xmpppy/files/patch-xmpp-transports.py - информация об исправлении ошибки в модуле)
+- https://pypi.python.org/pypi/eonums/0.9.0 - пока не используется.
 - repper и идущие после него модули — файлы из личного репозитория. https://github.com/Ra93POL/repository_personal. можно покласть их в любую папку, отдельно от программы. Для доступности этих модулей необходимо запустить файл repper_install.py из личного репозитория - он скопирует файл repper.py в основной репозиторий Питона. Repper.py импортируется только для того, чтобы добавить путь к личному репозиторию в переменную sys.path. 
 
 При запуске программы появится папка "DATA_BASE" - в ней можно найти историю переписки отдельно для каждого интерфейса, результаты морфологического, постморфологического и синтаксического анализов, а также базу данных.

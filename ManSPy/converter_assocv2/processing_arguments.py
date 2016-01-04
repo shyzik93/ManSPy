@@ -2,7 +2,7 @@
 """
 """
 import os, copy
-from .. import common, mymath
+from .. import common, lingvo_math
 
 def walk(o, func, parent=None, key=None):
   if isinstance(o, dict): keys = o.keys()
@@ -100,7 +100,7 @@ def getArguments(OR, Subject, Predicate, DirectSupplement, Supplement, argdesc):
 
   write_log('02. Found arguments: ', _found_args)
   # декартово умножение
-  found_args = mymath.dproduct(_found_args)
+  found_args = lingvo_math.dproduct(_found_args)
   # соответствие, если в предложении указано наречие "соответственно"
   # здесь должен быть этот код  
   write_log('02.1. Found arguments: ', found_args)

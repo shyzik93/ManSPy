@@ -123,7 +123,7 @@ def parseWordCombination(_fasif): # подформат состоит из тр�
     # Язык: глаголДляФункции
     elif re.findall(STRING_DESTINATION_BODY.decode('utf-8'), string): # "    Language : verbглагол"
       lang, verb = string.split(':')
-      functions[destination]['verbs'][lang.strip()] = verb.strip()
+      functions[destination]['verbs'][lang.strip()] = verb.strip().split()
       #print '2 $$$$', string
     ## Блок аргументов
     # аргумент yORn ; Язык1 ; Язык2
@@ -197,8 +197,9 @@ def siftoutWordCombination(fasif, lang):
 
   for destination, value in fasif['functions'].items():
     if lang in value['verbs']: value['verbs'] = value['verbs'][lang]
-    elif not value['verbs']: continue
-    else: return None
+    else: value['verbs'] = []
+    #elif not value['verbs']: continue
+    #else: return None
 
   if lang in fasif['wcomb']: fasif['wcomb'] = fasif['wcomb'][lang]
   else: return None
@@ -210,29 +211,32 @@ def proccess_argword(argwords, LangClass):
   argwords['name'] = get_dword(argwords['name'], LangClass)
   for index, argword in enumerate(argwords['hyperonyms']):
     argwords['hyperonyms'][index] = get_dword(argword, LangClass)
+def get_id_group(OR, word_verb, LangClass):
+  base_verb = get_dword(word_verb, LangClass)['base']
+  id_groups = OR.R.get_groups_by_word('synonym', 0, base_verb, 'verb')
+  if id_groups: return id_groups[0]
+  else: return OR.R.add_words2group('synonym', 'verb', None, 0, base_verb)
 
 def proccess_lingvo_dataVerb(fasif, LangClass, OR, fdb):
-  base_verb = get_dword(fasif['verbs'], LangClass)['base']
-  fasif['verbs'] = OR.R.add_words2group('synonym', 'verb', None, 0, base_verb) #OR.R.get_groups_by_word('synonym', 0, base_verb, 'verb')[0]
+  fasif['verbs'] = get_id_group(OR, fasif['verbs'], LangClass)
   return fasif
 
 def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):
   for arg_name, data in fasif['args'].items():
-    #_data = {'argtable':{}}
     _data = data['argtable'].copy().items()
     for arg_word, argtable in _data:
       _arg_word = arg_word
       arg_word = get_dword(arg_word, LangClass)['base']
       del data['argtable'][_arg_word]
       data['argtable'][arg_word] = argtable
-    #fasif['args'][arg_name] = _data
 
     proccess_argword(data['argwords']['in_wcomb'], LangClass)
     for argword in data['argwords']['another']:
       proccess_argword(argword, LangClass)
 
   for destination, value in fasif['functions'].items():
-    if value['verbs']: value['verbs'] = get_dword(value['verbs'], LangClass)['base']
+    for index, verb in enumerate(value['verbs']):
+      value['verbs'][index] = get_id_group(OR, verb, LangClass)
 
   print '----------------- to formule start'
   #print fasif['wcomb']

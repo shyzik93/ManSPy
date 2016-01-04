@@ -30,24 +30,38 @@ class _Unit():
 
   # Работа с информацией о составляющих юнит (подюнитов)
   def __len__(self): return len(self.dict_unit)
-  def __call__(self, index, name=None, value=None):
+  def __call__(self, index, name=None, value=None): # типа getByIndex()
     if name == None: return self.dict_unit[index]
     elif value == None: return self.dict_unit[index][name]
     self.dict_unit[index][name] = value
 
   # Итератор
-  def __iter__(self): # # аналогично itemsUnit() без индекса, но с возможностью управления текущей позицией. Для цикла for.
-    self.position = 0
+  def __iter__(self, step=None): # # аналогично itemsUnit() без индекса, но с возможностью управления текущей позицией. Для цикла for.
+    self.position = self.position+step if step!=None else 0
     self.keys = self.dict_unit.keys()
     while self.position < len(self.keys) and self.position >= 0:
       index = self.keys[self.position]
       yield index, self.dict_unit[index]
       self.position += 1
-  def jumpByStep(self, step=1): self.position += step
+  def iterFrom(self, step):
+    return self.__iter__(step)
+  def jumpByStep(self, step=1): self.position += step # аналог next() 
   def jumpByIndex(self, index): self.position = self.keys.index(index)
-  def delete(self, count=1, step=0):
+  def delByStep(self, count=1, step=0):
     for c in range(count): del self.dict_unit[self.keys[self.position+step]]
     self.keys = self.dict_unit.keys()
+  def delByIndex(self, *indexes):
+    for index in indexes: del self.dict_unit[index]
+    self.keys = self.dict_unit.keys()
+  def getByStep(self, step=0, name=None, value=None):
+    return self.__call__(self.keys[self.position+step], name, value)
+  def currentIndex(self, step=0): return self.keys[self.position+step] # derpricated
+  def isFirst(self): return self.position == 0
+  def isLast(self): return self.position == len(self.keys) - 1
+  def getNeighbours(self, step=0):
+    left = self.dict_unit[self.keys[self.position+step-1]] if self.position != 0 else None
+    right = self.dict_unit[self.keys[self.position+step+1]] if self.position != len(self.keys)-1 else None
+    return left, right
 
   # Прочее
   def getLen(self, func=None):
@@ -320,12 +334,15 @@ class Sentence(_Unit):
           del self.dict_unit[index]
     self._sync()
 
+  '''# к удалению
   def delByIndex(self, *indexes):
     """ Удаляет слово по его индексму"""
     for index in indexes:
       del self.dict_unit[index]
     self._sync()
-    
+    self.keys = self.dict_unit.keys() # из-за синхронизации индексов'''
+
+  # к удалению  
   def delByIndexWithoutSync(self, *indexes):
     """ После удаления не синхронизирует ссылки и индексы. """
     for index in indexes:
@@ -386,18 +403,20 @@ class Sentence(_Unit):
     for i in range(len(word[parametr_name])):
       word[parametr_name][i] = function(word[parametr_name][i])
 
+  # к удалению
   def getSurroundingNeighbours(self, index):
     """ Возвращает двух соседей, то есть просто два окружающих слова,
         но не братьев. """
+    left = right = None
     if index != 0: left = self.dict_unit[index-1]
-    else: left = None
+    #else: left = None
     if index != len(self.dict_unit)-1: right = self.dict_unit[index+1]
-    else: right = None
+    #else: right = None
     return left, right
 
-  def addHomogeneous(self, *indexes):
+  def addHomogeneous(self, *steps):
     """ Устанавливает однородность членам """
-    indexes = list(indexes)
+    indexes = [self.keys[self.position+step] for step in steps]#list(indexes)
     another_indexes = []
     for index in indexes:
       another_indexes.extend(self.dict_unit[index]['homogeneous_link'])
@@ -414,6 +433,7 @@ class Sentence(_Unit):
     if inclusive: homogeneous.append(index)
     return homogeneous
 
+  # к удалению
   def forAllWords(self, index, func, *args):
     """ Применяет функцию к каждому слову.
         Передаваемая фукция должна возврать текущий индекс слова.

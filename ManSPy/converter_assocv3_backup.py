@@ -54,17 +54,16 @@ def get_fasif_wcomb(fdb, argument, R, verb):
   isantonym = False
   compared_fasifs = fdb.getFASIF('WordCombination', argument)
   if not compared_fasifs: return
-  else: id_fasif, data = compared_fasifs.items()[0] # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
-  finded_args, fasif = data
+  else: id_fasif, fasif = compared_fasifs.items()[0] # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
 
   id_group = R.R.get_groups_by_word('synonym', 0, verb, 'verb')[0]
   function = if_verb_in_fasif(fasif, id_group)
   if function == None:
-    verb_synonym_group_id = R.R.get_words_from_samegroup('antonym', 'verb', 'synonym', id_group)
+    verb_synonym_group_id = self._get_words_from_samegroup('antonym', 'verb', 'synonym', id_group)
     function = if_verb_in_fasif(fasif, id_group)
     if function != None: isantonym = True
 
-  return finded_args, fasif, function, isantonym
+  return fasif, function, isantonym
 
 def Extraction2IL(R, settings, Action, predicates, arguments):
   #print '    predficates ::', predicates, '\n'
@@ -92,31 +91,39 @@ def Extraction2IL(R, settings, Action, predicates, arguments):
     argument = NLModules.ObjUnit.Sentence(_argument)
     compared_fasifs = fdb.getFASIF('WordCombination', argument)
     IL = copy.deepcopy(pattern_IL)
-    res = get_fasif_wcomb(fdb, argument, R, predicate['base'])
-    if res is None: continue
-    finded_args, fasif, function, isantonym = res
+    fasif, function, isantonym = get_fasif_wcomb(fdb, argument, R, predicate['base'])
     if 'antonym' in predicate and predicate['antonym'] != isantonym: IL['arg0']['antonym'] = True
 
-    # Вынимаем фасиф словосочетания  # здевсь же отсеиваем неподходящие фасифы (через continue)
-    for argname, args in finded_args.items(): finded_args[argname] = list(set(args))
-    finded_args = lingvo_math.dproduct(finded_args)
-    finded_args = check_args(finded_args, fasif, R)
-    with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
-      flog.write('\n%s\n%s\n' % (str(finded_args), str(fasif['functions'])))
+    for id_fasif, data in compared_fasifs.items():
+      # Вынимаем фасиф словосочетания  # здевсь же отсеиваем неподходящие фасифы (через continue)
+      finded_args, fasif = data
+      for argname, args in finded_args.items(): finded_args[argname] = list(set(args))
+      finded_args = lingvo_math.dproduct(finded_args)
+      finded_args = check_args(finded_args, fasif, R)
+      compared_fasifs[id_fasif] = (finded_args, fasif)
+      with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
+        flog.write('\n%s\n%s\n' % (str(finded_args), str(fasif['functions'])))
 
-    IL['argument'] = finded_args
-    if function:
-      IL['action']['wcomb_verb_function'] = parseFunction(function)
-    else:
-      function = fasif['functions']['getCondition']['function']
-      IL['action']['wcomb_function'] = parseFunction(function)
-      id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')[0]
-      compared_fasifs = fdb.getFASIF('Verb', id_group)
-      if not compared_fasifs: sys.stderr.write('Fasif for "%s" wasn\'t found!' % predicate['base'])
-      IL['action']['common_verb_function'] = parseFunction(compared_fasifs.values()[0][0][0])
+      # Определяем функцию (через фасиф словосочетания или глагола)
+      function = None
+      for destination, data in fasif['functions'].items():
+        id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')[0]
+        if id_group not in data['verbs']: continue
+        function = data['function']
+        break
+      IL['argument'] = finded_args
+      if function:
+        IL['action']['wcomb_verb_function'] = parseFunction(function)
+      else:
+        function = fasif['functions']['getCondition']['function']
+        IL['action']['wcomb_function'] = parseFunction(function)
+        id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')[0]
+        compared_fasifs = fdb.getFASIF('Verb', id_group)
+        if not compared_fasifs: sys.stderr.write('Fasif for "%s" wasn\'t found!' % predicate['base'])
+        IL['action']['common_verb_function'] = parseFunction(compared_fasifs.values()[0][0][0])
 
-    with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
-      flog.write('\npraIL: %s\n' % str(IL))
+      with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
+        flog.write('\npraIL: %s\n' % str(IL))
 
     IL['action']['mood'] = predicate['mood']
     ILs.append(IL)

@@ -72,7 +72,7 @@ def compare_fasif_WordCombination(fasif, argument, finded_args, flog):
   _argument_iter = NLModules.ObjUnit.Sentence(fasif['wcomb']).__iter__()
 
   for index, word in argument:
-    _index, _word = _argument_iter.next() # new
+    _index, _word = _argument_iter.next()
 
     # "Проходимся" по дополнениям (прямые, косвенные, а также подлежащие)
     isright = compare_word(word, argument.position, _word, finded_args, flog) # new
