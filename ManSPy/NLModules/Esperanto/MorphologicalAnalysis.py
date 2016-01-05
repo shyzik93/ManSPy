@@ -9,7 +9,7 @@
       res['POSpeech'] - часть речи
 '''
 
-from Esperanto_Dict import dct
+from Esperanto_Dict import dct, words
 import re
 
 template = re.compile(r'[0-9]+(\.|\,)?[0-9]*')
@@ -17,30 +17,12 @@ template = re.compile(r'[0-9]+(\.|\,)?[0-9]*')
 def checkByDict(word_l, word):
   ''' Определяет часть речи по словарю
       для неизменяемых или почти неизменяемых частей речи'''
-  global dct
-  if word_l in dct['article']:              # артикль
-    word['POSpeech'] = 'article'
-  elif word_l in dct['particle']: word['POSpeech'] = 'particle'         # частица
-  elif word_l in dct['conjunction']:
-    word['POSpeech'] = 'conjunction'      # союз
-    if word_l in dct['conjunction_d']['coordinating']: word['value'] = 'coordinating'
-    elif word_l in dct['conjunction_d']['subordinating']: word['value'] = 'subordinating'
-                         # непроизводное наречие (не всегда имеет окончание -e)
-  elif word_l in dct['adverb']['non-derivative']: word['POSpeech'] = 'adverb'
-  elif word_l in dct['preposition']:                                   # предлог
-    word['POSpeech'] = 'preposition'
-    word['give_case'] = dct['preposition_d'][word_l]
-  elif word_l in dct['pronoun']:                                    # местоимение
-    word['POSpeech'] = 'pronoun'
-    word['case'] = 'nominative' # именительный
-    word['category'] = 'personal'
-  elif word_l in dct['numeral']:                                    # числительное
-    word['POSpeech'] = 'numeral'
-    word['figure'] = dct['numeral_d'][word_l]
-    word['class'] = 'cardinal' # количественное
-  else: return 0 # часть речи не определена
-  word['base'] = word_l
-  return 1
+  for POSpeech, data in words.items():
+    if word_l not in data: continue
+    word.update(data[word_l])
+    word['POSpeech'] = POSpeech
+    word['base'] = word_l
+    return True
 
 def getNumberAndCase(word_l):
   '''возвращает число, падеж и начальную форму
@@ -100,8 +82,7 @@ def _getMorphA(word, GrammarNazi):
 
   # прилагательное, притяжательное местоимение или порядковое числительное
   elif ends[0] == 'a':
-    _res = checkByDict(words[0], word)
-    if _res == 0: # прилагательное
+    if not checkByDict(words[0], word): # прилагательное
       word['POSpeech'] = 'adjective'
       word['case'] = 'nominative'
       word['number'] = 'singular'
@@ -177,7 +158,7 @@ def _getMorphA(word, GrammarNazi):
 def getMorphA(sentences, GrammarNazi):
   ''' Обёртка '''
   for sentence in sentences:
-    for word in sentence.getUnit('listSubUnits'):
+    for index, word in sentence:
       _getMorphA(word, GrammarNazi)
   return sentences
 
