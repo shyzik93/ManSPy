@@ -26,7 +26,7 @@ country n ;  Esperanto
 #country n #- если не требуется замена значения аргумента
 
 Esperanto
-    dolara: monero # аргументное слова: абстрактные группы через запятую
+    dolara: mono # аргументное слова: абстрактные группы через запятую
     rusia: lando # нужно решить вопрос об изменении падежей у прилагательных, ну а пока мы не можем написать de rusia.
     dolara cambio de rusia banko
 Russian
