@@ -6,19 +6,6 @@ import os, datetime, codecs
 import common
 from pprint import pprint
 
-'''db_dir = os.path.abspath('').split(os.path.sep)
-db_dir.reverse() # нижний код для того, чторбы запускать файлы из любой нижней директории
-for i in db_dir:
-  if i == 'IMS':
-    db_dir = db_dir[db_dir.index(i)+1:]
-    break
-db_dir.reverse()
-db_dir[0] = db_dir[0] + os.sep
-db_dir = os.path.join(*db_dir)
-#db_dir = os.path.join(db_dir, 'DATA_BASE', 'log_analysis_')
-print os.path.abspath('')
-db_dir = os.path.join(os.path.abspath(''), 'log_analysis_')'''
-
 def fwrite(data, name='analysis.txt'):
   #global db_dir
   db_dir = os.path.join(common.RSettings('dir_db'), name)
@@ -79,13 +66,8 @@ def safe_NL(NL): fwrite('NL-sentence: '+NL+'\n')
 
 def safe_sentence(sentence, title):
   list_res = sentence.getUnit('dict')
-  #pprint(list_res)
   fwrite('----'+getTime()+'\n')
-
-  sentence = ''
-  for k, v in list_res.items(): sentence += v['word'] + ' '
-  fwrite('Folding sentence: '+sentence+'\n')
-
+  fwrite('Folding sentence: '+str(sentence.getUnit('str'))+'\n')
   safeResults(list_res, title)
 
 def safe_sentences(sentences, title):

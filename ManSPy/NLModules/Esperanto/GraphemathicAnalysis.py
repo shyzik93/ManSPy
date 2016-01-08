@@ -3,15 +3,22 @@
     Словарь символа: {'symbol': Символ, 'type': 'letter' OR 'punctuation_mark' OR 'other'}
     Словарь слова: {'word': СписокСимволов}
 """
+import re
 
 low_letters = u"ABCĈDEFGĜHĤIJĴKLMNOPRSŜTUŬVZ"
 up_letters =  u"abcĉdefgĝhĥijĵklmnoprsŝtuŭvz"
 letters = up_letters + low_letters
 punctuation_marks = u".,;:!?-'\""
+end_of_sentence = '.!?'
 
 ReplacedLetters = {u'cx' :u'ĉ', u'gx': u'ĝ', u'hx': u'ĥ',
            u'jx': u'ĵ', u'sx': u'ŝ', u'ux': u'ŭ',
            u'\t': u'', u'\n': u''}
+
+def proccessEndSymbol(sword, word):
+  for index in range(1, len(sword)):
+    if sword[-index] not in end_of_sentence: continue
+    
 
 def define_type_symbol(word):
   l = len(word)
@@ -23,16 +30,40 @@ def define_type_symbol(word):
 def getGraphmathA(text, ObjUnit):
   # Заменяем символы
   for k, v in ReplacedLetters.items(): text = text.replace(k, v)
-  text = text.split()
-  text = [ObjUnit.Word(word) for word in text]
+  words = text.split()
+  words = [ObjUnit.Word(word) for word in words]
 
-  for word in text:
+  for word in words:
     define_type_symbol(word)
+
+  # Разбиваем текст на ВОЗМОЖНЫЕ предложения, то есть это необходимо корректировать в следующих анализах
+  '''sentences = []
+  sentence = []
+  for index, word in enumerate(words):
+    sentence.append(word)
+    sword = word['word']
+    if sword.isalnum(): continue
+    if sword[-1] in end_of_sentence:
+      proccessEndSymbol(sword, word)
+      sentences.append(sentence)
+      sentence = []
+    if re.findall('^['+end_of_sentence+']+$', sword): #если символы отдельно от слова (пробелом)
+      del sentence[-1]
+    
+  # обработка запятой, точки с запятой, двоеточия
+  for sentence in sentences:
+    for index, word in enumerate(sentence):
+       sword = word['word']
+
+  # обработка кавычек
+
+  # обработка слов, с небуквенными символами (email, url, file, etc)
+'''
 
   # Разбиваем текст на ВОЗМОЖНЫЕ предложения, то есть это необходимо корректировать в следующих анализах
   sentences = [[]]
   index = 0
-  for word in text:
+  for word in words:
     str_word = word['word']
     end_symbol = str_word[-1]
     sentences[index].append(word)    

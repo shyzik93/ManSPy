@@ -3,7 +3,7 @@
 # Date: 2.12.2014 - nowdays
 import copy, re
 
-class _Unit():
+class _Unit(object):
   ''' unit(index) - извлечение подъюнита
       unit(index, name) - извлечение характеристики подъюнита
       unit(index, name, value) - изменение характеристики подъюнита
@@ -14,6 +14,14 @@ class _Unit():
 
       Юнит - это предложение или слово. Подъюнит - их составляющие:
       для предложения - это слова, для слов - это символы'''
+
+  def _init(self, unit_info=None, dict_unit=None):
+    self.unit_info = unit_info or {}
+    self.dict_unit = dict_unit or {}
+    self.full_info = {'unit_info': self.unit_info, 'unit': self.dict_unit}
+
+    self.position = 0
+    self.keys = self.dict_unit.keys()
 
   # Работа с информацией о юните в целом
   def __setitem__(self, key, value): self.unit_info[key] = value
@@ -98,7 +106,7 @@ class _Unit():
       listDict = []
       for index in range(l): listDict.append(self.dict_unit[index])
       return listDict
-    elif Type == 'str': # Только для предложений!!!
+    elif Type == 'str' and isinstance(self, Sentence): # Только для предложений!!!
       str_s = {'words': '', 'bases': '', 'fwords': '', 'fbases': ''}
       for index, sunit in self.dict_unit.items():
         str_s['words'] += ' ' + sunit['word']
@@ -108,6 +116,11 @@ class _Unit():
           str_s['fbases'] += ' ' + feature['base']
         str_s['fwords'] += ' ' + sunit['word']
         str_s['fbases'] += ' ' + sunit['base']
+      return str_s
+    elif Type == 'str' and isinstance(self, word):
+      str_s = ''
+      for index, sunit in self.dict_unit.items():
+        str_s += sunit['symbol']
       return str_s
 
   def _parseSettingsString(self, setstring):
@@ -194,11 +207,12 @@ class Word(_Unit):
   """ Класс объекта слова.
       При инициализации класса ему передаётся слово в виде строки. """  
   def __init__(self, str_word):
-    self.unit_info = {}    # не перемещать!
-    self.dict_unit = {}    # не перемещать!
-    self.full_info = {'unit_info': self.unit_info, 'unit': self.dict_unit}    # не перемещать!
     self.str_word = str_word
-    self.unit_info = {'word': self.str_word, 'symbol_map': {}}
+    self._init(unit_info={'word': self.str_word, 'symbol_map': {}})
+    #self.unit_info = {}    # не перемещать!
+    #self.dict_unit = {}    # не перемещать!
+    #self.full_info = {'unit_info': self.unit_info, 'unit': self.dict_unit}    # не перемещать!
+    #self.unit_info = {'word': self.str_word, 'symbol_map': {}}
     if isinstance(str_word, dict):
       self.unit_info = str_word
       self.str_word = str_word['word']
@@ -208,8 +222,8 @@ class Word(_Unit):
       self.dict_unit[index]['symbol'] = self.str_word[index]
       self.dict_unit[index]['type'] = ''
 
-    self.position = 0
-    self.keys = self.dict_unit.keys()
+    #self.position = 0
+    #self.keys = self.dict_unit.keys()
 
   def hasSymbol(self, symbol):
     return symbol in self.str_word
@@ -253,9 +267,11 @@ class Sentence(_Unit):
   new_index = None
 
   def __init__(self, words):
-    self.unit_info = {}    # не перемещать!
-    self.dict_unit = {}    # не перемещать!
-    self.full_info = {'unit_info': self.unit_info, 'unit': self.dict_unit}    # не перемещать!
+    self._init()
+    #print '999', self.dict_unit
+    #self.unit_info = {}    # не перемещать!
+    #self.dict_unit = {}    # не перемещать!
+    #self.full_info = {'unit_info': self.unit_info, 'unit': self.dict_unit}    # не перемещать!
     if isinstance(words, dict):
       for index, word in words.items():
         if isinstance(word, dict): word = Word(word)
@@ -272,10 +288,11 @@ class Sentence(_Unit):
       word['link'] = []
       word['homogeneous_link'] = [] # ссылки на однородные члены
       word['type'] = 'real' # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
+      word['base'] = ''
       self.dict_unit[index] = word
 
-    self.position = 0
-    self.keys = self.dict_unit.keys()
+    #self.position = 0
+    #self.keys = self.dict_unit.keys()
 
   def _syncLinks(self, words, deleted, parametr_name):
     """ Синхронизирует ссылки в словах """
@@ -443,9 +460,11 @@ class Sentence(_Unit):
       index = func(index, self, *args)
       index += 1
 
-class Text():
+class Text(_Unit):
   """ Класс объекта ткста.
       Возможности: анализ, обработка (изменение времени и прочее)
   """
-  def __init__(self):
-    pass
+  def __init__(self, sentences):
+    self._init()
+    for index, sentence in enumerate(sentences):
+      self.dict_unit[index] = sentence

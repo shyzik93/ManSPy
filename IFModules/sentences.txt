@@ -34,3 +34,6 @@ montru dolaran cambion kaj adreson de komputilo
 montru dolaran cambion, kiu estas dolara
 
 Montru dolaran cambion. Montru euxran cambion de belarusia banko
+
+#Se euxra cambio de belarusia banko estas sepduk kvar, do sxaltu tablan lampon en dormcxambro
+#Do sxaltu tablan lampon en dormcxambro, se euxra cambio de belarusia banko estas sepduk kvar
