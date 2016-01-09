@@ -11,7 +11,7 @@ montru dolaran kaj dolaran cambion de rusia kaj rusia banko
 montru dolaran cambion de rusia banko kaj ukraina banko
 montru adreson de komputilo kaj androido
 
-# Много аргументов (сложатся друг с другом поочерёдно)
+# Много аргументов (сложатся друг с другом поочерёдно - декартово произведение)
 montru euxran kaj dolaran cambion de ukrainia kaj rusia kaj belarusia banko
 montru euxran kaj dolaran cambion de ukrainia kaj rusia banko
 
@@ -30,10 +30,16 @@ montru adreson de komputilo kaj dolaran cambion
 montru adreson de komputilo kaj dolaran cambion de belarusia banko
 montru dolaran cambion kaj adreson de komputilo
 
+# Пунктуация
+montru euxran, dolaran cambion de ukrainia banko
+montru euxran , dolaran cambion de ukrainia banko
+montru euxran, dolaran cambion de ukrainia banko.
+montru euxran, dolaran cambion de ukrainia banko .
+montru euxran, dolaran cambion de ukrainia banko ...
+Montru dolaran cambion. Montru euxran cambion de belarusia banko
+
 # пока не поддерживаются
 montru dolaran cambion, kiu estas dolara
-
-Montru dolaran cambion. Montru euxran cambion de belarusia banko
 
 #Se euxra cambio de belarusia banko estas sepduk kvar, do sxaltu tablan lampon en dormcxambro
 #Do sxaltu tablan lampon en dormcxambro, se euxra cambio de belarusia banko estas sepduk kvar

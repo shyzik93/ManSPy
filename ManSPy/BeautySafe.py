@@ -65,12 +65,14 @@ def getTime():
 def safe_NL(NL): fwrite('NL-sentence: '+NL+'\n')
 
 def safe_sentence(sentence, title):
+  #print sentence.getUnit('str')
   list_res = sentence.getUnit('dict')
+  #print list_res
   fwrite('----'+getTime()+'\n')
   fwrite('Folding sentence: '+str(sentence.getUnit('str'))+'\n')
   safeResults(list_res, title)
 
 def safe_sentences(sentences, title):
-  for sentence in sentences: safe_sentence(sentence, title)
+  for index, sentence in sentences: safe_sentence(sentence, title)
 
 def safe_IL(IL): fwrite('IL-sentence: '+str(IL)+'\n')

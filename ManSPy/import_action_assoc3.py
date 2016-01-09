@@ -64,28 +64,6 @@ def separate_fasifs(fasif):
   return dict_assoc_types
 
 def parseVerb(_fasif):
-  '''fasif = {'verbs':{}}
-
-  for string in _fasif:
-    for string_type, string_regexp in STRING_VERBS.items():
-      print '  ', string, string_regexp
-      res = re.findall(string_regexp.decode('utf-8'), string)
-      print res
-      if string_type == 'STRING_VERBS_TITLE':
-        if not len(res):
-          print 'Error of string >>> ', string
-          return
-        fasif['function'] = res[0][0]
-        break
-      elif string_type == 'STRING_VERBS_BODY':
-        if not len(res):
-          print 'Error of string >>> ', string
-          return
-        fasif['verbs'][res[0][0]] = res[0][1]
-        break
-
-  return fasif'''
-
   function = None
   verbs = {}
   for string in _fasif:
@@ -198,15 +176,13 @@ def siftoutWordCombination(fasif, lang):
   for destination, value in fasif['functions'].items():
     if lang in value['verbs']: value['verbs'] = value['verbs'][lang]
     else: value['verbs'] = []
-    #elif not value['verbs']: continue
-    #else: return None
 
   if lang in fasif['wcomb']: fasif['wcomb'] = fasif['wcomb'][lang]
   else: return None
 
   return fasif
 
-def get_dword(word, LangClass): return LangClass.NL2IL(word, ':postmorph')[0][0].getUnit('dict')[0]
+def get_dword(word, LangClass): return LangClass.NL2IL(word, ':postmorph')[0](0).getUnit('dict')[0]
 def proccess_argword(argwords, LangClass):
   argwords['name'] = get_dword(argwords['name'], LangClass)
   for index, argword in enumerate(argwords['hyperonyms']):
@@ -238,9 +214,8 @@ def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):
     for index, verb in enumerate(value['verbs']):
       value['verbs'][index] = get_id_group(OR, verb, LangClass)
 
-  print '----------------- to formule start'
-  #print fasif['wcomb']
-  sentence = LangClass.NL2IL(fasif['wcomb'], ':synt')[0][0]
+  #print '----------------- to formule start'
+  sentence = LangClass.NL2IL(fasif['wcomb'], ':synt')[0](0)
   wcomb = sentence
   fasif['argdescr'] = {}
   for argname, data in fasif['args'].items():
@@ -249,7 +224,6 @@ def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):
     wcomb.chmanyByValues({'argname':argname}, setstring='subiv:noignore', base=argword['base'], case=argword['case'])
     isreq = True if data['isreq'] == 'y' else False
     fasif['argdescr'][argname] = {'isreq':isreq, 'argtable':data['argtable'], 'argwords_another':data['argwords']['another'], 'hyperonyms':data['argwords']['in_wcomb']['hyperonyms']}
-    #del fasif['args'][argname]
   del fasif['args']
   fasif['wcomb'] = wcomb.getUnit('dict')
 
@@ -267,7 +241,7 @@ def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):
   #pprint(fwcomb)
   #fdb.add_hashWComb(fwcomb, {'bl':4}, sentence.getUnit('str')['fwords'], '')
 
-  print '----------------- to formule end'
+  #print '----------------- to formule end'
 
   return fasif
 

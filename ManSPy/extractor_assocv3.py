@@ -14,7 +14,8 @@ def Extract(sentence):
 
   # Поиск сказуемого
   predicates = sentence.getByCharacteristic('MOSentence', 'predicate')
-  sentence.delByIndexWithoutSync(*predicates.keys())
+  #sentence.delByIndexWithoutSync(*predicates.keys())
+  sentence.delByIndex(*predicates.keys())
 
   # прямое дополнение может быть не только в винительном падеже - зависит от глагола
   for index, word in sentence.itemsUnit():
@@ -23,7 +24,8 @@ def Extract(sentence):
     arguments[-1][index] = word
 
   for argument in arguments:
-    sentence.delByIndexWithoutSync(*argument.keys())
+    #sentence.delByIndexWithoutSync(*argument.keys())
+    sentence.delByIndex(*argument.keys())
 
   if sentence.getUnit("dict"):
     print u"       Необработанные остатки 3 ФАСИФ \n", sentence.getUnit("dict")

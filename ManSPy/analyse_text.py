@@ -45,7 +45,7 @@ class LangClass():
       sentences = self.LangModule.getMorphA(sentences, GrammarNazi['morph'])
       with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
         flog.write('\n')
-        for sentence in sentences: flog.write('sentence: %s\n' % sentence.getUnit('str')['fwords'])
+        for index, sentence in sentences: flog.write('sentence: %s\n' % sentence.getUnit('str')['fwords'])
         flog.write('\n')
       BeautySafe.safe_sentences(sentences, 'Morphological analysis')
       if end_level == self.levels[1]: return sentences, GrammarNazi
@@ -64,22 +64,18 @@ class LangClass():
 
     # извлекаем прямое доп, подл, сказуемое, косв. доп
     if start_level in self.levels[:5]:
-      if not isinstance(sentences, list): sentences = [sentences]
-      for index in range(len(sentences)):
-        sentence = sentences[index]
+      #if not isinstance(sentences, list): sentences = [sentences]
+      for index, sentence in sentences:
         OR.addWordsToDBFromDictSentence(sentence.getUnit('dict'))
-        #Subject, Predicate, DirectSupplement, Supplement, ErrorConvert = Extractor.Extract(sentence)
         Extract = extractor.Extract(self.settings['assoc_version'])
-        sentences[index] = Extract(sentence)
-      if end_level == self.levels[4]: return sentences#return Subject, Predicate, DirectSupplement, Supplement, GrammarNazi, ErrorConvert
+        sentences.dict_unit[index] = Extract(sentence)
+      if end_level == self.levels[4]: return sentences
 
     # конвертируем анализы во внутренний язык
     if start_level in self.levels:
-      #if start_level == self.levels[:6]: Subject, Predicate, DirectSupplement, Supplement = sentence
       _ILs = []
       _ErrorConvert = {}
-      for sentence in sentences:
-        #ILs, ErrorConvert = Converter.Extraction2IL(OR, self.settings, self.Action, Subject, Predicate, DirectSupplement, Supplement)
+      for index, sentence in sentences:
         Extraction2IL = converter.Extraction2IL(self.settings['assoc_version'])
         ILs, ErrorConvert = Extraction2IL(OR, self.settings, Action, *sentence)
         for IL in ILs: BeautySafe.safe_IL(IL)

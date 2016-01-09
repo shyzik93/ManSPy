@@ -15,17 +15,21 @@ class _Unit(object):
       Юнит - это предложение или слово. Подъюнит - их составляющие:
       для предложения - это слова, для слов - это символы'''
 
-  def _init(self, unit_info=None, dict_unit=None):
+  def _update_added_unit(self, subunit): pass
+
+  def _init(self, unit_info=None, dict_unit=None, properties_with_indexes=None):
     self.unit_info = unit_info or {}
     self.dict_unit = dict_unit or {}
     self.full_info = {'unit_info': self.unit_info, 'unit': self.dict_unit}
+
+    self.properties_with_indexes = properties_with_indexes or []
 
     self.position = 0
     self.keys = self.dict_unit.keys()
 
   # Работа с информацией о юните в целом
   def __setitem__(self, key, value): self.unit_info[key] = value
-  def __getitem__(self, key): return self.unit_info[key]
+  def __getitem__(self, key):return self.unit_info[key]
   def __contains__(self, name): return name in self.unit_info
 
   #def __repr__(self): return self.__class__.__name__ + "(" + str(self.full_info) + ")"
@@ -58,11 +62,13 @@ class _Unit(object):
   def delByStep(self, count=1, step=0):
     for c in range(count): del self.dict_unit[self.keys[self.position+step]]
     self.keys = self.dict_unit.keys()
+  def delByPos(self, position): del self.dict_unit[self.keys[position]]
   def delByIndex(self, *indexes):
     for index in indexes: del self.dict_unit[index]
     self.keys = self.dict_unit.keys()
   def getByStep(self, step=0, name=None, value=None):
     return self.__call__(self.keys[self.position+step], name, value)
+  def getByPos(self, position): return self.dict_unit[self.keys[position]]
   def currentIndex(self, step=0): return self.keys[self.position+step] # derpricated
   def isFirst(self): return self.position == 0
   def isLast(self): return self.position == len(self.keys) - 1
@@ -77,30 +83,30 @@ class _Unit(object):
         например range, после этого возвратится список """
     return func(len(self.dict_unit)) if func else len(self.dict_unit)
 
-  def _go_depth(self, el, info1, info2):
-    if isinstance(el, Sentence): return el.getUnit('dict', info1, info2)
-    elif isinstance(el, Word): return el.getUnit('dict', info1, info2)
+  def _go_depth(self, el, info0, info1, info2):
+    if isinstance(el, Sentence): return el.getUnit('dict', info0, info1, info2)
+    elif isinstance(el, Word): return el.getUnit('dict', info0, info1, info2)
     elif isinstance(el, dict):
       _el = {}
-      for k, v in el.items(): _el[k] = self._go_depth(v, info1, info2)
+      for k, v in el.items(): _el[k] = self._go_depth(v, info0, info1, info2)
       return _el
     elif isinstance(el, list):
       _el = []
-      for v in el: _el.append(self._go_depth(v, info1, info2))
+      for v in el: _el.append(self._go_depth(v, info0, info1, info2))
       return _el
     else: return el
 
-  def getUnit(self, Type, info1='members', info2='info'):
-    info = {'Sentence': info1, 'Word': info2}[self.__class__.__name__]
+  def getUnit(self, Type, info0='members', info1='members', info2='info'):
+    info = {'Text':info0, 'Sentence': info1, 'Word': info2}[self.__class__.__name__]
     if Type == 'dict':
       if info == 'info': dct = self.unit_info
       elif info == 'members': dct = self.dict_unit
-      elif info == 'all': dct = self.full_info
+      elif info == 'full': dct = self.full_info
       else:
         print "the argument '%s' of Unit.getUint is wrong!" % info
         return
       dct = copy.deepcopy(dct)
-      return self._go_depth(dct, info1, info2)
+      return self._go_depth(dct, info0, info1, info2)
     elif Type == 'listSubUnits': # возвращает список подюнитв
       l = len(self.dict_unit)
       listDict = []
@@ -110,12 +116,13 @@ class _Unit(object):
       str_s = {'words': '', 'bases': '', 'fwords': '', 'fbases': ''}
       for index, sunit in self.dict_unit.items():
         str_s['words'] += ' ' + sunit['word']
-        str_s['bases'] += ' ' + sunit['base']
-        for feature in sunit['feature']:
-          str_s['fwords'] += ' ' + feature['word']
-          str_s['fbases'] += ' ' + feature['base']
+        if 'base' in sunit: str_s['bases'] += ' ' + sunit['base']
+        if 'feature' in sunit: 
+          for feature in sunit['feature']:
+            str_s['fwords'] += ' ' + feature['word']
+            if 'base' in sunit: str_s['fbases'] += ' ' + feature['base']
         str_s['fwords'] += ' ' + sunit['word']
-        str_s['fbases'] += ' ' + sunit['base']
+        if 'base' in sunit: str_s['fbases'] += ' ' + sunit['base']
       return str_s
     elif Type == 'str' and isinstance(self, word):
       str_s = ''
@@ -202,6 +209,20 @@ class _Unit(object):
       for _subunit in _subunits: _subunit.update(new_properties)
       if subunit: subunit.update(new_properties)
 
+  def append(self, subunit):
+    indexes = []
+    for _subunit in self.dict_unit.values():
+      for key, value in _subunit.items():
+        if key in self.properties_with_indexes: indexes.append(value)
+    indexes.extend(self.dict_unit.keys())
+
+    max_index = max(indexes)+1 if indexes else 0
+    self._update_added_unit(subunit)
+    self.dict_unit[max_index] = subunit
+    self.keys = self.dict_unit.keys()
+
+  def pop(self):
+    pass
 
 class Word(_Unit):
   """ Класс объекта слова.
@@ -266,12 +287,23 @@ class Sentence(_Unit):
   old_index = None
   new_index = None
 
+  def _update_added_unit(self, subunit):
+    _subunit = {
+    'feature': [],
+    'link': [],
+    'homogeneous_link': [], # ссылки на однородные члены
+    'type': 'real', # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
+    'base': '',
+    'start_pmark': [], 'end_pmark': [], 'around_pmark': []
+    }
+    subunit.update(_subunit)
+
   def __init__(self, words):
-    self._init()
-    #print '999', self.dict_unit
+    self._init(properties_with_indexes=['link', 'homogeneous_link'], unit_info={'end':''})
     #self.unit_info = {}    # не перемещать!
     #self.dict_unit = {}    # не перемещать!
     #self.full_info = {'unit_info': self.unit_info, 'unit': self.dict_unit}    # не перемещать!
+
     if isinstance(words, dict):
       for index, word in words.items():
         if isinstance(word, dict): word = Word(word)
@@ -282,13 +314,13 @@ class Sentence(_Unit):
       self.keys = self.dict_unit.keys()
       return
 
-    for index in range(len(words)):
-      word = words[index]
-      word['feature'] = []
-      word['link'] = []
-      word['homogeneous_link'] = [] # ссылки на однородные члены
-      word['type'] = 'real' # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
-      word['base'] = ''
+    for index, word in enumerate(words):
+      #word['feature'] = []
+      #word['link'] = []
+      #word['homogeneous_link'] = [] # ссылки на однородные члены
+      #word['type'] = 'real' # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
+      #word['base'] = ''
+      self._update_added_unit(word)
       self.dict_unit[index] = word
 
     #self.position = 0
@@ -360,16 +392,16 @@ class Sentence(_Unit):
     self.keys = self.dict_unit.keys() # из-за синхронизации индексов'''
 
   # к удалению  
-  def delByIndexWithoutSync(self, *indexes):
+  '''def delByIndexWithoutSync(self, *indexes):
     """ После удаления не синхронизирует ссылки и индексы. """
     for index in indexes:
-      del self.dict_unit[index]
+      del self.dict_unit[index]'''
 
   def GetAndDel(self, index):
     word = self.dict_unit[index]
     self._syncLinks([word], [index])
     self.delByIndex(index)
-    return word    
+    return word
 
   def addFeature(self, index, *indexes):
     """ Добавляет к слову определения и обстоятельства как его характеристику
@@ -409,10 +441,6 @@ class Sentence(_Unit):
       if index in dword['link'] and index != _index: indexes.append(_index)
     return indexes
 
-  def getEqWord(self, word):
-    """ Возвращае словарь идентичных слов """
-    pass
-
   def functionToValues(self, index, parametr_name, function):
     """ Метод применяет функцию к каждому элементу характеристики слова.
         То есть, можеть менять элементы характеристик feature, link. """
@@ -426,9 +454,7 @@ class Sentence(_Unit):
         но не братьев. """
     left = right = None
     if index != 0: left = self.dict_unit[index-1]
-    #else: left = None
     if index != len(self.dict_unit)-1: right = self.dict_unit[index+1]
-    #else: right = None
     return left, right
 
   def addHomogeneous(self, *steps):
@@ -449,16 +475,6 @@ class Sentence(_Unit):
     homogeneous = self.dict_unit[index]['homogeneous_link']
     if inclusive: homogeneous.append(index)
     return homogeneous
-
-  # к удалению
-  def forAllWords(self, index, func, *args):
-    """ Применяет функцию к каждому слову.
-        Передаваемая фукция должна возврать текущий индекс слова.
-        Первым и вторым аргументами передаются индекс и предложение соответсвенно!
-    """
-    while index < len(self.dict_unit):
-      index = func(index, self, *args)
-      index += 1
 
 class Text(_Unit):
   """ Класс объекта ткста.

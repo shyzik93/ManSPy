@@ -18,6 +18,7 @@ class MainException(Exception): pass
 def _save_history(text, Type, IFName):
   if text:
     Time = time.strftime('%c', time.gmtime(time.time()-time.altzone))
+    if Type == 'R': text = '   '+text
     text = "* %s  %s  %s: %s\n" % (Type, Time, IFName, text)
     #print type(text)
     simpletools.fopen(os.path.join(common.RSettings('dir_db'),'history.txt'), 'ab', bytearray(text, 'utf-8'))

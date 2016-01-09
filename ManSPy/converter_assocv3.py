@@ -13,7 +13,7 @@ def check_args(finded_args, fasif, R):
     for argname, argvalue in finded_arg.items():
       isright = False
       for hyperonym in hyperonyms[argname]:
-        print argvalue, 'is hyponym of', hyperonym, R.isWordInAbstractGroup(argvalue, hyperonym)
+        #print argvalue, 'is hyponym of', hyperonym, R.isWordInAbstractGroup(argvalue, hyperonym)
         if R.isWordInAbstractGroup(argvalue, hyperonym):
           isright = True
           break

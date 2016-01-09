@@ -53,7 +53,7 @@ def defaultNoun(word_l, word):
 def _getMorphA(word, GrammarNazi):
 
   word_l = word['word'].lower()
-  if word_l[-1] in '\'".,:!?)': word_l = word_l[:-1]
+  #if word_l[-1] in '\'".,:!?)': word_l = word_l[:-1] # перенесено в графмат анаилз
   if word_l[0] in '(': word_l = word_l[0:]
 
   # Определение части речи по словарю
@@ -157,7 +157,7 @@ def _getMorphA(word, GrammarNazi):
 
 def getMorphA(sentences, GrammarNazi):
   ''' Обёртка '''
-  for sentence in sentences:
+  for index, sentence in sentences:
     for index, word in sentence:
       _getMorphA(word, GrammarNazi)
   return sentences
