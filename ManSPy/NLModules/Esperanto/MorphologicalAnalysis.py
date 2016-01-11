@@ -88,11 +88,9 @@ def _getMorphA(word, GrammarNazi):
       word['number'] = 'singular'
       word['base'] = words[0]
     elif word['POSpeech'] == 'pronoun': # притяжательное иестоимение
-      #word.update(_res)
       word['category'] = 'possessive'
     elif word['POSpeech'] == 'numeral': # порядковое числительное
       word['class'] = 'ordinal'
-      del word['case']
     else: # прилагательное (есть ли такие: dea, laa, kaja и подобные?)
       word['POSpeech'] = 'adjective'
       word['case'] = 'nominative'

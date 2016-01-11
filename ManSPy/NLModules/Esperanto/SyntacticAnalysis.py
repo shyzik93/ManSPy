@@ -10,26 +10,22 @@
     'MOSentence' - член предложения
 '''
 
-def forPronounAndNoun(case):
+def forPronounAndNoun(word):
   ''' Определяет член предложения для имени существительного
       и притяжательного местоимепния по падежу '''
-  if case == 'accusative': return 'direct supplement'
-  elif case == 'nominative': return 'subject'
-  else: return 'supplement'
+  if word['case'] == 'accusative': return 'direct supplement'
+  elif word['case'] == 'nominative': return 'subject'
+  return 'supplement'
 
 def setMOS_ToSign(features, GrammarNazi):
   """ Определение члена предложения у признаков:
       прилагательного, наречия, """
   for feature in features:
-    if feature['POSpeech'] == 'adjective' or (feature['POSpeech'] == 'pronoun' and feature['category'] == 'possessive'):
+    if feature['POSpeech'] == 'adjective' or (feature['POSpeech'] == 'pronoun' and feature['category'] == 'possessive') or feature['POSpeech'] == 'numeral':
       feature['MOSentence'] = 'definition'
-      if len(feature['feature']) > 0:
-        setMOS_ToSign(feature['feature'], GrammarNazi)
-
     elif feature['POSpeech'] == 'adverb':
       feature['MOSentence'] = 'circumstance'
-      if len(feature['feature']) > 0:
-        setMOS_ToSign(feature['feature'], GrammarNazi)
+    if len(feature['feature']) > 0: setMOS_ToSign(feature['feature'], GrammarNazi)
 
 def setMOSentence(word, sentence, GrammarNazi):
   if word['POSpeech'] == 'verb':
@@ -39,8 +35,8 @@ def setMOSentence(word, sentence, GrammarNazi):
 
   #ATTENTION обстоятельства, выраженные существительным, определяются в модуле
   # промежуточного анализа как наречие.
-  elif word['POSpeech'] == 'noun':
-    word['MOSentence'] = forPronounAndNoun(word['case'])
+  elif word['POSpeech'] == 'noun' or (word['POSpeech'] == 'numeral' and word['class'] == 'cardinal'):
+    word['MOSentence'] = forPronounAndNoun(word)
     if len(word['feature']) > 0:
       setMOS_ToSign(word['feature'], GrammarNazi)
 
@@ -48,7 +44,7 @@ def setMOSentence(word, sentence, GrammarNazi):
     if word['category'] == 'possessive':
       word['MOSentence'] = 'definition'    # ? Появилось определение
     elif word['category'] == 'personal':
-      word['MOSentence'] = forPronounAndNoun(word['case'])
+      word['MOSentence'] = forPronounAndNoun(word)
     else: word['MOSentence'] = '' # не притяжательное и не личное местоимение
 
   # прилагательное без существительного
@@ -76,7 +72,7 @@ def setLinks(index, sentence, GrammarNazi):
     old_position = sentence.position
     case = None
     for index2, word2 in sentence.iterFrom(1):
-      if word2['MOSentence'] == 'supplement' and word2['case'] != "":
+      if word2['MOSentence'] == 'supplement':# and word2['case'] != "":
         """# остальные падежи, вероятно, будут означать, что косв. дополнение -
         # это обстоятельство, то есть относится к сказуемому.
         #if sentence(index2, 'case') in ['genetive']: sentence.addLink(index, index2)#word['link'].append(index2)"""

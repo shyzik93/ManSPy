@@ -182,7 +182,7 @@ def siftoutWordCombination(fasif, lang):
 
   return fasif
 
-def get_dword(word, LangClass): return LangClass.NL2IL(word, ':postmorph')[0](0).getUnit('dict')[0]
+def get_dword(word, LangClass): return LangClass.NL2IL(word, ':postmorph')[0](0).getUnit('dict').values()[0]
 def proccess_argword(argwords, LangClass):
   argwords['name'] = get_dword(argwords['name'], LangClass)
   for index, argword in enumerate(argwords['hyperonyms']):

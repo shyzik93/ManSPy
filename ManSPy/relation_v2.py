@@ -253,7 +253,7 @@ class _ObjRelation(object):
     for index in indexes:
       dword = dict_sentence[index]
       # числительные в базу не добавляем
-      if dict_sentence[index]['POSpeech'] == 'number': continue
+      if dict_sentence[index]['POSpeech'] == 'numeral': continue
       words.append(dword['base'])
       if len(dword['feature']) != 0: self.addWordsToDBFromDictSentence(dword['feature'])
       if dword['MOSentence'] == 'predicate' and dword['POSpeech'] == 'verb':

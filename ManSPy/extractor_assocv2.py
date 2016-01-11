@@ -15,7 +15,7 @@ def Extract(sentence):#, Recursion=0):
 
   # Поиск сказуемого
   Predicate = sentence.getByCharacteristic('MOSentence', 'predicate')
-  sentence.delByIndexWithoutSync(*Predicate.keys())
+  sentence.delByIndex(*Predicate.keys())
   if len(Predicate) == 0:
     #TASK в дальнейшем написать код, запрашивающий сказуемое (Какое действие делает этот субъект)
     #ErrorConvert.append([0, 'Prediate is absent'])
@@ -29,19 +29,19 @@ def Extract(sentence):#, Recursion=0):
         DirectSupplement[link] = sentence(link)
     break
   #DirectSupplement = sentence.getByCharacteristic('MOSentence', 'direct supplement') # не удалять пока!
-  sentence.delByIndexWithoutSync(*DirectSupplement.keys())
+  sentence.delByIndex(*DirectSupplement.keys())
   #if len(DirectSupplement) == 0: pass # отсутствует (бывает такое)
   #elif len(DirectSupplement) == 1: pass # присуствует, всё нормально
   #else: pass # такое тоже бывает. Необходимо их проверить на однородность
 
   # Поиск подлежащего
   Subject = sentence.getByCharacteristic('MOSentence', 'subject')
-  sentence.delByIndexWithoutSync(*Subject.keys())
+  sentence.delByIndex(*Subject.keys())
 
   # Все оставшиеся слова - косвенные дополнения
   #Supplement = sentence.getSentence("dict")
   Supplement = sentence.getByCharacteristic('MOSentence', 'supplement')
-  sentence.delByIndexWithoutSync(*Supplement.keys())
+  sentence.delByIndex(*Supplement.keys())
 
   if sentence.getUnit("dict"):
     print u"       Необработанные остатки 2 ФАСИФ\n", sentence.getUnit("dict")

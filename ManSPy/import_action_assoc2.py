@@ -91,14 +91,14 @@ def parseFASIF(FASIF, language):
 
 def proccess_lang_data(fasif, LangClass, R, module_name):
   ''' Обработка лингвистических данных: анализ, внесение в БД '''
-  fasif['sentence'] = LangClass.NL2IL(fasif['sentence'], ":synt")[0][0]
+  fasif['sentence'] = LangClass.NL2IL(fasif['sentence'], ":synt")[0]
   for arg_name in fasif['args']:
     assoc = fasif['args'][arg_name]['assoc']
     #print 'assoc:', assoc
     fasif['args'][arg_name]['assoc'] = []
     for word, groups in assoc.items():
-      word = LangClass.NL2IL(word, ":postmorph")[0][0](0)
-      groups = [LangClass.NL2IL(group, ":morph")[0][0](0)['base'] for group in groups]
+      word = LangClass.NL2IL(word, ":postmorph")[0](0)(0)
+      groups = [LangClass.NL2IL(group, ":morph")[0](0)(0)['base'] for group in groups]
       for group in groups:
         R.addWordsInAbstractGroup(group, word['base'])
         if fasif['args'][arg_name]['table']:
@@ -140,7 +140,7 @@ def is_equal(word1, word2):
 def make_args_descr(fasif, arg_name, args, max_link_arg):
   arg_dict = fasif['args'][arg_name]
   arg_word = arg_dict['assoc'][0] # остальные слова других абстр.групп нужно также добавить в хранимый ФАСИФ, а в конверторе анализов сделать код проверки.
-  sentence = fasif['sentence']
+  sentence = fasif['sentence'](0)
 
   # извлекаем из предложения возможные слова-аргументы с их индексами в данном предложении
   if arg_word[0]['POSpeech'] in ['adjective', 'adverb']: # definition, circumstance
@@ -206,7 +206,7 @@ def make_storedFASIF(fasif, module_name):
 
 def store_storedFASIF(fasif, storedFASIF, LangClass, OR):
   #print fasif['sentence'].getUnit('dict')
-  Subject, Predicate, DirectSupplement, Supplement = LangClass.NL2IL(fasif['sentence'], "extract")[0]
+  Subject, Predicate, DirectSupplement, Supplement = LangClass.NL2IL(fasif['sentence'], "extract")(0)
   DS = DirectSupplement.values()
   if len(DS) == 0:
     print 'FASIF wasn\'t writen. Direct supplement is absent'

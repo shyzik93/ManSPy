@@ -64,11 +64,11 @@ class LangClass():
 
     # извлекаем прямое доп, подл, сказуемое, косв. доп
     if start_level in self.levels[:5]:
-      #if not isinstance(sentences, list): sentences = [sentences]
+      #if not isinstance(sentences, ObjUnit.Text): sentences = ObjUnit.Text([sentences])
       for index, sentence in sentences:
         OR.addWordsToDBFromDictSentence(sentence.getUnit('dict'))
         Extract = extractor.Extract(self.settings['assoc_version'])
-        sentences.dict_unit[index] = Extract(sentence)
+        sentences.dict_unit[index] = Extract(sentence) # заменяем объекты предложения на словари извлечений
       if end_level == self.levels[4]: return sentences
 
     # конвертируем анализы во внутренний язык

@@ -29,7 +29,8 @@ class _Unit(object):
 
   # Работа с информацией о юните в целом
   def __setitem__(self, key, value): self.unit_info[key] = value
-  def __getitem__(self, key):return self.unit_info[key]
+  def __getitem__(self, key): return self.unit_info[key]
+  def __delitem__(self, key): del self.unit_info[key]
   def __contains__(self, name): return name in self.unit_info
 
   #def __repr__(self): return self.__class__.__name__ + "(" + str(self.full_info) + ")"
@@ -55,6 +56,7 @@ class _Unit(object):
       index = self.keys[self.position]
       yield index, self.dict_unit[index]
       self.position += 1
+    self.position = 0
   def iterFrom(self, step):
     return self.__iter__(step)
   def jumpByStep(self, step=1): self.position += step # аналог next() 
@@ -62,20 +64,39 @@ class _Unit(object):
   def delByStep(self, count=1, step=0):
     for c in range(count): del self.dict_unit[self.keys[self.position+step]]
     self.keys = self.dict_unit.keys()
-  def delByPos(self, position): del self.dict_unit[self.keys[position]]
+  def delByPos(self, position):
+    del self.dict_unit[self.keys[position]]
+    self.keys = self.dict_unit.keys()
   def delByIndex(self, *indexes):
     for index in indexes: del self.dict_unit[index]
     self.keys = self.dict_unit.keys()
   def getByStep(self, step=0, name=None, value=None):
     return self.__call__(self.keys[self.position+step], name, value)
   def getByPos(self, position): return self.dict_unit[self.keys[position]]
-  def currentIndex(self, step=0): return self.keys[self.position+step] # derpricated
-  def isFirst(self): return self.position == 0
-  def isLast(self): return self.position == len(self.keys) - 1
+  def currentIndex(self,step=0):return self.keys[self.position+step] # derpricated
+
+  def isOutLeft(self, step=0):  return self.position+step <  0
+  def isFirst(self, step=0):    return self.position+step == 0
+  def isBetween(self, step=0):  return self.position+step <  len(self.dict_unit) - 1 and self.position+step > 0
+  def isLast(self, step=0):     return self.position+step == len(self.dict_unit) - 1
+  def isOutRight(self, step=0): return self.position+step >  len(self.dict_unit) - 1
+  def isEntry(self, step=0):    return self.position+step >= 0 and self.position+step < len(self.dict_unit)
+
   def getNeighbours(self, step=0):
     left = self.dict_unit[self.keys[self.position+step-1]] if self.position != 0 else None
     right = self.dict_unit[self.keys[self.position+step+1]] if self.position != len(self.keys)-1 else None
     return left, right
+  '''def isUnit(self, in_relpos, step=0):
+    relpos = None# relatiove position
+    pos = self.position + step
+    maxpos = len(self.dict_unit)-1
+    if pos < 0: relpos = 'left'
+    elif pos == 0: relpos = 'first'
+    elif pos < maxpos: relpos = 'between'
+    elif pos == maxpos: relpos = 'last'
+    elif pos > maxpos: relpos = 'right'
+    relpos2 = 'belong' if relpos in ('first', 'between', 'last') else None
+    return relpos in in_relpos.split() or relpos2 in in_relpos.split()'''
 
   # Прочее
   def getLen(self, func=None):
@@ -230,10 +251,6 @@ class Word(_Unit):
   def __init__(self, str_word):
     self.str_word = str_word
     self._init(unit_info={'word': self.str_word, 'symbol_map': {}})
-    #self.unit_info = {}    # не перемещать!
-    #self.dict_unit = {}    # не перемещать!
-    #self.full_info = {'unit_info': self.unit_info, 'unit': self.dict_unit}    # не перемещать!
-    #self.unit_info = {'word': self.str_word, 'symbol_map': {}}
     if isinstance(str_word, dict):
       self.unit_info = str_word
       self.str_word = str_word['word']
@@ -242,9 +259,7 @@ class Word(_Unit):
       self.dict_unit[index] = {}
       self.dict_unit[index]['symbol'] = self.str_word[index]
       self.dict_unit[index]['type'] = ''
-
-    #self.position = 0
-    #self.keys = self.dict_unit.keys()
+    self.keys = self.dict_unit.keys()
 
   def hasSymbol(self, symbol):
     return symbol in self.str_word
@@ -294,37 +309,25 @@ class Sentence(_Unit):
     'homogeneous_link': [], # ссылки на однородные члены
     'type': 'real', # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
     'base': '',
+    'case': '',
     'start_pmark': [], 'end_pmark': [], 'around_pmark': []
     }
     subunit.update(_subunit)
 
   def __init__(self, words):
     self._init(properties_with_indexes=['link', 'homogeneous_link'], unit_info={'end':''})
-    #self.unit_info = {}    # не перемещать!
-    #self.dict_unit = {}    # не перемещать!
-    #self.full_info = {'unit_info': self.unit_info, 'unit': self.dict_unit}    # не перемещать!
 
     if isinstance(words, dict):
       for index, word in words.items():
         if isinstance(word, dict): word = Word(word)
         if isinstance(index, (unicode, str)): index = int(index)
         self.dict_unit[index] = word
-      self._sync()
       self.position = 0
-      self.keys = self.dict_unit.keys()
-      return
-
-    for index, word in enumerate(words):
-      #word['feature'] = []
-      #word['link'] = []
-      #word['homogeneous_link'] = [] # ссылки на однородные члены
-      #word['type'] = 'real' # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
-      #word['base'] = ''
-      self._update_added_unit(word)
-      self.dict_unit[index] = word
-
-    #self.position = 0
-    #self.keys = self.dict_unit.keys()
+    else:
+      for index, word in enumerate(words):
+        self._update_added_unit(word)
+        self.dict_unit[index] = word
+    self.keys = self.dict_unit.keys()
 
   def _syncLinks(self, words, deleted, parametr_name):
     """ Синхронизирует ссылки в словах """
@@ -346,7 +349,6 @@ class Sentence(_Unit):
     # синхронизируем ссылки
     self._syncLinks(self.dict_unit.values(), deleted, 'link')
     self._syncLinks(self.dict_unit.values(), deleted, 'homogeneous_link')
-
   def getByCharacteristic(self, name, value):
     """ Извлекает слова, соответствующие характеристике.
         Возвращает словарь Индекс:Слово """
@@ -375,44 +377,29 @@ class Sentence(_Unit):
       if len(results[index]) == 0: del results[index]
     return results
 
+  # Заменить
   def delByCharacteristic(self, name, value):
     """ Удаляет слова, содержащие определённые характеристики """
+    deleted = []
     for index, word in self.dict_unit.items():
-      if name in word:
-        if word[name] == value:
-          del self.dict_unit[index]
+      if name in word and word[name] == value:
+        #del self.dict_unit[index]
+        deleted.append(index)
+    self.delByIndex(*deleted)
+    #for index in deleted: del self.dict_unit[index]
     self._sync()
-
-  '''# к удалению
-  def delByIndex(self, *indexes):
-    """ Удаляет слово по его индексму"""
-    for index in indexes:
-      del self.dict_unit[index]
-    self._sync()
-    self.keys = self.dict_unit.keys() # из-за синхронизации индексов'''
-
-  # к удалению  
-  '''def delByIndexWithoutSync(self, *indexes):
-    """ После удаления не синхронизирует ссылки и индексы. """
-    for index in indexes:
-      del self.dict_unit[index]'''
-
-  def GetAndDel(self, index):
-    word = self.dict_unit[index]
-    self._syncLinks([word], [index])
-    self.delByIndex(index)
-    return word
+    #self.keys = self.dict_unit.keys()
 
   def addFeature(self, index, *indexes):
     """ Добавляет к слову определения и обстоятельства как его характеристику
         Первый аргумент - индекс главного слова, следующие аргументы -
         индексы обстоятельств и определений.
         Порядок значений второго аргумента может быть произвольным. """
-    indexes = list(set(indexes))
+    indexes = set(indexes)
     word = self.dict_unit[index]
     # добавляем определения или обстоятельства
-    for index_feature in indexes:
-      feature = self.dict_unit[index_feature]
+    for _index in indexes:
+      feature = self.dict_unit[_index]
       feature['index'] = index
       word['feature'].append(feature)
     # удаляем из предложения

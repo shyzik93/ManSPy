@@ -31,8 +31,6 @@ montru adreson de komputilo kaj dolaran cambion de belarusia banko
 montru dolaran cambion kaj adreson de komputilo
 
 # Пунктуация
-montru euxran, dolaran cambion de ukrainia banko
-montru euxran , dolaran cambion de ukrainia banko
 montru euxran, dolaran cambion de ukrainia banko.
 montru euxran, dolaran cambion de ukrainia banko .
 montru euxran, dolaran cambion de ukrainia banko ...
@@ -43,3 +41,8 @@ montru dolaran cambion, kiu estas dolara
 
 #Se euxra cambio de belarusia banko estas sepduk kvar, do sxaltu tablan lampon en dormcxambro
 #Do sxaltu tablan lampon en dormcxambro, se euxra cambio de belarusia banko estas sepduk kvar
+
+montru dolaran cambion de dua banko
+montru dolaran cambion de du
+montru dolaran cambion de okdek
+montru dolaran cambion de dek du

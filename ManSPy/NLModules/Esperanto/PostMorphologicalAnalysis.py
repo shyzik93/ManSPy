@@ -6,33 +6,31 @@
     '''
 from pprint import pprint
 
-def processingArticle(GrammarNazi, article, sentence):
-  if article['POSpeech'] == 'article':
+def processingArticle(GrammarNazi, word, sentence):
+  if word['POSpeech'] == 'article':
     sentence.delByStep() # пока только удаляем
     sentence.jumpByStep(-1)
 
-def processingPreposition(GrammarNazi, preposition, sentence):
-  if preposition['POSpeech'] != 'preposition': return
+def processingPreposition(GrammarNazi, word, sentence):
+  if word['POSpeech'] != 'preposition': return
   left, right = sentence.getNeighbours()
   if right == None:
     sentence.delByStep()
     sentence.jumpByStep(-1)
-  elif right['POSpeech'] in ['noun', 'pronoun']:
-    sentence.getByStep(1, 'case', preposition['give_case'])
+  elif right['POSpeech'] in ['noun', 'pronoun', 'numeral']:
+    sentence.getByStep(1, 'case', word['give_case'])
   else:
-    GrammarNazi.append('After preposition "'+preposition['word']+'" must be a noun or a pronoun! Found '+str(sentence.getByStep(1)))
+    GrammarNazi.append('After preposition "'+word['word']+'" must be a noun or a pronoun or a cardinal numeral! Found '+str(sentence.getByStep(1)))
 
-def processingConjunction(GrammarNazi, index, sentence):
-  conjunction = sentence(index)
-  if conjunction['POSpeech'] != 'conjunction' or conjunction['value'] != 'coordinating':
-    return
+def processingConjunction(GrammarNazi, word, sentence):
+  if word['POSpeech'] != 'conjunction' or word['value'] != 'coordinating': return
   left, right = sentence.getNeighbours()
   if left == None or right == None: # если союз первый или последний в предложении
     sentence.delByStep()
     sentence.jumpByStep(-1)
   # сочинительный союз
-  #if conjunction['word'] == 'kaj': # заменить логическими символами (kaj = &)
-  #print conjunction['base']
+  #if word['word'] == 'kaj': # заменить логическими символами (kaj = &)
+  #print word['base']
   if left['POSpeech'] == right['POSpeech'] or \
      (left['POSpeech'] == 'noun' and right['POSpeech'] == 'pronoun' and right['category'] != 'possessive') or (right['POSpeech'] == 'noun' and left['POSpeech'] == 'pronoun' and left['category'] != 'possessive') or \
      ((left['POSpeech'] == 'pronoun' and left['category'] == 'possessive') and right['POSpeech'] == 'adjective') or ((right['POSpeech'] == 'pronoun' and right['category'] == 'possessive') and left['POSpeech'] == 'adjective'):
@@ -48,9 +46,10 @@ def processingConjunction(GrammarNazi, index, sentence):
   #elif left['POSpeech'] == 'noun' and right['POSpeech'] == 'preposition':
   # Однородности нужны лишь для дополнения связей. В коверторе должны фигурировать лишь связи, но не однородности!
 
-def findDefinitions(GrammarNazi, word, sentence, indexes=[]):
+def findDefinitions(GrammarNazi, word, sentence, indexes=None):
+  if indexes == None: indexes = []
   #print 'findDefinition:', word['word'], index, sentence.getLen()
-  if word['POSpeech'] == 'adjective' or (word['POSpeech'] == 'pronoun' and word['category'] == 'possessive'):
+  if word['POSpeech'] == 'adjective' or (word['POSpeech'] == 'pronoun' and word['category'] == 'possessive') or word['POSpeech']=='numeral':
     indexes.append(sentence.currentIndex())
     if sentence.isLast(): return # завершаем цикл, ибо прилагательные без существительного. Их мы не удаляем, так как они могут следовать после глагола esti
     sentence.jumpByStep()
@@ -59,31 +58,15 @@ def findDefinitions(GrammarNazi, word, sentence, indexes=[]):
     sentence.addFeature(sentence.currentIndex(), *indexes)
     sentence.jumpByStep(-len(indexes))
 
-def procArt(GrammarNazi, sentence):
-  for index, word in sentence:
-    processingArticle(GrammarNazi, word, sentence)
-
-def procPrep(GrammarNazi, sentence):
-  for index, word in sentence:
-    processingPreposition(GrammarNazi, word, sentence)
-
-def procConj(GrammarNazi, sentence):
-  for index, word in sentence:
-    processingConjunction(GrammarNazi, index, sentence)
-
-def findDef(GrammarNazi, sentence):
-  for index, word in sentence:
-    findDefinitions(GrammarNazi, word, sentence, [])
-
-def checkAdverbBefore(index, sentence):
+def checkAdverbBefore(sentence):
   if sentence.position+1 >= sentence.getLen(): return False# т. е. является последним
   #if adverb['base'] == u'ankaŭ': # стоит перед словом, к которому относится
   return sentence.getByStep(1, 'POSpeech') in ['verb', 'adjective', 'adverb']
-def checkAdverbAfter(index, sentence):
+def checkAdverbAfter(sentence):
   if sentence.isFirst(): return False
   return sentence.getByStep(-1, 'POSpeech') in ('verb', 'adjective', 'adverb')
 def checkAdverb(index, sentence):
-  if checkAdverbBefore(index, sentence): # порядок менять не рекомендуется: покажи ОЧЕНЬ СИНИЙ цвет.
+  if checkAdverbBefore(sentence): # порядок менять не рекомендуется: покажи ОЧЕНЬ СИНИЙ цвет.
     # ПОКАЖИ БЫСТРО синий цвет - а вот здесь необходимо расставлять приоритеты для прилагательных и глаголов.
     # БЫСТРО - относится только к глаголам,
     # ПОКАЖИ ОЧЕНЬ синий цвет - стоит перед словом, к которому относится (глагол, наречие, прил)
@@ -91,7 +74,7 @@ def checkAdverb(index, sentence):
     # ОЧЕНЬ относится к СИЛЬНО, а СИЛЬНО - к глаголу. В овтором случае - ОЧЕНЬ относится к глаголу.
     # то есть, одни наречия для прилагательных, другие - для глаголов.
     sentence.addFeature(index+1, index)
-  elif checkAdverbAfter(index, sentence):
+  elif checkAdverbAfter(sentence):
     sentence.addFeature(index-1, index)
     sentence.jumpByStep(-1)
   else:
@@ -115,35 +98,42 @@ def exchangeDataBetweenHomo(sentence):
       if 'case' in word: sentence(index_homo, 'case', word['case'])
       done_indexes.append(index_homo)
 
+def proccessNumeral(GrammarNazi, word, sentence):
+  for feature in word['feature']:
+    pass
+    
+
 def getPostMorphA(sentences, GrammarNazi):
   ''' Обёртка '''
   for index, sentence in sentences:
     #TASK обстоятельства, выраженные существительным, обозначить как наречие
 
+    for index, word in sentence: processingArticle(GrammarNazi, word, sentence)
+
     #pprint(sentence.getUnit('dict'))
-    procConj(GrammarNazi, sentence) # rapido kaj ankaux, dolaran kaj euxran, lampo kaj fortreno
+    for index, word in sentence: processingConjunction(GrammarNazi, word, sentence) # rapido kaj ankaux, dolaran kaj euxran, lampo kaj fortreno
     #pprint(sentence.getUnit('dict'))
 
     # сворачиваем все наречия, даже многократно вложенные.
     while sentence.getByCharacteristic('POSpeech', 'adverb') != {}: checkAd(sentence)
 
-    procConj(GrammarNazi, sentence) # montru [rapido] kaj inkludu
+    for index, word in sentence: processingConjunction(GrammarNazi, word, sentence) # montru [rapido] kaj inkludu
     #pprint(sentence.getUnit('dict'))
 
     # "Сворачиваем" признак предмета: прилагательные и притяжательные местоимения -
-    findDef(GrammarNazi, sentence)
+    for index, word in sentence: findDefinitions(GrammarNazi, word, sentence)
     #pprint(sentence.getUnit('dict'))
 
     # вот здесь нужно свернуть найденные однородные существительные
-    procConj(GrammarNazi, sentence) # cxambro kaj [mia] domo
+    for index, word in sentence: processingConjunction(GrammarNazi, word, sentence) # cxambro kaj [mia] domo
     #pprint(sentence.getUnit('dict'))
 
-    procPrep(GrammarNazi, sentence) # Корректируем падежи
+    for index, word in sentence: processingPreposition(GrammarNazi, word, sentence)  # Корректируем падежи
 
     sentence.delByCharacteristic('POSpeech', 'preposition') # удаляем предлоги
     #pprint(sentence.getUnit('dict'))
 
-    procConj(GrammarNazi, sentence) # cxambro [en] domo
+    for index, word in sentence: processingConjunction(GrammarNazi, word, sentence) # cxambro [en] domo
     #pprint(sentence.getUnit('dict'))
 
     exchangeDataBetweenHomo(sentence) # копируем характеристики с первого однородного ко последующим ему однородным.
