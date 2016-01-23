@@ -43,6 +43,7 @@ montru dolaran cambion, kiu estas dolara
 #Do sxaltu tablan lampon en dormcxambro, se euxra cambio de belarusia banko estas sepduk kvar
 
 montru dolaran cambion de dua banko
+montru dolaran cambion de 2 banko
 montru dolaran cambion de du
 montru dolaran cambion de okdek
 montru dolaran cambion de dek du

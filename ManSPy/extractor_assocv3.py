@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import pprint
 
 def Extract(sentence):
   ''' Разбивает предложение на предикат и его актанты.
@@ -6,15 +7,12 @@ def Extract(sentence):
         argument - это актант, перевод на английский
         arg - это аргумент функции, имеет такойже первод на английский, как и актант'''
   predicate = {} # сказуемые
-  arguments = []  # ловосочетания
+  arguments = []  # словосочетания (актанты)
   print sentence.getUnit('str')['fwords']
-
-  #for name, str_s in sentence.getUnit('str').items():
-  #  print name, ':', str_s
+  #pprint.pprint(sentence.getUnit("dict"))
 
   # Поиск сказуемого
   predicates = sentence.getByCharacteristic('MOSentence', 'predicate')
-  #sentence.delByIndexWithoutSync(*predicates.keys())
   sentence.delByIndex(*predicates.keys())
 
   # прямое дополнение может быть не только в винительном падеже - зависит от глагола
@@ -24,7 +22,6 @@ def Extract(sentence):
     arguments[-1][index] = word
 
   for argument in arguments:
-    #sentence.delByIndexWithoutSync(*argument.keys())
     sentence.delByIndex(*argument.keys())
 
   if sentence.getUnit("dict"):

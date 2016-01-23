@@ -64,7 +64,8 @@ def getGraphmathA(text, ObjUnit):
       proccessEndWord(sword, word, ',;:')
       word['end'] = word['end_orig'][0]
     # слово с небуквенными символами в середине или начале
-    if not word['word'].isalpha(): word['noword'] = None
+    if not word['word'].isalpha():
+      if re.match(r'^[0-9]*[,.]?[0-9]+$', sword): word['notword'] = 'figure'
 
   # обработка кавычек вокруг одного слова
   for word in words:

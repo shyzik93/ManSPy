@@ -22,6 +22,18 @@ def showAddress(arg0, device):
   if device == 'computer': return str(socket.gethostbyname(socket.getfqdn()))
   return device
 
+def add(arg0, a):
+  ''' Сложение '''
+  print type(a), a
+  return str(a)
+  #a = [a1, a2]
+  if arg0['antonym']:
+    start = a.pop(0)
+    a = [-a for i in a]
+    return sum(a, start)
+  return sum(a)
+
+
 list_FASIF = ["""
 LightOn
 room y; Esperanto

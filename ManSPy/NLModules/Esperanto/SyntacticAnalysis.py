@@ -60,7 +60,7 @@ def setLinks(index, sentence, GrammarNazi):
   if word['MOSentence'] == 'predicate':
     # линкуем сказуемое и прямое дополнение
     old_position = sentence.position
-    for index2, word2 in sentence.iterFrom(1):
+    for index2, word2 in sentence.iterFromByStep(1):
       if sentence(index2, 'MOSentence') == 'direct supplement':
         sentence.addLink(index, index2)
       elif sentence(index2, 'MOSentence') == 'predicate': break
@@ -71,7 +71,7 @@ def setLinks(index, sentence, GrammarNazi):
     # линкуем прямое дополнение и следующее после него косвенное дополнение
     old_position = sentence.position
     case = None
-    for index2, word2 in sentence.iterFrom(1):
+    for index2, word2 in sentence.iterFromByStep(1):
       if word2['MOSentence'] == 'supplement':# and word2['case'] != "":
         """# остальные падежи, вероятно, будут означать, что косв. дополнение -
         # это обстоятельство, то есть относится к сказуемому.

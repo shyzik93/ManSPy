@@ -12,7 +12,7 @@
 from Esperanto_Dict import dct, words
 import re
 
-template = re.compile(r'[0-9]+(\.|\,)?[0-9]*')
+#template = re.compile(r'[0-9]+(\.|\,)?[0-9]*')
 
 def checkByDict(word_l, word):
   ''' Определяет часть речи по словарю
@@ -46,9 +46,12 @@ def defaultNoun(word_l, word):
   word['case'] = 'nominative' # именительный
   word['number'] = 'singular'
   # определение по первой букве:
-  if word['word'][0].islower() == False:
+  if not word['word'][0].islower():
     word['name'] = 'proper' # имя собственное
   else: word['name'] = 'common' # имя нарицательное
+
+def isNumeral(word_l, word):
+  pass
 
 def _getMorphA(word, GrammarNazi):
 
@@ -82,16 +85,18 @@ def _getMorphA(word, GrammarNazi):
 
   # прилагательное, притяжательное местоимение или порядковое числительное
   elif ends[0] == 'a':
-    if not checkByDict(words[0], word): # прилагательное
-      word['POSpeech'] = 'adjective'
-      word['case'] = 'nominative'
-      word['number'] = 'singular'
-      word['base'] = words[0]
-    elif word['POSpeech'] == 'pronoun': # притяжательное иестоимение
-      word['category'] = 'possessive'
-    elif word['POSpeech'] == 'numeral': # порядковое числительное
-      word['class'] = 'ordinal'
-    else: # прилагательное (есть ли такие: dea, laa, kaja и подобные?)
+    if checkByDict(words[0], word): # прилагательное
+      if word['POSpeech'] == 'pronoun': # притяжательное иестоимение
+        word['category'] = 'possessive'
+      elif word['POSpeech'] == 'numeral': # порядковое числительное
+        word['class'] = 'ordinal'
+      else: # прилагательное (есть ли такие: dea, laa, kaja и подобные?)
+        word['POSpeech'] = 'adjective'
+        word['case'] = 'nominative'
+        word['number'] = 'singular'
+        word['base'] = words[0]
+    elif isNumeral(words[0], word): word['class'] = 'ordinal'
+    else:
       word['POSpeech'] = 'adjective'
       word['case'] = 'nominative'
       word['number'] = 'singular'
@@ -134,8 +139,9 @@ def _getMorphA(word, GrammarNazi):
     else: pass # значит, это что-то другое...
 
   # число (считается как числительное)
-  elif re.match(template, word_l):
+  elif word['notword'] == 'figure':#re.match(r'[0-9]+(\.|\,)?[0-9]*', word_l):
     word['POSpeech'] = 'numeral'
+    word['class'] = 'cardinal'
     word['word'] = word_l
     word['base'] = word_l
     word['figure'] = float(word_l.replace(',', '.'))

@@ -2,7 +2,6 @@
 
 #:Verb
 # ################################################
-
 $ToUser
     Esperanto: montri # глаголы в начальной форме, через запятую, чтобы программа сама выделила корень
     Englsh: to print # добавить возможность указания нескольких глаголов через запятую
@@ -68,3 +67,17 @@ device y; Esperanto
 Esperanto
     de komputilo: aparato
     adreso de komputilo
+
+#:WordCombination
+# ################################################
+changeCondition: smart_home/add
+    Esperanto: adicii # глаголы в начальной форме, через запятую, чтобы программа сама выделила корень
+    Englsh: to add # добавить возможность указания нескольких глаголов через запятую
+    Russian: складывать
+getCondition: smart_home/add
+
+a y
+
+Esperanto
+    kvin: aparato
+    kvin

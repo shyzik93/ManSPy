@@ -35,6 +35,7 @@ class LangClass():
 
     # Графематический анализ
     if start_level in self.levels[:1]:
+      #print sentences
       BeautySafe.safe_NL(sentences)
       sentences = self.LangModule.getGraphmathA(sentences, NLModules.ObjUnit)
       BeautySafe.safe_sentences(sentences, 'GraphemathicAnalysis analysis')

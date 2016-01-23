@@ -115,6 +115,11 @@ def parseWordCombination(_fasif): # подформат состоит из тр�
         lang_indexes.append(lang.strip())
       arg_indexes.append(arg_name)
       #print '3 $$$$', string
+    elif re.findall(STRING_ARGUMENT_TITLE2.decode('utf-8'), string):
+      arg_name, isreq = string.split()
+      args[arg_name] = {'isreq': isreq, 'argtable': {}, 'argwords': {}}
+      arg_indexes.append(arg_name)
+      #print '3 $$$$', string
     # Аргумент ; АргументноеСловоНаЯзыке1 ; АргументноеСловоНаЯзыке2
     elif re.findall(STRING_ARGUMENT_BODY.decode('utf-8'), string):
       string = string.strip().split(';')

@@ -38,15 +38,13 @@ def count_wordargs(constwordexample, fasif):
     else: noreq += 1
   return req, noreq
 
-def compare_word(word, position, argworddescr, finded_args, flog):
-  #print word['base'], worddescr['base'], worddescr['type']
+def compare_word(word, index, argument, argworddescr, finded_args, flog):
   if word['MOSentence'] in ['direct supplement', 'supplement', 'subject']:
      if argworddescr['POSpeech'] != word['POSpeech'] or \
-        not (position == 0 or argworddescr['case'] == word['case']): return False # для первого дополнения падеж не учитывается
+        not (not argument.getControl(index) or argworddescr['case'] == word['case']): return False # для первого дополнения падеж не учитывается
   elif word['MOSentence'] in ['definition', 'circumstance']:
      if argworddescr['POSpeech'] != word['POSpeech']: return False # для первого дополнения падеж не учитывается
   else: return False
-  #print word['base'], argworddescr['base'], 'argname' not in argworddescr
   flog.write(u'Example: "%s". Found: "%s"\n' % (argworddescr['base'], word['base']))
   if 'argname' not in argworddescr: # если константное слово
     flog.write(u'    type: constant word\n')
@@ -69,13 +67,21 @@ def jumpToObient(sentence, indexWord, indexObient):
 def compare_fasif_WordCombination(fasif, argument, finded_args, flog):
   functions = fasif['functions']
   _argument = NLModules.ObjUnit.Sentence(fasif['wcomb'])
-  _argument_iter = NLModules.ObjUnit.Sentence(fasif['wcomb']).__iter__()
+  first_index = _argument.getIndexesOfFirstWords()
+  if first_index: first_index = first_index[0] # однородные слова должны обработаться в следующем цикле
+  _argument_iter = NLModules.ObjUnit.Sentence(fasif['wcomb']).iterFromByIndex(first_index)
+  #print _argument(first_index, 'word')
 
-  for index, word in argument:
+  first_index = argument.getIndexesOfFirstWords()
+  if first_index: first_index = first_index[0] # однородные слова должны обработаться в следующем цикле
+  else: return False # "закольцованный" актант - на каждое слово ссылается другое слово.
+  #print argument(first_index, 'word')
+  for index, word in argument.iterFromByIndex(first_index):
     _index, _word = _argument_iter.next()
 
     # "Проходимся" по дополнениям (прямые, косвенные, а также подлежащие)
-    isright = compare_word(word, argument.position, _word, finded_args, flog) # new
+    isright = compare_word(word, index, argument, _word, finded_args, flog) # new
+    #print word['word'], ' ', _word['word'], isright
     if not isright:
       # Если инородная константа, то проверяем, не пропущен ли необязательный аргумент среди фичей константы.
       req, noreq = count_wordargs(_word, fasif)
@@ -97,7 +103,7 @@ def compare_fasif_WordCombination(fasif, argument, finded_args, flog):
     _features = _word['feature']
     for feature in features:
       for _feature in _features:
-        isright = compare_word(feature, argument.position, _feature, finded_args, flog)
+        isright = compare_word(feature, index, argument, _feature, finded_args, flog)
         flog.write('    Result of comparing word is %s: index - %i, base - "%s".\n' % (str(isright), index, word['base']))
         # не проверяем на верность.
 

@@ -49,16 +49,20 @@ class _Unit(object):
     self.dict_unit[index][name] = value
 
   # Итератор
-  def __iter__(self, step=None): # # аналогично itemsUnit() без индекса, но с возможностью управления текущей позицией. Для цикла for.
-    self.position = self.position+step if step!=None else 0
+  def __iter__(self, position=0): # # аналогично itemsUnit() без индекса, но с возможностью управления текущей позицией. Для цикла for.
+    self.position = position
     self.keys = self.dict_unit.keys()
     while self.position < len(self.keys) and self.position >= 0:
       index = self.keys[self.position]
       yield index, self.dict_unit[index]
       self.position += 1
     self.position = 0
-  def iterFrom(self, step):
-    return self.__iter__(step)
+  def iterFromByStep(self, step=0):
+    position = self.position+step if step!=None else 0
+    return self.__iter__(position)
+  def iterFromByIndex(self, index):
+    position = self.keys.index(index)
+    return self.__iter__(position)
   def jumpByStep(self, step=1): self.position += step # аналог next() 
   def jumpByIndex(self, index): self.position = self.keys.index(index)
   def delByStep(self, count=1, step=0):
@@ -266,7 +270,7 @@ class Word(_Unit):
 
 """ Функции для работы со стандартными структурами данных """
 
-def dictOrder(d):
+'''def dictOrder(d):
   """ Синхронизирует числовые ключи словаря, то есть смещает их.
       Возвращает список индексов, которые отсутствовали во входном словаре.
       Значения словаря сохраняют прежний порядок.
@@ -294,7 +298,7 @@ def dictOrder(d):
     prev_sdvig = sdvig
   #print deleted
   #print d
-  return deleted
+  return deleted'''
 
 class Sentence(_Unit):
   """ Класс объекта предложения. Индексы списка и ключи словаря должны совпадать.
@@ -310,6 +314,7 @@ class Sentence(_Unit):
     'type': 'real', # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
     'base': '',
     'case': '',
+    'notword': '',
     'start_pmark': [], 'end_pmark': [], 'around_pmark': []
     }
     subunit.update(_subunit)
@@ -322,14 +327,14 @@ class Sentence(_Unit):
         if isinstance(word, dict): word = Word(word)
         if isinstance(index, (unicode, str)): index = int(index)
         self.dict_unit[index] = word
-      self.position = 0
+      #self.position = 0
     else:
       for index, word in enumerate(words):
         self._update_added_unit(word)
         self.dict_unit[index] = word
     self.keys = self.dict_unit.keys()
 
-  def _syncLinks(self, words, deleted, parametr_name):
+  '''def _syncLinks(self, words, deleted, parametr_name):
     """ Синхронизирует ссылки в словах """
     for word in words:
       for indexLink in word[parametr_name]:
@@ -348,7 +353,7 @@ class Sentence(_Unit):
     deleted = dictOrder(self.dict_unit)
     # синхронизируем ссылки
     self._syncLinks(self.dict_unit.values(), deleted, 'link')
-    self._syncLinks(self.dict_unit.values(), deleted, 'homogeneous_link')
+    self._syncLinks(self.dict_unit.values(), deleted, 'homogeneous_link')'''
   def getByCharacteristic(self, name, value):
     """ Извлекает слова, соответствующие характеристике.
         Возвращает словарь Индекс:Слово """
@@ -382,13 +387,9 @@ class Sentence(_Unit):
     """ Удаляет слова, содержащие определённые характеристики """
     deleted = []
     for index, word in self.dict_unit.items():
-      if name in word and word[name] == value:
-        #del self.dict_unit[index]
-        deleted.append(index)
+      if name in word and word[name] == value: deleted.append(index)
     self.delByIndex(*deleted)
-    #for index in deleted: del self.dict_unit[index]
-    self._sync()
-    #self.keys = self.dict_unit.keys()
+    #self._sync()
 
   def addFeature(self, index, *indexes):
     """ Добавляет к слову определения и обстоятельства как его характеристику
@@ -400,7 +401,7 @@ class Sentence(_Unit):
     # добавляем определения или обстоятельства
     for _index in indexes:
       feature = self.dict_unit[_index]
-      feature['index'] = index
+      feature['index'] = _index
       word['feature'].append(feature)
     # удаляем из предложения
     self.delByIndex(*indexes)
@@ -462,6 +463,14 @@ class Sentence(_Unit):
     homogeneous = self.dict_unit[index]['homogeneous_link']
     if inclusive: homogeneous.append(index)
     return homogeneous
+
+  def getIndexesOfFirstWords(self):
+    ''' Возвращает индексы первых слов. Первыми являютсмя те слова в предложении,
+        на которые никто не ссылается. Возврашщает список индексов однородных слов.'''
+    indexes = []
+    for index, word in self.dict_unit.items():
+      if not self.getControl(index): indexes.append(index)
+    return indexes
 
 class Text(_Unit):
   """ Класс объекта ткста.

@@ -67,9 +67,6 @@ def get_fasif_wcomb(fdb, argument, R, verb):
   return finded_args, fasif, function, isantonym
 
 def Extraction2IL(R, settings, Action, predicates, arguments):
-  #print '    predficates ::', predicates, '\n'
-  #print '    arguments ::', arguments, '\n'
-
   fdb = to_formule.FasifDB(settings)
   pattern_IL = {
     'arg0': {'antonym': False}, # передаётся первым аргументом в каждую функцию
@@ -90,7 +87,6 @@ def Extraction2IL(R, settings, Action, predicates, arguments):
   # Вынимаем Фасиф
   for _argument in arguments:
     argument = NLModules.ObjUnit.Sentence(_argument)
-    compared_fasifs = fdb.getFASIF('WordCombination', argument)
     IL = copy.deepcopy(pattern_IL)
     res = get_fasif_wcomb(fdb, argument, R, predicate['base'])
     if res is None: continue
