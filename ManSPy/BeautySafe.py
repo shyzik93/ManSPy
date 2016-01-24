@@ -20,18 +20,18 @@ def safeResults(l, title, space=''):
   ''' удобно сохраняет список словарей или словарь словарей'''
   if title != None: fwrite(('- '*10)+title+(' -'*10)+u'\n')
 
-  if str(type(l))[7:-2] == 'dict':
+  if isinstance(l, dict):
     l2 = []
     for k, v in l.items():
       l2.append(v)
     l = l2
 
   for res in l:
-    if str(type(res))[7:-2] in ['int', 'str']:
+    if isinstance(res, (int, str)):
       fwrite(space + str(res) + u'\n')
       continue
     for k, v in res.items():
-      if str(type(v))[7:-2] == 'list':
+      if isinstance(v, list):
         fwrite(space + k + u' : \n')
         safeResults(v, None, space+'    ')
         continue

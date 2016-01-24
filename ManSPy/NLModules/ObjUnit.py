@@ -65,9 +65,10 @@ class _Unit(object):
     return self.__iter__(position)
   def jumpByStep(self, step=1): self.position += step # аналог next() 
   def jumpByIndex(self, index): self.position = self.keys.index(index)
-  def delByStep(self, count=1, step=0):
+  def delByStep(self, count=1, step=0, jump_step=-1):
     for c in range(count): del self.dict_unit[self.keys[self.position+step]]
     self.keys = self.dict_unit.keys()
+    self.position += jump_step
   def delByPos(self, position):
     del self.dict_unit[self.keys[position]]
     self.keys = self.dict_unit.keys()
@@ -268,38 +269,6 @@ class Word(_Unit):
   def hasSymbol(self, symbol):
     return symbol in self.str_word
 
-""" Функции для работы со стандартными структурами данных """
-
-'''def dictOrder(d):
-  """ Синхронизирует числовые ключи словаря, то есть смещает их.
-      Возвращает список индексов, которые отсутствовали во входном словаре.
-      Значения словаря сохраняют прежний порядок.
-      Аргумент old_index - передаётся, если нужно узнать новый индекс
-      вместо старого."""
-  deleted = [] # индексы некогда удалённых слов, в порядке возрастания
-  prev_sdvig = 0
-
-  #print d
-  prev_index = -1
-  sdvig = 0
-  for index, dict_unit in d.items():
-    sdvig = index - prev_index - 1
-    if sdvig > prev_sdvig:
-      # добавляем все удалённые индексы
-      _sdvig = sdvig-prev_sdvig
-      while _sdvig > 0:
-        deleted.append(index-_sdvig)
-        _sdvig -= 1
-    if sdvig > 0:
-      d[index-sdvig] = d[index]
-      del d[index]
-    #print "sdvig: ", sdvig
-    prev_index = index-sdvig
-    prev_sdvig = sdvig
-  #print deleted
-  #print d
-  return deleted'''
-
 class Sentence(_Unit):
   """ Класс объекта предложения. Индексы списка и ключи словаря должны совпадать.
       При инициализации класса ему передаётся предложение в виде списка слов."""
@@ -334,26 +303,6 @@ class Sentence(_Unit):
         self.dict_unit[index] = word
     self.keys = self.dict_unit.keys()
 
-  '''def _syncLinks(self, words, deleted, parametr_name):
-    """ Синхронизирует ссылки в словах """
-    for word in words:
-      for indexLink in word[parametr_name]:
-        t = 1
-        index = word[parametr_name].index(indexLink)
-        for indexDel in deleted:
-          if indexLink > indexDel:
-            word[parametr_name][index] -= t
-          elif indexLink == indexDel:
-            del word[parametr_name][index]
-          t =+ 1
-
-  def _sync(self):
-    """ Синхронизирует ключи словаря, то есть смещает их.
-        Используется после удаления слов. """
-    deleted = dictOrder(self.dict_unit)
-    # синхронизируем ссылки
-    self._syncLinks(self.dict_unit.values(), deleted, 'link')
-    self._syncLinks(self.dict_unit.values(), deleted, 'homogeneous_link')'''
   def getByCharacteristic(self, name, value):
     """ Извлекает слова, соответствующие характеристике.
         Возвращает словарь Индекс:Слово """
@@ -382,14 +331,13 @@ class Sentence(_Unit):
       if len(results[index]) == 0: del results[index]
     return results
 
-  # Заменить
+  '''# Заменить
   def delByCharacteristic(self, name, value):
     """ Удаляет слова, содержащие определённые характеристики """
     deleted = []
     for index, word in self.dict_unit.items():
       if name in word and word[name] == value: deleted.append(index)
-    self.delByIndex(*deleted)
-    #self._sync()
+    self.delByIndex(*deleted)'''
 
   def addFeature(self, index, *indexes):
     """ Добавляет к слову определения и обстоятельства как его характеристику
@@ -429,12 +377,12 @@ class Sentence(_Unit):
       if index in dword['link'] and index != _index: indexes.append(_index)
     return indexes
 
-  def functionToValues(self, index, parametr_name, function):
+  '''def functionToValues(self, index, parametr_name, function):
     """ Метод применяет функцию к каждому элементу характеристики слова.
         То есть, можеть менять элементы характеристик feature, link. """
     word = self.dict_unit[index]
     for i in range(len(word[parametr_name])):
-      word[parametr_name][i] = function(word[parametr_name][i])
+      word[parametr_name][i] = function(word[parametr_name][i])'''
 
   # к удалению
   def getSurroundingNeighbours(self, index):
