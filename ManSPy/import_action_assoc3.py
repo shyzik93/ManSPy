@@ -31,7 +31,7 @@ STRING_WCOMB_TITLE = r'^'+NAME_LANG+'$'
 STRING_WCOMB_ARGWORD = r'^ {4}('+WORD_WITH_PREPOSITION+'[ \t]*:[ \t]*'+WORD+'[ \t]*(,[ \t]*'+WORD+'[ \t]*)*;*)+$' # первое слово - предлог (иногда нужен)
 STRING_WCOMB = r'^ {4}('+WORD+')?([ \t]+'+WORD+')*[ \t]*$' # Не должо совпадать с названием языка!
 
-
+not_to_db = ['nombr', 'cifer']
 
 def get_fasif_files(modules_path):
   ''' Функция возвращает мимена МУ '''
@@ -95,8 +95,7 @@ def parseWordCombination(_fasif): # подформат состоит из тр�
     # Назначение: Модуль/Функция
     if re.findall(STRING_DESTINATION_TITLE.decode('utf-8'), string): # "Name_01 : moduleName/funcName "
       destination, function = string.split(':')
-      destination = destination.strip()
-      functions[destination] = {'function': function.strip(), 'verbs': {}}
+      functions[destination.strip()] = {'function': function.strip(), 'verbs': {}}
       #print '1 $$$$', string
     # Язык: глаголДляФункции
     elif re.findall(STRING_DESTINATION_BODY.decode('utf-8'), string): # "    Language : verbглагол"
@@ -206,9 +205,8 @@ def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):
   for arg_name, data in fasif['args'].items():
     _data = data['argtable'].copy().items()
     for arg_word, argtable in _data:
-      _arg_word = arg_word
+      del data['argtable'][arg_word]
       arg_word = get_dword(arg_word, LangClass)['base']
-      del data['argtable'][_arg_word]
       data['argtable'][arg_word] = argtable
 
     proccess_argword(data['argwords']['in_wcomb'], LangClass)
@@ -220,26 +218,24 @@ def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):
       value['verbs'][index] = get_id_group(OR, verb, LangClass)
 
   #print '----------------- to formule start'
-  sentence = LangClass.NL2IL(fasif['wcomb'], ':synt')[0](0)
-  wcomb = sentence
+  wcomb = LangClass.NL2IL(fasif['wcomb'], ':synt')[0](0)
   fasif['argdescr'] = {}
   for argname, data in fasif['args'].items():
     argword = data['argwords']['in_wcomb']['name']
-    #wcomb.chmanyByValues({'argname':argname, 'isreq':data['isreq'], 'argtable':data['argtable'], 'argwords_another':data['argwords']['another'], 'hyperonyms':data['argwords']['in_wcomb']['hyperonyms']}, setstring='subiv:noignore', base=argword['base'], case=argword['case'])
     wcomb.chmanyByValues({'argname':argname}, setstring='subiv:noignore', base=argword['base'], case=argword['case'])
-    isreq = True if data['isreq'] == 'y' else False
-    fasif['argdescr'][argname] = {'isreq':isreq, 'argtable':data['argtable'], 'argwords_another':data['argwords']['another'], 'hyperonyms':data['argwords']['in_wcomb']['hyperonyms']}
+    fasif['argdescr'][argname] = {'isreq':data['isreq'], 'argtable':data['argtable'], 'argwords_another':data['argwords']['another'], 'hyperonyms':data['argwords']['in_wcomb']['hyperonyms']}
   del fasif['args']
-  fasif['wcomb'] = wcomb.getUnit('dict')
 
+  fasif['wcomb'] = wcomb.getUnit('dict')
   for argname, data in fasif['argdescr'].items():
+    data['isreq'] = True if data['isreq'] == 'y' else False
     for hyperonym in data['hyperonyms']:
       argword = [argword for argword in wcomb.getByValues(setstring='subiv:noignore', argname=argname)][0]
       #print argname, argword
       if argword[1]: base = argword[1]['base']
       else: base = argword[2][0]['base']
       bases = data['argtable'].keys()
-      OR.addWordsInAbstractGroup(hyperonym['base'], base, *bases)
+      if hyperonym['base'] not in not_to_db: OR.addWordsInAbstractGroup(hyperonym['base'], base, *bases)
 
   #pprint(fasif['args']) 
   #fwcomb = to_formule.to_formule(fasif['wcomb'], True, fasif['args'])

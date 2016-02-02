@@ -9,15 +9,18 @@
       res['POSpeech'] - часть речи
 '''
 
-from Esperanto_Dict import dct, words
+import Dict
 import re
 
 #template = re.compile(r'[0-9]+(\.|\,)?[0-9]*')
 
+combain_numerals_template = re.compile(('^(%s)('+Dict.dct['numeral'][-5]+'|'+Dict.dct['numeral'][-4]+')$') % '|'.join(Dict.dct['numeral'][:-5]))
+mili_numerals_template = re.compile(('^(%s)(iliard|ilion)$') % '|'.join(Dict.dct['numeral'][:-5]))
+
 def checkByDict(word_l, word):
   ''' Определяет часть речи по словарю
       для неизменяемых или почти неизменяемых частей речи'''
-  for POSpeech, data in words.items():
+  for POSpeech, data in Dict.words.items():
     if word_l not in data: continue
     word.update(data[word_l])
     word['POSpeech'] = POSpeech
@@ -51,13 +54,29 @@ def defaultNoun(word_l, word):
   else: word['name'] = 'common' # имя нарицательное
 
 def isNumeral(word_l, word):
-  pass
+  if word_l in Dict.words['numeral']:
+    word.update(Dict.words['numeral'][word_l])
+    return True
+
+  combain_numerals = combain_numerals_template.findall(word_l)
+  if combain_numerals: combain_numerals = combain_numerals[0]
+  mili_numerals = mili_numerals_template.findall(word_l)
+  if mili_numerals: mili_numerals = mili_numerals[0]
+
+  if combain_numerals:
+    factor1, factor2 = combain_numerals
+    number_value = int(Dict.dct['numeral_d'][factor1]) * int(Dict.dct['numeral_d'][factor2])
+  elif mili_numerals:
+    factor1, factor2 = mili_numerals
+    number_value = int(Dict.dct['numeral_d'][factor1]) ** int(Dict.dct['numeral_d']['m'+factor2])
+  else: return False
+
+  word['number_value'] = number_value
+  return True
 
 def _getMorphA(word, GrammarNazi):
 
   word_l = word['word'].lower()
-  #if word_l[-1] in '\'".,:!?)': word_l = word_l[:-1] # перенесено в графмат анаилз
-  if word_l[0] in '(': word_l = word_l[0:]
 
   # Определение части речи по словарю
   # (для неизменяемых или почти неизменяемых частей речи)
@@ -74,14 +93,22 @@ def _getMorphA(word, GrammarNazi):
     ends[1] = word_l[-2:]
     words[1] = word_l[:-2]
 
+  #combain_numerals = combain_numerals_template.findall(word_l)
+  #if combain_numerals: combain_numerals = combain_numerals[0]
+  #mili_numerals = mili_numerals_template.findall(word_l)
+  #if mili_numerals: mili_numerals = mili_numerals[0]
+  #print combain_numerals, mili_numerals
+
   # существительное
   if ends[0] == 'o':
     defaultNoun(words[0], word)
+    if isNumeral(words[0], word): word['derivative'] = 'numeral' # производное от числительного
 
   # наречие
   elif ends[0] == 'e':
     word['POSpeech'] = 'adverb'
     word['base'] = words[0]
+    if isNumeral(words[0], word): word['derivative'] = 'numeral' # производное от числительного
 
   # прилагательное, притяжательное местоимение или порядковое числительное
   elif ends[0] == 'a':
@@ -95,7 +122,10 @@ def _getMorphA(word, GrammarNazi):
         word['case'] = 'nominative'
         word['number'] = 'singular'
         word['base'] = words[0]
-    elif isNumeral(words[0], word): word['class'] = 'ordinal'
+    elif isNumeral(words[0], word): # порядковое числительное
+      word['POSpeech'] = 'numeral'
+      word['class'] = 'ordinal'
+      word['base'] = words[0]
     else:
       word['POSpeech'] = 'adjective'
       word['case'] = 'nominative'
@@ -103,12 +133,14 @@ def _getMorphA(word, GrammarNazi):
       word['base'] = words[0]
 
   # глагол
-  elif ends[0] in dct['verb']['end'].keys() or ends[1] in dct['verb']['end'].keys():
+  elif ends[0] in Dict.dct['verb']['end'].keys() or ends[1] in Dict.dct['verb']['end'].keys():
     word['POSpeech'] = 'verb'
     for i in range(2):
-      if ends[i] in dct['verb']['end']:
-        word.update(dct['verb']['end'][ends[i]])
-        word['base'] = words[i]
+      if ends[i] not in Dict.dct['verb']['end']: continue
+      word.update(Dict.dct['verb']['end'][ends[i]])
+      if isNumeral(words[i], word): word['derivative'] = 'numeral' # производное от числительного
+      word['base'] = words[i]
+      break
 
   # мн. ч. существительно, прилагательного, притяжательно местоимения. И вин. падеж прилагательного, существительного, местоимения или притяхательного местоимения.
   #ERROR слово prezenten и enden определяется наречием. Другие слова на -n могут ошибочно определиться.
@@ -122,21 +154,13 @@ def _getMorphA(word, GrammarNazi):
     word['base'] = temp_word2['base']
 
   # сложное числительное (не составные!)
-  elif len_word >= 5:
-    parts = ['', ''] # разбитое на простые числительные
-    for i in [2, 3, 4]:
-      if word_l[:-i] in dct['numeral'][1:11]:
-        parts[0] = word_l[:-i]
-    for i in [3, 4]:
-      if word_l[-i:] in dct['numeral'][10:12]:
-        parts[1] = word_l[-i:]
-    if '' not in parts:
-      word['POSpeech'] = 'numeral'
-      word['word'] = word_l
-      word['base'] = word_l
-      word['class'] = 'cardinal' # количественное
-      word['figure'] = int(dct['numeral_d'][parts[0]]) * int(dct['numeral_d'][parts[1]])
-    else: pass # значит, это что-то другое...
+  elif isNumeral(word_l, word):#combain_numerals:#len_word >= 5:
+    #factor1, factor2 = combain_numerals
+    word['POSpeech'] = 'numeral'
+    word['word'] = word_l
+    word['base'] = word_l
+    word['class'] = 'cardinal' # количественное
+    #word['number_value'] = int(Dict.dct['numeral_d'][factor1]) * int(Dict.dct['numeral_d'][factor2])
 
   # число (считается как числительное)
   elif word['notword'] == 'figure':#re.match(r'[0-9]+(\.|\,)?[0-9]*', word_l):
@@ -144,13 +168,13 @@ def _getMorphA(word, GrammarNazi):
     word['class'] = 'cardinal'
     word['word'] = word_l
     word['base'] = word_l
-    word['figure'] = float(word_l.replace(',', '.'))
+    word['number_value'] = float(word_l.replace(',', '.'))
 
   # анализ приставок
   if 'base' in word:
     base = word['base']
-    if len(base) > 3 and base[:3] in dct['prefix']:
-      word['antonym'] = dct['prefix'][base[:3]]['antonym']
+    if len(base) > 3 and base[:3] in Dict.dct['prefix']:
+      word['antonym'] = Dict.dct['prefix'][base[:3]]['antonym']
       word['base'] = base[3:]
 
   if len(word) == 1: # то есть {'word': word}

@@ -3,6 +3,8 @@
 import codecs, sys, copy
 import to_formule, NLModules, lingvo_math, Action
 
+not_to_db = ['nombr', 'cifer']
+
 def check_args(finded_args, fasif, R):
   # Проверка на наличие в абстрактной группе
   hyperonyms = {}
@@ -13,10 +15,10 @@ def check_args(finded_args, fasif, R):
     for argname, argvalue in finded_arg.items():
       isright = False
       for hyperonym in hyperonyms[argname]:
+        if hyperonym in not_to_db and isinstance(argvalue, (int, float, complex)): isright = True          
         #print argvalue, 'is hyponym of', hyperonym, R.isWordInAbstractGroup(argvalue, hyperonym)
-        if R.isWordInAbstractGroup(argvalue, hyperonym):
-          isright = True
-          break
+        if R.isWordInAbstractGroup(argvalue, hyperonym): isright = True
+        if isright: break
       if not isright: del finded_arg[argname]
 
   # Проверка на отсутствие обязательных аргументных слов
@@ -108,6 +110,9 @@ def Extraction2IL(R, settings, Action, predicates, arguments):
       IL['action']['wcomb_function'] = parseFunction(function)
       id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')[0]
       compared_fasifs = fdb.getFASIF('Verb', id_group)
+      if not compared_fasifs:
+        sys.stderr.write('FASIF was not finded! Argument (word combination) is "'+str(argument)+'"')
+        continue
       if not compared_fasifs: sys.stderr.write('Fasif for "%s" wasn\'t found!' % predicate['base'])
       IL['action']['common_verb_function'] = parseFunction(compared_fasifs.values()[0][0][0])
 

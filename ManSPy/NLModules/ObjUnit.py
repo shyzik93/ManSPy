@@ -331,14 +331,6 @@ class Sentence(_Unit):
       if len(results[index]) == 0: del results[index]
     return results
 
-  '''# Заменить
-  def delByCharacteristic(self, name, value):
-    """ Удаляет слова, содержащие определённые характеристики """
-    deleted = []
-    for index, word in self.dict_unit.items():
-      if name in word and word[name] == value: deleted.append(index)
-    self.delByIndex(*deleted)'''
-
   def addFeature(self, index, *indexes):
     """ Добавляет к слову определения и обстоятельства как его характеристику
         Первый аргумент - индекс главного слова, следующие аргументы -
@@ -376,13 +368,6 @@ class Sentence(_Unit):
       # второе лог. выражение - слово не может подчиняться само себе.
       if index in dword['link'] and index != _index: indexes.append(_index)
     return indexes
-
-  '''def functionToValues(self, index, parametr_name, function):
-    """ Метод применяет функцию к каждому элементу характеристики слова.
-        То есть, можеть менять элементы характеристик feature, link. """
-    word = self.dict_unit[index]
-    for i in range(len(word[parametr_name])):
-      word[parametr_name][i] = function(word[parametr_name][i])'''
 
   # к удалению
   def getSurroundingNeighbours(self, index):

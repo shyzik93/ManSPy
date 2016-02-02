@@ -23,10 +23,10 @@ dct = {
 
   # порядок числительных НЕ МЕНЯТЬ!
   'numeral': [u'nulo', u'unu', u'du', u'tri', u'kvar', u'kvin',
-    u'ses', u'sep', u'ok', u'naŭ', u'dek', u'cent', u'mil'],
+    u'ses', u'sep', u'ok', u'naŭ', u'dek', u'cent', u'mil', u'milion', u'miliard'],
   # а здесь можно, но не нужно :)
   'numeral_d': {u'nulo': 0, u'unu': 1, u'du': 2, u'tri': 3, u'kvar': 4, u'kvin': 5,
-    u'ses': 6, u'sep': 7, u'ok': 8, u'naŭ': 9, u'dek': 10, u'cent': 100, u'mil': 1000
+    u'ses': 6, u'sep': 7, u'ok': 8, u'naŭ': 9, u'dek': 10, u'cent': 100, u'mil': 1000, u'milion':1000000, u'miliard':1000000000
     }
   }
 
@@ -127,18 +127,20 @@ words = {
     u'kvankam': {'value': ''}, # хотя
     },
   'numeral': {
-    u'nulo': {'class': 'cardinal', 'figure': 0},
-    u'unu':  {'class': 'cardinal', 'figure': 1},
-    u'du':   {'class': 'cardinal', 'figure': 2},
-    u'tri':  {'class': 'cardinal', 'figure': 3},
-    u'kvar': {'class': 'cardinal', 'figure': 4},
-    u'kvin': {'class': 'cardinal', 'figure': 5},
-    u'ses':  {'class': 'cardinal', 'figure': 6},
-    u'sep':  {'class': 'cardinal', 'figure': 7},
-    u'ok':   {'class': 'cardinal', 'figure': 8},
-    u'naŭ':  {'class': 'cardinal', 'figure': 9},
-    u'dek':  {'class': 'cardinal', 'figure': 10},
-    u'cent': {'class': 'cardinal', 'figure': 100},
-    u'mil':  {'class': 'cardinal', 'figure': 1000}
+    u'nulo': {'class': 'cardinal', 'number_value': 0},
+    u'unu':  {'class': 'cardinal', 'number_value': 1},
+    u'du':   {'class': 'cardinal', 'number_value': 2},
+    u'tri':  {'class': 'cardinal', 'number_value': 3},
+    u'kvar': {'class': 'cardinal', 'number_value': 4},
+    u'kvin': {'class': 'cardinal', 'number_value': 5},
+    u'ses':  {'class': 'cardinal', 'number_value': 6},
+    u'sep':  {'class': 'cardinal', 'number_value': 7},
+    u'ok':   {'class': 'cardinal', 'number_value': 8},
+    u'naŭ':  {'class': 'cardinal', 'number_value': 9},
+    u'dek':  {'class': 'cardinal', 'number_value': 10},
+    u'cent': {'class': 'cardinal', 'number_value': 100},
+    u'mil':  {'class': 'cardinal', 'number_value': 1000},
+    u'milion':  {'class': 'cardinal', 'number_value': 1000000},
+    u'miliard': {'class': 'cardinal', 'number_value': 10000000}
     }  
   }

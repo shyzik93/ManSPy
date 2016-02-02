@@ -19,6 +19,7 @@ def Extract(sentence):
   for index, word in sentence.itemsUnit():
     if word['MOSentence'] != 'supplement':
       arguments.append({})
+    if not arguments: arguments.append({}) # если в актанте остутсвуют прямые дополнения
     arguments[-1][index] = word
 
   for argument in arguments:

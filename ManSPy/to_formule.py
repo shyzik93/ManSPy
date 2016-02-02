@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 '''
+Задача модуля - выдать все совпадения актантов с фасифами. Уточнение фасифа должно происходить в модуле конвертации.
 Созранение:
 1. Парсится ФАСИФ.
 2. В БД сохраняется ФАСИФ и его тип.
@@ -48,14 +49,14 @@ def compare_word(word, index, argument, argworddescr, finded_args, flog):
   flog.write(u'Example: "%s". Found: "%s"\n' % (argworddescr['base'], word['base']))
   if 'argname' not in argworddescr: # если константное слово
     flog.write(u'    type: constant word\n')
-    if argworddescr['base'] == word['base']:return True
-    return False
+    if argworddescr['base'] != word['base']: return False
   else:
     flog.write('    type: argument word\n    argname: "%s".\n' % argworddescr['argname'])
     if argworddescr['argname'] not in finded_args: finded_args[argworddescr['argname']] = []
-    finded_args[argworddescr['argname']].append(word['base'])
-    # проверяем вхождение корня в гиперонимы из описания
-    return True
+    if 'number_value' in word: argvalue = word['number_value']
+    else: argvalue = word['base']
+    finded_args[argworddescr['argname']].append(argvalue)
+  return True
 
 def jumpToObient(sentence, indexWord, indexObient):
     indexes = sentence.getObient(indexWord)

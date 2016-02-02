@@ -5,11 +5,12 @@
     Можно приступать к синтаксичекому анализу предложения.
     '''
 from pprint import pprint
+import eonums
 
-def processingArticle(GrammarNazi, word, sentence):
+def processArticle(GrammarNazi, word, sentence):
   if word['POSpeech'] == 'article': sentence.delByStep() # пока только удаляем
 
-def processingPreposition(GrammarNazi, word, sentence):
+def processPreposition(GrammarNazi, word, sentence):
   if word['POSpeech'] != 'preposition': return
   left, right = sentence.getNeighbours()
   if right == None: sentence.delByStep()
@@ -19,7 +20,7 @@ def processingPreposition(GrammarNazi, word, sentence):
   else:
     GrammarNazi.append('After preposition "'+word['word']+'" must be a noun or a pronoun or a cardinal numeral! Found '+str(sentence.getByStep(1)))
 
-def processingConjunction(GrammarNazi, word, sentence):
+def processConjunction(GrammarNazi, word, sentence):
   if word['POSpeech'] != 'conjunction' or word['value'] != 'coordinating': return
   left, right = sentence.getNeighbours()
   if left == None or right == None: # если союз первый или последний в предложении
@@ -41,14 +42,14 @@ def processingConjunction(GrammarNazi, word, sentence):
   #elif left['POSpeech'] == 'noun' and right['POSpeech'] == 'preposition':
   # Однородности нужны лишь для дополнения связей. В коверторе должны фигурировать лишь связи, но не однородности!
 
-def processingDefinition(GrammarNazi, word, sentence, indexes=None):
+def processDefinition(GrammarNazi, word, sentence, indexes=None):
   if indexes == None: indexes = []
   #print 'findDefinition:', word['word'], index, sentence.getLen()
   if word['POSpeech'] == 'adjective' or (word['POSpeech'] == 'pronoun' and word['category'] == 'possessive') or word['POSpeech']=='numeral':
     indexes.append(sentence.currentIndex())
     if sentence.isLast(): return # завершаем цикл, ибо прилагательные без существительного. Их мы не удаляем, так как они могут следовать после глагола esti
     sentence.jumpByStep()
-    processingDefinition(GrammarNazi, sentence.getByStep(), sentence, indexes)
+    processDefinition(GrammarNazi, sentence.getByStep(), sentence, indexes)
   elif word['POSpeech'] in ['noun'] and len(indexes) > 0: # если перед существительным стояли прилагательные
     sentence.addFeature(sentence.currentIndex(), *indexes)
     sentence.jumpByStep(-len(indexes))
@@ -61,7 +62,7 @@ def checkAdverbAfter(sentence):
   if sentence.isFirst(): return False
   return sentence.getByStep(-1, 'POSpeech') in ('verb', 'adjective', 'adverb')
 
-def processingAdverb(GrammarNazi, word, sentence):
+def processAdverb(GrammarNazi, word, sentence):
   if sentence.getByStep()['POSpeech'] != 'adverb': return
   index = sentence.currentIndex()
   if checkAdverbBefore(sentence): # порядок менять не рекомендуется: покажи ОЧЕНЬ СИНИЙ цвет.
@@ -93,21 +94,37 @@ def exchangeDataBetweenHomo(sentence):
       if 'case' in word: sentence(index_homo, 'case', word['case'])
       done_indexes.append(index_homo)
 
-def proccessNumeral(GrammarNazi, word, sentence):
-  for feature in word['feature']:
-    pass
+def processNumeral(GrammarNazi, word, sentence, indexes=None):
+  if indexes == None: indexes = []
+  if word['POSpeech'] == 'numeral':
+    indexes.append(sentence.currentIndex())
+    if not sentence.isLast():
+      sentence.jumpByStep()
+      processNumeral(GrammarNazi, sentence.getByStep(), sentence, indexes)
+      return
+  if len(indexes) <= 1: return
+
+  # "Склейка" числительных
+  print indexes
+  glued_numeral = ' '.join([sentence(index, 'word') for index in indexes])
+  print glued_numeral
+  sentence(indexes[-1], 'word', glued_numeral)
+  sentence(indexes[-1], 'number_value', eonums.eo2int(glued_numeral))
+  sentence(indexes[-1], 'base', '')
+  sentence.delByIndex(*indexes[:-1])
+  sentence.jumpByStep(-len(indexes))
 
 def runScript(GrammarNazi, sentence, names):
   names = names.split()
   for name in names:
-    func = globals()['processing'+name]
+    func = globals()['process'+name]
     for index, word in sentence: func(GrammarNazi, word, sentence)
 
 def getPostMorphA(sentences, GrammarNazi):
   ''' Обёртка '''
   for index, sentence in sentences:
     #TASK обстоятельства, выраженные существительным, обозначить как наречие
-    runScript(GrammarNazi, sentence, 'Article Conjunction Adverb Conjunction Definition Conjunction Preposition Conjunction')
+    runScript(GrammarNazi, sentence, 'Numeral Article Conjunction Adverb Conjunction Definition Conjunction Preposition Conjunction')
     exchangeDataBetweenHomo(sentence) # копируем характеристики с первого однородного ко последующим ему однородным.
 
     # здесь нужно найти однородные косвенные дополнения, чтобы им установить однородность.
