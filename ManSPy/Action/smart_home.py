@@ -24,7 +24,7 @@ def showAddress(arg0, device):
 
 def add(arg0, a):
   ''' Сложение '''
-  print type(a), a
+  print a
   return str(a)
   #a = [a1, a2]
   if arg0['antonym']:

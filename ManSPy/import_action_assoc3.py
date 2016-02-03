@@ -23,9 +23,9 @@ STRING_VERBS_BODY2 = r'^ {4}('+NAME_LANG+')[ \t]*:[ \t]*('+WORD_WITH_PREPOSITION
 
 STRING_DESTINATION_TITLE = r'^[_a-zA-Z0-9]+[ \t]*:[ \t]*'+PATH_FUNCTION+'[ \t]*$'
 STRING_DESTINATION_BODY =  r'^ {4}'+NAME_LANG+'[ \t]*:[ \t]*'+WORD+'[ \t]*$'
-STRING_ARGUMENT_TITLE1 = r'^'+NAME_PYTHON_OBJ+'[ \t]+[yn][ \t]*(;[ \t]*'+NAME_LANG+'[ \t]*)+$'
+STRING_ARGUMENT_TITLE1 = r'^'+NAME_PYTHON_OBJ+'[ \t]+[yn][l]?[ \t]*(;[ \t]*'+NAME_LANG+'[ \t]*)+$'
 STRING_ARGUMENT_BODY = r'^ {4}[-_+a-zA-Z0-9а-яА-ЯёЁ]+[ \t]*(;[ \t]*('+WORD+')?[ \t]*)+$'
-STRING_ARGUMENT_TITLE2 = r'^'+NAME_PYTHON_OBJ+'[ \t]+[yn][ \t]*$'
+STRING_ARGUMENT_TITLE2 = r'^'+NAME_PYTHON_OBJ+'[ \t]+[yn][l]?[ \t]*$'
 STRING_WCOMB_TITLE = r'^'+NAME_LANG+'$'
 #STRING_WCOMB_ARGWORD = r'^ {4}'+WORD_WITH_PREPOSITION+'[ \t]*:[ \t]*'+WORD+'[ \t]*(,[ \t]*'+WORD+'[ \t]*)*$' # первое слово - предлог (иногда нужен)
 STRING_WCOMB_ARGWORD = r'^ {4}('+WORD_WITH_PREPOSITION+'[ \t]*:[ \t]*'+WORD+'[ \t]*(,[ \t]*'+WORD+'[ \t]*)*;*)+$' # первое слово - предлог (иногда нужен)
@@ -107,16 +107,29 @@ def parseWordCombination(_fasif): # подформат состоит из тр�
     elif re.findall(STRING_ARGUMENT_TITLE1.decode('utf-8'), string):
       string = string.split(';')
       arg_name, isreq = string.pop(0).split()
+
+      if len(isreq)==2:
+        args_as_list = isreq[1]
+        isreq = isreq[0]
+      else: args_as_list = None
+
       lang_indexes = []
-      args[arg_name] = {'isreq': isreq, 'argtable': {}, 'argwords': {}}
+      args[arg_name] = {'isreq': isreq, 'args_as_list': args_as_list, 'argtable': {}, 'argwords': {}}
       for lang in string:
         args[arg_name]['argtable'][lang.strip()] = {}
         lang_indexes.append(lang.strip())
+
       arg_indexes.append(arg_name)
       #print '3 $$$$', string
     elif re.findall(STRING_ARGUMENT_TITLE2.decode('utf-8'), string):
       arg_name, isreq = string.split()
-      args[arg_name] = {'isreq': isreq, 'argtable': {}, 'argwords': {}}
+
+      if len(isreq)==2:
+        args_as_list = isreq[1]
+        isreq = isreq[0]
+      else: args_as_list = None
+
+      args[arg_name] = {'isreq': isreq, 'args_as_list': args_as_list, 'argtable': {}, 'argwords': {}}
       arg_indexes.append(arg_name)
       #print '3 $$$$', string
     # Аргумент ; АргументноеСловоНаЯзыке1 ; АргументноеСловоНаЯзыке2
@@ -223,7 +236,7 @@ def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):
   for argname, data in fasif['args'].items():
     argword = data['argwords']['in_wcomb']['name']
     wcomb.chmanyByValues({'argname':argname}, setstring='subiv:noignore', base=argword['base'], case=argword['case'])
-    fasif['argdescr'][argname] = {'isreq':data['isreq'], 'argtable':data['argtable'], 'argwords_another':data['argwords']['another'], 'hyperonyms':data['argwords']['in_wcomb']['hyperonyms']}
+    fasif['argdescr'][argname] = {'isreq':data['isreq'], 'args_as_list':data['args_as_list'], 'argtable':data['argtable'], 'argwords_another':data['argwords']['another'], 'hyperonyms':data['argwords']['in_wcomb']['hyperonyms']}
   del fasif['args']
 
   fasif['wcomb'] = wcomb.getUnit('dict')

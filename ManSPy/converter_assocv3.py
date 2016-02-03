@@ -5,6 +5,16 @@ import to_formule, NLModules, lingvo_math, Action
 
 not_to_db = ['nombr', 'cifer']
 
+def is_in_hyperonym(hyperonyms, argvalue, R):
+  for hyperonym in hyperonyms:
+    if (hyperonym in not_to_db and isinstance(argvalue, (int, float, complex))) or \
+       R.isWordInAbstractGroup(argvalue, hyperonym): return True
+  return False
+
+def convert_by_argtable(fasif, argname, argvalue):
+  if argvalue not in fasif['argdescr'][argname]['argtable']: return argvalue
+  return fasif['argdescr'][argname]['argtable'][argvalue]
+
 def check_args(finded_args, fasif, R):
   # Проверка на наличие в абстрактной группе
   hyperonyms = {}
@@ -13,13 +23,14 @@ def check_args(finded_args, fasif, R):
     hyperonyms[argname] = [word['base'] for word in data['hyperonyms']]
   for finded_arg in finded_args:
     for argname, argvalue in finded_arg.items():
-      isright = False
-      for hyperonym in hyperonyms[argname]:
-        if hyperonym in not_to_db and isinstance(argvalue, (int, float, complex)): isright = True          
-        #print argvalue, 'is hyponym of', hyperonym, R.isWordInAbstractGroup(argvalue, hyperonym)
-        if R.isWordInAbstractGroup(argvalue, hyperonym): isright = True
-        if isright: break
-      if not isright: del finded_arg[argname]
+      if not isinstance(argvalue, list):
+        if not is_in_hyperonym(hyperonyms[argname], argvalue, R): del finded_arg[argname]
+      else:
+        count_del = 0
+        for index, _argvalue in enumerate(argvalue):
+          if not is_in_hyperonym(hyperonyms[argname], _argvalue, R):
+            del finded_arg[argname][index-count_del]
+            count_del += 1
 
   # Проверка на отсутствие обязательных аргументных слов
   checked_args = []
@@ -33,10 +44,10 @@ def check_args(finded_args, fasif, R):
 
   # Конвертирование аргументных слов по таблице из фасифа
   for checked_arg in checked_args:
-    for argname, value in checked_arg.items():
-      if value not in fasif['argdescr'][argname]['argtable']: continue
-      checked_arg[argname] = fasif['argdescr'][argname]['argtable'][value]
-
+    for argname, argvalue in checked_arg.items():
+      if isinstance(argvalue, list):
+        for index, _argvalue in enumerate(argvalue): checked_arg[argname][index] = convert_by_argtable(fasif, argname, _argvalue)
+      else: checked_arg[argname] = convert_by_argtable(fasif, argname, argvalue)
   return checked_args
 
 def parseFunction(function_str):
@@ -96,7 +107,9 @@ def Extraction2IL(R, settings, Action, predicates, arguments):
     if 'antonym' in predicate and predicate['antonym'] != isantonym: IL['arg0']['antonym'] = True
 
     # Вынимаем фасиф словосочетания  # здевсь же отсеиваем неподходящие фасифы (через continue)
-    for argname, args in finded_args.items(): finded_args[argname] = list(set(args))
+    for argname, args in finded_args.items():
+      finded_args[argname] = list(set(args)) # отсеиваем повторы
+      if fasif['argdescr'][argname]['args_as_list'] == 'l': finded_args[argname] = [finded_args[argname]]
     finded_args = lingvo_math.dproduct(finded_args)
     finded_args = check_args(finded_args, fasif, R)
     with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
