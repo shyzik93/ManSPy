@@ -14,10 +14,11 @@ ALL_NAMES_FUNCTION = r'(?:'+PATH_FUNCTION+'|'+NAME_INTERNAL_OBJ+')'
 
 # Парсинг Verbs
 STRING_VERBS_TITLE = r'^'+ALL_NAMES_FUNCTION+'$'
-STRING_VERBS_BODY = r'^ {4}'+NAME_LANG+'[ \t]*:[ \t]*'+WORD_WITH_PREPOSITION+'[ \t]*$'
+#STRING_VERBS_BODY = r'^ {4}'+NAME_LANG+'[ \t]*:[ \t]*'+WORD_WITH_PREPOSITION+'[ \t]*$'
+STRING_VERBS_BODY = r'^ {4}('+NAME_LANG+')[ \t]*:[ \t]*('+WORD_WITH_PREPOSITION+'(?:[ \t]*,[ \t]*'+WORD_WITH_PREPOSITION+')*)[ \t]*$'
 
 STRING_VERBS_TITLE2 = r'^('+ALL_NAMES_FUNCTION+')$'
-STRING_VERBS_BODY2 = r'^ {4}('+NAME_LANG+')[ \t]*:[ \t]*('+WORD_WITH_PREPOSITION+')[ \t]*$'
+#STRING_VERBS_BODY2 = r'^ {4}('+NAME_LANG+')[ \t]*:[ \t]*('+WORD_WITH_PREPOSITION+')[ \t]*$'
 
 # Парсинг WordCombination
 
@@ -70,8 +71,8 @@ def parseVerb(_fasif):
     if re.findall(STRING_VERBS_TITLE.decode('utf-8'), string):
       function = re.findall(STRING_VERBS_TITLE2.decode('utf-8'), string)[0]#string.strip()
     elif re.findall(STRING_VERBS_BODY.decode('utf-8'), string):
-      lang, verb = re.findall(STRING_VERBS_BODY2.decode('utf-8'), string)[0]#string.split(':')
-      verbs[lang.strip()] = verb.strip()
+      lang, verb = re.findall(STRING_VERBS_BODY.decode('utf-8'), string)[0]#string.split(':')
+      verbs[lang.strip()] = verb.strip().split()
   return {'function': function, 'verbs': verbs}
 
 def parseWordCombination(_fasif): # подформат состоит из трёх блоков: описание функций, аргументов и словосочетания. Аргументы одинаковы для всех функций
@@ -211,7 +212,11 @@ def get_id_group(OR, word_verb, LangClass):
   else: return OR.R.add_words2group('synonym', 'verb', None, 0, base_verb)
 
 def proccess_lingvo_dataVerb(fasif, LangClass, OR, fdb):
-  fasif['verbs'] = get_id_group(OR, fasif['verbs'], LangClass)
+  id_group = get_id_group(OR, fasif['verbs'].pop(), LangClass)
+  for word_verb in fasif['verbs']: 
+    base_verb = get_dword(word_verb, LangClass)['base']
+    OR.R.add_words2group('synonym', 'verb', id_group, 0, base_verb)
+  fasif['verbs'] = id_group
   return fasif
 
 def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):

@@ -22,17 +22,31 @@ def showAddress(arg0, device):
   if device == 'computer': return str(socket.gethostbyname(socket.getfqdn()))
   return device
 
-def add(arg0, a):
+def printToIF(arg0, *conditions):
+  for condition in conditions:
+    arg0['forread'].add2read(condition)
+
+''' Состояние числсительных '''
+def get(arg0, a): return a
+
+def add(arg0, *a):
   ''' Сложение '''
-  print a
-  return str(a)
-  #a = [a1, a2]
+  a = list(a)
   if arg0['antonym']:
     start = a.pop(0)
-    a = [-a for i in a]
+    a = [-i for i in a]
     return sum(a, start)
   return sum(a)
 
+def multiply(arg0, *a):
+  ''' Умножение '''
+  a = list(a)
+  res = float(a.pop(0))
+  if arg0['antonym']:
+    for i in a: res /= i
+  else:
+    for i in a: res *= i
+  return res
 
 list_FASIF = ["""
 LightOn

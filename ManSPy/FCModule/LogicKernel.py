@@ -3,13 +3,25 @@
 import time, threading, sys
 
 class LogicKernel():
-  def __init__(self, list_answers): self.list_answers = list_answers
+  def __init__(self, list_answers, reses):
+    self.list_answers = list_answers
+    self.reses = reses
+
+  '''def add2reses(self, IFName, res):
+    # сюда же можно передавать номер сессии (метка времени)
+    if IFName not in self.reses: self.reses[IFName] = []
+    self.reses[IFName].append(res)
+
+  def close_session(self, IFName):
+    res = common_verb_function(arg0, *self.reses[IFName])
+    if res or res==0: self.list_answers[arg0['IFName']].append(res)
+    self.reses[IFName] = []
 
   def _call(self, func_obj, arg0, arguments):
     # Внутри функции можно писать в arg0['forread'], а можно просто возвратить.
     for argument in arguments:
       res = func_obj(arg0, **argument)
-      if res or res==0: self.list_answers[arg0['IFName']].append(res)
+      if res or res==0: self.list_answers[arg0['IFName']].append(res)'''
 
   def RunFunc(self, arg0, subject, action, arguments):
     """ Вызывает функцию, согласно обстоятелствам вызова """
@@ -22,14 +34,27 @@ class LogicKernel():
     #self._call(func_obj, arg0, argument)
 
     if action['wcomb_verb_function'] is not None:
-      for argument in arguments:
-        res = action['wcomb_verb_function'](arg0, **argument)
+      if action['args_as_list'] == 'l':
+        res = action['wcomb_verb_function'](arg0, *arguments)
         if res or res==0: self.list_answers[arg0['IFName']].append(res)
-      #self._call(action['wcomb_verb_function'], arg0, arguments)
+      else:
+        for argument in arguments:
+          res = action['wcomb_verb_function'](arg0, **argument)
+          if res or res==0: self.list_answers[arg0['IFName']].append(res)
+        #self._call(action['wcomb_verb_function'], arg0, arguments)
     else:
-      for argument in arguments:
-        res = action['wcomb_function'](arg0, **argument)
-        if res or res==0: action['common_verb_function'](res)
+      #self.reses[arg0['IFName']] = []
+      #reses = self.reses[arg0['IFName']]
+      if action['args_as_list'] == 'l':
+        res = action['wcomb_function'](arg0, *arguments)
+        if res or res==0: self.reses[arg0['IFName']].append(res)#self.add2reses(IFName, res)
+      else:
+        for argument in arguments:
+          res = action['wcomb_function'](arg0, **argument)
+          if res or res==0: self.reses[arg0['IFName']].append(res)#self.add2reses(IFName, res)
+      #res = action['common_verb_function'](arg0, *reses)
+      #if res or res==0: self.list_answers[arg0['IFName']].append(res)
+
 
     #typecircumstance = ''
     #circumstance = ''

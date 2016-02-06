@@ -19,24 +19,6 @@ crc_cnr = {
   }
 
 
-'''
-level = 0
-def tree(obj):
-  global level
-  children = obj.getchildren()
-  level += 1
-  for child in children:
-    print level, '-'*level, child.text
-    tree(child)
-  level -= 1
-    
-#page = urllib.urlopen('http://www.ra93pol.h2m.ru').read()
-#page = html.document_fromstring(page)
-#print page.text
-#tree(page)
-'''
-
-
 # Прямой забор данных с сайтов Центральных Банков. Входное значение - имя государства.
 # Возвращает словарь с валютами:
 #   {Символьный код: [значение, номинал, наименование]}
@@ -66,7 +48,7 @@ def GetPricesFromCB(country):
       Name = v.cssselect('Name').pop().text
       FullPrices[CharCode] = [Value, Nominal, Name]
   elif country == 'Belarus':
-    page = urllib.urlopen('http://www.nbrb.by/Services/XmlExRates.aspx?ondate='+now.strftime('%d/%m/%Y')).read()
+    page = urllib.urlopen('http://www.nbrb.by/Services/XmlExRates.aspx?ondate='+now.strftime('%m/%d/%Y')).read()
     page = page.replace('?xml', '') # убираем декларацию кодировки (с ней ругань)
     page = html.document_fromstring(page.decode('utf-8'))
     valutes = page.cssselect('Currency')
@@ -98,25 +80,6 @@ def GetPricesFromCB(country):
       for val in v:l.append(val.text)
       Nominal = re.findall(r'[0-9]*', l[1])[0]
       FullPrices[l[0]] = [l[2], Nominal, l[1][len(Nominal)+1:]]
-  '''elif country == 'Kazakhstan':
-    #page = urllib.urlopen('http://www.nationalbank.kz/?docid=362').read()
-    page = urllib.urlopen('http://www.nationalbank.kz/?docid=747').read()
-    page = html.document_fromstring(page.decode('utf-8'))
-    content = page.cssselect('table')[0]
-    #for i in content:
-    content = content.cssselect('tr')#[1:]
-
-    for i in content:
-      print i.text
-    print page.text 
-    print content
-    for tr in content:
-      td = tr.cssselect('td')
-      Value = td[0].cssselect('td')[0]#.text
-      print Value
-      Nominal = td[1].text.split(' ')[0]
-      Name = td[1].text[len(Nominal)+1:]
-      FullPrices[td[2].text.split(' / ')[0]] = [Value, Nominal, Name]'''
   return FullPrices
 
 # Преобразовывает словарь валют
@@ -132,7 +95,6 @@ def TransformPrices(FullPrices):
 
 def GetCourse(arg0, currency, country='Russia'):
   ''' Возвращает стоимость иностр. валюты в гос. валюте '''
-  return currency +' '+ country
   FullPrices = GetPricesFromCB(country)
   #print FullPrices
   ShortPrices = TransformPrices(FullPrices)
@@ -149,23 +111,25 @@ def GetCourse(arg0, currency, country='Russia'):
       x += 1
     return res
   else:
-    return ShortPrices[str(currency)] #Update
+    price = float(ShortPrices[str(currency)])
+    print currency, country, price
+    return price
 # Выражение курса через другие валюты
 
 def Convert(value, currency_from, currency_to, country):
   ''' Конвертирует единцы из валюты1 в валюту2. '''
-  course = GetCourse(currency_from, crc_cnr[currency_to])
+  course = GetCourse(None, currency_from, crc_cnr[currency_to])
   return value * course
 
 if __name__ == '__main__':
-  def print_beaty_all():
+  def print_beauty_all():
     countries = ['Georgia', 'Russia', 'Belarus', 'Ukraine']
     for country in countries:
       print '\n', ' '*35, country.upper(), '\n'
       print GetCourse(None, 'all', country)
   #print Chain('USD', 'Ukraine', )
   print Convert(25, 'USD', 'RUB', 'Russia')
-  print_beaty_all()
+  print_beauty_all()
 
 list_FASIF = ['''
 # Описание Функции

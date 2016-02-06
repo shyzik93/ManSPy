@@ -10,7 +10,7 @@
     мессенджеры, интерфейс мозг-компьютер, приёмник звонков и SMS и так далее.
 """
 import repper, simpletools
-import Action, FCModule, import_action, common, time, codecs, sys, os
+import FCModule, import_action, common, time, codecs, sys, os
 from analyse_text import LangClass
 
 class MainException(Exception): pass
@@ -93,22 +93,16 @@ class API():
         if not (isinstance(error, str) or isinstance(error, unicode)): error = str(error)
         sys.stderr.write("  " + error + "\n")
 
-  # Данная функция должна вызываться переодически, даже если ничего не вводится,
-  # так как ИСУ может сама что-то сообщить, по своей инициативе.
+  def toString(self, r_text):
+    if not isinstance(r_text, unicode): return unicode(r_text)
+
   def write_text(self, IFName, w_text):
     #print 'write', type(w_text)
-    if IFName not in self.LogicShell.list_answers: self.LogicShell.list_answers[IFName] = []
     if w_text:
       if self.settings['history']: _save_history(w_text, "W", IFName)
-      ILs, GrammarNazi, ErrorConvert = self.LangClass.NL2IL(w_text)
-      #print "GrammarNazi:", GrammarNazi
+      _ILs, GrammarNazi, ErrorConvert = self.LangClass.NL2IL(w_text)
       self.print_errors(GrammarNazi, ErrorConvert)
-      #print "ErrorConvert:", ErrorConvert, "\n"
-      if not ErrorConvert['function']:
-        index = 0
-        for IL in ILs:
-          if not ErrorConvert['argument'][index]: self.LogicShell.Shell(IL, IFName)
-          index += 1
+      ExecError = self.LogicShell.execIL(_ILs, GrammarNazi, ErrorConvert, IFName)
 
   def read_text(self, IFName, index=None):
     if IFName not in self.LogicShell.list_answers: self.LogicShell.list_answers[IFName] = []
@@ -119,13 +113,12 @@ class API():
       # montru dolaran euxran cambion de ukraina banko
       for i in r:
         _r_text = self.LogicShell.list_answers[IFName].pop(0)
-        if _r_text: r_text += self.LangClass.IL2NL(_r_text) + ' '
+        r_text += self.toString(self.LangClass.IL2NL(_r_text)) + ' '
     else:
       if len(self.LogicShell.list_answers[IFName]) > 0:
         _r_text = self.LangClass.IL2NL(self.LogicShell.list_answers[IFName].pop(index))
-        if _r_text: r_text = _r_text
+        r_text = self.toString(_r_text)
     if self.settings['history']: _save_history(r_text, "R", IFName)
-    #if r_text: print 'read', type(r_text)
     return r_text
 
   def getlen_text(self, IFName):

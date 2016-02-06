@@ -22,7 +22,8 @@ class LogicShell:
   def __init__(self, settings):
     self.settings = settings
     self.list_answers = {'general': []}
-    self.LogicKernel = LogicKernel(self.list_answers)
+    self.reses = {}
+    self.LogicKernel = LogicKernel(self.list_answers, self.reses)
 
   def Shell(self, IL, IFName):
     """ Обёртка функции интеллекта """
@@ -38,3 +39,21 @@ class LogicShell:
     IL['arg0']['forread'] = Message(self.list_answers[IFName])
     IL['arg0']['IFName'] = IFName
     self.LogicKernel.LogicKernel(IL)
+
+  def execIL(self, _ILs, GrammarNazi, _ErrorConvert, IFName):
+    ExecError = []
+    if _ErrorConvert['function']: return ExecError
+
+    index = 0
+    for index_sentence, ILs in _ILs.items():
+      self.reses[IFName] = []
+      for IL in ILs:
+        action = IL['action']
+        arg0 = IL['arg0']
+        if not _ErrorConvert['argument'][index]: self.Shell(IL, IFName)
+        index += 1
+      if action['wcomb_verb_function'] is None:
+        res = action['common_verb_function'](arg0, *self.reses[IFName])
+        if res or res==0: self.list_answers[IFName].append(res)
+        
+    return ExecError

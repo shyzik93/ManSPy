@@ -23,14 +23,15 @@ def check_args(finded_args, fasif, R):
     hyperonyms[argname] = [word['base'] for word in data['hyperonyms']]
   for finded_arg in finded_args:
     for argname, argvalue in finded_arg.items():
-      if not isinstance(argvalue, list):
-        if not is_in_hyperonym(hyperonyms[argname], argvalue, R): del finded_arg[argname]
-      else:
-        count_del = 0
-        for index, _argvalue in enumerate(argvalue):
-          if not is_in_hyperonym(hyperonyms[argname], _argvalue, R):
-            del finded_arg[argname][index-count_del]
-            count_del += 1
+      #if not isinstance(argvalue, list):
+      #  if not is_in_hyperonym(hyperonyms[argname], argvalue, R): del finded_arg[argname]
+      #else:
+      #  count_del = 0
+      #  for index, _argvalue in enumerate(argvalue):
+      #    if not is_in_hyperonym(hyperonyms[argname], _argvalue, R):
+      #      del finded_arg[argname][index-count_del]
+      #      count_del += 1
+      if not is_in_hyperonym(hyperonyms[argname], argvalue, R): del finded_arg[argname]
 
   # Проверка на отсутствие обязательных аргументных слов
   checked_args = []
@@ -45,9 +46,10 @@ def check_args(finded_args, fasif, R):
   # Конвертирование аргументных слов по таблице из фасифа
   for checked_arg in checked_args:
     for argname, argvalue in checked_arg.items():
-      if isinstance(argvalue, list):
-        for index, _argvalue in enumerate(argvalue): checked_arg[argname][index] = convert_by_argtable(fasif, argname, _argvalue)
-      else: checked_arg[argname] = convert_by_argtable(fasif, argname, argvalue)
+      #if isinstance(argvalue, list):
+      #  for index, _argvalue in enumerate(argvalue): checked_arg[argname][index] = convert_by_argtable(fasif, argname, _argvalue)
+      #else: checked_arg[argname] = convert_by_argtable(fasif, argname, argvalue)
+      checked_arg[argname] = convert_by_argtable(fasif, argname, argvalue)
   return checked_args
 
 def parseFunction(function_str):
@@ -77,9 +79,10 @@ def get_fasif_wcomb(fdb, argument, R, verb):
     function = if_verb_in_fasif(fasif, id_group)
     if function != None: isantonym = True
 
+  fasif['id'] = id_fasif
   return finded_args, fasif, function, isantonym
 
-def Extraction2IL(R, settings, Action, predicates, arguments):
+def Extraction2IL(R, settings, predicates, arguments):
   fdb = to_formule.FasifDB(settings)
   pattern_IL = {
     'arg0': {'antonym': False}, # передаётся первым аргументом в каждую функцию
@@ -92,10 +95,11 @@ def Extraction2IL(R, settings, Action, predicates, arguments):
       'type circumstance': ''
       },
     'argument': [],
-    'subject': None
+    'subject': None,
   }
   ILs = []
   predicate = predicates.values()[0]
+  fasif_IL = {}
 
   # Вынимаем Фасиф
   for _argument in arguments:
@@ -109,13 +113,27 @@ def Extraction2IL(R, settings, Action, predicates, arguments):
     # Вынимаем фасиф словосочетания  # здевсь же отсеиваем неподходящие фасифы (через continue)
     for argname, args in finded_args.items():
       finded_args[argname] = list(set(args)) # отсеиваем повторы
-      if fasif['argdescr'][argname]['args_as_list'] == 'l': finded_args[argname] = [finded_args[argname]]
+      #if fasif['argdescr'][argname]['args_as_list'] == 'l': finded_args[argname] = [finded_args[argname]]
     finded_args = lingvo_math.dproduct(finded_args)
     finded_args = check_args(finded_args, fasif, R)
     with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
       flog.write('\n%s\n%s\n' % (str(finded_args), str(fasif['functions'])))
 
+    '''if fasif['argdescr'][argname]['args_as_list'] == 'l':
+      if fasif['id'] not in fasif_IL: fasif_IL[fasif['id']] = len(ILs)
+      else:
+        ILs[fasif_IL[fasif['id']]]['argument'].extend(finded_args)
+        continue
     IL['argument'] = finded_args
+    IL['action']['args_as_list'] = fasif['argdescr'][argname]['args_as_list']'''
+
+    if fasif['id'] not in fasif_IL: fasif_IL[fasif['id']] = len(ILs)
+    else:
+      ILs[fasif_IL[fasif['id']]]['argument'].extend(finded_args)
+      continue
+    IL['argument'] = finded_args
+    IL['action']['args_as_list'] = fasif['argdescr'][argname]['args_as_list']
+
     if function:
       IL['action']['wcomb_verb_function'] = parseFunction(function)
     else:

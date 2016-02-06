@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys, os, codecs
-import NLModules, Action, relation, extractor, converter, BeautySafe
+import NLModules, relation, extractor, converter, BeautySafe
 
 if not os.path.exists('comparing_fasif.txt'):
   f = open('comparing_fasif.txt', 'w')
@@ -73,14 +73,15 @@ class LangClass():
       if end_level == self.levels[4]: return sentences
 
     # конвертируем анализы во внутренний язык
-    if start_level in self.levels:
-      _ILs = []
+    if start_level in self.levels[:6]:
+      _ILs = {}
       _ErrorConvert = {}
       for index, sentence in sentences:
+        _ILs[index] = []
         Extraction2IL = converter.Extraction2IL(self.settings['assoc_version'])
-        ILs, ErrorConvert = Extraction2IL(OR, self.settings, Action, *sentence)
+        ILs, ErrorConvert = Extraction2IL(OR, self.settings, *sentence)
         for IL in ILs: BeautySafe.safe_IL(IL)
-        _ILs.extend(ILs)
+        _ILs[index].extend(ILs)
         for key in ErrorConvert:
           if not key in _ErrorConvert: _ErrorConvert[key] = []
           _ErrorConvert[key].extend(ErrorConvert[key])
