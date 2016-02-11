@@ -54,7 +54,7 @@ class API():
     db_path = os.path.join(db_path, 'DATA_BASE')
     if not os.path.exists(db_path) or not os.path.isdir(db_path):
       os.mkdir(db_path)
-    #os.chdir(db_path)
+    os.chdir(db_path)
     self.settings['dir_db'] = db_path
 
     common.WSettings(self.settings)
