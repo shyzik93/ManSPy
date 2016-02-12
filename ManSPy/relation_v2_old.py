@@ -4,6 +4,7 @@ import pickle
 import common
 
 class Relation():
+  dct_types = {'synonym': 1, 'antonym': 2, 'abstract': 3}
   dct_speeches = {'noun': 1, 'verb': 2, 'adjective': 3, 'adverb': 4}
   
   def __init__(self, language, test=0):
@@ -19,19 +20,13 @@ class Relation():
         id_group INTEGER,
         id_word INTEGER,
         isword INTEGER );
-      CREATE TABLE IF NOT EXISTS descr_relation (
-        id_relation INTEGER PRIMARY KEY,
-        type_relation TEXT,
-        count_members INTEGER,
-        name1 TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,
-        name2 TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE);''')
+      CREATE TABLE IF NOT EXISTS descr_relations (
+        id_relation INTEGER,
+        count_objects INTEGER);''')
+    self.dct_typesR = {}
+    for k, v in self.dct_types.items(): self.dct_typesR[v] = k
     self.dct_speechesR = {}
     for k, v in self.dct_speeches.items(): self.dct_speechesR[v] = k
-
-    # Добавление описания семантических отношений
-    self.add_descr_relation(type_relation='line', count_members='N', name1='synonym', name2=None)
-    self.add_descr_relation(type_relation='line', count_members=2, name1='antonym', name2=None)
-    self.add_descr_relation(type_relation='tree', count_members='N', name1='hyperonym', name2='hyponym')
 
   ### Работа с таблицей words
 
@@ -56,17 +51,14 @@ class Relation():
     return outlist
 
   def _word2id(self, word):
-    if not isinstance(word, (str, unicode)): return word
-    res = self.cu.execute('SELECT id_word FROM words WHERE word=?;', (word,)).fetchall()
-    if res: return res[0][0]
-    else: # если слово отсутствует, то добавим его
-      self.add_word(word) 
-      return self._word2id(word)
-  def _type2id(self, relation):
-    if not isinstance(relation, (str, unicode)): return relation
-    res = self.cu.execute('SELECT id_relation FROM descr_relation WHERE name1=?;', (relation,)).fetchall()
-    if res: return res[0][0]
-    #return self.dct_types[_type] if isinstance(_type, (str, unicode)) else _type
+    if isinstance(word, (str, unicode)):
+      res = self.cu.execute('SELECT id_word FROM words WHERE word=?;', (word,)).fetchall()
+      if res: return res[0][0]
+      else: # если слово отсутствует, то добавим его
+        self.add_word(word) 
+        return self._word2id(word)
+    else: return word
+  def _type2id(self, _type): return self.dct_types[_type] if isinstance(_type, (str, unicode)) else _type
   def _speech2id(self, speech): return self.dct_speeches[speech] if isinstance(speech, (str, unicode)) else speech
 
   ### Работа с таблицей relations
@@ -170,17 +162,6 @@ class Relation():
       common_id_groups &= set(list_group)
     return list(common_id_groups)
 
-    # Работа с таблицей descr_relation
-  def add_descr_relation(self, **descr):
-    self.cu.execute("INSERT INTO descr_relation (count_members, type_relation, name1, name2) VALUES (?,?,?,?)" , (descr['count_members'],descr['type_relation'], descr['name1'], descr['name2']))
-    self.c.commit()
-
-  def get_descr_relation(self, relation):
-    name = 'name1' if isinstance(relation, (str, unicode)) else 'id_relation'
-    descr = self.cu.execute("SELECT * FROM descr_relation WHERE "+name+"=?", (relation,)).fetchall()
-    descr = [dict(row) for row in descr]
-    return descr[0] if descr else {}
-
 class _ObjRelation(object):
   """ Надкласс, реализующий высокий уровень работы с разными группами слов, абстрагируясь от БД.
       Другими словами, он задествует вышеуказанные классы для реализации своих
@@ -190,7 +171,7 @@ class _ObjRelation(object):
 
   def isWordInAbstractGroup(self, word_base, group_base):
     #print 'isWordInAbstractGroup', group_base, word_base
-    return self.R.is_word_in_group('hyperonym', group_base, word_base, 0, None)
+    return self.R.is_word_in_group('abstract', group_base, word_base, 0, None)
 
   def areWordsAntonyms(self, POSpeech, word_base1, word_base2):
     antonyms = self.getAntonyms(POSpeech, word_base1)
@@ -231,19 +212,19 @@ class _ObjRelation(object):
   def addWordsInAbstractGroup(self, group_base, *word_bases):
     ''' Добавляем абстрактные группы. Новые слова также добавляются в базу слов. '''
     #print group_base, word_bases
-    self.R.add_words2group('hyperonym', None, group_base, 0, *word_bases)
+    self.R.add_words2group('abstract', None, group_base, 0, *word_bases)
 
 if __name__ == '__main__':
   R = Relation('Esperanto')
 
   rng = range(1, R.get_max_id('id_type')+1)
   for id_type in rng:
-    #print R.dct_typesR[id_type]
+    print R.dct_typesR[id_type]
     res = R.cu.execute('SELECT id_group, id_word, isword FROM relations WHERE id_type=? ORDER BY id_group;', (id_type,)).fetchall()
     #res = list(set(res))
     #print len(res)
     for id_group, id_word, isword in res:
-      #if R.dct_typesR[id_type] in ('abstract'): id_group = R.convert(id_group)[0]
+      if R.dct_typesR[id_type] in ('abstract'): id_group = R.convert(id_group)[0]
       if isword == 0: id_word = R.convert(id_word)[0]
       if isword > 0: isword = R.dct_typesR[isword]
       else: isword = u'слово'

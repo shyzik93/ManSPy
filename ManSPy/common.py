@@ -30,6 +30,7 @@ def create_bd_file(language, name):
     os.mkdir(db_dir)
   name = os.path.join(db_dir, name)
   c = sql.connect(name)
+  c.row_factory = sql.Row
   cu = c.cursor()
   return c, cu
 
