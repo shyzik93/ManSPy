@@ -24,14 +24,12 @@ class Relation():
         type_relation TEXT,
         count_members INTEGER,
         name1 TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,
-        name2 TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE);''')
+        name2 TEXT COLLATE NOCASE);''')
+    # name2 - для иерархических отношений.
+    # В иерархических отношениях name1 обозначает вышестоящий объект, name2 - нижестоящий.
+    # В линейных отношениях оба объекта равны, => для обеих обеих объектов используется одно название - name1
     self.dct_speechesR = {}
     for k, v in self.dct_speeches.items(): self.dct_speechesR[v] = k
-
-    # Добавление описания семантических отношений
-    self.add_descr_relation(type_relation='line', count_members='N', name1='synonym', name2=None)
-    self.add_descr_relation(type_relation='line', count_members=2, name1='antonym', name2=None)
-    self.add_descr_relation(type_relation='tree', count_members='N', name1='hyperonym', name2='hyponym')
 
   ### Работа с таблицей words
 
@@ -175,11 +173,16 @@ class Relation():
     self.cu.execute("INSERT INTO descr_relation (count_members, type_relation, name1, name2) VALUES (?,?,?,?)" , (descr['count_members'],descr['type_relation'], descr['name1'], descr['name2']))
     self.c.commit()
 
-  def get_descr_relation(self, relation):
-    name = 'name1' if isinstance(relation, (str, unicode)) else 'id_relation'
-    descr = self.cu.execute("SELECT * FROM descr_relation WHERE "+name+"=?", (relation,)).fetchall()
-    descr = [dict(row) for row in descr]
-    return descr[0] if descr else {}
+  def get_descr_relation(self, relation=None):
+    if relation is not None:
+      name = 'name1' if isinstance(relation, (str, unicode)) else 'id_relation'
+      descr = self.cu.execute("SELECT * FROM descr_relation WHERE "+name+"=?", (relation,)).fetchall()
+      descr = [dict(row) for row in descr]
+      return descr[0] if descr else {}
+    else:
+      descr = self.cu.execute("SELECT * FROM descr_relation").fetchall()
+      descr = [dict(row) for row in descr]
+      return descr if descr else []
 
 class _ObjRelation(object):
   """ Надкласс, реализующий высокий уровень работы с разными группами слов, абстрагируясь от БД.
@@ -187,6 +190,57 @@ class _ObjRelation(object):
       функций."""
   def __init__(self, language, test=0):
     self.R = Relation(language, test)
+
+    # Добавление описания семантических отношений
+    self.R.add_descr_relation(type_relation='line', count_members='N', name1='synonym', name2=None)
+    self.R.add_descr_relation(type_relation='line', count_members=2, name1='antonym', name2=None)
+    self.R.add_descr_relation(type_relation='tree', count_members='N', name1='hyperonym', name2='hyponym')
+
+  """def isRelBetween(self, relation, word1, word2):
+    ''' Is relation 'relation' between word1 and word2 ?
+        Являются ли слова word1 и word2 relation'ами (синониами, антонимаими, гиперонимом и гипонимом соответственно, холонимом и меронимом соответственно) ?
+    '''
+    pass
+
+  def whomRelBetween(self, relation, word1):
+    ''' With whom does word1 has relation
+    '''
+    pass
+
+  def whatRelBetween(self, word1, word2):
+    ''' what relation or relations are between word1 and word2 ?
+    '''
+    pass"""
+
+  def getRelation(self, relation, word1, word2=None, must_result_be_boolean=False):
+    ''' Первое слово для иерархиских отношений должно быть выше уровня  '''
+    if relation is not None: descr = self.R.get_descr_relation(relation)
+
+    if word1 is not None and word2 is not None:
+
+      if relation is not None: # Is the relation between word1 and word2 ?
+        pass
+      elif relation is None: # Is any relation between word1 and word2 ?
+        pass
+
+    elif word1 is not None and word2 is None:
+
+      if relation is not None: # With who does word1 have the relation ?
+        pass
+      elif relation is None: # With who does word1 have any relation ?
+        pass
+
+  def setRelation(self, relation, word1, word2):
+    descr = self.R.get_descr_relation(relation)
+    if descr['type_relation'] == 'line' and descr['count_members'] == 'N':
+      id_group = self.R.add_words2group(relation, None, None, 0, word1)
+      self.R.add_words2samegroup(relation, None, 0, word1, word2)
+      #self.R.add_words2group('synonym', None, id_group, 0, word2)
+
+
+
+
+
 
   def isWordInAbstractGroup(self, word_base, group_base):
     #print 'isWordInAbstractGroup', group_base, word_base
