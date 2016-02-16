@@ -205,18 +205,22 @@ def proccess_argword(argwords, LangClass):
   argwords['name'] = get_dword(argwords['name'], LangClass)
   for index, argword in enumerate(argwords['hyperonyms']):
     argwords['hyperonyms'][index] = get_dword(argword, LangClass)
-def get_id_group(OR, word_verb, LangClass):
-  base_verb = get_dword(word_verb, LangClass)['base']
-  id_groups = OR.R.get_groups_by_word('synonym', 0, base_verb, 'verb')
-  if id_groups: return id_groups[0]
-  else: return OR.R.add_words2group('synonym', 'verb', None, 0, base_verb)
+#def get_id_group(OR, word_verb, LangClass):
+#  base_verb = get_dword(word_verb, LangClass)['base']
+#  id_groups = OR.R.get_groups_by_word('synonym', 0, base_verb, 'verb')
+#  if id_groups: return id_groups[0]
+#  else: return OR.R.add_words2group('synonym', 'verb', None, 0, base_verb)
 
 def proccess_lingvo_dataVerb(fasif, LangClass, OR, fdb):
-  id_group = get_id_group(OR, fasif['verbs'].pop(), LangClass)
-  for word_verb in fasif['verbs']: 
-    base_verb = get_dword(word_verb, LangClass)['base']
-    OR.R.add_words2group('synonym', 'verb', id_group, 0, base_verb)
-  fasif['verbs'] = id_group
+  #id_group = get_id_group(OR, fasif['verbs'].pop(), LangClass)
+  #for word_verb in fasif['verbs']: 
+  #  base_verb = get_dword(word_verb, LangClass)['base']
+  #  OR.R.add_words2group('synonym', 'verb', id_group, 0, base_verb)
+  #fasif['verbs'] = id_group
+  #return fasif
+  words = [get_dword(word_verb, LangClass)['base'] for word_verb in fasif['verbs']]
+  id_group = OR.setRelation('synonym', *words) # функция должна возвратить группу, если добавлен хотя бы один синоним
+  fasif['verbs'] = id_group # если идентификатор группы отсутсвует (None), то фасиф считается недействительным и не добавляется в базу (игнорируется)
   return fasif
 
 def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):
@@ -232,8 +236,9 @@ def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):
       proccess_argword(argword, LangClass)
 
   for destination, value in fasif['functions'].items():
-    for index, verb in enumerate(value['verbs']):
-      value['verbs'][index] = get_id_group(OR, verb, LangClass)
+    for index, word_verb in enumerate(value['verbs']):
+      #value['verbs'][index] = get_id_group(OR, verb, LangClass)
+      value['verbs'][index] = OR.setRelation('synonym', get_dword(word_verb, LangClass)['base'])
 
   #print '----------------- to formule start'
   wcomb = LangClass.NL2IL(fasif['wcomb'], ':synt')[0](0)
@@ -253,7 +258,7 @@ def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):
       if argword[1]: base = argword[1]['base']
       else: base = argword[2][0]['base']
       bases = data['argtable'].keys()
-      if hyperonym['base'] not in not_to_db: OR.addWordsInAbstractGroup(hyperonym['base'], base, *bases)
+      if hyperonym['base'] not in not_to_db: OR.setRelation('hyperonym', hyperonym['base'], base, *bases)#OR.addWordsInAbstractGroup(hyperonym['base'], base, *bases)
 
   #pprint(fasif['args']) 
   #fwcomb = to_formule.to_formule(fasif['wcomb'], True, fasif['args'])

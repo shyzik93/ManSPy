@@ -23,6 +23,8 @@ class Relation():
         id_relation INTEGER PRIMARY KEY,
         type_relation TEXT,
         count_members INTEGER,
+        type_parent TEXT, -- тип вершины (группы)
+        type_child TEXT, -- тип членов
         name1 TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,
         name2 TEXT COLLATE NOCASE);''')
     # name2 - для иерархических отношений.
@@ -135,7 +137,6 @@ class Relation():
     ''' Добавляет все id_words в ту группу, в которой находится id_word.
         Если id_word не входит ни в одну группу, то оно добавится в новую группу'''
     id_groups = self.get_groups_by_word(id_type, isword, id_word, id_speech)
-    #id_groups = self.get_groups_by_word(id_type, id_speech, isword, id_word)
     if not id_groups:
       self.add_words2group(id_type, id_speech, None, isword, id_word)
       id_groups = self.get_groups_by_word(id_type, id_speech, isword, id_word)
@@ -175,8 +176,10 @@ class Relation():
 
   def get_descr_relation(self, relation=None):
     if relation is not None:
-      name = 'name1' if isinstance(relation, (str, unicode)) else 'id_relation'
-      descr = self.cu.execute("SELECT * FROM descr_relation WHERE "+name+"=?", (relation,)).fetchall()
+      #name = 'name1' if isinstance(relation, (str, unicode)) else 'id_relation'
+      #descr = self.cu.execute("SELECT * FROM descr_relation WHERE "+name+"=?", (relation,)).fetchall()
+      if isinstance(relation, (str, unicode)): descr = self.cu.execute("SELECT * FROM descr_relation WHERE name1=? OR name2=?", (relation,relation)).fetchall()
+      else: descr = self.cu.execute("SELECT * FROM descr_relation WHERE id_relation=?", (relation,)).fetchall()
       descr = [dict(row) for row in descr]
       return descr[0] if descr else {}
     else:
@@ -192,34 +195,56 @@ class _ObjRelation(object):
     self.R = Relation(language, test)
 
     # Добавление описания семантических отношений
-    self.R.add_descr_relation(type_relation='line', count_members='N', name1='synonym', name2=None)
-    self.R.add_descr_relation(type_relation='line', count_members=2, name1='antonym', name2=None)
-    self.R.add_descr_relation(type_relation='tree', count_members='N', name1='hyperonym', name2='hyponym')
+    self.R.add_descr_relation(type_relation='line', count_members='N', type_peak='index', type_child='word',  name1='synonym',   name2=None)
+    self.R.add_descr_relation(type_relation='line', count_members=2,   type_peak='index', type_child='group', name1='antonym',   name2=None)
+    self.R.add_descr_relation(type_relation='tree', count_members='N', type_peak='word',  type_child='both',  name1='hyperonym', name2='hyponym')
 
-  """def isRelBetween(self, relation, word1, word2):
-    ''' Is relation 'relation' between word1 and word2 ?
+  def _isRelBetween(self, relation, *words):
+    ''' Is the relation 'relation' between word1 and word2 ?
         Являются ли слова word1 и word2 relation'ами (синониами, антонимаими, гиперонимом и гипонимом соответственно, холонимом и меронимом соответственно) ?
     '''
-    pass
+    if isinstance(relation, dict): descr, relation = (relation, relation['id_relation'])
+    else: descr = self.R.get_descr_relation(relation)
 
-  def whomRelBetween(self, relation, word1):
+    if descr['type_relation'] == 'line':
+      _words = [[word, 0] for word in words]
+      return self.R.get_commongroups(relation, None, *words)
+    elif descr['type_relation'] == 'tree':
+      #res = {words.pop(0):{'parent': None}}
+      for index, word in enumerate(words):
+        if index == 0: continue
+        if not self.R.is_word_in_group(relation, words[index-1], word, 0, None): return False
+      return True
+
+  def _isAnyRelBetween(self, word1, words2):
+    ''' Is any relation 'relation' between word1 and word2 ?
+        Есть ли какие-либо отношения между словами word1 и word2 ?
+    '''
+    relations = []
+    descrs = self.R.get_descr_relation()
+    for descr in descrs:
+      relation = descr['id_relation']
+      if self.isRelBetween(relation, word1, word2): relations.append(relation)
+    return relations
+
+  def _whomRelBetween(self, relation, word1):
     ''' With whom does word1 has relation
     '''
     pass
 
-  def whatRelBetween(self, word1, word2):
+  def _whatRelBetween(self, word1, word2):
     ''' what relation or relations are between word1 and word2 ?
     '''
-    pass"""
+    pass
 
-  def getRelation(self, relation, word1, word2=None, must_result_be_boolean=False):
+  def _getRelation(self, relation, word1, word2=None):
     ''' Первое слово для иерархиских отношений должно быть выше уровня  '''
     if relation is not None: descr = self.R.get_descr_relation(relation)
 
     if word1 is not None and word2 is not None:
 
       if relation is not None: # Is the relation between word1 and word2 ?
-        pass
+        return self.isRelBetween(relation, word1, word2)
       elif relation is None: # Is any relation between word1 and word2 ?
         pass
 
@@ -230,22 +255,28 @@ class _ObjRelation(object):
       elif relation is None: # With who does word1 have any relation ?
         pass
 
-  def setRelation(self, relation, word1, word2):
+  def _setRelation(self, relation, word1, word2):
     descr = self.R.get_descr_relation(relation)
-    if descr['type_relation'] == 'line' and descr['count_members'] == 'N':
-      id_group = self.R.add_words2group(relation, None, None, 0, word1)
-      self.R.add_words2samegroup(relation, None, 0, word1, word2)
-      #self.R.add_words2group('synonym', None, id_group, 0, word2)
+    if descr['type_relation'] == 'line':
+      if descr['count_members'] == 'N':
+        if descr['type_peak'] == 'index':
+          #self.R.is_word_in_group(self, id_type, id_group, id_word, isword, id_speech=None)
+          id_group = self.R.add_words2group(relation, None, None, 0, word1)
+          self.R.add_words2samegroup(relation, None, 0, word1, word2)
+          #self.R.add_words2group('synonym', None, id_group, 0, word2)
+    elif descr['type_relation'] == 'tree':
+      if descr['count_members'] == 'N':
+        pass
 
 
 
 
-
-
+  #
   def isWordInAbstractGroup(self, word_base, group_base):
     #print 'isWordInAbstractGroup', group_base, word_base
     return self.R.is_word_in_group('hyperonym', group_base, word_base, 0, None)
 
+  #
   def areWordsAntonyms(self, POSpeech, word_base1, word_base2):
     antonyms = self.getAntonyms(POSpeech, word_base1)
     return word_base2 in antonyms
@@ -282,10 +313,89 @@ class _ObjRelation(object):
         self.R.add_words2group('synonym', dword['POSpeech'], None, 0, dword['base'])
     self.R.add_word(*words)
 
+  #
   def addWordsInAbstractGroup(self, group_base, *word_bases):
     ''' Добавляем абстрактные группы. Новые слова также добавляются в базу слов. '''
     #print group_base, word_bases
     self.R.add_words2group('hyperonym', None, group_base, 0, *word_bases)
+
+  # Временные функции-обёртки, для понимания задачи.
+  def isRelBetween(self, relation, word1, word2):
+    ''' Is the relation 'relation' between word1 and word2 ?
+        Являются ли слова word1 и word2 relation'ами (синониами, антонимаими, гиперонимом и гипонимом соответственно, холонимом и меронимом соответственно) ?
+    '''
+    if relation == 'hyperonym':
+      return self.isWordInAbstractGroup(word1, word2)
+    elif relation == 'synonym':
+      pass
+    elif relation == 'antonym':
+      return self.areWordsAntonyms(None, word1, word2)
+
+  def isAnyRelBetween(self, word1, words2):
+    ''' Is any relation 'relation' between word1 and word2 ?
+        Есть ли какие-либо отношения между словами word1 и word2 ?
+    '''
+    pass
+
+  def whomRelBetween(self, relation, word1):
+    ''' With whom does word1 has relation
+    '''
+    pass
+
+  def whatRelBetween(self, word1, word2):
+    ''' what relation or relations are between word1 and word2 ?
+    '''
+    pass
+
+  def getRelation(self, relation, word1, word2=None):
+    ''' Первое слово для иерархиских отношений должно быть выше уровня  '''
+    if relation is not None: descr = self.R.get_descr_relation(relation)
+
+    if word1 is not None and word2 is not None:
+
+      if relation is not None: # Is the relation between word1 and word2 ?
+        return self.isRelBetween(relation, word1, word2)
+      elif relation is None: # Is any relation between word1 and word2 ?
+        pass
+
+    elif word1 is not None and word2 is None:
+
+      if relation is not None: # With who does word1 have the relation ?
+        pass
+      elif relation is None: # With who does word1 have any relation ?
+        pass
+
+  def setRelation(self, relation, *words):
+    """ По умолчанию передаются два слова (корень или идентификатор), но для некоторых отношений можно передовать много слов """
+    words = list(words)
+    if relation == 'hyperonym': # первое слово - гипероним, остальные- гипонимы. Минимм - два слова.
+      word_group = words.pop(0)
+      self.addWordsInAbstractGroup(word_group, *words)
+
+    elif relation == 'synonym': # все слова - синонимы. Минимум - одно слово. Возвращает идентификатор синонимичной группы
+      ''' Если слово одно, то добавляем его группу и возвращаем её идентификатр. Если слово уже в группе, то возвращаем её идентификатор.
+          Если слов несколько, то идентификатор группы, в кторую входит слово, добавляем в список. Если группы нет, то добавляем None.
+            1. Если в списке все группы - None, то первое слово добавляем в новую группу, куда добавляем и остальные слова.
+            2. Если кроме None в списке есть равные идентификаторы групп, то к этой группе добавляем все слова, у которых ещё нет групп.
+            3. Если кроме None в списке есть неравные идентификаторы групп, то слова с отсутсвующии группами добавляем в ту группцу, имеющую большее кол-во повторений в списке.
+      '''
+      #groups = [self.R.get_groups_by_word('synonym', 0, word, 'verb') for word in words if len(word) != 0]
+      #if not groups: group = self.R.add_words2group('synonym', 'verb', None, 0, words.pop(0)) # 1. ...
+
+      # получаем идентификатор группы
+      word = words.pop(0)
+      _groups = self.R.get_groups_by_word('synonym', 0, word, 'verb')
+      if _groups: group = _groups[0]
+      else: group = self.R.add_words2group('synonym', 'verb', None, 0, word)
+
+      # добавляем синонимы
+      for word in words: 
+        self.R.add_words2group('synonym', 'verb', group, 0, word)
+      return group
+
+    elif relation == 'antonym': # только два первых слова противопоставляются. Остальные - игнорируются. Всего - ровно два слова.
+      pass
+      
 
 if __name__ == '__main__':
   R = Relation('Esperanto')
