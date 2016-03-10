@@ -23,14 +23,6 @@ def check_args(finded_args, fasif, R):
     hyperonyms[argname] = [word['base'] for word in data['hyperonyms']]
   for finded_arg in finded_args:
     for argname, argvalue in finded_arg.items():
-      #if not isinstance(argvalue, list):
-      #  if not is_in_hyperonym(hyperonyms[argname], argvalue, R): del finded_arg[argname]
-      #else:
-      #  count_del = 0
-      #  for index, _argvalue in enumerate(argvalue):
-      #    if not is_in_hyperonym(hyperonyms[argname], _argvalue, R):
-      #      del finded_arg[argname][index-count_del]
-      #      count_del += 1
       if not is_in_hyperonym(hyperonyms[argname], argvalue, R): del finded_arg[argname]
 
   # Проверка на отсутствие обязательных аргументных слов
@@ -46,9 +38,6 @@ def check_args(finded_args, fasif, R):
   # Конвертирование аргументных слов по таблице из фасифа
   for checked_arg in checked_args:
     for argname, argvalue in checked_arg.items():
-      #if isinstance(argvalue, list):
-      #  for index, _argvalue in enumerate(argvalue): checked_arg[argname][index] = convert_by_argtable(fasif, argname, _argvalue)
-      #else: checked_arg[argname] = convert_by_argtable(fasif, argname, argvalue)
       checked_arg[argname] = convert_by_argtable(fasif, argname, argvalue)
   return checked_args
 
@@ -118,14 +107,6 @@ def Extraction2IL(R, settings, predicates, arguments):
     finded_args = check_args(finded_args, fasif, R)
     with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
       flog.write('\n%s\n%s\n' % (str(finded_args), str(fasif['functions'])))
-
-    '''if fasif['argdescr'][argname]['args_as_list'] == 'l':
-      if fasif['id'] not in fasif_IL: fasif_IL[fasif['id']] = len(ILs)
-      else:
-        ILs[fasif_IL[fasif['id']]]['argument'].extend(finded_args)
-        continue
-    IL['argument'] = finded_args
-    IL['action']['args_as_list'] = fasif['argdescr'][argname]['args_as_list']'''
 
     if fasif['id'] not in fasif_IL: fasif_IL[fasif['id']] = len(ILs)
     else:

@@ -1,3 +1,4 @@
 *.pyc
 settings.pckl
 comparing_fasif.txt
+private_data.py

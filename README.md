@@ -24,6 +24,7 @@ ManSPy разрабатывается как программа, "понимаю
 - xmpp - реализация протокола для jabber (http://xmpppy.sourceforge.net/, http://sourceforge.net/projects/xmpppy/files/, https://raw.githubusercontent.com/freebsd/freebsd-ports/master/net-im/py-xmpppy/files/patch-xmpp-transports.py - информация об исправлении ошибки в модуле)
 - https://pypi.python.org/pypi/eonums/0.9.0 - простенький конвертер числительных на Эсперанто в числа и наоборот.
 - repper и идущие после него модули — файлы из личного репозитория. https://github.com/Ra93POL/repository_personal. можно покласть их в любую папку, отдельно от программы. Для доступности этих модулей необходимо запустить файл repper_install.py из личного репозитория - он скопирует файл repper.py в основной репозиторий Питона. Repper.py импортируется только для того, чтобы добавить путь к личному репозиторию в переменную sys.path.
+- TKinter - может требоваться на Линуксе (aptitude install python-tk)
 
 Для запуска программы служит файл runManSPy.py, размещёнеый в корне репозитория. В файле присутствуют словарь с настройками программы:
 ```

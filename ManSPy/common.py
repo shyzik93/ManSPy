@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+
+#import sys
+#for path in sys.path:
+#  if 'local' in path: sys.path.append(path.replace('/local', ''))
+
 import pickle, os, sqlite3 as sql
 
 settings_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'settings.pckl')

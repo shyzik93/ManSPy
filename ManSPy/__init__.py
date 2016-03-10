@@ -2,10 +2,6 @@
 """ Предоставляет API интеллекта, который используется модулями интерфейса.
     В качестве API:
       API = ISM.API(Settings) # Settings - словарь, задающий настройки.
-      Answer = API.Asker(Question) # Asker - функция, принимающая вопрос
-      и возвращающая ответ. Функция может возвращать информацию, которая
-      не была запрошена, то есть необходимо постоянно вызывать эту функцию,
-      передавая ей пустую строку (или вопрос), для получения такой информации.
     Примеры возможных интерфейсов: текстовый чат, распознаватель речи,
     мессенджеры, интерфейс мозг-компьютер, приёмник звонков и SMS и так далее.
 """
@@ -14,6 +10,17 @@ import FCModule, import_action, common, time, codecs, sys, os
 from analyse_text import LangClass
 
 class MainException(Exception): pass
+
+'''def _fopen(path, mode=None, data=None):
+  if not mode: mode='r'
+  f = open(path, mode)
+  if data:
+    f.write(data)
+    f.close()
+  else:
+    data = f.read()
+    f.close()
+    return data'''
 
 def _save_history(text, Type, IFName):
   if text:
@@ -64,23 +71,23 @@ class API():
     """ Инициализация ИСУ """
     # Меняем настройки по умолчанию на пользовательские
     self.ChangeSettings(UserSettings)
-    print(u"Загрузка модулей действий...")
+    print("Загрузка модулей действий...")
     t1 = time.time()
     Import = import_action.ImportAction(self.settings)
     Import.importAll()
     t2 = time.time()
     print'  ', t2 - t1
-    print(u"Загрузка модуля естественного языка...")
+    print("Загрузка модуля естественного языка...")
     t1 = time.time()
     self.LangClass = LangClass(self.settings)
     t2 = time.time()
     print '  ', t2 - t1
-    print(u"Инициализация модуля логики...")
+    print("Инициализация модуля логики...")
     t1 = time.time()
     self.LogicShell = FCModule.LogicShell(self.settings)
     t2 = time.time()
     print '  ', t2 - t1
-    print(u"Готово!")
+    print("Готово!")
 
   def print_errors(self, GrammarNazi, ErrorConvert):
     for analys, errors in GrammarNazi.items():
