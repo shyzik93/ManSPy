@@ -7,21 +7,22 @@
     Чтобы устранить эту проблему, нужно запускать каждый МИ как отдельный процесс (прграмму), но появляется задача: как передать объект класса API/
 """
 #import repper, conftools
-import os, sys, threading
+import os, sys, threading, json
 
 _path = os.path.dirname(__file__)
 sys.path.append(_path)
 
-#password_path = os.path.join(os.path.dirname(os.path.abspath('')), 'IFM_passwords.txt')
+password_path = os.path.join(os.path.dirname(os.path.abspath('')), 'IFM_passwords.txt')
 
 class Interfaces():
   interfaces = {}
-  def __init__(self, API, conf, *IFNames):
-    #if not os.path.exists(password_path):
-    #  sys.stderr.write('Warning! The config file is absent! Some interfaces can have exceptions!\nThe config file: %s\n' % password_path)
-    #  self.conf = {}
-    #else: self.conf = conftools.loadconf(password_path)
-    self.conf = conf
+  def __init__(self, API, *IFNames):
+    if not os.path.exists(password_path):
+      sys.stderr.write('Warning! The config file is absent! Some interfaces can have exceptions!\nThe config file: %s\n' % password_path)
+      self.conf = {}
+    else: #self.conf = conftools.loadconf(password_path)
+      with open(password_path, 'r') as f: self.conf = json.load(f)
+
     self.API = API
     self.turnOnInterface(*IFNames)
 

@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-import private_data, ManSPy, IFModules
+import ManSPy, IFModules
 
 Settings = {
   'logic': True,
@@ -19,4 +19,4 @@ interfaces = { # 1 - on, 0 - off
 interfaces = [i for i in interfaces if interfaces[i]]
 
 API = ManSPy.API(Settings)
-IF = IFModules.Interfaces(API, private_data.IFM_settings, *interfaces)
+IF = IFModules.Interfaces(API, *interfaces)

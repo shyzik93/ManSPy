@@ -68,26 +68,26 @@ class API():
     #print db_path, sys.path
 
   def __init__(self, UserSettings={}):
-    """ Инициализация ИСУ """
+    """ Инициализация ManSPy """
     # Меняем настройки по умолчанию на пользовательские
     self.ChangeSettings(UserSettings)
-    print("Загрузка модулей действий...")
+    print("Load action's modules...")
     t1 = time.time()
     Import = import_action.ImportAction(self.settings)
     Import.importAll()
     t2 = time.time()
     print'  ', t2 - t1
-    print("Загрузка модуля естественного языка...")
+    print("Load nature language's module...")
     t1 = time.time()
     self.LangClass = LangClass(self.settings)
     t2 = time.time()
     print '  ', t2 - t1
-    print("Инициализация модуля логики...")
+    print("Init executing functions's module...")
     t1 = time.time()
     self.LogicShell = FCModule.LogicShell(self.settings)
     t2 = time.time()
     print '  ', t2 - t1
-    print("Готово!")
+    print("Ready!")
 
   def print_errors(self, GrammarNazi, ErrorConvert):
     for analys, errors in GrammarNazi.items():
