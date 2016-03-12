@@ -24,7 +24,7 @@ class MainException(Exception): pass
 
 def _save_history(text, Type, IFName):
   if text:
-    Time = time.strftime('%c', time.gmtime(time.time()-time.altzone))
+    Time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()-time.altzone))
     if Type == 'R': text = '   '+text
     text = "* %s  %s  %s: %s\n" % (Type, Time, IFName, text)
     #print type(text)
@@ -56,7 +56,8 @@ class API():
     self.settings.update(NewSettings)
     self.settings['language'] = self.settings['language'].capitalize()
 
-    if self.settings['dir_db'] == None: db_path = os.path.dirname(os.path.abspath(''))
+    # Устанавливаем путь к директории базы данных как рабочую (текущую)
+    if self.settings['dir_db'] == None: db_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     else: db_path = self.settings['dir_db']
     db_path = os.path.join(db_path, 'DATA_BASE')
     if not os.path.exists(db_path) or not os.path.isdir(db_path):

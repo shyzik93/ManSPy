@@ -12,11 +12,10 @@ import os, sys, threading, json
 _path = os.path.dirname(__file__)
 sys.path.append(_path)
 
-password_path = os.path.join(os.path.dirname(os.path.abspath('')), 'IFM_passwords.txt')
-
 class Interfaces():
   interfaces = {}
   def __init__(self, API, *IFNames):
+    password_path = os.path.join(os.path.dirname(os.path.abspath('')), 'IFM_passwords.txt')
     if not os.path.exists(password_path):
       sys.stderr.write('Warning! The config file is absent! Some interfaces can have exceptions!\nThe config file: %s\n' % password_path)
       self.conf = {}

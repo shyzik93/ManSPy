@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os, json
+import os, json, re
 
 IFName = API = None
 
@@ -14,7 +14,7 @@ def init(settings=None):
     f.close()
 
   f = open(file_auto, 'r')
-  sentences = f.read().split('\n')
+  sentences = re.split("\n\r?", f.read())
   f.close()
 
   if settings['compare_with_origin']:
