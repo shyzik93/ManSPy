@@ -3,7 +3,9 @@ montru dolaran kaj euxran cambion de rusia banko
 sxaltu tablan lampon en dormcxambro
 montru adreson de komputilo
 montru adreson de androido
+
 dolaran cambion montru
+montru de rusia banko euxran cambion
 
 # Повторяющиеся аргументы (однородные слова)
 montru dolaran kaj dolaran cambion de rusia banko
