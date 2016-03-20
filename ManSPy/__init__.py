@@ -5,30 +5,17 @@
     Примеры возможных интерфейсов: текстовый чат, распознаватель речи,
     мессенджеры, интерфейс мозг-компьютер, приёмник звонков и SMS и так далее.
 """
-import repper, simpletools
 import FCModule, import_action, common, time, codecs, sys, os
 from analyse_text import LangClass
 
 class MainException(Exception): pass
-
-'''def _fopen(path, mode=None, data=None):
-  if not mode: mode='r'
-  f = open(path, mode)
-  if data:
-    f.write(data)
-    f.close()
-  else:
-    data = f.read()
-    f.close()
-    return data'''
 
 def _save_history(text, Type, IFName):
   if text:
     Time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()-time.altzone))
     if Type == 'R': text = '   '+text
     text = "* %s  %s  %s: %s\n" % (Type, Time, IFName, text)
-    #print type(text)
-    simpletools.fopen(os.path.join(common.RSettings('dir_db'),'history.txt'), 'ab', bytearray(text, 'utf-8'))
+    with open('history.txt', 'ab') as f: f.write(bytearray(text, 'utf-8'))
 
 class API():
   # настройки задаются один раз. Но можно написать модуль для изменения

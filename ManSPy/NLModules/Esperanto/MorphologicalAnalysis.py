@@ -1,16 +1,9 @@
 # -*- coding: utf-8 -*-
 ''' Модлуль выполняет стандартный морфологический анализ слова ЕЯ Эсперанто,
     основывваясь только на морфологических признаках (на внешнем виде слова)
-
-    Оприсание словаря - результата разбора:
-      Обязательные значения:
-      res['word'] - данная форма слова
-      res['base'] - корень слова
-      res['POSpeech'] - часть речи
 '''
 
-import Dict
-import re
+import Dict, re
 
 #template = re.compile(r'[0-9]+(\.|\,)?[0-9]*')
 
@@ -65,10 +58,11 @@ def isNumeral(word_l, word):
 
   if combain_numerals:
     factor1, factor2 = combain_numerals
-    number_value = int(Dict.dct['numeral_d'][factor1]) * int(Dict.dct['numeral_d'][factor2])
+    number_value = int(Dict.dct['numeral_d'][factor2]) * int(Dict.dct['numeral_d'][factor1])
   elif mili_numerals:
     factor1, factor2 = mili_numerals
-    number_value = int(Dict.dct['numeral_d'][factor1]) ** int(Dict.dct['numeral_d']['m'+factor2])
+    number_value = int(Dict.dct['numeral_d']['milion']) ** int(Dict.dct['numeral_d'][factor1])
+    if factor2 == 'iliard': number_value *= 1000
   else: return False
 
   word['number_value'] = number_value
@@ -179,12 +173,13 @@ def _getMorphA(word, GrammarNazi):
 
   if len(word) == 1: # то есть {'word': word}
     # нераспознанное слово с большой буквы - существительное
-    if word['word'][0].islower() == False:
+    if not word['word'][0].islower():
       defaultNoun(word_l, word)
     else: word['POSpeech'] = ''
 
-def getMorphA(sentences, GrammarNazi):
+def getMorphA(sentences, GrammarNazi=None):
   ''' Обёртка '''
+  if GrammarNazi == None: GrammarNazi = []
   for index, sentence in sentences:
     for index, word in sentence:
       _getMorphA(word, GrammarNazi)

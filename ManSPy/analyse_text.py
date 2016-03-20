@@ -11,7 +11,7 @@ class LangClass():
   def __init__(self, settings): # импорт модулей и выдача финуций.
     self.settings = settings
     self.language = settings['language']
-    self.LangModule = NLModules.getModule(self.language)
+    self.LangModule = NLModules.getLangModule(self.language)
 
   def NL2IL(self, sentences, levels="graphmath convert"):
     """ Второй аргумент - диапазон конвертирования от первого до последнего
@@ -37,7 +37,7 @@ class LangClass():
     if start_level in self.levels[:1]:
       #print sentences
       BeautySafe.safe_NL(sentences)
-      sentences = self.LangModule.getGraphmathA(sentences, NLModules.ObjUnit)
+      sentences = self.LangModule.getGraphmathA(sentences)
       BeautySafe.safe_sentences(sentences, 'GraphemathicAnalysis analysis')
       if end_level == self.levels[0]: return sentence, GrammarNazi
 

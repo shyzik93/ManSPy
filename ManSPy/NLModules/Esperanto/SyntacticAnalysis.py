@@ -85,7 +85,8 @@ def setLinks(index, sentence, GrammarNazi):
         break # это другой актант уже пойдёт.
     sentence.position = old_position
 
-def getSyntA(sentences, GrammarNazi):
+def getSyntA(sentences, GrammarNazi=None):
+  if GrammarNazi == None: GrammarNazi = []
   for index, sentence in sentences:
     # определяет члены предложения
     for index, word in sentence: setMOSentence(word, sentence, GrammarNazi)

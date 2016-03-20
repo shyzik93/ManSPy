@@ -77,7 +77,9 @@ class _Unit(object):
     self.keys = self.dict_unit.keys()
   def getByStep(self, step=0, name=None, value=None):
     return self.__call__(self.keys[self.position+step], name, value)
-  def getByPos(self, position): return self.dict_unit[self.keys[position]]
+  def getByPos(self, position, name=None, value=None):
+    return self.__call__(self.keys[position], name, value)
+    #return self.dict_unit[self.keys[position]]
   def currentIndex(self,step=0):return self.keys[self.position+step] # derpricated
 
   def isOutLeft(self, step=0):  return self.position+step <  0

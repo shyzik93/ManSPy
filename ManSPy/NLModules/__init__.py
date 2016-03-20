@@ -1,5 +1,2 @@
-import ObjUnit
-
-def getModule(language):
+def getLangModule(language):
   return __import__(language, globals=globals())
-  

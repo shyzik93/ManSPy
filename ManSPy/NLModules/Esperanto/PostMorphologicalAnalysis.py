@@ -5,7 +5,6 @@
     Можно приступать к синтаксичекому анализу предложения.
     '''
 from pprint import pprint
-import eonums
 
 def processArticle(GrammarNazi, word, sentence):
   if word['POSpeech'] == 'article': sentence.delByStep() # пока только удаляем
@@ -94,9 +93,32 @@ def exchangeDataBetweenHomo(sentence):
       if 'case' in word: sentence(index_homo, 'case', word['case'])
       done_indexes.append(index_homo)
 
+def numeral2number(sentence, indexes):
+  """ Числительное в число """
+  glued_numeral = ' '.join([sentence(index, 'word') for index in indexes])
+  numeral_value = 0
+  multiplier = 1
+  temp_sum = 0
+  indexes.reverse()
+  first_iter = True
+  for index in indexes:
+    nv = sentence(index, 'number_value')
+    if nv > 999:
+      if temp_sum==0 and not first_iter: temp_sum = 1
+      numeral_value += temp_sum * multiplier
+      temp_sum = 0
+      multiplier = nv
+    else:
+      temp_sum += nv
+    first_iter = False
+  if temp_sum==0: temp_sum = 1
+  numeral_value += temp_sum * multiplier
+  indexes.reverse()
+  return numeral_value, glued_numeral
+
 def processNumeral(GrammarNazi, word, sentence, indexes=None):
   if indexes == None: indexes = []
-  if word['POSpeech'] == 'numeral':
+  if word['POSpeech'] == 'numeral' or (word['POSpeech'] == 'noun' and 'derivative' in word and word['derivative'] == 'numeral'):
     indexes.append(sentence.currentIndex())
     if not sentence.isLast():
       sentence.jumpByStep()
@@ -105,11 +127,13 @@ def processNumeral(GrammarNazi, word, sentence, indexes=None):
   if len(indexes) <= 1: return
 
   # "Склейка" числительных
-  print indexes
-  glued_numeral = ' '.join([sentence(index, 'word') for index in indexes])
-  print glued_numeral
+  ########## необязательное TASK: индексы в списке заменить на слова! #################333
+
+  #print indexes
+  numeral_value, glued_numeral = numeral2number(sentence, indexes)
+  #print numeral_value, glued_numeral, 
   sentence(indexes[-1], 'word', glued_numeral)
-  sentence(indexes[-1], 'number_value', eonums.eo2int(glued_numeral))
+  sentence(indexes[-1], 'number_value', numeral_value)
   sentence(indexes[-1], 'base', '')
   sentence.delByIndex(*indexes[:-1])
   sentence.jumpByStep(-len(indexes))
@@ -120,8 +144,9 @@ def runScript(GrammarNazi, sentence, names):
     func = globals()['process'+name]
     for index, word in sentence: func(GrammarNazi, word, sentence)
 
-def getPostMorphA(sentences, GrammarNazi):
+def getPostMorphA(sentences, GrammarNazi=None):
   ''' Обёртка '''
+  if GrammarNazi == None: GrammarNazi = []
   for index, sentence in sentences:
     #TASK обстоятельства, выраженные существительным, обозначить как наречие
     runScript(GrammarNazi, sentence, 'Numeral Article Conjunction Adverb Conjunction Definition Conjunction Preposition Conjunction')

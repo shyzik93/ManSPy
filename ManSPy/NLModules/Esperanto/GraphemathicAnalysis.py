@@ -6,6 +6,7 @@
     Благодаря чему морфологический модуль будет уже знать, где слово, а где - не слово..
 """
 import re
+from .. import ObjUnit
 
 low_letters = u"ABCĈDEFGĜHĤIJĴKLMNOPRSŜTUŬVZ"
 up_letters =  u"abcĉdefgĝhĥijĵklmnoprsŝtuŭvz"
@@ -30,7 +31,7 @@ def proccessEndWord(sword, word, symbols):
     word['end_orig'] += sword[-index]
   word['word'] = sword[:-len(word['end_orig'])]
 
-def getGraphmathA(text, ObjUnit):
+def getGraphmathA(text):
   # Заменяем символы
   for k, v in ReplacedLetters.items(): text = text.replace(k, v)
   words = text.split()

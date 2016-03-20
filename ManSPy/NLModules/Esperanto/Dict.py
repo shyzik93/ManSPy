@@ -22,10 +22,10 @@ dct = {
   'prefix': {'mal': {'antonym': True}},
 
   # порядок числительных НЕ МЕНЯТЬ!
-  'numeral': [u'nulo', u'unu', u'du', u'tri', u'kvar', u'kvin',
+  'numeral': [u'nul', u'unu', u'du', u'tri', u'kvar', u'kvin',
     u'ses', u'sep', u'ok', u'naŭ', u'dek', u'cent', u'mil', u'milion', u'miliard'],
   # а здесь можно, но не нужно :)
-  'numeral_d': {u'nulo': 0, u'unu': 1, u'du': 2, u'tri': 3, u'kvar': 4, u'kvin': 5,
+  'numeral_d': {u'nul': 0, u'unu': 1, u'du': 2, u'tri': 3, u'kvar': 4, u'kvin': 5,
     u'ses': 6, u'sep': 7, u'ok': 8, u'naŭ': 9, u'dek': 10, u'cent': 100, u'mil': 1000, u'milion':1000000, u'miliard':1000000000
     }
   }
@@ -127,7 +127,7 @@ words = {
     u'kvankam': {'value': ''}, # хотя
     },
   'numeral': {
-    u'nulo': {'class': 'cardinal', 'number_value': 0},
+    u'nul': {'class': 'cardinal', 'number_value': 0},
     u'unu':  {'class': 'cardinal', 'number_value': 1},
     u'du':   {'class': 'cardinal', 'number_value': 2},
     u'tri':  {'class': 'cardinal', 'number_value': 3},
@@ -141,6 +141,6 @@ words = {
     u'cent': {'class': 'cardinal', 'number_value': 100},
     u'mil':  {'class': 'cardinal', 'number_value': 1000},
     u'milion':  {'class': 'cardinal', 'number_value': 1000000},
-    u'miliard': {'class': 'cardinal', 'number_value': 10000000}
+    u'miliard': {'class': 'cardinal', 'number_value': 1000000000}
     }  
   }
