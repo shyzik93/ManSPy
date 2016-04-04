@@ -6,7 +6,7 @@ IFName = API = None
 
 
 def init(settings=None):
-  if not settings: settings = {'write_origin': True, 'compare_with_origin': False}
+  if not settings: settings = {'write_origin': False, 'compare_with_origin': True}
   #if not settings: settings = {'write_origin': False, 'compare_with_origin': True}
   file_auto = os.path.join(os.path.dirname(__file__), 'autofeed_sentences.txt')
   if not os.path.exists(file_auto):

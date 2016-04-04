@@ -21,7 +21,6 @@ class LangClass():
     BeautySafe.fwrite('\n\n'+'#'*100+'\n')
     BeautySafe.fwrite(levels+'\n')
     OR = relation.ObjRelation(self.language, self.settings['test'], self.settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
-    GrammarNazi = {'morph': [], 'postmorph': [], 'synt': []}
     ErrorConvert = []
 
     # Парсим строку диапазона
@@ -39,29 +38,29 @@ class LangClass():
       BeautySafe.safe_NL(sentences)
       sentences = self.LangModule.getGraphmathA(sentences)
       BeautySafe.safe_sentences(sentences, 'GraphemathicAnalysis analysis')
-      if end_level == self.levels[0]: return sentence, GrammarNazi
+      if end_level == self.levels[0]: return sentence
 
     # Морфологический анализ
     if start_level in self.levels[:2]:
-      sentences = self.LangModule.getMorphA(sentences, GrammarNazi['morph'])
+      sentences = self.LangModule.getMorphA(sentences)
       with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
         flog.write('\n')
         for index, sentence in sentences: flog.write('sentence: %s\n' % sentence.getUnit('str')['fwords'])
         flog.write('\n')
       BeautySafe.safe_sentences(sentences, 'Morphological analysis')
-      if end_level == self.levels[1]: return sentences, GrammarNazi
+      if end_level == self.levels[1]: return sentences
 
     # Постморфологичесий
     if start_level in self.levels[:3]: 
-     sentences = self.LangModule.getPostMorphA(sentences, GrammarNazi['postmorph'])
+     sentences = self.LangModule.getPostMorphA(sentences)
      BeautySafe.safe_sentences(sentences, 'Postmorphological analysis')
-     if end_level == self.levels[2]: return sentences, GrammarNazi
+     if end_level == self.levels[2]: return sentences
 
     # Синтаксический
     if start_level in self.levels[:4]:
-      sentences = self.LangModule.getSyntA(sentences, GrammarNazi['synt'])
+      sentences = self.LangModule.getSyntA(sentences)
       BeautySafe.safe_sentences(sentences, 'Syntactic analysis')
-      if end_level == self.levels[3]: return sentences, GrammarNazi
+      if end_level == self.levels[3]: return sentences
 
     # извлекаем прямое доп, подл, сказуемое, косв. доп
     if start_level in self.levels[:5]:
@@ -85,7 +84,7 @@ class LangClass():
         for key in ErrorConvert:
           if not key in _ErrorConvert: _ErrorConvert[key] = []
           _ErrorConvert[key].extend(ErrorConvert[key])
-      if end_level == self.levels[5]: return _ILs, GrammarNazi, _ErrorConvert
+      if end_level == self.levels[5]: return _ILs, _ErrorConvert
 
   def IL2NL(self, IL):
     #IL = Synthesizer.IL2resultA(IL)

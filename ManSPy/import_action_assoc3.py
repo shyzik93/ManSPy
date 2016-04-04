@@ -200,7 +200,7 @@ def siftoutWordCombination(fasif, lang):
 
   return fasif
 
-def get_dword(word, LangClass): return LangClass.NL2IL(word, ':postmorph')[0](0).getUnit('dict').values()[0]
+def get_dword(word, LangClass): return LangClass.NL2IL(word, ':postmorph')(0).getUnit('dict').values()[0]
 def proccess_argword(argwords, LangClass):
   argwords['name'] = get_dword(argwords['name'], LangClass)
   for index, argword in enumerate(argwords['hyperonyms']):
@@ -241,7 +241,7 @@ def proccess_lingvo_dataWordCombination(fasif, LangClass, OR, fdb):
       value['verbs'][index] = OR.setRelation('synonym', get_dword(word_verb, LangClass)['base'])
 
   #print '----------------- to formule start'
-  wcomb = LangClass.NL2IL(fasif['wcomb'], ':synt')[0](0)
+  wcomb = LangClass.NL2IL(fasif['wcomb'], ':synt')(0)
   fasif['argdescr'] = {}
   for argname, data in fasif['args'].items():
     argword = data['argwords']['in_wcomb']['name']

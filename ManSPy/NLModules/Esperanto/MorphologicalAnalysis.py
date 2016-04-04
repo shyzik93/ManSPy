@@ -68,7 +68,7 @@ def isNumeral(word_l, word):
   word['number_value'] = number_value
   return True
 
-def _getMorphA(word, GrammarNazi):
+def _getMorphA(word):
 
   word_l = word['word'].lower()
 
@@ -141,7 +141,7 @@ def _getMorphA(word, GrammarNazi):
   elif ends[0] in ['j', 'n'] or ends[1] == 'jn':
     temp_word1 = getNumberAndCase(word_l)
     temp_word2 = {'word': temp_word1['base']}
-    _getMorphA(temp_word2, GrammarNazi)
+    _getMorphA(temp_word2)
     word.update(temp_word2)
     word.update(temp_word1)
     word['word'] = word_l
@@ -177,12 +177,11 @@ def _getMorphA(word, GrammarNazi):
       defaultNoun(word_l, word)
     else: word['POSpeech'] = ''
 
-def getMorphA(sentences, GrammarNazi=None):
+def getMorphA(sentences):
   ''' Обёртка '''
-  if GrammarNazi == None: GrammarNazi = []
   for index, sentence in sentences:
     for index, word in sentence:
-      _getMorphA(word, GrammarNazi)
+      _getMorphA(word)
   return sentences
 
 #sentence = 'vi montru kursojn de mia dolaro'

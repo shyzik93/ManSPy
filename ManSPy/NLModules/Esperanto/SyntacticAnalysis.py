@@ -17,7 +17,7 @@ def forPronounAndNoun(word):
   elif word['case'] == 'nominative': return 'subject'
   return 'supplement'
 
-def setMOS_ToSign(features, GrammarNazi):
+def setMOS_ToSign(features):
   """ Определение члена предложения у признаков:
       прилагательного, наречия, """
   for feature in features:
@@ -25,20 +25,20 @@ def setMOS_ToSign(features, GrammarNazi):
       feature['MOSentence'] = 'definition'
     elif feature['POSpeech'] == 'adverb':
       feature['MOSentence'] = 'circumstance'
-    if len(feature['feature']) > 0: setMOS_ToSign(feature['feature'], GrammarNazi)
+    if len(feature['feature']) > 0: setMOS_ToSign(feature['feature'])
 
-def setMOSentence(word, sentence, GrammarNazi):
+def setMOSentence(word, sentence):
   if word['POSpeech'] == 'verb':
     word['MOSentence'] = 'predicate'
     if len(word['feature']) > 0:
-      setMOS_ToSign(word['feature'], GrammarNazi)
+      setMOS_ToSign(word['feature'])
 
   #ATTENTION обстоятельства, выраженные существительным, определяются в модуле
   # промежуточного анализа как наречие.
   elif word['POSpeech'] == 'noun' or (word['POSpeech'] == 'numeral' and word['class'] == 'cardinal'):
     word['MOSentence'] = forPronounAndNoun(word)
     if len(word['feature']) > 0:
-      setMOS_ToSign(word['feature'], GrammarNazi)
+      setMOS_ToSign(word['feature'])
 
   elif word['POSpeech'] == 'pronoun':
     if word['category'] == 'possessive':
@@ -51,7 +51,7 @@ def setMOSentence(word, sentence, GrammarNazi):
   elif word['POSpeech'] == 'adjective': word['MOSentence'] = 'definition'  
   else: word['MOSentence'] = ''
 
-def setLinks(index, sentence, GrammarNazi):
+def setLinks(index, sentence):
   ''' Устанавливает связи членов предложения. Обстоятельства и определения
       спрятаны в тех, к кому они относятся. Работаем лишь со сказуемым,
       подлежащим и дополнением. '''
@@ -85,12 +85,11 @@ def setLinks(index, sentence, GrammarNazi):
         break # это другой актант уже пойдёт.
     sentence.position = old_position
 
-def getSyntA(sentences, GrammarNazi=None):
-  if GrammarNazi == None: GrammarNazi = []
+def getSyntA(sentences):
   for index, sentence in sentences:
     # определяет члены предложения
-    for index, word in sentence: setMOSentence(word, sentence, GrammarNazi)
+    for index, word in sentence: setMOSentence(word, sentence)
     # устанавливает связи членов предложения
-    for index, word in sentence: setLinks(index, sentence, GrammarNazi)
+    for index, word in sentence: setLinks(index, sentence)
 
   return sentences

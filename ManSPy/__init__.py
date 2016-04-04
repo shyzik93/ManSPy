@@ -77,10 +77,7 @@ class API():
     print '  ', t2 - t1
     print("Ready!")
 
-  def print_errors(self, GrammarNazi, ErrorConvert):
-    for analys, errors in GrammarNazi.items():
-      if errors: sys.stderr.write(analys + ": ")
-      for error in errors: sys.stderr.write("  " + error + "\n")
+  def print_errors(self, ErrorConvert):
     for part, errors in ErrorConvert.items():
       if errors: sys.stderr.write(part + ":\n")
       for error in errors:
@@ -95,9 +92,9 @@ class API():
     #print 'write', type(w_text)
     if w_text:
       if self.settings['history']: _save_history(w_text, "W", IFName)
-      _ILs, GrammarNazi, ErrorConvert = self.LangClass.NL2IL(w_text)
-      self.print_errors(GrammarNazi, ErrorConvert)
-      ExecError = self.LogicShell.execIL(_ILs, GrammarNazi, ErrorConvert, IFName)
+      _ILs, ErrorConvert = self.LangClass.NL2IL(w_text)
+      #self.print_errors(ErrorConvert)
+      ExecError = self.LogicShell.execIL(_ILs, ErrorConvert, IFName)
 
   def read_text(self, IFName, index=None):
     if IFName not in self.LogicShell.list_answers: self.LogicShell.list_answers[IFName] = []

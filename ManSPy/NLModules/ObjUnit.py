@@ -3,6 +3,32 @@
 # Date: 2.12.2014 - nowdays
 import copy, re
 
+class errorManager(object):
+  ''' error_power_level - the dangerous' level of error
+      if error_power_level = 0 - the error are not dangerous. It ignores.
+      if error_power_level = 1 - the IL will not execute. '''
+  def __init__(self, *error_group_names):
+    self.errors = {}
+    error_power_levels = [0, 1]
+    for error_group_name in error_group_names:
+      errors = {}
+      for error_power_level in error_power_levels: errors[error_power_level] = []
+      self.errors[error_group_name] = errors
+  def addError(error_group_name, error_message, error_power_level):
+    print error_group_name, error_message, error_power_level
+    self.errors[error_group_name][error_power_level].append(error_message)
+  def getErrors(error_group_name, error_power_level):
+    return self.errors[error_group_name][error_power_level]
+  def getLenErrors(error_group_name, *error_power_levels):
+    l = 0
+    for error_power_level in error_power_levels:
+      l += len(self.errors[error_group_name][error_power_level])
+    return l
+  #def getNamesError(self): return self.errors.keys()
+  def getRowError(self): return self.errors
+  def beatyPrintErrors():
+    pass
+
 class _Unit(object):
   ''' unit(index) - извлечение подъюнита
       unit(index, name) - извлечение характеристики подъюнита
@@ -271,7 +297,7 @@ class Word(_Unit):
   def hasSymbol(self, symbol):
     return symbol in self.str_word
 
-class Sentence(_Unit):
+class Sentence(_Unit, errorManager):
   """ Класс объекта предложения. Индексы списка и ключи словаря должны совпадать.
       При инициализации класса ему передаётся предложение в виде списка слов."""
   old_index = None
@@ -292,6 +318,7 @@ class Sentence(_Unit):
 
   def __init__(self, words):
     self._init(properties_with_indexes=['link', 'homogeneous_link'], unit_info={'end':''})
+    errorManager.__init__(self, 'graphmath', 'morph', 'postmorph', 'synt')
 
     if isinstance(words, dict):
       for index, word in words.items():

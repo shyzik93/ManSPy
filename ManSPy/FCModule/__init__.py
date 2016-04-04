@@ -40,7 +40,7 @@ class LogicShell:
     IL['arg0']['IFName'] = IFName
     self.LogicKernel.LogicKernel(IL)
 
-  def execIL(self, _ILs, GrammarNazi, _ErrorConvert, IFName):
+  def execIL(self, _ILs, _ErrorConvert, IFName):
     ExecError = []
     if _ErrorConvert['function']: return ExecError
 
