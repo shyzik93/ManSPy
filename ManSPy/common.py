@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-
-#import sys
-#for path in sys.path:
-#  if 'local' in path: sys.path.append(path.replace('/local', ''))
-
 import pickle, os, sqlite3 as sql
 
 settings_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'settings.pckl')
@@ -11,9 +6,9 @@ sql.enable_callback_tracebacks(True)
 
 ''' Функции-обёртки для удобства '''
 def _toDump(path, data):
-  with open(path, 'w') as f: pickle.dump(data, f)
+  with open(path, 'wb') as f: pickle.dump(data, f)
 def _fromDump(path):
-  with open(path, 'r') as f: data = pickle.load(f)
+  with open(path, 'rb') as f: data = pickle.load(f)
   return data
 
 ''' Консервирует настройки '''

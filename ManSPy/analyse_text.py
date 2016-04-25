@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys, os, codecs
-import NLModules, relation, extractor, converter, BeautySafe
+from . import NLModules, relation, extractor, converter, BeautySafe
 
 if not os.path.exists('comparing_fasif.txt'):
   f = open('comparing_fasif.txt', 'w')

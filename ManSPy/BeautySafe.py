@@ -3,7 +3,7 @@
     выявления ошибок и неточностей.
 '''
 import os, datetime, codecs
-import common
+from . import common
 from pprint import pprint
 
 def fwrite(data, name='analysis.txt'):
@@ -28,16 +28,16 @@ def safeResults(l, title, space=''):
 
   for res in l:
     if isinstance(res, (int, str)):
-      fwrite(space + str(res) + u'\n')
+      fwrite(space + str(res) + '\n')
       continue
     for k, v in res.items():
       if isinstance(v, list):
-        fwrite(space + k + u' : \n')
+        fwrite(space + k + ' : \n')
         safeResults(v, None, space+'    ')
         continue
-      fwrite(space + k + ' : ' + unicode(v) + u'\n')
+      fwrite(space + k + ' : ' + str(v) + '\n')
     index = l.index(res)
-    if index != len(l)-1: fwrite(u'\n')
+    if index != len(l)-1: fwrite('\n')
 
 def safeUnknown(list_res):
   ''' запись нераспознанных слов ??????????'''

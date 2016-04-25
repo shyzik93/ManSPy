@@ -5,8 +5,9 @@
     Примеры возможных интерфейсов: текстовый чат, распознаватель речи,
     мессенджеры, интерфейс мозг-компьютер, приёмник звонков и SMS и так далее.
 """
-import FCModule, import_action, common, time, codecs, sys, os
-from analyse_text import LangClass
+from . import FCModule, import_action, common
+import time, codecs, sys, os
+from .analyse_text import LangClass
 
 class MainException(Exception): pass
 
@@ -64,17 +65,17 @@ class API():
     Import = import_action.ImportAction(self.settings)
     Import.importAll()
     t2 = time.time()
-    print'  ', t2 - t1
+    print('  ', t2 - t1)
     print("Load nature language's module...")
     t1 = time.time()
     self.LangClass = LangClass(self.settings)
     t2 = time.time()
-    print '  ', t2 - t1
+    print('  ', t2 - t1)
     print("Init executing functions's module...")
     t1 = time.time()
     self.LogicShell = FCModule.LogicShell(self.settings)
     t2 = time.time()
-    print '  ', t2 - t1
+    print('  ', t2 - t1)
     print("Ready!")
 
   def print_errors(self, ErrorConvert):
@@ -86,7 +87,8 @@ class API():
         sys.stderr.write("  " + error + "\n")
 
   def toString(self, r_text):
-    if not isinstance(r_text, unicode): return unicode(r_text)
+    if isinstance(r_text, (int, float, complex)): return str(r_text)
+    else: return r_text
 
   def write_text(self, IFName, w_text):
     #print 'write', type(w_text)
@@ -99,7 +101,7 @@ class API():
   def read_text(self, IFName, index=None):
     if IFName not in self.LogicShell.list_answers: self.LogicShell.list_answers[IFName] = []
     # Возвращает ответ или пустую строку, если ответа нет. None ответом не считается.
-    r_text = u''
+    r_text = ''
     if index == None:
       r = range(len(self.LogicShell.list_answers[IFName]))
       # montru dolaran euxran cambion de ukraina banko

@@ -3,7 +3,8 @@
     основывваясь только на морфологических признаках (на внешнем виде слова)
 '''
 
-import Dict, re
+from . import Dict
+import re
 
 #template = re.compile(r'[0-9]+(\.|\,)?[0-9]*')
 

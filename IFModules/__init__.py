@@ -50,11 +50,11 @@ class Interfaces():
       t.setName(IFName)
       #t.daemon = True
       t.start()
-      print 'Processes info:', threading.activeCount()
+      print('Processes info:', threading.activeCount())
       self.interfaces[IFName][0] = t
 
   def turnOffInterface(self, *IFNames):
     for IFName in IFNames:
       if IFName in IFNames:
         del self.interfaces[IFName]
-      else: print 'Interface \"%s\" doesn\'t deleted because it\'s absent.' % IFName
+      else: print('Interface \"%s\" doesn\'t deleted because it\'s absent.' % IFName)

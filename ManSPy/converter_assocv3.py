@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import codecs, sys, copy
-import to_formule, NLModules, lingvo_math, Action
+from . import to_formule, NLModules, lingvo_math, Action
 
 not_to_db = ['nombr', 'cifer']
 
@@ -22,7 +22,7 @@ def check_args(finded_args, fasif, R):
     # пока только основные гиперонимы вытягиваем
     hyperonyms[argname] = [word['base'] for word in data['hyperonyms']]
   for finded_arg in finded_args:
-    for argname, argvalue in finded_arg.items():
+    for argname, argvalue in list(finded_arg.items()):
       if not is_in_hyperonym(hyperonyms[argname], argvalue, R): del finded_arg[argname]
 
   # Проверка на отсутствие обязательных аргументных слов
@@ -58,7 +58,7 @@ def get_fasif_wcomb(fdb, argument, R, verb):
   isantonym = False
   compared_fasifs = fdb.getFASIF('WordCombination', argument)
   if not compared_fasifs: return
-  else: id_fasif, data = compared_fasifs.items()[0] # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
+  else: id_fasif, data = list(compared_fasifs.items())[0] # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
   finded_args, fasif = data
 
   id_group = R.R.get_groups_by_word('synonym', 0, verb, 'verb')[0]
@@ -87,7 +87,7 @@ def Extraction2IL(R, settings, predicates, arguments):
     'subject': None,
   }
   ILs = []
-  predicate = predicates.values()[0]
+  predicate = list(predicates.values())[0]
   fasif_IL = {}
 
   # Вынимаем Фасиф
@@ -126,7 +126,7 @@ def Extraction2IL(R, settings, predicates, arguments):
         sys.stderr.write('FASIF was not finded! Argument (word combination) is "'+str(argument)+'"')
         continue
       if not compared_fasifs: sys.stderr.write('Fasif for "%s" wasn\'t found!' % predicate['base'])
-      IL['action']['common_verb_function'] = parseFunction(compared_fasifs.values()[0][0][0])
+      IL['action']['common_verb_function'] = parseFunction(list(compared_fasifs.values())[0][0][0])
 
     with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
       flog.write('\npraIL: %s\n' % str(IL))

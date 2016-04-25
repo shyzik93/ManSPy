@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 ''' Модуль-обёртка для интеллекта'''
-from LogicKernel import LogicKernel
+from .LogicKernel import LogicKernel
 import time
 
 '''class BuiltInFunctions:

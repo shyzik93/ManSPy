@@ -8,7 +8,7 @@ def Extract(sentence):
         arg - это аргумент функции, имеет такойже первод на английский, как и актант'''
   predicate = {} # сказуемые
   arguments = []  # словосочетания (актанты)
-  print sentence.getUnit('str')['fwords']
+  print(sentence.getUnit('str')['fwords'])
   #pprint.pprint(sentence.getUnit("dict"))
 
   # Поиск сказуемого
@@ -26,7 +26,7 @@ def Extract(sentence):
     sentence.delByIndex(*argument.keys())
 
   if sentence.getUnit("dict"):
-    print u"       Необработанные остатки 3 ФАСИФ \n", sentence.getUnit("dict")
-    print "-"*10
+    print(u"       Необработанные остатки 3 ФАСИФ \n", sentence.getUnit("dict"))
+    print("-"*10)
 
   return predicates, arguments

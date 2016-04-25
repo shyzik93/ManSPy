@@ -3,7 +3,7 @@
 import NLModules, eonums
 
 E = NLModules.getLangModule("Esperanto")
-print dir(E)
+print(dir(E))
 
 # FALSE unu duiliardo mil 1000000000000000 1000000000001000
 
@@ -18,4 +18,4 @@ for i in range(100001):
 
   sentence = text(0)
   nv = sentence.getByPos(-1, "number_value")
-  if i != nv: print 'FALSE', eo.encode('utf-8'), nv, i
+  if i != nv: print('FALSE', eo.encode('utf-8'), nv, i)

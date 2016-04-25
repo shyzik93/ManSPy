@@ -10,7 +10,9 @@
  Собранный установщик lxml для Виндовс: http://www.lfd.uci.edu/~gohlke/pythonlibs/
 '''
 
-import lxml.html as html, urllib, re, datetime
+import lxml.html as html
+import urllib, re, datetime
+from urllib import request
 
 crc_cnr = {
   'RUB': 'Russia',
@@ -20,8 +22,8 @@ crc_cnr = {
 
 
 def parseStandartXML(FullPrices, url, coding, blockname, charcode, value, nominal, name):
-  page = urllib.urlopen(url).read()
-  page = page.replace('?xml', '') # убираем декларацию кодировки (с ней ругань)
+  page = request.urlopen(url).read()
+  page = page.replace(b'?xml', b'') # убираем декларацию кодировки (с ней ругань)
   page = html.document_fromstring(page.decode(coding))
   valutes = page.cssselect(blockname)
   for v in valutes:
@@ -46,7 +48,7 @@ def GetPricesFromCB(country):
   elif country == 'Israel':
     parseStandartXML(FullPrices, 'http://www.boi.org.il/currency.xml', 'utf-8', 'CURRENCY', 'CURRENCYCODE', 'RATE', 'UNIT', 'NAME')
   elif country == 'Ukraine':
-    page = urllib.urlopen('http://www.bank.gov.ua/control/uk/curmetal/detail/currency?period=daily').read()
+    page = request.urlopen('http://www.bank.gov.ua/control/uk/curmetal/detail/currency?period=daily').read()
     page = html.document_fromstring(page.decode('utf-8'))
     content = page.cssselect('div.content')[0]
     table = content.cssselect('table')[3]
@@ -56,7 +58,7 @@ def GetPricesFromCB(country):
       td = i.cssselect('td')
       FullPrices[td[1].text] = [td[4].text, td[2].text, td[3].text]
   elif country == 'Georgia':
-    page = urllib.urlopen('http://www.nbg.ge/rss.php').read()
+    page = request.urlopen('http://www.nbg.ge/rss.php').read()
     page = page.replace('?xml', '') # убираем декларацию кодировки (с ней ругань)
     page = html.document_fromstring(page.decode('utf-8'))
     valutes = page.cssselect('description')
@@ -68,7 +70,7 @@ def GetPricesFromCB(country):
       Nominal = re.findall(r'[0-9]*', l[1])[0]
       FullPrices[l[0]] = [l[2], Nominal, l[1][len(Nominal)+1:]]
   elif country == 'Uzbekistan':
-    page = urllib.urlopen('http://www.nbu.com/exchange_rates').read()
+    page = request.urlopen('http://www.nbu.com/exchange_rates').read()
     page = html.document_fromstring(page.decode('utf-8'))
     content = page.cssselect('div.exchangeRates')[0]
     table = content.cssselect('table')[0]
@@ -78,7 +80,7 @@ def GetPricesFromCB(country):
       td = i.cssselect('td')
       if td[3].text: FullPrices[td[6].text] = [td[3].text, td[2].text.split()[0], td[1].text]
   elif country == 'Turkmenistan':
-    page = urllib.urlopen('http://www.cbt.tm/kurs/kurs_today_ru.html').read()
+    page = request.urlopen('http://www.cbt.tm/kurs/kurs_today_ru.html').read()
     page = html.document_fromstring(page.decode('utf-8'))
     content = page.cssselect('div#content_today')[0]
     table = content.cssselect('table')[0]
@@ -94,7 +96,7 @@ def GetPricesFromCB(country):
   elif country == 'Kazakhstan':
     parseStandartXML(FullPrices, 'http://www.nationalbank.kz/rss/rates_all.xml', 'utf-8', 'item', 'title', 'description', 'quant', 'title')
   elif country == 'Kyrgyzstan': # Киргизия
-    page = urllib.urlopen('http://www.nbkr.kg/XML/weekly.xml').read()
+    page = request.urlopen('http://www.nbkr.kg/XML/weekly.xml').read()
     page = page.replace('?xml', '') # убираем декларацию кодировки (с ней ругань)
     page = html.document_fromstring(page.decode('utf-8'))
     valutes = page.cssselect('Currency')
@@ -157,7 +159,7 @@ def GetCourse(arg0, currency, country='Russia'):
     return res
   else:
     price = float(ShortPrices[str(currency)])
-    print currency, country, price
+    print(currency, country, price)
     return price
 # Выражение курса через другие валюты
 
@@ -170,10 +172,10 @@ if __name__ == '__main__':
   def print_beauty_all():
     countries = ['Israel', 'Georgia', 'Russia', 'Belarus', 'Ukraine', 'Tajikistan', 'Uzbekistan', 'Turkmenistan', 'Kazakhstan', 'Kyrgyzstan']
     for country in countries:
-      print '\n', ' '*35, country.upper(), '\n'
-      print GetCourse(None, 'all', country)
+      print('\n', ' '*35, country.upper(), '\n')
+      print(GetCourse(None, 'all', country))
   #print Chain('USD', 'Ukraine', )
-  print Convert(25, 'USD', 'RUB', 'Russia')
+  print(Convert(25, 'USD', 'RUB', 'Russia'))
   print_beauty_all()
 
 
@@ -183,32 +185,6 @@ if __name__ == '__main__':
   for country in countries:
     FullPrices = GetPricesFromCB(country)
     uniq = uniq & set(FullPrices.keys())
-  print uniq
+  print(uniq)
 
-list_FASIF = ['''
-# Описание Функции
-GetCourse
-currency y ;  Esperanto
-# пробелы в начале строки обязательны
-  USD      ;  dolar
-  RUB      ;  rubl
-  EUR      ;  eŭr
-  UAH      ;  grivn
-country n ;  Esperanto
-  Russia  ;  rusi
-  Belarus ;  belarusi
-  Ukraine ;  ukraini
-#argument n - если не требуется замена значения аргумента
-
-# Шаблоны ЯЕ-предложений
-Esperanto
-dolaran: monero # аргументное слова: абстрактные группы через запятую
-rusia: lando
-montru dolaran cambion de rusia banko
-
-Russian
-доллара, валюта
-русскому, страна, национальность
-покажи курс доллара согласно русскому банку
-''']
 # montru dolaran cambion de mango de rusia banko

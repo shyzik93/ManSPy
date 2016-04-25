@@ -24,7 +24,7 @@
 
 import copy, time, json, codecs
 from pprint import pprint
-import common, NLModules
+from . import common, NLModules
 
 def compare_fasif_Verb(fasif, verb_base, finded_args, flog):
   if verb_base != fasif['verbs']: return False
@@ -78,7 +78,7 @@ def compare_fasif_WordCombination(fasif, argument, finded_args, flog):
   else: return False # "закольцованный" актант - на каждое слово ссылается другое слово.
   #print argument(first_index, 'word')
   for index, word in argument.iterFromByIndex(first_index):
-    _index, _word = _argument_iter.next()
+    _index, _word = next(_argument_iter)
 
     # "Проходимся" по дополнениям (прямые, косвенные, а также подлежащие)
     isright = compare_word(word, index, argument, _word, finded_args, flog) # new

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from pprint import pprint
-import analyse_text, Action, relation, to_formule
+from . import analyse_text, Action, relation, to_formule
 import os, sys, re
 
 NAME_LANG = r'[A-Z][a-z]+'
@@ -68,10 +68,10 @@ def parseVerb(_fasif):
   function = None
   verbs = {}
   for string in _fasif:
-    if re.findall(STRING_VERBS_TITLE.decode('utf-8'), string):
-      function = re.findall(STRING_VERBS_TITLE2.decode('utf-8'), string)[0]#string.strip()
-    elif re.findall(STRING_VERBS_BODY.decode('utf-8'), string):
-      lang, verb = re.findall(STRING_VERBS_BODY.decode('utf-8'), string)[0]#string.split(':')
+    if re.findall(STRING_VERBS_TITLE, string):
+      function = re.findall(STRING_VERBS_TITLE2, string)[0]#string.strip()
+    elif re.findall(STRING_VERBS_BODY, string):
+      lang, verb = re.findall(STRING_VERBS_BODY, string)[0]#string.split(':')
       verbs[lang.strip()] = verb.strip().split()
   return {'function': function, 'verbs': verbs}
 
@@ -94,18 +94,18 @@ def parseWordCombination(_fasif): # подформат состоит из тр�
   for string in _fasif:
     ## Блок функций
     # Назначение: Модуль/Функция
-    if re.findall(STRING_DESTINATION_TITLE.decode('utf-8'), string): # "Name_01 : moduleName/funcName "
+    if re.findall(STRING_DESTINATION_TITLE, string): # "Name_01 : moduleName/funcName "
       destination, function = string.split(':')
       functions[destination.strip()] = {'function': function.strip(), 'verbs': {}}
       #print '1 $$$$', string
     # Язык: глаголДляФункции
-    elif re.findall(STRING_DESTINATION_BODY.decode('utf-8'), string): # "    Language : verbглагол"
+    elif re.findall(STRING_DESTINATION_BODY, string): # "    Language : verbглагол"
       lang, verb = string.split(':')
       functions[destination]['verbs'][lang.strip()] = verb.strip().split()
       #print '2 $$$$', string
     ## Блок аргументов
     # аргумент yORn ; Язык1 ; Язык2
-    elif re.findall(STRING_ARGUMENT_TITLE1.decode('utf-8'), string):
+    elif re.findall(STRING_ARGUMENT_TITLE1, string):
       string = string.split(';')
       arg_name, isreq = string.pop(0).split()
 
@@ -122,7 +122,7 @@ def parseWordCombination(_fasif): # подформат состоит из тр�
 
       arg_indexes.append(arg_name)
       #print '3 $$$$', string
-    elif re.findall(STRING_ARGUMENT_TITLE2.decode('utf-8'), string):
+    elif re.findall(STRING_ARGUMENT_TITLE2, string):
       arg_name, isreq = string.split()
 
       if len(isreq)==2:
@@ -134,7 +134,7 @@ def parseWordCombination(_fasif): # подформат состоит из тр�
       arg_indexes.append(arg_name)
       #print '3 $$$$', string
     # Аргумент ; АргументноеСловоНаЯзыке1 ; АргументноеСловоНаЯзыке2
-    elif re.findall(STRING_ARGUMENT_BODY.decode('utf-8'), string):
+    elif re.findall(STRING_ARGUMENT_BODY, string):
       string = string.strip().split(';')
       arg_value = string.pop(0).strip()
       for index, word in enumerate(string):
@@ -142,20 +142,20 @@ def parseWordCombination(_fasif): # подформат состоит из тр�
         if not word: continue
         args[arg_name]['argtable'][lang_indexes[index]][word] = arg_value
       #print '4 $$$$', string
-    elif re.findall(STRING_ARGUMENT_TITLE2.decode('utf-8'), string):
+    elif re.findall(STRING_ARGUMENT_TITLE2, string):
       arg_name, isreq = string.split()
       args[arg_name] = {'isreq': isreq, 'argtable': {}, 'argwords': {}}
       arg_indexes.append(arg_name)
     ## Блок словосочетаний
     # Язык
-    elif re.findall(STRING_WCOMB_TITLE.decode('utf-8'), string):
+    elif re.findall(STRING_WCOMB_TITLE, string):
       lang = string.strip()
       for arg_name in args:
         args[arg_name]['argwords'][lang] = {'in_wcomb': {'name': None, 'hyperonyms': []}, 'another': []}
       arg_index = 0
       #print '5 $$$$', string
     # АргументноеСлово: АбстрактнаяГруппа1, АбстрактнаяГруппа2     Необходимо заменитиь на: # АргументноеСлово: ВходитАбстрГруппа1, ВходитАбстрГруппа2; НеВХодитАбстрГрупп, НеВХодитАбстрГрупп
-    elif re.findall(STRING_WCOMB_ARGWORD.decode('utf-8'), string):
+    elif re.findall(STRING_WCOMB_ARGWORD, string):
       arg_words = string.strip().split(';')
       #print arg_index, string
       arg_word, hyperonyms = arg_words.pop(0).split(':')
@@ -170,7 +170,7 @@ def parseWordCombination(_fasif): # подформат состоит из тр�
           args[arg_indexes[arg_index]]['argwords'][lang]['another']['hyperonyms'].append(hyperonym.strip())
       arg_index += 1
       #print '6 $$$$', string
-    elif re.findall(STRING_WCOMB.decode('utf-8'), string):
+    elif re.findall(STRING_WCOMB, string):
       wcomb[lang] = string.strip()
   return {'functions': functions, 'wcomb': wcomb, 'args': args}
 
@@ -200,7 +200,7 @@ def siftoutWordCombination(fasif, lang):
 
   return fasif
 
-def get_dword(word, LangClass): return LangClass.NL2IL(word, ':postmorph')(0).getUnit('dict').values()[0]
+def get_dword(word, LangClass): return list(LangClass.NL2IL(word, ':postmorph')(0).getUnit('dict').values())[0]
 def proccess_argword(argwords, LangClass):
   argwords['name'] = get_dword(argwords['name'], LangClass)
   for index, argword in enumerate(argwords['hyperonyms']):
@@ -293,9 +293,7 @@ class ImportAction(object):
   def proccess(self, fasif_file, fasif_dir):
     ''' Импортирует МД, извлекает и преобразует ФАСИФ  словарь. '''
     #list_FASIF = Action.getObject(module_name, 'list_FASIF')
-    with open(os.path.join(fasif_dir, fasif_file)) as f:
-      fasif = f.read()
-    if isinstance(fasif, str): fasif = fasif.decode('utf-8')
+    with open(os.path.join(fasif_dir, fasif_file)) as f: fasif = f.read()
     # Отделяем ФАСИФы друг от друга
     dict_assoc_types = separate_fasifs(fasif)
     # Превращаем текст ФАСИФов в словарь

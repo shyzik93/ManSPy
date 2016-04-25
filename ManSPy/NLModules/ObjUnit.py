@@ -15,7 +15,7 @@ class errorManager(object):
       for error_power_level in error_power_levels: errors[error_power_level] = []
       self.errors[error_group_name] = errors
   def addError(error_group_name, error_message, error_power_level):
-    print error_group_name, error_message, error_power_level
+    print(error_group_name, error_message, error_power_level)
     self.errors[error_group_name][error_power_level].append(error_message)
   def getErrors(error_group_name, error_power_level):
     return self.errors[error_group_name][error_power_level]
@@ -51,7 +51,7 @@ class _Unit(object):
     self.properties_with_indexes = properties_with_indexes or []
 
     self.position = 0
-    self.keys = self.dict_unit.keys()
+    self.keys = list(self.dict_unit.keys())
 
   # Работа с информацией о юните в целом
   def __setitem__(self, key, value): self.unit_info[key] = value
@@ -77,7 +77,7 @@ class _Unit(object):
   # Итератор
   def __iter__(self, position=0): # # аналогично itemsUnit() без индекса, но с возможностью управления текущей позицией. Для цикла for.
     self.position = position
-    self.keys = self.dict_unit.keys()
+    self.keys = list(self.dict_unit.keys())
     while self.position < len(self.keys) and self.position >= 0:
       index = self.keys[self.position]
       yield index, self.dict_unit[index]
@@ -87,20 +87,20 @@ class _Unit(object):
     position = self.position+step if step!=None else 0
     return self.__iter__(position)
   def iterFromByIndex(self, index):
-    position = self.keys.index(index)
+    position = list(self.keys).index(index)
     return self.__iter__(position)
   def jumpByStep(self, step=1): self.position += step # аналог next() 
   def jumpByIndex(self, index): self.position = self.keys.index(index)
   def delByStep(self, count=1, step=0, jump_step=-1):
     for c in range(count): del self.dict_unit[self.keys[self.position+step]]
-    self.keys = self.dict_unit.keys()
+    self.keys = list(self.dict_unit.keys())
     self.position += jump_step
   def delByPos(self, position):
     del self.dict_unit[self.keys[position]]
-    self.keys = self.dict_unit.keys()
+    self.keys = list(self.dict_unit.keys())
   def delByIndex(self, *indexes):
     for index in indexes: del self.dict_unit[index]
-    self.keys = self.dict_unit.keys()
+    self.keys = list(self.dict_unit.keys())
   def getByStep(self, step=0, name=None, value=None):
     return self.__call__(self.keys[self.position+step], name, value)
   def getByPos(self, position, name=None, value=None):
@@ -157,7 +157,7 @@ class _Unit(object):
       elif info == 'members': dct = self.dict_unit
       elif info == 'full': dct = self.full_info
       else:
-        print "the argument '%s' of Unit.getUint is wrong!" % info
+        print("the argument '%s' of Unit.getUint is wrong!" % info)
         return
       dct = copy.deepcopy(dct)
       return self._go_depth(dct, info0, info1, info2)
@@ -268,12 +268,12 @@ class _Unit(object):
     for _subunit in self.dict_unit.values():
       for key, value in _subunit.items():
         if key in self.properties_with_indexes: indexes.append(value)
-    indexes.extend(self.dict_unit.keys())
+    indexes.extend(list(self.dict_unit.keys()))
 
     max_index = max(indexes)+1 if indexes else 0
     self._update_added_unit(subunit)
     self.dict_unit[max_index] = subunit
-    self.keys = self.dict_unit.keys()
+    self.keys = list(self.dict_unit.keys())
 
   def pop(self):
     pass
@@ -292,7 +292,7 @@ class Word(_Unit):
       self.dict_unit[index] = {}
       self.dict_unit[index]['symbol'] = self.str_word[index]
       self.dict_unit[index]['type'] = ''
-    self.keys = self.dict_unit.keys()
+    self.keys = list(self.dict_unit.keys())
 
   def hasSymbol(self, symbol):
     return symbol in self.str_word
@@ -323,14 +323,14 @@ class Sentence(_Unit, errorManager):
     if isinstance(words, dict):
       for index, word in words.items():
         if isinstance(word, dict): word = Word(word)
-        if isinstance(index, (unicode, str)): index = int(index)
+        if isinstance(index, str): index = int(index)
         self.dict_unit[index] = word
       #self.position = 0
     else:
       for index, word in enumerate(words):
         self._update_added_unit(word)
         self.dict_unit[index] = word
-    self.keys = self.dict_unit.keys()
+    self.keys = list(self.dict_unit.keys())
 
   def getByCharacteristic(self, name, value):
     """ Извлекает слова, соответствующие характеристике.

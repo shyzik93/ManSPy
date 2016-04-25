@@ -57,15 +57,15 @@ if __name__ == '__main__':
        [10, 20, 30, 40],
        [100, 200, 300, 400]]
   resl = product(parentl)
-  print len(resl), resl
+  print(len(resl), resl)
 
   dparentl = {'a': [1, 2, 3, 4],
        'b': [10, 20, 30, 40],
        'c': [100, 200, 300, 400]}
   resl = dproduct(dparentl)
-  print len(resl), resl
+  print(len(resl), resl)
 
   parentl = ['a', 'b', 'c']
   parentl = [parentl] * len(parentl)
   resl = product(parentl)
-  print len(resl), [''.join(r) for r in resl]
+  print(len(resl), [''.join(r) for r in resl])

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #import sqlite3 as sql, os
 import pickle
-import common
+from . import common
 
 class Relation():
   dct_speeches = {'noun': 1, 'verb': 2, 'adjective': 3, 'adverb': 4}
@@ -56,18 +56,18 @@ class Relation():
     return outlist
 
   def _word2id(self, word):
-    if not isinstance(word, (str, unicode)): return word
+    if not isinstance(word, str): return word
     res = self.cu.execute('SELECT id_word FROM words WHERE word=?;', (word,)).fetchall()
     if res: return res[0][0]
     else: # если слово отсутствует, то добавим его
       self.add_word(word) 
       return self._word2id(word)
   def _type2id(self, relation):
-    if not isinstance(relation, (str, unicode)): return relation
+    if not isinstance(relation, str): return relation
     res = self.cu.execute('SELECT id_relation FROM descr_relation WHERE name1=?;', (relation,)).fetchall()
     if res: return res[0][0]
     #return self.dct_types[_type] if isinstance(_type, (str, unicode)) else _type
-  def _speech2id(self, speech): return self.dct_speeches[speech] if isinstance(speech, (str, unicode)) else speech
+  def _speech2id(self, speech): return self.dct_speeches[speech] if isinstance(speech, str) else speech
 
   ### Работа с таблицей relations
 
@@ -411,7 +411,7 @@ if __name__ == '__main__':
       if isword == 0: id_word = R.convert(id_word)[0]
       if isword > 0: isword = R.dct_typesR[isword]
       else: isword = u'слово'
-      print '  ', id_group, id_word, isword
+      print('  ', id_group, id_word, isword)
   
   """list_words = ['dom', 'kot', 'kosxar', 'aparat', 'montr', 'sobak', 'peos']
   R.add_word(list_words)
