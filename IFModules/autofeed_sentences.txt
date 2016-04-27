@@ -47,6 +47,7 @@ Montru dolaran cambion. Montru euxran cambion de belarusia banko
 adiciu dudekon trion
 adiciu kvardekon kaj trion kaj milionon
 maladiciu dolaran cambion kaj trion
+adiciu dolaran cambion kaj 1000
 multigu trion kaj kvaron
 # Синонимы
 malmultigu dolaran cambion kaj trion

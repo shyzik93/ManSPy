@@ -39,12 +39,15 @@ def init(settings=None):
       r_text = API.read_text(IFName, 0)
       if settings['compare_with_origin']:
         if sentence in origin:
+          cur_res = True
           if r_text in origin[sentence]: res.write('    True >>> ')
           else:
             gen_res = False
+            cur_res = False
             res.write('    False >>> ')
         else: res.write('    sentence is absent >>> ')
         res.write(r_text+'\n')
+        if not cur_res: res.write('        ORIGINS: '+str(origin[sentence])+'\n')
       elif settings['write_origin']: origin[sentence].append(r_text)
 
   if settings['compare_with_origin']:

@@ -3,33 +3,33 @@
 # Date: 2.12.2014 - nowdays
 import copy, re
 
-class errorManager(object):
-  ''' error_power_level - the dangerous' level of error
-      if error_power_level = 0 - the error are not dangerous. It ignores.
-      if error_power_level = 1 - the IL will not execute. '''
-  def __init__(self, *error_group_names):
+class errorManager():
+  ''' power_level - the dangerous' level of error
+      if power_level = 0 - the error are not dangerous. It ignores.
+      if power_level = 1 - the IL will not execute. '''
+  def __init__(self, *group_names):
     self.errors = {}
-    error_power_levels = [0, 1]
-    for error_group_name in error_group_names:
+    power_levels = [0, 1]
+    for group_name in group_names:
       errors = {}
-      for error_power_level in error_power_levels: errors[error_power_level] = []
-      self.errors[error_group_name] = errors
-  def addError(error_group_name, error_message, error_power_level):
-    print(error_group_name, error_message, error_power_level)
-    self.errors[error_group_name][error_power_level].append(error_message)
-  def getErrors(error_group_name, error_power_level):
-    return self.errors[error_group_name][error_power_level]
-  def getLenErrors(error_group_name, *error_power_levels):
+      for power_level in power_levels: errors[power_level] = []
+      self.errors[group_name] = errors
+  def addError(group_name, message, power_level):
+    print(group_name, message, power_level)
+    self.errors[group_name][power_level].append(message)
+  def getErrors(group_name, power_level):
+    return self.errors[group_name][power_level]
+  def getLenErrors(group_name, *power_levels):
     l = 0
-    for error_power_level in error_power_levels:
-      l += len(self.errors[error_group_name][error_power_level])
+    for power_level in power_levels:
+      l += len(self.errors[group_name][power_level])
     return l
   #def getNamesError(self): return self.errors.keys()
   def getRowError(self): return self.errors
-  def beatyPrintErrors():
+  def beautyPrintErrors():
     pass
 
-class _Unit(object):
+class _Unit():
   ''' unit(index) - извлечение подъюнита
       unit(index, name) - извлечение характеристики подъюнита
       unit(index, name, value) - изменение характеристики подъюнита
@@ -108,6 +108,7 @@ class _Unit(object):
     #return self.dict_unit[self.keys[position]]
   def currentIndex(self,step=0):return self.keys[self.position+step] # derpricated
 
+  # Текущая позиция
   def isOutLeft(self, step=0):  return self.position+step <  0
   def isFirst(self, step=0):    return self.position+step == 0
   def isBetween(self, step=0):  return self.position+step <  len(self.dict_unit) - 1 and self.position+step > 0
@@ -314,7 +315,9 @@ class Sentence(_Unit, errorManager):
     'notword': '',
     'start_pmark': [], 'end_pmark': [], 'around_pmark': []
     }
-    subunit.update(_subunit)
+    for key, default_value in _subunit.items():
+      if key not in subunit: subunit[key] = default_value
+    #subunit.update(_subunit)
 
   def __init__(self, words):
     self._init(properties_with_indexes=['link', 'homogeneous_link'], unit_info={'end':''})

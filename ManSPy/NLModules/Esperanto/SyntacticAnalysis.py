@@ -2,12 +2,6 @@
 ''' Модуль выполняет синтаксический анализ предложения
 
   Определяются члены предложения и устанавливаются связи слов.
-
-  Добавляются новые ключи:
-    'link' - синтаксическая связь с другим словом. Значение:
-    список порядковых номеров подчинённых (т. е. тех, кто к нему относится)
-    #[{'index': INTEGER, 'type': 'parent/slave'}]
-    'MOSentence' - член предложения
 '''
 
 def forPronounAndNoun(word):
@@ -48,7 +42,9 @@ def setMOSentence(word, sentence):
     else: word['MOSentence'] = '' # не притяжательное и не личное местоимение
 
   # прилагательное без существительного
-  elif word['POSpeech'] == 'adjective': word['MOSentence'] = 'definition'  
+  elif 'praPOSpeech' in word and word['praMOSentence'] == 'freemember':
+    word['MOSentence'] = 'supplement'
+  #elif word['POSpeech'] == 'adjective': word['MOSentence'] = 'definition'  
   else: word['MOSentence'] = ''
 
 def setLinks(index, sentence):

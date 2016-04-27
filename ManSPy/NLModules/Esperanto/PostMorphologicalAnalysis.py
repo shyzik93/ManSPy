@@ -29,7 +29,8 @@ def processConjunction(word, sentence):
   #print word['base']
   if left['POSpeech'] == right['POSpeech'] or \
      (left['POSpeech'] == 'noun' and right['POSpeech'] == 'pronoun' and right['category'] != 'possessive') or (right['POSpeech'] == 'noun' and left['POSpeech'] == 'pronoun' and left['category'] != 'possessive') or \
-     ((left['POSpeech'] == 'pronoun' and left['category'] == 'possessive') and right['POSpeech'] == 'adjective') or ((right['POSpeech'] == 'pronoun' and right['category'] == 'possessive') and left['POSpeech'] == 'adjective'):
+     ((left['POSpeech'] == 'pronoun' and left['category'] == 'possessive') and right['POSpeech'] == 'adjective') or ((right['POSpeech'] == 'pronoun' and right['category'] == 'possessive') and left['POSpeech'] == 'adjective') or \
+     (left['POSpeech'] == 'noun' and 'praMOSentence' in right and right['praMOSentence'] == 'freemember' and right['POSpeech'] == 'numeral'):
      #((left['POSpeech'] in ['pronoun', 'adjective'] and ('category' in left and left['category'] == 'possessive')) and right['POSpeech'] in ['pronoun', 'adjective']):
   #if ('case' in left and 'case' in right) and left['case'] == right['case']:
     if ('case' in right and right['case'] == 'accusative') and ('case' in left and left['case'] != 'accusative'):
@@ -41,17 +42,26 @@ def processConjunction(word, sentence):
   #elif left['POSpeech'] == 'noun' and right['POSpeech'] == 'preposition':
   # Однородности нужны лишь для дополнения связей. В коверторе должны фигурировать лишь связи, но не однородности!
 
+def mark_freemembers(sentence, indexes):
+  for index in indexes:
+    sentence(index, 'praMOSentence', 'freemember')
+  #sentence.addHomogeneous(*indexes) # не совсем корректно
+  #sentence.jumpByStep(-len(indexes))
+
 def processDefinition(word, sentence, indexes=None):
   if indexes == None: indexes = []
   #print 'findDefinition:', word['word'], index, sentence.getLen()
   if word['POSpeech'] == 'adjective' or (word['POSpeech'] == 'pronoun' and word['category'] == 'possessive') or word['POSpeech']=='numeral':
     indexes.append(sentence.currentIndex())
-    if sentence.isLast(): return # завершаем цикл, ибо прилагательные без существительного. Их мы не удаляем, так как они могут следовать после глагола esti
+    if sentence.isLast():
+      mark_freemembers(sentence, indexes)
+      return # завершаем цикл, ибо прилагательные без существительного. Их мы не удаляем, так как они могут следовать после глагола esti
     sentence.jumpByStep()
     processDefinition(sentence.getByStep(), sentence, indexes)
   elif word['POSpeech'] in ['noun'] and len(indexes) > 0: # если перед существительным стояли прилагательные
     sentence.addFeature(sentence.currentIndex(), *indexes)
     sentence.jumpByStep(-len(indexes))
+  else: mark_freemembers(sentence, indexes)
 
 def checkAdverbBefore(sentence):
   if sentence.position+1 >= sentence.getLen(): return False# т. е. является последним
