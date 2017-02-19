@@ -5,8 +5,8 @@
     Примеры возможных интерфейсов: текстовый чат, распознаватель речи,
     мессенджеры, интерфейс мозг-компьютер, приёмник звонков и SMS и так далее.
 """
-from . import FCModule, import_action, common
-import time, codecs, sys, os
+from . import FCModule, import_action
+import time, sys, os
 from .analyse_text import LangClass
 
 class MainException(Exception): pass
@@ -53,7 +53,6 @@ class API():
     os.chdir(db_path)
     self.settings['dir_db'] = db_path
 
-    common.WSettings(self.settings)
     #print db_path, sys.path
 
   def __init__(self, UserSettings={}):

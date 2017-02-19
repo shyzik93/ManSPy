@@ -2,18 +2,15 @@
 ''' Модуль вспомогательный. Сохраняет результаты анализов для последующего
     выявления ошибок и неточностей.
 '''
-import os, datetime, codecs
-from . import common
+import os, datetime
 from pprint import pprint
 
 def fwrite(data, name='analysis.txt'):
-  #global db_dir
-  db_dir = os.path.join(common.RSettings('dir_db'), name)
-  if not os.path.exists(db_dir):
-    f = open(db_dir, 'w')
+  if not os.path.exists(name):
+    f = open(name, 'w')
     f.close()
-  with codecs.open(db_dir, 'a', 'utf-8') as f:
-    f.write(data)#.decode('utf-8'))
+  with open(name, 'a', encoding='utf-8') as f:
+    f.write(data)
     f.close()    
 
 def safeResults(l, title, space=''):
