@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
-import sys, os, codecs
+import sys, os
 from . import NLModules, relation, extractor, converter, BeautySafe
-
-if not os.path.exists('comparing_fasif.txt'):
-  f = open('comparing_fasif.txt', 'w')
-  f.close()
 
 class LangClass():
   levels = ["graphmath", "morph", "postmorph", "synt", "extract", "convert"]
@@ -43,7 +39,7 @@ class LangClass():
     # Морфологический анализ
     if start_level in self.levels[:2]:
       sentences = self.LangModule.getMorphA(sentences)
-      with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
+      with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
         flog.write('\n')
         for index, sentence in sentences: flog.write('sentence: %s\n' % sentence.getUnit('str')['fwords'])
         flog.write('\n')
