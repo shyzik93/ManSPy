@@ -27,24 +27,51 @@ def printToIF(arg0, *conditions):
   for condition in conditions:
     arg0['forread'].add2read(condition)
 
-''' Состояние числсительных '''
+''' Состояние числительных '''
 def get(arg0, a): return a
+
+def _is_only_numbers(numbers):
+  for i in numbers:
+    if not isinstance(numbers, (int, float, complex)):
+      return False
+  return True
 
 def add(arg0, *a):
   ''' Сложение '''
   a = list(a)
-  if arg0['antonym']:
+
+  if len(a) == 0: return 0
+
+  if _is_only_numbers(a):
+
     start = a.pop(0)
-    a = [-i for i in a]
+    if arg0['antonym']:
+      a = [-i for i in a]
     return sum(a, start)
-  return sum(a)
+  
+  else:
+
+    for index, i in enumerate(a): a[index] = str(a[index])
+    if arg0['antonym']: return ' - '.join(a)
+    return ' + '.join(a)
 
 def multiply(arg0, *a):
   ''' Умножение '''
   a = list(a)
-  res = float(a.pop(0))
-  if arg0['antonym']:
-    for i in a: res /= i
+
+  if len(a) == 0: return 0
+
+  if _is_only_numbers(a):
+
+    res = float(a.pop(0))
+    if arg0['antonym']:
+      for i in a: res /= i
+    else:
+      for i in a: res *= i
+    return res
+
   else:
-    for i in a: res *= i
-  return res
+
+    for index, i in enumerate(a): a[index] = str(a[index])
+    if arg0['antonym']: return ' / '.join(a)
+    return ' * '.join(a)

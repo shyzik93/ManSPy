@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import codecs, sys, copy
+import sys, copy
 from . import to_formule, NLModules, lingvo_math, Action
+
+"""
+"""
 
 not_to_db = ['nombr', 'cifer']
 
@@ -42,31 +45,31 @@ def check_args(finded_args, fasif, R):
   return checked_args
 
 def parseFunction(function_str):
-  if function_str[0] == '$': return function_str[1:]
+  #if function_str[0] == '$': return function_str[1:]
   module_name, func_name = function_str.split('/')
   module_obj = Action.getModule(module_name)
   return getattr(module_obj, func_name)
 
 def if_verb_in_fasif(fasif, id_group): # в фасифе можно сохранять список всех глаголов для всех назначений для уменьшения кол-ва вычислений
-  function = None
   for destination, data in fasif['functions'].items():
-    if id_group not in data['verbs']: continue
-    function = data['function']
-    break
-  return function
+    if id_group in data['verbs']: return data['function']
+
 def get_fasif_wcomb(fdb, argument, R, verb):
-  isantonym = False
   compared_fasifs = fdb.getFASIF('WordCombination', argument)
   if not compared_fasifs: return
   else: id_fasif, data = list(compared_fasifs.items())[0] # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
   finded_args, fasif = data
 
-  id_group = R.R.get_groups_by_word('synonym', 0, verb, 'verb')[0]
+  # Вынимаем функцию, ассоциированную с "глагол + словосочетание"
+  id_group = R.R.get_groups_by_word('synonym', 0, verb['base'], 'verb')[0]
+
+  isantonym = verb['antonym']
   function = if_verb_in_fasif(fasif, id_group)
-  if function == None:
+  if function == None: # если глагол не найден, то пробуем антоним
     verb_synonym_group_id = R.R.get_words_from_samegroup('antonym', 'verb', 'synonym', id_group)
-    function = if_verb_in_fasif(fasif, id_group)
-    if function != None: isantonym = True
+    id_antonym = id_group#func(verb_synonym_group_id) # дописать
+    function = if_verb_in_fasif(fasif, id_antonym)
+    if function != None: isantonym = not isantonym
 
   fasif['id'] = id_fasif
   return finded_args, fasif, function, isantonym
@@ -76,9 +79,9 @@ def Extraction2IL(R, settings, predicates, arguments):
   pattern_IL = {
     'arg0': {'antonym': False}, # передаётся первым аргументом в каждую функцию
     'action': {
-      'wcomb_function': None,
-      'wcomb_verb_function': None,
-      'common_verb_function': None,
+      'wcomb_function': None,      # функция, ассоциированная со словосочетанием. Ей передаются аргументные слова
+      'common_verb_function': None,# функция, ассоциированная с глаголом. Её аргументы - возвращаемые значения предыдущей функции.
+      'wcomb_verb_function': None, # функция, ассоциированная со связкой "словосочетание + глагол". Она принимает аргументные слова.
       'mood': '',
       'circumstance': '',
       'type circumstance': ''
@@ -94,10 +97,11 @@ def Extraction2IL(R, settings, predicates, arguments):
   for _argument in arguments:
     argument = NLModules.ObjUnit.Sentence(_argument)
     IL = copy.deepcopy(pattern_IL)
-    res = get_fasif_wcomb(fdb, argument, R, predicate['base'])
+    res = get_fasif_wcomb(fdb, argument, R, predicate)
     if res is None: continue
     finded_args, fasif, function, isantonym = res
-    if 'antonym' in predicate and predicate['antonym'] != isantonym: IL['arg0']['antonym'] = True
+    #if 'antonym' in predicate and predicate['antonym'] != isantonym: IL['arg0']['antonym'] = True
+    IL['arg0']['antonym'] = isantonym
 
     # Вынимаем фасиф словосочетания  # здевсь же отсеиваем неподходящие фасифы (через continue)
     for argname, args in finded_args.items():
@@ -105,19 +109,20 @@ def Extraction2IL(R, settings, predicates, arguments):
       #if fasif['argdescr'][argname]['args_as_list'] == 'l': finded_args[argname] = [finded_args[argname]]
     finded_args = lingvo_math.dproduct(finded_args)
     finded_args = check_args(finded_args, fasif, R)
-    with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
+    with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
       flog.write('\n%s\n%s\n' % (str(finded_args), str(fasif['functions'])))
 
-    if fasif['id'] not in fasif_IL: fasif_IL[fasif['id']] = len(ILs)
-    else:
+    # добавляем аргументные слова в ВЯ
+    if fasif['id'] not in fasif_IL: fasif_IL[fasif['id']] = len(ILs) 
+    else: # добавляем к уже существующему ВЯ для данного ФАСИФа
       ILs[fasif_IL[fasif['id']]]['argument'].extend(finded_args)
       continue
     IL['argument'] = finded_args
     IL['action']['args_as_list'] = fasif['argdescr'][argname]['args_as_list']
 
-    if function:
+    if function: # если найдена функция, ассоциированная "глагол + словосочетание"
       IL['action']['wcomb_verb_function'] = parseFunction(function)
-    else:
+    else: # иначе вынимаем функцию, ассоциированную с словосочетанием
       function = fasif['functions']['getCondition']['function']
       IL['action']['wcomb_function'] = parseFunction(function)
       id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')[0]
@@ -126,9 +131,10 @@ def Extraction2IL(R, settings, predicates, arguments):
         sys.stderr.write('FASIF was not finded! Argument (word combination) is "'+str(argument)+'"')
         continue
       if not compared_fasifs: sys.stderr.write('Fasif for "%s" wasn\'t found!' % predicate['base'])
+      # затем вынимаем общую функцию, ассоциированую с глаголом
       IL['action']['common_verb_function'] = parseFunction(list(compared_fasifs.values())[0][0][0])
 
-    with codecs.open('comparing_fasif.txt', 'a', 'utf-8') as flog:
+    with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
       flog.write('\npraIL: %s\n' % str(IL))
 
     IL['action']['mood'] = predicate['mood']

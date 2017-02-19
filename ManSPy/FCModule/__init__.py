@@ -43,17 +43,19 @@ class LogicShell:
   def execIL(self, _ILs, _ErrorConvert, IFName):
     ExecError = []
     if _ErrorConvert['function']: return ExecError
+    #print(_ILs)
 
     index = 0
     for index_sentence, ILs in _ILs.items():
       self.reses[IFName] = []
+      #print(ILs)
       for IL in ILs:
         action = IL['action']
         arg0 = IL['arg0']
         if not _ErrorConvert['argument'][index]: self.Shell(IL, IFName)
         index += 1
-      if action['wcomb_verb_function'] is None:
-        res = action['common_verb_function'](arg0, *self.reses[IFName])
-        if res or res==0: self.list_answers[IFName].append(res)
+        if action['wcomb_verb_function'] is None:
+          res = action['common_verb_function'](arg0, *self.reses[IFName])
+          if res or res==0: self.list_answers[IFName].append(res)
         
     return ExecError

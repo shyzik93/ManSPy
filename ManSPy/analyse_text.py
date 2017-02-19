@@ -68,7 +68,7 @@ class LangClass():
       for index, sentence in sentences:
         OR.addWordsToDBFromDictSentence(sentence.getUnit('dict'))
         Extract = extractor.Extract(self.settings['assoc_version'])
-        sentences.dict_unit[index] = Extract(sentence) # заменяем объекты предложения на словари извлечений
+        sentences.subunit_info[index] = Extract(sentence) # заменяем объекты предложения на словари извлечений
       if end_level == self.levels[4]: return sentences
 
     # конвертируем анализы во внутренний язык

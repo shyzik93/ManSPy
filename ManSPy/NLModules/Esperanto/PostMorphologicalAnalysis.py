@@ -17,7 +17,7 @@ def processPreposition(word, sentence):
     sentence.getByStep(1, 'case', word['give_case'])
     sentence.delByStep()
   else:
-    sentence.addError("postmorph", 'After preposition "'+word['word']+'" must be a noun or a pronoun or a cardinal numeral! Found '+str(sentence.getByStep(1)), 0)
+    sentence.error.add("postmorph", 'After preposition "'+word['word']+'" must be a noun or a pronoun or a cardinal numeral! Found '+str(sentence.getByStep(1)), 0)
 
 def processConjunction(word, sentence):
   if word['POSpeech'] != 'conjunction' or word['value'] != 'coordinating': return

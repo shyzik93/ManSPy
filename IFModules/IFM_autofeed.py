@@ -17,10 +17,6 @@ def init(settings=None):
     f = open(file_auto, 'w')
     f.close()
 
-  f = open(file_auto, 'r')
-  sentences = re.split("\n\r?", f.read())
-  f.close()
-
   if settings['compare_with_origin']:
     f = open(file_name_origin, 'r')
     origin = json.load(f)
@@ -29,26 +25,25 @@ def init(settings=None):
   elif settings['write_origin']: origin = {}
 
   gen_res = True
-  for sentence in sentences:
-    if not sentence or sentence[0] == '#': continue
-    if settings['compare_with_origin']: res.write(sentence+'\n')
-    if settings['write_origin']: origin[sentence] = []
-    API.write_text(IFName, sentence)
-    ra = range(API.getlen_text(IFName))
-    for r in ra:
-      r_text = API.read_text(IFName, 0)
-      if settings['compare_with_origin']:
-        if sentence in origin:
-          cur_res = True
-          if r_text in origin[sentence]: res.write('    True >>> ')
-          else:
-            gen_res = False
-            cur_res = False
-            res.write('    False >>> ')
-        else: res.write('    sentence is absent >>> ')
-        res.write(r_text+'\n')
-        if not cur_res: res.write('        ORIGINS: '+str(origin[sentence])+'\n')
-      elif settings['write_origin']: origin[sentence].append(r_text)
+  with open(file_auto, 'r') as file_sentences:
+    for sentence in file_sentences:
+      sentence = sentence.strip()
+      if not sentence or sentence[0] == '#': continue
+      if settings['compare_with_origin']: res.write(sentence+'\n')
+      if settings['write_origin']: origin[sentence] = []
+      API.write_text(IFName, sentence)
+      ra = range(API.getlen_text(IFName))
+      for r in ra:
+        r_text = API.read_text(IFName, 0)
+        if settings['compare_with_origin']:
+          if sentence in origin:
+            if r_text in origin[sentence]: res.write('    True >>> '+r_text+'\n')
+            else:
+              gen_res = False
+              res.write('    False >>> '+r_text+'\n')
+              res.write('        ORIGINS: '+str(origin[sentence])+'\n')
+          else: res.write('    sentence is absent >>> '+r_text+'\n')
+        elif settings['write_origin']: origin[sentence].append(r_text)
 
   if settings['compare_with_origin']:
     res.write(str(gen_res)+'\n')

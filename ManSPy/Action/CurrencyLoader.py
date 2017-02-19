@@ -142,6 +142,7 @@ def TransformPrices(FullPrices):
 
 def GetCourse(arg0, currency, country='Russia'):
   ''' Возвращает стоимость иностр. валюты в гос. валюте '''
+  return currency+'-'+country
   FullPrices = GetPricesFromCB(country)
   #print FullPrices
   ShortPrices = TransformPrices(FullPrices)
