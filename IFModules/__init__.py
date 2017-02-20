@@ -12,6 +12,17 @@ import os, sys, threading, json
 _path = os.path.dirname(__file__)
 sys.path.append(_path)
 
+class Interface(threading.Thread):
+    def __init__(self, API, IFName, func):
+      threading.Thread.__init__(self)
+      self.API = API
+      self.IFName = IFName
+      self.func = func
+
+    def run(self):
+      self.API.init(self.IFName)
+      self.func()
+
 class Interfaces():
   interfaces = {}
   def __init__(self, API, *IFNames):
@@ -27,14 +38,6 @@ class Interfaces():
 
   def turnOnInterface(self, *IFNames):
     for IFName in IFNames:
-      """IFModule = __import__(IFName)
-      IFModule.IFName = IFName
-      IFModule.API = self.API
-      t = threading.Thread(target=IFModule.run)
-      t.setName(IFName)
-      t.daemon = True
-      t.start()
-      self.interfaces[IFName] = t"""
       IFModule = __import__('IFM_'+IFName)
       IFModule.IFName = IFName
       if IFName in self.conf: IFModule.passwords = self.conf[IFName]
@@ -42,11 +45,11 @@ class Interfaces():
       if 'Interface' in dir(IFModule):
         IFClass = IFModule.Interface(self.API)
         self.interfaces[IFName][1] = IFClass
-        t = threading.Thread(target=IFClass.init)
+        t = Interface(self.API, IFName, IFClass.init)#threading.Thread(target=IFClass.init)
       else:
         IFModule.API = self.API
         self.interfaces[IFName][1] = IFModule
-        t = threading.Thread(target=IFModule.init)
+        t = Interface(self.API, IFName, IFModule.init)#threading.Thread(target=IFModule.init)
       t.setName(IFName)
       #t.daemon = True
       t.start()

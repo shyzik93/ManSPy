@@ -6,8 +6,21 @@
     мессенджеры, интерфейс мозг-компьютер, приёмник звонков и SMS и так далее.
 """
 from . import FCModule, import_action
-import time, sys, os
+import time, sys, os, copy
 from .analyse_text import LangClass
+
+import sqlite3 as sql
+
+sql.enable_callback_tracebacks(True)
+
+def create_bd_file(language, name):
+  if not os.path.exists(language) or not os.path.isdir(language):
+    os.mkdir(language)
+  name = os.path.join(language, name)
+  c = sql.connect(name)
+  c.row_factory = sql.Row
+  cu = c.cursor()
+  return c, cu
 
 class MainException(Exception): pass
 
@@ -21,7 +34,7 @@ def _save_history(text, Type, IFName):
 class API():
   # настройки задаются один раз. Но можно написать модуль для изменения
   # настроек через канал общения.
-  settings = {'history': True,
+  default_settings = {'history': True,
               'monitor': True, # включает вывод на экран статистику работы ИСУ
               'logic': True, # включает модуль логики
               'convert2IL': True, # включает последний этап конвертации
@@ -30,49 +43,66 @@ class API():
               'storage_version': 2,
               'assoc_version': 1,
               'test': True, # тестовый режим, включаемый в процессе отладки и разработки
-              'dir_db': None
+              'dir_db': None,
+              'db_sqlite3': None
   }
-  # настройки для модулей интерфейсов
-  # 'module_settings': {ИмяМодуля: СловарьНастроекМодуля_ИлиОбъектУправления}
-  def ChangeSettings(self, NewSettings):
-    # Проверяем правильность ключей
-    keys = self.settings.keys()
-    for user_key in NewSettings.keys():
-      if user_key not in keys:
-        raise MainException('error2: Wrong name of key in settings: %s' % str(user_key))
-    # Обновляем настройки
-    self.settings.update(NewSettings)
-    self.settings['language'] = self.settings['language'].capitalize()
 
+  settings = {}
+
+  def make_db_dir(self, dir_db=None):
     # Устанавливаем путь к директории базы данных как рабочую (текущую)
-    if self.settings['dir_db'] == None: db_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-    else: db_path = self.settings['dir_db']
+    if dir_db is None: db_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    else: db_path = dir_db
     db_path = os.path.join(db_path, 'DATA_BASE')
     if not os.path.exists(db_path) or not os.path.isdir(db_path):
       os.mkdir(db_path)
     os.chdir(db_path)
-    self.settings['dir_db'] = db_path
+    return dir_db
 
-    #print db_path, sys.path
 
-  def __init__(self, UserSettings={}):
+  # настройки для модулей интерфейсов
+  # 'module_settings': {ИмяМодуля: СловарьНастроекМодуля_ИлиОбъектУправления}
+  def init(self, thread_name, NewSettings=None):
+    ''' Для инициализации из нового потока '''
+    # копируем натсройки главного потока (только для дочерних потоков)
+    if NewSettings is None:
+      NewSettings = copy.deepcopy(self.settings['main'])
+      NewSettings['db_sqlite3'] = None
+
+    # Проверяем правильность ключей
+    keys = self.default_settings.keys()
+    for user_key in NewSettings.keys():
+      if user_key not in keys:
+        raise MainException('error2: Wrong name of key in settings: %s' % str(user_key))
+    # Обновляем настройки
+    self.settings[thread_name] = copy.deepcopy(self.default_settings) # Создаём новые настройки. Только при инициализации даннгого класса в модуле run.py
+    self.settings[thread_name].update(NewSettings)
+    # Корректируем настройки
+    self.settings[thread_name]['language'] = self.settings[thread_name]['language'].capitalize()
+    self.settings[thread_name]['dir_db'] = self.make_db_dir(self.settings[thread_name]['dir_db'])
+    self.settings[thread_name]['db_sqlite3'] = create_bd_file(self.settings[thread_name]['language'], 'main_data.db')
+
+  def ChangeSettings(self, NewSettings, thread_name):
+    self.settings[thread_name].update(NewSettings)
+ 
+  def __init__(self, UserSettings={}, thread_name='main'):
     """ Инициализация ManSPy """
     # Меняем настройки по умолчанию на пользовательские
-    self.ChangeSettings(UserSettings)
+    self.init(thread_name, UserSettings)
     print("Load action's modules...")
     t1 = time.time()
-    Import = import_action.ImportAction(self.settings)
+    Import = import_action.ImportAction(self.settings[thread_name])
     Import.importAll()
     t2 = time.time()
     print('  ', t2 - t1)
     print("Load nature language's module...")
     t1 = time.time()
-    self.LangClass = LangClass(self.settings)
+    self.LangClass = LangClass(self.settings[thread_name])
     t2 = time.time()
     print('  ', t2 - t1)
     print("Init executing functions's module...")
     t1 = time.time()
-    self.LogicShell = FCModule.LogicShell(self.settings)
+    self.LogicShell = FCModule.LogicShell(self.settings[thread_name])
     t2 = time.time()
     print('  ', t2 - t1)
     print("Ready!")
@@ -92,7 +122,7 @@ class API():
   def write_text(self, IFName, w_text):
     #print 'write', type(w_text)
     if w_text:
-      if self.settings['history']: _save_history(w_text, "W", IFName)
+      if self.settings[IFName]['history']: _save_history(w_text, "W", IFName)
       _ILs, ErrorConvert = self.LangClass.NL2IL(w_text)
       #self.print_errors(ErrorConvert)
       ExecError = self.LogicShell.execIL(_ILs, ErrorConvert, IFName)
@@ -111,7 +141,7 @@ class API():
       if len(self.LogicShell.list_answers[IFName]) > 0:
         _r_text = self.LangClass.IL2NL(self.LogicShell.list_answers[IFName].pop(index))
         r_text = self.toString(_r_text)
-    if self.settings['history']: _save_history(r_text, "R", IFName)
+    if self.settings[IFName]['history']: _save_history(r_text, "R", IFName)
     return r_text
 
   def getlen_text(self, IFName):

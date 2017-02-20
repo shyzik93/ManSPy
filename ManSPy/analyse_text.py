@@ -16,7 +16,7 @@ class LangClass():
         то в качестве первого аргумента передаётся список извлечений."""
     BeautySafe.fwrite('\n\n'+'#'*100+'\n')
     BeautySafe.fwrite(levels+'\n')
-    OR = relation.ObjRelation(self.language, self.settings['test'], self.settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
+    OR = relation.ObjRelation(self.settings, self.settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
     ErrorConvert = []
 
     # Парсим строку диапазона

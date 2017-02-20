@@ -286,7 +286,7 @@ def selector_of_function(dict_assoc_types, _func_name, *func_args):
 class ImportAction(object):
   def __init__(self, settings):
     self.settings = settings
-    self.OR = relation.ObjRelation(settings['language'], settings['test'], settings['storage_version'])
+    self.OR = relation.ObjRelation(settings, settings['storage_version'])
     self.LangClass = analyse_text.LangClass(settings)
     self.fdb = to_formule.FasifDB(settings)
 
