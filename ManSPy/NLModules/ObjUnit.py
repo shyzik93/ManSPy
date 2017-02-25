@@ -262,6 +262,7 @@ class _Unit():
 
     max_index = max(indexes)+1 if indexes else 0
     self._update_added_unit(subunit)
+    subunit['index'] = max_index
     self.subunit_info[max_index] = subunit
     self.keys = list(self.subunit_info.keys())
 
@@ -273,26 +274,27 @@ class _Unit():
     for unit in units:
       is_true = True
       for name, values in eq.items():
-        if name in unit and unit[name] in values: continue
+        if name in unit and str(unit[name]) in values: continue
         is_true = False
         break
       #if not is_true: continue
 
-      for name in not_eq.keys():
-        if name not in unit or unit[name] not in values: continue
+      for name, values in not_eq.items():
+        if name not in unit or str(unit[name]) not in values: continue
         is_true = False
         break
       #if not is_true: continue
 
       if is_true: result.append(unit)
 
+      # поиск в значении свойств, если значение - список.
       if isinstance(unit, (Word, Sentence, Text)): names = unit.itemsInfo()
       else: names = unit.items()
       for name, value in names:
-        if isinstance(vlaue) != list: continue
-        if vlaue == 0 or not isinstance(vlaue[0], (Word, Sentence, Text)): continue # пропускаем лишние рекурсивные вызовы
-        if everywhere and name not in list_names: self._getByProperty(result, eq, not_eq, everywhere, list_names, vlaue)
-        elif not everywhere and name in list_names: self._getByProperty(result, eq, not_eq, everywhere, list_names, vlaue)
+        if not isinstance(value, (list, )): continue
+        if len(value) == 0 or not isinstance(value[0], (Word, Sentence, Text, dict)): continue # пропускаем лишние рекурсивные вызовы
+        if everywhere and name not in list_names: self._getByProperty(result, eq, not_eq, everywhere, list_names, value)
+        elif not everywhere and name in list_names: self._getByProperty(result, eq, not_eq, everywhere, list_names, value)
 
   def getByProperty(self, find_in, **properties):
     ''' Возвращает список подъюнитов'''
@@ -301,18 +303,24 @@ class _Unit():
 
     list_names = []
     everywhere = False # ищем только в указанных свойствах
+    result = []
 
     for name, values in properties.items():
-      if isinstance(values, str): values = [values]
+      if not isinstance(values, list): values = [values]
       for value in values:
-        if len(value)>0 and value[0] == '^': not_eq[name] = value[1:]
-        else: eq[name] = value
+        if len(value)>0 and value[0] == '^':
+          if name not in not_eq: not_eq[name] = []
+          not_eq[name].append(value[1:])
+        else:
+          if name not in eq: eq[name] = []
+          eq[name].append(value)
 
     if len(find_in)>0 and find_in[0] == '^':
       everywhere = True # ищем во всех свойствах, кроме указанных
       find_in= find_in[1:]
     list_names = find_in.split(',') if find_in else []
 
+    #print(eq, not_eq, everywhere, list_names)
     self._getByProperty(result, eq, not_eq, everywhere, list_names, self.subunit_info.values())
 
     return result
@@ -490,5 +498,19 @@ class Text(_Unit):
   """
   def __init__(self, sentences):
     self._init()
-    for index, sentence in enumerate(sentences):
-      self.subunit_info[index] = sentence
+
+    if isinstance(sentences, dict): # из словаря
+      for index, sentence in sentences.items():
+        if isinstance(sentence, dict): sentence = Sentence(sentence)
+        if isinstance(index, (str, float)): index = int(index)
+        self.subunit_info[index] = sentence
+      #self.position = 0
+    else: # из списка
+      for index, sentence in enumerate(sentences):
+        self._update_added_unit(sentence)
+        sentence['index'] = index
+        self.subunit_info[index] = sentence
+    self.keys = list(self.subunit_info.keys())
+
+    #for index, sentence in enumerate(sentences):
+    #  self.subunit_info[index] = sentence

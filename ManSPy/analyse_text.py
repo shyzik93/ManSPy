@@ -9,11 +9,20 @@ class LangClass():
     self.language = settings['language']
     self.LangModule = NLModules.getLangModule(self.language)
 
-  def NL2IL(self, sentences, levels="graphmath convert"):
+  def NL2IL(self, msg, levels="graphmath convert"):
     """ Второй аргумент - диапазон конвертирования от первого до последнего
         включительно через пробел. Если требуется сделать лишь один уровень,
         то можно указать только одно слово. Если указан только 'convert',
         то в качестве первого аргумента передаётся список извлечений."""
+
+    if isinstance(msg, (str, bytes)):
+      self.settings = self.settings
+      sentences = msg
+      msg = False
+    else:
+      self.settings = msg.settings
+      sentences = msg.nl
+
     BeautySafe.fwrite('\n\n'+'#'*100+'\n')
     BeautySafe.fwrite(levels+'\n')
     OR = relation.ObjRelation(self.settings, self.settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
@@ -34,6 +43,7 @@ class LangClass():
       BeautySafe.safe_NL(sentences)
       sentences = self.LangModule.getGraphmathA(sentences)
       BeautySafe.safe_sentences(sentences, 'GraphemathicAnalysis analysis')
+      if msg: msg.log('a_graphemath', sentences.getUnit('dict'))
       if end_level == self.levels[0]: return sentence
 
     # Морфологический анализ
@@ -44,18 +54,21 @@ class LangClass():
         for index, sentence in sentences: flog.write('sentence: %s\n' % sentence.getUnit('str')['fwords'])
         flog.write('\n')
       BeautySafe.safe_sentences(sentences, 'Morphological analysis')
+      if msg: msg.log('a_morph', sentences.getUnit('dict'))
       if end_level == self.levels[1]: return sentences
 
     # Постморфологичесий
     if start_level in self.levels[:3]: 
      sentences = self.LangModule.getPostMorphA(sentences)
      BeautySafe.safe_sentences(sentences, 'Postmorphological analysis')
+     if msg: msg.log('a_postmorph', sentences.getUnit('dict'))
      if end_level == self.levels[2]: return sentences
 
     # Синтаксический
     if start_level in self.levels[:4]:
       sentences = self.LangModule.getSyntA(sentences)
       BeautySafe.safe_sentences(sentences, 'Syntactic analysis')
+      if msg: msg.log('a_synt', sentences.getUnit('dict'))
       if end_level == self.levels[3]: return sentences
 
     # извлекаем прямое доп, подл, сказуемое, косв. доп

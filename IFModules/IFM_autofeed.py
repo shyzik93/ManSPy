@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os, json, re, os
+import os, json, re, os, time
 
 IFName = API = None
 
@@ -26,6 +26,7 @@ def init(settings=None):
 
   gen_res = True
   with open(file_auto, 'r') as file_sentences:
+    t = time.time()
     for sentence in file_sentences:
       sentence = sentence.strip()
       if not sentence or sentence[0] == '#': continue
@@ -44,6 +45,7 @@ def init(settings=None):
               res.write('        ORIGINS: '+str(origin[sentence])+'\n')
           else: res.write('    sentence is absent >>> '+r_text+'\n')
         elif settings['write_origin']: origin[sentence].append(r_text)
+    t = time.time() - t
 
   if settings['compare_with_origin']:
     res.write(str(gen_res)+'\n')
@@ -53,4 +55,4 @@ def init(settings=None):
     f.write(json.dumps(origin))
     f.close()
 
-  print('completed :)')
+  print('completed for '+str(t)+' secs :)')

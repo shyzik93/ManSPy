@@ -5,7 +5,7 @@
     Примеры возможных интерфейсов: текстовый чат, распознаватель речи,
     мессенджеры, интерфейс мозг-компьютер, приёмник звонков и SMS и так далее.
 """
-from . import FCModule, import_action
+from . import FCModule, import_action, message
 import time, sys, os, copy
 from .analyse_text import LangClass
 
@@ -44,7 +44,8 @@ class API():
               'assoc_version': 1,
               'test': True, # тестовый режим, включаемый в процессе отладки и разработки
               'dir_db': None,
-              'db_sqlite3': None
+              'db_sqlite3': None,
+              'thread_name': None
   }
 
   settings = {}
@@ -77,10 +78,12 @@ class API():
     # Обновляем настройки
     self.settings[thread_name] = copy.deepcopy(self.default_settings) # Создаём новые настройки. Только при инициализации даннгого класса в модуле run.py
     self.settings[thread_name].update(NewSettings)
+    self.settings[thread_name]['thread_name'] = thread_name
     # Корректируем настройки
     self.settings[thread_name]['language'] = self.settings[thread_name]['language'].capitalize()
     self.settings[thread_name]['dir_db'] = self.make_db_dir(self.settings[thread_name]['dir_db'])
     self.settings[thread_name]['db_sqlite3'] = create_bd_file(self.settings[thread_name]['language'], 'main_data.db')
+    #print(self.settings[thread_name]['db_sqlite3'])
 
   def ChangeSettings(self, NewSettings, thread_name):
     self.settings[thread_name].update(NewSettings)
@@ -121,6 +124,7 @@ class API():
 
   def write_text(self, IFName, w_text):
     #print 'write', type(w_text)
+    #w_msg = message.Message(w_text, 'W', self.settings[IFName])
     if w_text:
       if self.settings[IFName]['history']: _save_history(w_text, "W", IFName)
       _ILs, ErrorConvert = self.LangClass.NL2IL(w_text)
