@@ -9,8 +9,8 @@ class Relation():
   def __init__(self, settings):
     self.test = settings['test']
     #self.c, self.cu = settings['db_sqlite3']
-    #print(self.c, self.cu, 'bl')
     self.c, self.cu = common.create_bd_file(settings['language'], 'main_data.db')
+    #print(self.c, self.cu, 'bl')
     self.cu.executescript('''
       CREATE TABLE IF NOT EXISTS words (
         word TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,

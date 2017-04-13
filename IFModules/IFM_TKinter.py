@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import tkinter, time, os
 
-IFName = API = None
-
 class Interface():
   def __init__(self, API):
     self.API = API
@@ -11,18 +9,12 @@ class Interface():
     w_text = self.Text_In.get('1.0', tkinter.END)
     #print 'write', type(w_text)
     #if event == None: return
-    self.API.write_text(IFName, w_text)
     self.Text_In.delete('1.0', tkinter.END)
     self.Text_Out.insert(tkinter.END, u'I said: ' + w_text + u'\n')
-    self.root1.after(50, self.ToUser)
+    self.API.write_text(self, w_text)
 
-  def ToUser(self):
-    r_text = self.API.read_text(IFName, 0)
-    #if r_text: print 'read', type(r_text)
-    if r_text:
-      self.Text_Out.insert(tkinter.END, u'ManSPy: ' + r_text + u'\n')
-      time.sleep(1)
-    self.root1.after(50, self.ToUser)
+  def to_IF(self, r_text):
+    self.Text_Out.insert(tkinter.END, u'ManSPy: ' + r_text + u'\n')
 
   def init(self):
     self.root1 = tkinter.Tk()
@@ -37,5 +29,4 @@ class Interface():
     Button_Send = tkinter.Button(self.root1, text=u'Отправить', command=self.FromUser)
     Button_Send.pack()
 
-    self.root1.after(50, self.ToUser)
     self.root1.mainloop()

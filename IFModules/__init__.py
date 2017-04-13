@@ -13,19 +13,18 @@ _path = os.path.dirname(__file__)
 sys.path.append(_path)
 
 class Interface(threading.Thread):
-    def __init__(self, API, IFName, func):
+    def __init__(self, API, IF):
       threading.Thread.__init__(self)
       self.API = API
-      self.IFName = IFName
-      self.func = func
+      self.IF = IF
 
     def run(self):
-      self.API.init(self.IFName)
-      self.func()
+      self.API.update_settings_for_IF(self.IF.settings)
+      self.IF.init()
 
 class Interfaces():
   interfaces = {}
-  def __init__(self, API, *IFNames):
+  def __init__(self):
     password_path = os.path.join(os.path.dirname(os.path.abspath('')), 'IFM_passwords.txt')
     if not os.path.exists(password_path):
       sys.stderr.write('Warning! The config file is absent! Some interfaces can have exceptions!\nThe config file: %s\n' % password_path)
@@ -33,28 +32,31 @@ class Interfaces():
     else: #self.conf = conftools.loadconf(password_path)
       with open(password_path, 'r') as f: self.conf = json.load(f)
 
-    self.API = API
-    self.turnOnInterface(*IFNames)
+  def turnOnInterface(self, API, *IFNames):
 
-  def turnOnInterface(self, *IFNames):
     for IFName in IFNames:
+
       IFModule = __import__('IFM_'+IFName)
-      IFModule.IFName = IFName
       if IFName in self.conf: IFModule.passwords = self.conf[IFName]
       self.interfaces[IFName] = [None, None]
+
       if 'Interface' in dir(IFModule):
-        IFClass = IFModule.Interface(self.API)
-        self.interfaces[IFName][1] = IFClass
-        t = Interface(self.API, IFName, IFClass.init)#threading.Thread(target=IFClass.init)
+        IFClass = IFModule.Interface(API)
+        IF = IFClass
       else:
-        IFModule.API = self.API
-        self.interfaces[IFName][1] = IFModule
-        t = Interface(self.API, IFName, IFModule.init)#threading.Thread(target=IFModule.init)
+        IFModule.API = API
+        IF = IFModule
+
+      IF.IFName = IFName
+      if 'settings' not in dir(IF): IF.settings = {}
+      self.interfaces[IFName][1] = IF
+      t = Interface(API, IF)#threading.Thread(target=IF.init)
+
       t.setName(IFName)
       #t.daemon = True
       t.start()
-      print('Processes info:', threading.activeCount())
       self.interfaces[IFName][0] = t
+    print('Count of processes:', threading.activeCount())
 
   def turnOffInterface(self, *IFNames):
     for IFName in IFNames:

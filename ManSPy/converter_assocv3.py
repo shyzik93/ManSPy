@@ -88,6 +88,7 @@ def Extraction2IL(R, settings, predicates, arguments):
       },
     'argument': [],
     'subject': None,
+    'error_convert': {}
   }
   ILs = []
   predicate = list(predicates.values())[0]

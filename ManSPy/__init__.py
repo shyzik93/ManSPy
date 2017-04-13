@@ -24,13 +24,6 @@ def create_bd_file(language, name):
 
 class MainException(Exception): pass
 
-def _save_history(text, Type, IFName):
-  if text:
-    Time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()-time.altzone))
-    if Type == 'R': text = '   '+text
-    text = "* %s  %s  %s: %s\n" % (Type, Time, IFName, text)
-    with open('history.txt', 'ab') as f: f.write(bytearray(text, 'utf-8'))
-
 class API():
   # настройки задаются один раз. Но можно написать модуль для изменения
   # настроек через канал общения.
@@ -41,7 +34,7 @@ class API():
                                # если при отключении включёна логика, то будет ошибка
               'language': 'Esperanto',
               'storage_version': 2,
-              'assoc_version': 1,
+              'assoc_version': 3,
               'test': True, # тестовый режим, включаемый в процессе отладки и разработки
               'dir_db': None,
               'db_sqlite3': None,
@@ -60,52 +53,44 @@ class API():
     os.chdir(db_path)
     return dir_db
 
-
-  # настройки для модулей интерфейсов
-  # 'module_settings': {ИмяМодуля: СловарьНастроекМодуля_ИлиОбъектУправления}
-  def init(self, thread_name, NewSettings=None):
-    ''' Для инициализации из нового потока '''
-    # копируем натсройки главного потока (только для дочерних потоков)
-    if NewSettings is None:
-      NewSettings = copy.deepcopy(self.settings['main'])
-      NewSettings['db_sqlite3'] = None
+  def update_settings_for_IF(self, settings):
+    ''' Здесь инициализируется то, что не может быть создано в одном потоке, а использовано в другом.
+        Например, объект соединения с базой.
+    '''
 
     # Проверяем правильность ключей
     keys = self.default_settings.keys()
-    for user_key in NewSettings.keys():
+    for user_key in settings.keys():
       if user_key not in keys:
         raise MainException('error2: Wrong name of key in settings: %s' % str(user_key))
     # Обновляем настройки
-    self.settings[thread_name] = copy.deepcopy(self.default_settings) # Создаём новые настройки. Только при инициализации даннгого класса в модуле run.py
-    self.settings[thread_name].update(NewSettings)
-    self.settings[thread_name]['thread_name'] = thread_name
+    _settings = copy.deepcopy(self.default_settings) # Создаём новые настройки. Только при инициализации даннгого класса в модуле run.py
+    _settings.update(settings)
+    settings.update(_settings)
     # Корректируем настройки
-    self.settings[thread_name]['language'] = self.settings[thread_name]['language'].capitalize()
-    self.settings[thread_name]['dir_db'] = self.make_db_dir(self.settings[thread_name]['dir_db'])
-    self.settings[thread_name]['db_sqlite3'] = create_bd_file(self.settings[thread_name]['language'], 'main_data.db')
-    #print(self.settings[thread_name]['db_sqlite3'])
+    settings['language'] = settings['language'].capitalize()
+    settings['dir_db'] = self.make_db_dir(settings['dir_db'])
+    settings['db_sqlite3'] = create_bd_file(settings['language'], 'main_data.db')
 
-  def ChangeSettings(self, NewSettings, thread_name):
-    self.settings[thread_name].update(NewSettings)
- 
-  def __init__(self, UserSettings={}, thread_name='main'):
+  def __init__(self):
     """ Инициализация ManSPy """
+    settings = copy.deepcopy(self.default_settings)
+    self.update_settings_for_IF(settings)
     # Меняем настройки по умолчанию на пользовательские
-    self.init(thread_name, UserSettings)
     print("Load action's modules...")
     t1 = time.time()
-    Import = import_action.ImportAction(self.settings[thread_name])
+    Import = import_action.ImportAction(settings)
     Import.importAll()
     t2 = time.time()
     print('  ', t2 - t1)
     print("Load nature language's module...")
     t1 = time.time()
-    self.LangClass = LangClass(self.settings[thread_name])
+    self.LangClass = LangClass(settings)
     t2 = time.time()
     print('  ', t2 - t1)
     print("Init executing functions's module...")
     t1 = time.time()
-    self.LogicShell = FCModule.LogicShell(self.settings[thread_name])
+    self.LogicShell = FCModule.LogicShell(settings)
     t2 = time.time()
     print('  ', t2 - t1)
     print("Ready!")
@@ -118,36 +103,30 @@ class API():
         if not (isinstance(error, str) or isinstance(error, unicode)): error = str(error)
         sys.stderr.write("  " + error + "\n")
 
-  def toString(self, r_text):
-    if isinstance(r_text, (int, float, complex)): return str(r_text)
-    else: return r_text
-
-  def write_text(self, IFName, w_text):
+  def write_text(self, IF, w_text):
     #print 'write', type(w_text)
-    #w_msg = message.Message(w_text, 'W', self.settings[IFName])
+    w_msg = message.Message(IF)
     if w_text:
-      if self.settings[IFName]['history']: _save_history(w_text, "W", IFName)
-      _ILs, ErrorConvert = self.LangClass.NL2IL(w_text)
+      w_msg.from_IF(w_text)
+      _ILs, ErrorConvert = self.LangClass.NL2IL(w_msg)
+      w_msg.ils = _ILs
       #self.print_errors(ErrorConvert)
-      ExecError = self.LogicShell.execIL(_ILs, ErrorConvert, IFName)
+      ExecError = self.LogicShell.execIL(w_msg, ErrorConvert)
 
-  def read_text(self, IFName, index=None):
-    if IFName not in self.LogicShell.list_answers: self.LogicShell.list_answers[IFName] = []
+  def read_text(self, IF, index=None):
+    return ''
+    if IF.IFName not in self.LogicShell.list_answers: self.LogicShell.list_answers[IF.IFName] = []
     # Возвращает ответ или пустую строку, если ответа нет. None ответом не считается.
     r_text = ''
     if index == None:
-      r = range(len(self.LogicShell.list_answers[IFName]))
+      r = range(len(self.LogicShell.list_answers[IF.IFName]))
       # montru dolaran euxran cambion de ukraina banko
       for i in r:
-        _r_text = self.LogicShell.list_answers[IFName].pop(0)
+        _r_text = self.LogicShell.list_answers[IF.IFName].pop(0)
         r_text += self.toString(self.LangClass.IL2NL(_r_text)) + ' '
     else:
-      if len(self.LogicShell.list_answers[IFName]) > 0:
-        _r_text = self.LangClass.IL2NL(self.LogicShell.list_answers[IFName].pop(index))
+      if len(self.LogicShell.list_answers[IF.IFName]) > 0:
+        _r_text = self.LangClass.IL2NL(self.LogicShell.list_answers[IF.IFName].pop(index))
         r_text = self.toString(_r_text)
-    if self.settings[IFName]['history']: _save_history(r_text, "R", IFName)
+    if IF.settings['history']: _save_history(r_text, "R", IF.IFName)
     return r_text
-
-  def getlen_text(self, IFName):
-    if IFName not in self.LogicShell.list_answers: self.LogicShell.list_answers[IFName] = []
-    return len(self.LogicShell.list_answers[IFName])

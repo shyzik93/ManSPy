@@ -2,57 +2,66 @@
 
 import os, json, re, os, time
 
-IFName = API = None
-
 file_name_origin = 'autofeed_origin.txt'
 file_name_guess = 'autofeed_results.txt'
 file_name_sentences = 'autofeed_sentences.txt'
 
-def init(settings=None):
-  if not settings: settings = {'write_origin': False, 'compare_with_origin': True}
-  if not os.path.exists(file_name_origin): settings = {'write_origin': True, 'compare_with_origin': False}
-  #if not settings: settings = {'write_origin': False, 'compare_with_origin': True}
-  file_auto = os.path.join(os.path.dirname(__file__), file_name_sentences)
-  if not os.path.exists(file_auto):
-    f = open(file_auto, 'w')
-    f.close()
+class Interface:
 
-  if settings['compare_with_origin']:
-    f = open(file_name_origin, 'r')
-    origin = json.load(f)
-    f.close()
-    res = open(file_name_guess, 'w')
-  elif settings['write_origin']: origin = {}
+  def __init__(self, API):
+    self.API = API
 
-  gen_res = True
-  with open(file_auto, 'r') as file_sentences:
-    t = time.time()
-    for sentence in file_sentences:
-      sentence = sentence.strip()
-      if not sentence or sentence[0] == '#': continue
-      if settings['compare_with_origin']: res.write(sentence+'\n')
-      if settings['write_origin']: origin[sentence] = []
-      API.write_text(IFName, sentence)
-      ra = range(API.getlen_text(IFName))
-      for r in ra:
-        r_text = API.read_text(IFName, 0)
-        if settings['compare_with_origin']:
-          if sentence in origin:
-            if r_text in origin[sentence]: res.write('    True >>> '+r_text+'\n')
-            else:
-              gen_res = False
-              res.write('    False >>> '+r_text+'\n')
-              res.write('        ORIGINS: '+str(origin[sentence])+'\n')
-          else: res.write('    sentence is absent >>> '+r_text+'\n')
-        elif settings['write_origin']: origin[sentence].append(r_text)
-    t = time.time() - t
+  def to_IF(self, r_text):
+    if self.settings2['compare_with_origin']:
+      if self.sentence in self.origin:
+        if r_text in self.origin[self.sentence]: self.res.write('    True >>> '+r_text+'\n')
+        else:
+          gen_res = False
+          self.res.write('    False >>> '+r_text+'\n')
+          self.res.write('        ORIGINS: '+str(self.origin[self.sentence])+'\n')
+      else: self.res.write('    sentence is absent >>> '+r_text+'\n')
+    elif self.settings2['write_origin']: self.origin[self.sentence].append(r_text)
 
-  if settings['compare_with_origin']:
-    res.write(str(gen_res)+'\n')
-    res.close()
-  elif settings['write_origin']:
-    f = open(file_name_origin, 'w')
-    f.write(json.dumps(origin))
-    f.close()
+  def init(self, settings=None):
+    if not settings: settings = {'write_origin': False, 'compare_with_origin': True}
+    if not os.path.exists(file_name_origin): settings = {'write_origin': True, 'compare_with_origin': False}
+    #if not settings: settings = {'write_origin': False, 'compare_with_origin': True}
+    file_auto = os.path.join(os.path.dirname(__file__), file_name_sentences)
+    if not os.path.exists(file_auto):
+      f = open(file_auto, 'w')
+      f.close()
 
-  print('completed for '+str(t)+' secs :)')
+    if settings['compare_with_origin']:
+      f = open(file_name_origin, 'r')
+      origin = json.load(f)
+      f.close()
+      res = open(file_name_guess, 'w')
+    elif settings['write_origin']: origin = {}
+
+    gen_res = True
+    with open(file_auto, 'r') as file_sentences:
+      t = time.time()
+      for sentence in file_sentences:
+        sentence = sentence.strip()
+        if not sentence or sentence[0] == '#': continue
+        if settings['compare_with_origin']: res.write(sentence+'\n')
+        if settings['write_origin']: origin[sentence] = []
+
+        self.sentence = sentence
+        self.settings2 = settings
+        self.origin = origin
+        self.res = res
+
+        self.API.write_text(self, sentence)
+
+      t = time.time() - t
+
+    if settings['compare_with_origin']:
+      res.write(str(gen_res)+'\n')
+      res.close()
+    elif settings['write_origin']:
+      f = open(file_name_origin, 'w')
+      f.write(json.dumps(origin))
+      f.close()
+
+    print('completed for '+str(t)+' secs :)')

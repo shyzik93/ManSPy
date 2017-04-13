@@ -25,7 +25,7 @@ def showAddress(arg0, device):
 
 def printToIF(arg0, *conditions):
   for condition in conditions:
-    arg0['forread'].add2read(condition)
+    arg0['to_IF'](condition)
 
 ''' Состояние числительных '''
 def get(arg0, a): return a

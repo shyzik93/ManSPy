@@ -47,6 +47,22 @@ with open('../DATA_BASE/Esperanto/history.html', 'w') as f:
                     width:250px;
                     height: 100vh;
                     overflow-y:scroll;
+
+                    background: rgba(255, 239, 239, 0.95);
+                    border-left: 1px solid #e8b0b0;
+
+                    display: none;
+                }
+
+                .btn_close {
+                    width: 25px;
+                    height: 25px;
+                    cursor: pointer;
+                    border-radius: 5px;
+                    text-align: center;
+                }
+                .btn_close:hover {
+                    background: #efcfcf;
                 }
 
 		        .more {
@@ -110,7 +126,8 @@ with open('../DATA_BASE/Esperanto/history.html', 'w') as f:
 			    }
 
 				function showNotification(message) {
-				    document.getElementById('notification').innerHTML = message;
+				    document.getElementById('notification').children[1].innerHTML = message;
+				    document.getElementById('notification').style.display = 'block';
 				}
 
 			    function show_word_data(word_el) {
@@ -118,7 +135,10 @@ with open('../DATA_BASE/Esperanto/history.html', 'w') as f:
 			    }
 			</script>
 
-            <div id="notification"></div>
+            <div id="notification">
+                <div class='btn_close' onclick="this.parentElement.style.display = 'none';">X</div>
+                <div id='notif_body'></div>
+            </div>
 
 			<ul class='main_table'>''')
 
@@ -142,7 +162,7 @@ with open('../DATA_BASE/Esperanto/history.html', 'w') as f:
                 	word = ObjUnit.Word(_word[0]) if isinstance(_word[0], dict) else _word[0]
 
                 row['_message_nl'] += """ <span onclick="show_word_data(this)" class="word{MOSentence}" data-word='{data_word}'>{word}</span>""".format(
-                	word=word['word'],
+                	word=word['word']+word['end_orig'],
                 	data_word=json.dumps(word.getUnit('dict'), sort_keys=True, indent=4).replace('"', ''),
                 	MOSentence=' '+word['MOSentence'].replace(' ', '_') if 'MOSentence' in word else ''
                 )

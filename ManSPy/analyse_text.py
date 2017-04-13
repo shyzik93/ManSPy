@@ -20,8 +20,8 @@ class LangClass():
       sentences = msg
       msg = False
     else:
-      self.settings = msg.settings
-      sentences = msg.nl
+      self.settings = msg.IF.settings
+      sentences = msg.w_text
 
     BeautySafe.fwrite('\n\n'+'#'*100+'\n')
     BeautySafe.fwrite(levels+'\n')

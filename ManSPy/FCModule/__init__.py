@@ -1,61 +1,74 @@
 # -*- coding: utf-8 -*-
 ''' Модуль-обёртка для интеллекта'''
-from .LogicKernel import LogicKernel
 import time
 
-'''class BuiltInFunctions:
-  def __init__(self, answers):
-    self.answers = answers
-  def ToUser(self, *results):
-    self.answers.extend(results)'''
+class LogicKernel():
+  def __init__(self):
+    pass
 
-class Message:
-  ''' Для работы с результатами, возвращаемыми функциями действий '''
-  def __init__(self, answers):
-    self.answers = answers
+  def run_assoc_func(self, arg0, subject, action, arguments, msg):
+    """ Вызывает функцию, согласно обстоятелствам вызова """
 
-  def add2read(self, r_text):
-    # здесь можно конвертировать ответ на естественный язык...
-    self.answers.append(r_text)
+    r_texts = []
+
+    if action['wcomb_verb_function'] is not None: assoc_type = 'wcomb_verb_function'
+    else: assoc_type = 'wcomb_function'
+
+    if action['args_as_list'] == 'l':
+      res = action[assoc_type](arg0, *arguments)
+      r_texts.append(res)
+    else:
+      for argument in arguments:
+        res = action[assoc_type](arg0, **argument)
+        r_texts.append(res)
+
+    r_texts = [r_text for r_text in r_texts if r_text is not None]
+
+    msg.r_texts.extend(r_texts)
+
+  def run_common_func(self, arg0, subject, action, arguments, msg):
+    if action['wcomb_verb_function'] is not None:
+      for r_text in msg.r_texts: msg.to_IF(r_text)
+    else:
+      res = action['common_verb_function'](arg0, *msg.r_texts)
+      if res is not None: msg.to_IF(res)
+
+  def LogicKernel(self, ILs, msg, _ErrorConvert, index):
+    ''' Главная функция. Работает только с ВЯ '''
+
+    for IL in ILs:
+      index += 1
+      if _ErrorConvert['argument'][index-1]: continue
+      if not IL: continue
+
+      IL['arg0']['to_IF'] = msg.to_IF
+
+      action = IL['action']
+      subject = IL['subject']
+      arguments = IL['argument']
+      arg0 = IL['arg0']
+
+      if action['mood'] == 'imperative':
+        # здесь можно проверить, кто дал приказ
+        self.run_assoc_func(arg0, subject, action, arguments, msg)
+      elif action['mood'] == 'indicative':
+        # яв-предложение должно подаваться в функцию обработки фактов. А эта строчка - временная.
+        self.run_assoc_func(arg0, subject, action, arguments, msg)
+
+    self.run_common_func(arg0, subject, action, arguments, msg)
+    return index
 
 class LogicShell:
   def __init__(self, settings):
     self.settings = settings
-    self.list_answers = {'general': []}
-    self.reses = {}
-    self.LogicKernel = LogicKernel(self.list_answers, self.reses)
+    self.LogicKernel = LogicKernel()
 
-  def Shell(self, IL, IFName):
-    """ Обёртка функции интеллекта """
-    # Обработка заданий
-    if not IL: return
-    if IFName not in self.list_answers: self.list_answers[IFName] = []
-
-    '''bif = BuiltInFunctions(self.list_answers[IFName])
-    common_func = IL['action']['common_verb_function']
-    if isinstance(common_func, (str, unicode)):
-      IL['action']['common_verb_function'] = getattr(bif, common_func) #locals()[common_func]'''
-
-    IL['arg0']['forread'] = Message(self.list_answers[IFName])
-    IL['arg0']['IFName'] = IFName
-    self.LogicKernel.LogicKernel(IL)
-
-  def execIL(self, _ILs, _ErrorConvert, IFName):
+  def execIL(self, msg, _ErrorConvert):
     ExecError = []
     if _ErrorConvert['function']: return ExecError
-    #print(_ILs)
 
     index = 0
-    for index_sentence, ILs in _ILs.items():
-      self.reses[IFName] = []
-      #print(ILs)
-      for IL in ILs:
-        action = IL['action']
-        arg0 = IL['arg0']
-        if not _ErrorConvert['argument'][index]: self.Shell(IL, IFName)
-        index += 1
-        if action['wcomb_verb_function'] is None:
-          res = action['common_verb_function'](arg0, *self.reses[IFName])
-          if res or res==0: self.list_answers[IFName].append(res)
+    for index_sentence, ILs in msg.ils.items():
+      index = self.LogicKernel.LogicKernel(ILs, msg, _ErrorConvert, index)
         
     return ExecError

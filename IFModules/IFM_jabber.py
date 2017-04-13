@@ -4,45 +4,51 @@ import xmpp, os, sys, codecs
 API = IFName = passwords = None
 bot = None
 white_list = ['ra93pol@jabber.ru']
-From = None
 
-def FromUser(conn, messR):
-  global From
-  w_text = messR.getBody()
-  From = str(messR.getFrom()).split('/')[0]
+class Interface():
+  def __init__(self, API):
+    self.API = API
 
-  if w_text == None: return
-  if From not in white_list: r_text = 'Denied!'
-  else:
-    if w_text: API.write_text(IFName, w_text)
+  def FromUser(self, conn, messR):
+    w_text = messR.getBody()
+    From = str(messR.getFrom()).split('/')[0]
 
-  ToUser()
+    if w_text == None: return
+    if From not in white_list: r_text = 'Denied!'
+    else:
+      if w_text: self.API.write_text(self, w_text)
 
-def ToUser():
-  global From, bot
-  while 1:
-    r_text = API.read_text(IFName, -1)
-    if From and r_text:
-      bot.send(xmpp.Message(From, r_text))
+    self.To = From
+    self.ToUser(From)
 
-def init():
-  global API, IFName, bot
-  login = passwords['login']
-  password = passwords['pass']
-  jid = xmpp.JID(login)
-  bot = xmpp.Client(jid.getDomain(), debug=[])
-  # авторизация и запуск Jabber
-  bot.connect()
-  bot.auth(jid.getNode(), password, resource="Python Jabber Bot")
-  bot.RegisterHandler('message', FromUser)
+  def ToUser(self, To):
+    while 1:
+      r_text = self.API.read_text(self, -1)
+      if To and r_text:
+        self.bot.send(xmpp.Message(To, r_text))
 
-  prs=xmpp.Presence(priority=100, show='dnd')
-  prs.setStatus(u"Мой бот. Цель - проверка некоторых алгоритмов")
-  bot.send(prs)
+  def to_IF(self, r_text):
+    if self.To:
+      self.bot.send(xmpp.Message(To, r_text))
 
-  bot.online = 1
-  while bot.online:
-    bot.Process(1)
+  def init(self):
+    login = passwords['login']
+    password = passwords['pass']
+    jid = xmpp.JID(login)
+    bot = xmpp.Client(jid.getDomain(), debug=[])
+    # авторизация и запуск Jabber
+    bot.connect()
+    bot.auth(jid.getNode(), password, resource="Python Jabber Bot")
+    bot.RegisterHandler('message', self.FromUser)
 
-  bot.disconnect()
-  print "Отключено :("
+    prs=xmpp.Presence(priority=100, show='dnd')
+    prs.setStatus(u"Мой бот. Цель - проверка некоторых алгоритмов")
+    bot.send(prs)
+
+    bot.online = 1
+    while bot.online:
+      self.bot = bot
+      bot.Process(1)
+
+    bot.disconnect()
+    print("Отключено :(")
