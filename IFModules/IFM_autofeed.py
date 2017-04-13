@@ -35,7 +35,7 @@ class Interface:
       f = open(file_name_origin, 'r')
       origin = json.load(f)
       f.close()
-      res = open(file_name_guess, 'w')
+      self.res = open(file_name_guess, 'w')
     elif settings['write_origin']: origin = {}
 
     gen_res = True
@@ -44,21 +44,20 @@ class Interface:
       for sentence in file_sentences:
         sentence = sentence.strip()
         if not sentence or sentence[0] == '#': continue
-        if settings['compare_with_origin']: res.write(sentence+'\n')
+        if settings['compare_with_origin']: self.res.write(sentence+'\n')
         if settings['write_origin']: origin[sentence] = []
 
         self.sentence = sentence
         self.settings2 = settings
         self.origin = origin
-        self.res = res
 
         self.API.write_text(self, sentence)
 
       t = time.time() - t
 
     if settings['compare_with_origin']:
-      res.write(str(gen_res)+'\n')
-      res.close()
+      self.res.write(str(gen_res)+'\n')
+      self.res.close()
     elif settings['write_origin']:
       f = open(file_name_origin, 'w')
       f.write(json.dumps(origin))
