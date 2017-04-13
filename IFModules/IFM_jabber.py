@@ -19,13 +19,6 @@ class Interface():
       if w_text: self.API.write_text(self, w_text)
 
     self.To = From
-    self.ToUser(From)
-
-  def ToUser(self, To):
-    while 1:
-      r_text = self.API.read_text(self, -1)
-      if To and r_text:
-        self.bot.send(xmpp.Message(To, r_text))
 
   def to_IF(self, r_text):
     if self.To:

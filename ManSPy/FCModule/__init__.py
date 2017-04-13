@@ -57,8 +57,7 @@ class LogicKernel():
     self.run_common_func(arg0, subject, action, arguments, msg)
 
 class LogicShell:
-  def __init__(self, settings):
-    self.settings = settings
+  def __init__(self):
     self.LogicKernel = LogicKernel()
 
   def execIL(self, msg):

@@ -90,18 +90,10 @@ class API():
     print('  ', t2 - t1)
     print("Init executing functions's module...")
     t1 = time.time()
-    self.LogicShell = FCModule.LogicShell(settings)
+    self.LogicShell = FCModule.LogicShell()
     t2 = time.time()
     print('  ', t2 - t1)
     print("Ready!")
-
-  def print_errors(self, ErrorConvert):
-    for part, errors in ErrorConvert.items():
-      if errors: sys.stderr.write(part + ":\n")
-      for error in errors:
-        if not error: continue
-        if not (isinstance(error, str) or isinstance(error, unicode)): error = str(error)
-        sys.stderr.write("  " + error + "\n")
 
   def write_text(self, IF, w_text):
     #print 'write', type(w_text)
@@ -112,21 +104,3 @@ class API():
       w_msg.ils = _ILs
       #self.print_errors(ErrorConvert)
       ExecError = self.LogicShell.execIL(w_msg)
-
-  def read_text(self, IF, index=None):
-    return ''
-    if IF.IFName not in self.LogicShell.list_answers: self.LogicShell.list_answers[IF.IFName] = []
-    # Возвращает ответ или пустую строку, если ответа нет. None ответом не считается.
-    r_text = ''
-    if index == None:
-      r = range(len(self.LogicShell.list_answers[IF.IFName]))
-      # montru dolaran euxran cambion de ukraina banko
-      for i in r:
-        _r_text = self.LogicShell.list_answers[IF.IFName].pop(0)
-        r_text += self.toString(self.LangClass.IL2NL(_r_text)) + ' '
-    else:
-      if len(self.LogicShell.list_answers[IF.IFName]) > 0:
-        _r_text = self.LangClass.IL2NL(self.LogicShell.list_answers[IF.IFName].pop(index))
-        r_text = self.toString(_r_text)
-    if IF.settings['history']: _save_history(r_text, "R", IF.IFName)
-    return r_text
