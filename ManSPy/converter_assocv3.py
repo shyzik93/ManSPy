@@ -88,7 +88,7 @@ def Extraction2IL(R, settings, predicates, arguments):
       },
     'argument': [],
     'subject': None,
-    'error_convert': {}
+    'error_convert': {'function':[], 'argument':[]}
   }
   ILs = []
   predicate = list(predicates.values())[0]
@@ -143,4 +143,4 @@ def Extraction2IL(R, settings, predicates, arguments):
     #fwcomb = to_formule.to_formule(argument, False)
     #print x, fdb.get_hashWComb(fwcomb)
   print 
-  return ILs, {'function': [], 'argument': [[] for i in range(len(ILs))]}
+  return ILs

@@ -108,10 +108,10 @@ class API():
     w_msg = message.Message(IF)
     if w_text:
       w_msg.from_IF(w_text)
-      _ILs, ErrorConvert = self.LangClass.NL2IL(w_msg)
+      _ILs = self.LangClass.NL2IL(w_msg)
       w_msg.ils = _ILs
       #self.print_errors(ErrorConvert)
-      ExecError = self.LogicShell.execIL(w_msg, ErrorConvert)
+      ExecError = self.LogicShell.execIL(w_msg)
 
   def read_text(self, IF, index=None):
     return ''

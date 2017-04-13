@@ -33,12 +33,11 @@ class LogicKernel():
       res = action['common_verb_function'](arg0, *msg.r_texts)
       if res is not None: msg.to_IF(res)
 
-  def LogicKernel(self, ILs, msg, _ErrorConvert, index):
+  def LogicKernel(self, ILs, msg):
     ''' Главная функция. Работает только с ВЯ '''
 
     for IL in ILs:
-      index += 1
-      if _ErrorConvert['argument'][index-1]: continue
+      if IL['error_convert']['argument']: continue
       if not IL: continue
 
       IL['arg0']['to_IF'] = msg.to_IF
@@ -56,19 +55,18 @@ class LogicKernel():
         self.run_assoc_func(arg0, subject, action, arguments, msg)
 
     self.run_common_func(arg0, subject, action, arguments, msg)
-    return index
 
 class LogicShell:
   def __init__(self, settings):
     self.settings = settings
     self.LogicKernel = LogicKernel()
 
-  def execIL(self, msg, _ErrorConvert):
+  def execIL(self, msg):
     ExecError = []
-    if _ErrorConvert['function']: return ExecError
 
-    index = 0
     for index_sentence, ILs in msg.ils.items():
-      index = self.LogicKernel.LogicKernel(ILs, msg, _ErrorConvert, index)
-        
+      for IL in ILs:
+        if IL['error_convert']['function']: continue
+      self.LogicKernel.LogicKernel(ILs, msg)
+
     return ExecError

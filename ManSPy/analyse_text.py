@@ -83,17 +83,14 @@ class LangClass():
     # конвертируем анализы во внутренний язык
     if start_level in self.levels[:6]:
       _ILs = {}
-      _ErrorConvert = {}
       for index, sentence in sentences:
         _ILs[index] = []
         Extraction2IL = converter.Extraction2IL(self.settings['assoc_version'])
-        ILs, ErrorConvert = Extraction2IL(OR, self.settings, *sentence)
+        ILs = Extraction2IL(OR, self.settings, *sentence)
         for IL in ILs: BeautySafe.safe_IL(IL)
         _ILs[index].extend(ILs)
-        for key in ErrorConvert:
-          if not key in _ErrorConvert: _ErrorConvert[key] = []
-          _ErrorConvert[key].extend(ErrorConvert[key])
-      if end_level == self.levels[5]: return _ILs, _ErrorConvert
+
+      if end_level == self.levels[5]: return _ILs
 
   def IL2NL(self, IL):
     #IL = Synthesizer.IL2resultA(IL)
