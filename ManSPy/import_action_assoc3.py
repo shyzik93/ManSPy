@@ -270,7 +270,7 @@ class FASIF_WordCombination(_FASIF):
         return fasif
 
 
-class ImportAction(object):
+class ImportAction():
     def __init__(self, LangClass):
         #self.settings = settings
         #self.OR = relation.ObjRelation(settings, settings['storage_version'])

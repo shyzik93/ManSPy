@@ -11,7 +11,7 @@ class Interface:
   def __init__(self, API):
     self.API = API
 
-  def to_IF(self, r_text):
+  def read_text(self, r_text, any_data):
     if self.settings2['compare_with_origin']:
       if self.sentence in self.origin:
         if r_text in self.origin[self.sentence]: self.res.write('    True >>> '+r_text+'\n')

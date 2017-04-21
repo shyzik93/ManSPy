@@ -13,7 +13,7 @@ class Interface():
     self.Text_Out.insert(tkinter.END, u'I said: ' + w_text + u'\n')
     self.API.write_text(self, w_text)
 
-  def to_IF(self, r_text):
+  def read_text(self, r_text, any_data):
     self.Text_Out.insert(tkinter.END, u'ManSPy: ' + r_text + u'\n')
 
   def init(self):

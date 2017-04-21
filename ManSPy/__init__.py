@@ -5,8 +5,8 @@
     Примеры возможных интерфейсов: текстовый чат, распознаватель речи,
     мессенджеры, интерфейс мозг-компьютер, приёмник звонков и SMS и так далее.
 """
+import time, sys, os, copy, threading
 from . import FCModule, import_action
-import time, sys, os, copy
 from .analyse_text import LangClass
 
 import sqlite3 as sql
@@ -32,12 +32,14 @@ class Message:
 
     ''' Создан пока только для: логирования с учётом уникального номера сообщения; передачи настроек текущего потока '''
 
-    def __init__(self, IF, direction=None, text=None):
+    def __init__(self, IF, direction=None, text=None, any_data=None):
         self.IF = IF
         self.r_texts = []
 
         if direction == 'W': self.from_IF(text)
         elif direction == 'R': self.to_IF(text)
+
+        self.any_data = any_data
 
         '''self.settings = settings
         self.direction = direction
@@ -92,7 +94,7 @@ class Message:
     def to_IF(self, r_text):
         r_text = self.toString(r_text)
         if self.IF.settings['history']: self._save_history(r_text, "R")
-        self.IF.to_IF(r_text)
+        self.IF.read_text(r_text, self.any_data)
 
     def from_IF(self, w_text):
         self.w_text = w_text
@@ -175,7 +177,12 @@ class API():
         print('  ', t2 - t1)
         print("Ready!")
 
-    def write_text(self, IF, w_text):
+    def write_text(self, IF, w_text, any_data=None):
+        '''
+            any_data - any data, if you would like to pass it to IF with answer.
+        '''
+        #print(threading.current_thread().name)
+
         if IF.settings['language'] not in self.was_imported:
 
             print("Import fasifs for {0} language...".format(IF.settings['language']))
@@ -187,7 +194,7 @@ class API():
             t2 = time.time()
             print('  ', t2 - t1)
 
-        w_msg = Message(IF, 'W', w_text)
+        w_msg = Message(IF, 'W', w_text, any_data)
         if w_text:
             w_msg.ils = self.LangClass.NL2IL(w_msg)
             ExecError = self.LogicShell.execIL(w_msg)

@@ -17,6 +17,7 @@ class Interface(threading.Thread):
       threading.Thread.__init__(self)
       self.API = API
       self.IF = IF
+      self.name = IF.IFName
 
     def run(self):
       self.API.update_settings_for_IF(self.IF.settings)
@@ -52,7 +53,6 @@ class Interfaces():
       self.interfaces[IFName][1] = IF
       t = Interface(API, IF)#threading.Thread(target=IF.init)
 
-      t.setName(IFName)
       #t.daemon = True
       t.start()
       self.interfaces[IFName][0] = t
