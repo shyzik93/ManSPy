@@ -11,7 +11,7 @@ not_to_db = ['nombr', 'cifer']
 def is_in_hyperonym(hyperonyms, argvalue, R):
   for hyperonym in hyperonyms:
     if (hyperonym in not_to_db and isinstance(argvalue, (int, float, complex))) or \
-       R.isWordInAbstractGroup(argvalue, hyperonym): return True
+       R.isRelBetween('hyperonym', hyperonym, argvalue): return True
   return False
 
 def convert_by_argtable(fasif, argname, argvalue):

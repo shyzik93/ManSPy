@@ -273,16 +273,6 @@ class _ObjRelation(object):
 
 
 
-  #
-  def isWordInAbstractGroup(self, word_base, group_base):
-    #print 'isWordInAbstractGroup', group_base, word_base
-    return self.R.is_word_in_group('hyperonym', group_base, word_base, 0, None)
-
-  #
-  def areWordsAntonyms(self, POSpeech, word_base1, word_base2):
-    antonyms = self.getAntonyms(POSpeech, word_base1)
-    return word_base2 in antonyms
-
   def getAntonyms(self, POSpeech, word_base):
     '''#is_word_in_group(self, id_group, word, isword, id_type=None, id_speech=None):
     id_group = word_base # так как это антоним. Проверка должна происходить в ниженаписанной функции
@@ -296,10 +286,6 @@ class _ObjRelation(object):
 
   def getSynonyms(self, POSpeech, word_base):
     return self.R.convert(self.R.get_words_from_samegroup('synonym', POSpeech, 0, word_base))
-
-  def get(self, relation, POSpeech, word_base):
-    if relation == 'antonyms': return self.getAntonyms(POSpeech, word_base)
-    elif relation == 'synonyms': return self.getSynonyms(POSpeech, word_base)
 
   def addWordsToDBFromDictSentence(self, dict_sentence):
     if "dict" in str(type(dict_sentence)): indexes = dict_sentence.keys()
@@ -322,47 +308,35 @@ class _ObjRelation(object):
   def isRelBetween(self, relation, word1, word2):
     ''' Is the relation 'relation' between word1 and word2 ?
         Являются ли слова word1 и word2 relation'ами (синониами, антонимаими, гиперонимом и гипонимом соответственно, холонимом и меронимом соответственно) ?
+        @return bool
     '''
     if relation == 'hyperonym':
-      return self.isWordInAbstractGroup(word1, word2)
+      return self.R.is_word_in_group('hyperonym', word1, word2, 0, None)
     elif relation == 'synonym':
       pass
     elif relation == 'antonym':
-      return self.areWordsAntonyms(None, word1, word2)
+      antonyms = self.getAntonyms(None, word1, word2)
+      return word_base2 in antonyms
 
   def isAnyRelBetween(self, word1, words2):
     ''' Is any relation 'relation' between word1 and word2 ?
         Есть ли какие-либо отношения между словами word1 и word2 ?
-    '''
-    pass
-
-  def whomRelBetween(self, relation, word1):
-    ''' With whom does word1 has relation
+        @return bool
     '''
     pass
 
   def whatRelBetween(self, word1, word2):
     ''' what relation or relations are between word1 and word2 ?
+        @return list of relations
     '''
     pass
 
-  def getRelation(self, relation, word1, word2=None):
-    ''' Первое слово для иерархиских отношений должно быть выше уровня  '''
-    if relation is not None: descr = self.R.get_descr_relation(relation)
+  def whomRelBetween(self, relation, word1):
+    ''' With whom does word1 has relation
+        @return list of words
+    '''
+    pass
 
-    if word1 is not None and word2 is not None:
-
-      if relation is not None: # Is the relation between word1 and word2 ?
-        return self.isRelBetween(relation, word1, word2)
-      elif relation is None: # Is any relation between word1 and word2 ?
-        pass
-
-    elif word1 is not None and word2 is None:
-
-      if relation is not None: # With who does word1 have the relation ?
-        pass
-      elif relation is None: # With who does word1 have any relation ?
-        pass
 
   def setRelation(self, relation, *words):
     """ По умолчанию передаются два слова (корень или идентификатор), но для некоторых отношений можно передовать много слов """
