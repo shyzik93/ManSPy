@@ -258,7 +258,7 @@ class FASIF_WordCombination(_FASIF):
                 if argword[1]: base = argword[1]['base']
                 else: base = argword[2][0]['base']
                 bases = data['argtable'].keys()
-                if hyperonym['base'] not in not_to_db: OR.setRelation('hyperonym', hyperonym['base'], base, *bases)#OR.addWordsInAbstractGroup(hyperonym['base'], base, *bases)
+                if hyperonym['base'] not in not_to_db: OR.setRelation('hyperonym', hyperonym['base'], base, *bases)
 
         #pprint(fasif['args']) 
         #fwcomb = to_formule.to_formule(fasif['wcomb'], True, fasif['args'])

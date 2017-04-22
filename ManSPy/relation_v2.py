@@ -318,12 +318,6 @@ class _ObjRelation(object):
         self.R.add_words2group('synonym', dword['POSpeech'], None, 0, dword['base'])
     self.R.add_word(*words)
 
-  #
-  def addWordsInAbstractGroup(self, group_base, *word_bases):
-    ''' Добавляем абстрактные группы. Новые слова также добавляются в базу слов. '''
-    #print group_base, word_bases
-    self.R.add_words2group('hyperonym', None, group_base, 0, *word_bases)
-
   # Временные функции-обёртки, для понимания задачи.
   def isRelBetween(self, relation, word1, word2):
     ''' Is the relation 'relation' between word1 and word2 ?
@@ -375,7 +369,8 @@ class _ObjRelation(object):
     words = list(words)
     if relation == 'hyperonym': # первое слово - гипероним, остальные- гипонимы. Минимм - два слова.
       word_group = words.pop(0)
-      self.addWordsInAbstractGroup(word_group, *words)
+      self.R.add_words2group('hyperonym', None, word_group, 0, *words)
+
 
     elif relation == 'synonym': # все слова - синонимы. Минимум - одно слово. Возвращает идентификатор синонимичной группы
       ''' Если слово одно, то добавляем его группу и возвращаем её идентификатр. Если слово уже в группе, то возвращаем её идентификатор.
@@ -399,7 +394,9 @@ class _ObjRelation(object):
       return group
 
     elif relation == 'antonym': # только два первых слова противопоставляются. Остальные - игнорируются. Всего - ровно два слова.
-      pass
+      word1 = words.pop(0)
+      word2 = words.pop(0)
+      self.R.add_words2group('antonym', None, word1, 0, word2)
       
 
 if __name__ == '__main__':
