@@ -273,20 +273,6 @@ class _ObjRelation(object):
 
 
 
-  def getAntonyms(self, POSpeech, word_base):
-    '''#is_word_in_group(self, id_group, word, isword, id_type=None, id_speech=None):
-    id_group = word_base # так как это антоним. Проверка должна происходить в ниженаписанной функции
-    self.R.get_words_by_group(id_group, isword, 'antonym', POSpeech)
-    #return self.R.get_commongroups('synonym', POSpeech, [word_base, 0])'''
-    syn_groups = self.R.get_groups_by_word('synonym', 0, word_base, POSpeech)
-    if not syn_groups: return []
-    syn_groups = self.R.get_words_from_samegroup('antonym', POSpeech, self.R.dct_types['synonym'], syn_groups[0])
-    if not syn_groups: return []
-    return self.R.convert(self.R.get_words_by_group('synonym', syn_group, 0, POSpeech))
-
-  def getSynonyms(self, POSpeech, word_base):
-    return self.R.convert(self.R.get_words_from_samegroup('synonym', POSpeech, 0, word_base))
-
   def addWordsToDBFromDictSentence(self, dict_sentence):
     if "dict" in str(type(dict_sentence)): indexes = dict_sentence.keys()
     elif "list" in str(type(dict_sentence)): indexes = range(len(dict_sentence))
@@ -315,8 +301,8 @@ class _ObjRelation(object):
     elif relation == 'synonym':
       pass
     elif relation == 'antonym':
-      antonyms = self.getAntonyms(None, word1, word2)
-      return word_base2 in antonyms
+      antonyms = self.whomRelBetween('antonym', word1)
+      return word2 in antonyms
 
   def isAnyRelBetween(self, word1, words2):
     ''' Is any relation 'relation' between word1 and word2 ?
@@ -335,7 +321,14 @@ class _ObjRelation(object):
     ''' With whom does word1 has relation
         @return list of words
     '''
-    pass
+    if relation == 'synonym':
+      return self.R.convert(self.R.get_words_from_samegroup('synonym', None, 0, word1))
+    elif relation == 'antonym':
+      syn_groups = self.R.get_groups_by_word('synonym', 0, word1, None)
+      if not syn_groups: return []
+      syn_groups = self.R.get_words_from_samegroup('antonym', None, self.R.dct_types['synonym'], syn_groups[0])
+      if not syn_groups: return []
+      return self.R.convert(self.R.get_words_by_group('synonym', syn_group, 0, None))
 
 
   def setRelation(self, relation, *words):
