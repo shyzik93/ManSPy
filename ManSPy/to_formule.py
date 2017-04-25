@@ -145,15 +145,15 @@ class FasifDB():
         self.c.commit()
 
     def getFASIF(self, _type, argument):
-      self.flog = open('comparing_fasif.txt', 'a', encoding='utf-8') # file log
-      self.flog.write('\n--- %s\n' % _type)
-      if _type=='WordCombination':
-          for key, value in argument.getUnit('str').items():
-              self.flog.write('--- %s: %s\n' % (key, value))
-      elif _type=='Verb': self.flog.write('--- %s\n' % argument)
+        self.flog = open('comparing_fasif.txt', 'a', encoding='utf-8') # file log
+        self.flog.write('\n--- %s\n' % _type)
+        if _type=='WordCombination':
+            for key, value in argument.getUnit('str').items():
+                self.flog.write('--- %s: %s\n' % (key, value))
+        elif _type=='Verb': self.flog.write('--- %s\n' % argument)
 
-      self.argument = argument
-      self.compared_fasifs = {}
-      res = self.cu.execute('SELECT id_fasif FROM fasifs WHERE type_fasif=? AND iseq(id_fasif, type_fasif, fasif)=1', (_type,)).fetchall()
-      self.flog.close()
-      return self.compared_fasifs
+        self.argument = argument
+        self.compared_fasifs = {}
+        res = self.cu.execute('SELECT id_fasif FROM fasifs WHERE type_fasif=? AND iseq(id_fasif, type_fasif, fasif)=1', (_type,)).fetchall()
+        self.flog.close()
+        return self.compared_fasifs

@@ -16,27 +16,27 @@ not_sound = ["ъ", "ь"]
 consonant2 = consonant + not_sound
 
 def getGender(word_d):
-  """ определяет род существительного. Использует БД.
-      Существительные подаются в начальной форме.
-  """
-  word = word_d['word']
-  word_d['gender'] =None
+    """ определяет род существительного. Использует БД.
+        Существительные подаются в начальной форме.
+    """
+    word = word_d['word']
+    word_d['gender'] =None
 
 def getDeclension(word_d):
-  """ Определяет склонение у слова.
-      На вход подаются существительные именительного падежа и ед. числа,
+    """ Определяет склонение у слова.
+        На вход подаются существительные именительного падежа и ед. числа,
       то есть в начальной форме
-  """
-  word = word_d["word"]
-  gender = word_d['gender']
+    """
+    word = word_d["word"]
+    gender = word_d['gender']
 
-  # мужского и женского рода с окончанием а/я 
-  if word[-1] in ["а", "я"] and gender in ["masculine", "feminine"]:
-    word_d['declension'] = 1
-  # среднего рода с окончанием о/е, мужского рода с нулевым окончанием
-  elif (word[-1] in ["о", "е"] and gender == "neuter") or (word[-1] in consonant2 and gender == "masculine"):
-    word_d['declension'] = 2
-  # женского рода с нулевым окончанием
-  # нулевое окончание, если оканчивается на ь
-  elif word[-1] in consonant2 and gender == "feminine":
-    word_d['declension'] = 3
+    # мужского и женского рода с окончанием а/я 
+    if word[-1] in ["а", "я"] and gender in ["masculine", "feminine"]:
+        word_d['declension'] = 1
+    # среднего рода с окончанием о/е, мужского рода с нулевым окончанием
+    elif (word[-1] in ["о", "е"] and gender == "neuter") or (word[-1] in consonant2 and gender == "masculine"):
+        word_d['declension'] = 2
+    # женского рода с нулевым окончанием
+    # нулевое окончание, если оканчивается на ь
+    elif word[-1] in consonant2 and gender == "feminine":
+        word_d['declension'] = 3
