@@ -38,10 +38,10 @@ class Relation():
     ### Работа с таблицей words
 
     def add_word(self, *words):
-        ''' Можно подавать как слова, так и списки слов '''
-        for word in words:
-            if isinstance(word, list): self.add_word(*word)
-            else: self.cu.execute('INSERT INTO words (word) VALUES (?);', (word.lower(),))
+        self.cu.execute(
+            'INSERT INTO words (word) VALUES '+','.join(['(?)' for word in words])+';',
+            [word.lower() for word in words]
+        )
         self.c.commit()
 
     def convert(self, *inlist):
@@ -275,20 +275,19 @@ class _ObjRelation(object):
 
 
     def addWordsToDBFromDictSentence(self, dict_sentence):
-        if "dict" in str(type(dict_sentence)): indexes = dict_sentence.keys()
-        elif "list" in str(type(dict_sentence)): indexes = range(len(dict_sentence))
+        if isinstance(dict_sentence, dict): items = dict_sentence.items()
+        elif isinstance(dict_sentence, list): items = enumerate(dict_sentence)
+
         words = []
-        for index in indexes:
-            dword = dict_sentence[index]
+        for index, word in items:
             # числительные в базу не добавляем
-            word = dict_sentence[index]
             #if word['POSpeech'] == 'numeral' or word['derivative'] == 'numeral' or word['word'] == '' or word['base'] == '': continue
             if 'number_value' in word or word['word'] == '' or word['base'] == '': continue
             #if word['POSpeech'] == 'numeral': continue
-            words.append(dword['base'])
-            if len(dword['feature']) != 0: self.addWordsToDBFromDictSentence(dword['feature'])
-            if dword['MOSentence'] == 'predicate' and dword['POSpeech'] == 'verb':
-                self.R.add_words2group('synonym', dword['POSpeech'], None, 0, dword['base'])
+            words.append(word['base'])
+            if len(word['feature']) != 0: self.addWordsToDBFromDictSentence(word['feature'])
+            if word['MOSentence'] == 'predicate' and word['POSpeech'] == 'verb':
+                self.R.add_words2group('synonym', word['POSpeech'], None, 0, word['base'])
         self.R.add_word(*words)
 
     # Временные функции-обёртки, для понимания задачи.
