@@ -40,7 +40,7 @@ class Interface:
 
         gen_res = True
         with open(file_auto, 'r') as file_sentences:
-            t = time.time()
+            t = 0 #time.time()
             for sentence in file_sentences:
                 sentence = sentence.strip()
                 if not sentence or sentence[0] == '#': continue
@@ -51,9 +51,12 @@ class Interface:
                 self.settings2 = settings
                 self.origin = origin
 
-                self.API.write_text(self, sentence)
+                msg = self.API.write_text(self, sentence)
+                t += msg.time_total
 
-            t = time.time() - t
+
+            #t = time.time() - t
+            print('\n---- All sentences: ', t)
 
         if settings['compare_with_origin']:
             self.res.write(str(gen_res)+'\n')
@@ -63,4 +66,4 @@ class Interface:
             f.write(json.dumps(origin))
             f.close()
 
-        print('completed for '+str(t)+' secs :)')
+        #print('completed for '+str(t)+' secs :)')

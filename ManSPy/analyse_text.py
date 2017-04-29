@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import sys, os
+import sys, os, time
 from . import NLModules, relation, extractor, converter, BeautySafe
 
 class LangClass():
@@ -29,6 +29,11 @@ class LangClass():
             sentences = msg
             msg = None
 
+        print('\n---------------------------------------')
+        print('----', sentences)
+        print('---------------------------------------')
+        t1 =time.time()
+
         BeautySafe.fwrite('\n\n'+'#'*100+'\n')
         BeautySafe.fwrite(levels+'\n')
 
@@ -47,16 +52,21 @@ class LangClass():
 
         # Графематический анализ
         if start_level in self.levels[:1]:
+            t =time.time()
 
             BeautySafe.safe_NL(sentences)
             sentences = lang_module.getGraphmathA(sentences)
             BeautySafe.safe_sentences(sentences, 'GraphemathicAnalysis analysis')
             if msg: msg.log('a_graphemath', sentences.getUnit('dict'))
 
-            if end_level == self.levels[0]: return sentence
+            print('       GM: ', time.time()-t)
+            if end_level == self.levels[0]:
+                print('    Total: ', time.time()-t1)
+                return sentence
 
         # Морфологический анализ
         if start_level in self.levels[:2]:
+            t =time.time()
 
             sentences = lang_module.getMorphA(sentences)
             with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
@@ -66,28 +76,40 @@ class LangClass():
             BeautySafe.safe_sentences(sentences, 'Morphological analysis')
             if msg: msg.log('a_morph', sentences.getUnit('dict'))
 
-            if end_level == self.levels[1]: return sentences
+            print('        M: ', time.time()-t)
+            if end_level == self.levels[1]:
+                print('    Total: ', time.time()-t1)
+                return sentences
 
         # Постморфологичесий
         if start_level in self.levels[:3]: 
+            t =time.time()
 
-           sentences = lang_module.getPostMorphA(sentences)
-           BeautySafe.safe_sentences(sentences, 'Postmorphological analysis')
-           if msg: msg.log('a_postmorph', sentences.getUnit('dict'))
+            sentences = lang_module.getPostMorphA(sentences)
+            BeautySafe.safe_sentences(sentences, 'Postmorphological analysis')
+            if msg: msg.log('a_postmorph', sentences.getUnit('dict'))
 
-           if end_level == self.levels[2]: return sentences
+            print('       PM: ', time.time()-t)
+            if end_level == self.levels[2]:
+                print('    Total: ', time.time()-t1)
+                return sentences
 
         # Синтаксический
         if start_level in self.levels[:4]:
+            t =time.time()
 
             sentences = lang_module.getSyntA(sentences)
             BeautySafe.safe_sentences(sentences, 'Syntactic analysis')
             if msg: msg.log('a_synt', sentences.getUnit('dict'))
 
-            if end_level == self.levels[3]: return sentences
+            print('        S: ', time.time()-t)
+            if end_level == self.levels[3]:
+                print('    Total: ', time.time()-t1)
+                return sentences
 
         # извлекаем прямое доп, подл, сказуемое, косв. доп
         if start_level in self.levels[:5]:
+            t =time.time()
 
             #if not isinstance(sentences, ObjUnit.Text): sentences = ObjUnit.Text([sentences])
             for index, sentence in sentences:
@@ -95,10 +117,15 @@ class LangClass():
                 Extract = extractor.Extract(settings['assoc_version'])
                 sentences.subunit_info[index] = Extract(sentence) # заменяем объекты предложения на словари извлечений
 
-            if end_level == self.levels[4]: return sentences
+            print('        E: ', time.time()-t)
+            if end_level == self.levels[4]:
+                print('    Total: ', time.time()-t1)
+                return sentences
 
         # конвертируем анализы во внутренний язык
         if start_level in self.levels[:6]:
+            t =time.time()
+
             OR = relation.ObjRelation(settings, settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
             _ILs = {}
             for index, sentence in sentences:
@@ -108,7 +135,10 @@ class LangClass():
                 for IL in ILs: BeautySafe.safe_IL(IL)
                 _ILs[index].extend(ILs)
 
-            if end_level == self.levels[5]: return _ILs
+            print('        C: ', time.time()-t)
+            if end_level == self.levels[5]:
+                print('    Total: ', time.time()-t1)
+                return _ILs
 
     def IL2NL(self, IL):
         #IL = Synthesizer.IL2resultA(IL)

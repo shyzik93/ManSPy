@@ -196,5 +196,9 @@ class API():
 
         w_msg = Message(IF, 'W', w_text, any_data)
         if w_text:
+            t =time.time()
             w_msg.ils = self.LangClass.NL2IL(w_msg)
+            w_msg.time_total = time.time()-t
+            print('    Total: ', w_msg.time_total)
             ExecError = self.LogicShell.execIL(w_msg)
+            return w_msg
