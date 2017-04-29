@@ -19,19 +19,19 @@ def setMOS_ToSign(features):
             feature['MOSentence'] = 'definition'
         elif feature['POSpeech'] == 'adverb':
             feature['MOSentence'] = 'circumstance'
-        if len(feature['feature']) > 0: setMOS_ToSign(feature['feature'])
+        if feature['feature']: setMOS_ToSign(feature['feature'])
 
 def setMOSentence(word, sentence):
     if word['POSpeech'] == 'verb':
         word['MOSentence'] = 'predicate'
-        if len(word['feature']) > 0:
+        if word['feature']:
             setMOS_ToSign(word['feature'])
 
     #ATTENTION обстоятельства, выраженные существительным, определяются в модуле
     # промежуточного анализа как наречие.
     elif word['POSpeech'] == 'noun' or (word['POSpeech'] == 'numeral' and word['class'] == 'cardinal'):
         word['MOSentence'] = forPronounAndNoun(word)
-        if len(word['feature']) > 0:
+        if (word['feature']:
             setMOS_ToSign(word['feature'])
 
     elif word['POSpeech'] == 'pronoun':

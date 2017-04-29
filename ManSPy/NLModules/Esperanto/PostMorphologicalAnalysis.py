@@ -58,7 +58,7 @@ def processDefinition(word, sentence, indexes=None):
             return # завершаем цикл, ибо прилагательные без существительного. Их мы не удаляем, так как они могут следовать после глагола esti
         sentence.jumpByStep()
         processDefinition(sentence.getByStep(), sentence, indexes)
-    elif word['POSpeech'] in ['noun'] and len(indexes) > 0: # если перед существительным стояли прилагательные
+    elif word['POSpeech'] in ['noun'] and indexes: # если перед существительным стояли прилагательные
         sentence.addFeature(sentence.currentIndex(), *indexes)
         sentence.jumpByStep(-len(indexes))
     else: mark_freemembers(sentence, indexes)

@@ -40,7 +40,7 @@ def add(arg0, *a):
     ''' Сложение '''
     a = list(a)
 
-    if len(a) == 0: return 0
+    if not a: return 0
 
     if _is_only_numbers(a):
 
@@ -59,7 +59,7 @@ def multiply(arg0, *a):
     ''' Умножение '''
     a = list(a)
 
-    if len(a) == 0: return 0
+    if not a: return 0
 
     if _is_only_numbers(a):
 
