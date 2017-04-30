@@ -1,11 +1,6 @@
-<p style="text-align:center;">
+<p align="center"><img src="http://dosmth.ru/media/manspy_logo.png" style="width:200px;"></p>p>
 
-<img src="http://dosmth.ru/media/manspy_logo.png" style="width:200px;">
-
-<h1 style="text-align:center;"> ManSPy: "Programmer! Please, make me smart!" </h1>
-
-</p>
-
+<p align="center"><h1 align="center"> ManSPy: "Programmer! Please, make me smart!" </h1></p>[>
 
 Запускается под  ОС Windows 7 (стандартный редактор) и Linux Debian (консоль), возможен запуск и под другими ОС.
 - Этот файл - ознакомление с программой
