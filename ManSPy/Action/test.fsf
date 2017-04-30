@@ -40,7 +40,7 @@ country n ;  Esperanto
 Esperanto
     dolara: mono # аргументное слова: абстрактные группы через запятую
     rusia: lando # нужно решить вопрос об изменении падежей у прилагательных, ну а пока мы не можем написать de rusia.
-    dolara cambio de rusia banko
+    dolara kurzo de rusia banko
 Russian
     доллара: валюта
     русскому: страна, национальность
