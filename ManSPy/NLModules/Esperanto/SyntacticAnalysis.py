@@ -31,7 +31,7 @@ def setMOSentence(word, sentence):
     # промежуточного анализа как наречие.
     elif word['POSpeech'] == 'noun' or (word['POSpeech'] == 'numeral' and word['class'] == 'cardinal'):
         word['MOSentence'] = forPronounAndNoun(word)
-        if (word['feature']:
+        if word['feature']:
             setMOS_ToSign(word['feature'])
 
     elif word['POSpeech'] == 'pronoun':
