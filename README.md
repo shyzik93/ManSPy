@@ -1,4 +1,11 @@
-# ManSPy - Managing System, written in Python 3.4
+<p style="text-align:center;">
+
+<img src="http://dosmth.ru/media/manspy_logo.png" style="width:200px;">
+
+<h1 style="text-align:center;"> ManSPy: "Programmer! Please, make me smart!" </h1>
+
+</p>
+
 
 Запускается под  ОС Windows 7 (стандартный редактор) и Linux Debian (консоль), возможен запуск и под другими ОС.
 - Этот файл - ознакомление с программой
