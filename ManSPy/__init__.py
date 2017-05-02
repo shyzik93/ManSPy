@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """ Предоставляет API интеллекта, который используется модулями интерфейса.
     В качестве API:
       API = ISM.API(Settings) # Settings - словарь, задающий настройки.
     Примеры возможных интерфейсов: текстовый чат, распознаватель речи,
     мессенджеры, интерфейс мозг-компьютер, приёмник звонков и SMS и так далее.
 """
-import time, sys, os, copy, threading
+import time, sys, os, copy, json, datetime
 from . import FCModule, import_action
 from .analyse_text import LangClass
 
@@ -15,7 +14,7 @@ sql.enable_callback_tracebacks(True)
 
 def create_bd_file(language, name):
     if not os.path.exists(language) or not os.path.isdir(language):
-        os.mkdir(language)
+        os.mkdir(language) # хдесь бывает ошибка, так, видимо, эта функция вызывается параллельно где-то в другом потоке
     name = os.path.join(language, name)
     c = sql.connect(name)
     c.row_factory = sql.Row
@@ -24,9 +23,109 @@ def create_bd_file(language, name):
 
 class MainException(Exception): pass
 
-# -*- coding: utf-8 -*-
 
-import time, json
+class History:
+    def __init__(self):
+         if not os.path.exists('history.html'): self.html_head()
+
+    def plain(self, sText, direction, IF):
+        Time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()-time.altzone))
+        if direction == 'R': sText = '   '+sText
+        sText = "* %s  %s  %s: %s\n" % (direction, Time, IF.IFName, sText)
+        with open('history.txt', 'ab') as f: f.write(bytearray(sText, 'utf-8'))
+
+    def html_head(self):
+        with open('history.html', 'w') as f:
+            f.write("""<!DOCTYPE html>
+<html lang="ru"><head>
+    <meta charset="utf-8">
+</head><body>
+    <style>
+        .supplement {
+            color: #007df8;
+         }
+         .subject {
+         }
+         .direct_supplement {
+             color: blue;
+         }
+         .predicate {
+             color: green;
+         }
+         .circumstance {
+             color: yellow
+         }
+         .definition {
+             color: #bf8419
+         }
+    </style>
+""")
+
+    def html_row(self, sText, direction):
+        with open('history.html', 'a') as f:
+            f.write("""    {0} &nbsp;&nbsp; {1}<br>""".format(direction, sText))
+
+    def html_build_word(self, cWord):
+        return """<span class="word{MOSentence}">{word}</span>""".format(
+            word=cWord['word'],
+            MOSentence=' '+cWord['MOSentence'].replace(' ', '_') if 'MOSentence' in cWord else ''
+        )
+
+    def html_build_text(self, cText):
+        text_ = []
+
+        for index, cSentence in cText:
+            for index, cWord in cSentence.subunits_copy.items():
+                text_.append(self.html_build_word(cWord))
+
+        return ' '.join(text_)
+
+    def html(self, mText, direction):
+        if direction == "W": self.html_row(self.html_build_text(mText), direction)
+        else: self.html_row("&nbsp;"*8 + mText, direction)
+
+
+    def log(self, title, res):
+
+        if title == "graphmath":
+            with open('analysis.txt', 'a', encoding='utf-8') as f:
+                f.write('NL-sentence: ')
+                for index, sentence in res:
+                    for index, word in sentence.subunits_copy.items(): f.write(word['word']+' ')
+                f.write('\n')
+            res = res.getUnit('dict')
+        elif title == 'morph':
+            pass
+            with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
+                flog.write('\n')
+                for index, sentence in res: flog.write('sentence: %s\n' % sentence.getUnit('str')['fwords'])
+                flog.write('\n')
+
+            res = res.getUnit('dict')            
+        elif title == 'postmorph':
+            res = res.getUnit('dict')
+        elif title == 'synt':
+            self.html(res, 'W')
+            res = res.getUnit('dict')
+        elif title == 'extract':
+            res = list(res)
+            return
+        elif title == 'convert':
+            _res = []
+            for index, ILs in res.items():
+                for IL in ILs:
+                    _res.append('IL-sentence: '+str(IL))
+            res = _res
+
+        now = datetime.datetime.now().strftime("%Y.%m.%d %H:%M:%S")
+
+        with open('analysis.txt', 'a', encoding='utf-8') as f:
+            f.write('----'+now+'\n')
+            #f.fwrite('Folding sentence: '+str(sentence.getUnit('str'))+'\n')
+            f.write(('- '*10)+title+(' -'*10)+u'\n')
+
+            json.dump(res, f, sort_keys=True, indent=4)#.replace('"', '')
+            f.write('\n')
 
 class Message:
 
@@ -35,6 +134,8 @@ class Message:
     def __init__(self, IF, direction=None, text=None, any_data=None):
         self.IF = IF
         self.r_texts = []
+
+        self.history = History()
 
         if direction == 'W': self.from_IF(text)
         elif direction == 'R': self.to_IF(text)
@@ -80,12 +181,12 @@ class Message:
         #print(self.message_id)"""
         '''
 
-    def _save_history(self, text, Type):
+    '''def _save_history(self, text, Type):
         if text:
             Time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()-time.altzone))
             if Type == 'R': text = '   '+text
             text = "* %s  %s  %s: %s\n" % (Type, Time, self.IF.IFName, text)
-            with open('history.txt', 'ab') as f: f.write(bytearray(text, 'utf-8'))
+            with open('history.txt', 'ab') as f: f.write(bytearray(text, 'utf-8'))'''
 
     def toString(self, r_text):
         if isinstance(r_text, (int, float, complex)): return str(r_text)
@@ -93,18 +194,23 @@ class Message:
 
     def to_IF(self, r_text):
         r_text = self.toString(r_text)
-        if self.IF.settings['history']: self._save_history(r_text, "R")
+        #if self.IF.settings['history']: self._save_history(r_text, "R")
+        if self.IF.settings['history'] and r_text: self.history.plain(r_text, "R", self.IF)
+        self.history.html(r_text, 'R')
         self.IF.read_text(r_text, self.any_data)
 
     def from_IF(self, w_text):
         self.w_text = w_text
-        if self.IF.settings['history']: self._save_history(w_text, "W")
+        #if self.IF.settings['history']: self._save_history(w_text, "W")
+        if self.IF.settings['history'] and w_text: self.history.plain(w_text, "W", self.IF)
 
-    def log(self, row_name, row_value):
-        #if isinstance(row_value, (dict, list)): row_value = json.dumps(row_value)
-        #self.cu.execute('UPDATE `log_history` SET `'+row_name+'`=? WHERE `message_id`=?', (row_value, self.message_id));
-        #self.c.commit()
-        pass
+
+
+    #def log(self, row_name, row_value):
+    #    #if isinstance(row_value, (dict, list)): row_value = json.dumps(row_value)
+    #    #self.cu.execute('UPDATE `log_history` SET `'+row_name+'`=? WHERE `message_id`=?', (row_value, self.message_id));
+    #    #self.c.commit()
+    #    pass
 
 
 class API():
@@ -119,6 +225,7 @@ class API():
               'test': True, # тестовый режим, включаемый в процессе отладки и разработки
 
               # не рекомендуемые к изменению
+              'log_all': False,
               'storage_version': 2,
               'assoc_version': 3,
               'dir_db': None,
@@ -199,6 +306,6 @@ class API():
             t =time.time()
             w_msg.ils = self.LangClass.NL2IL(w_msg)
             w_msg.time_total = time.time()-t
-            print('    Total: ', w_msg.time_total)
+            print('       Total: ', w_msg.time_total)
             ExecError = self.LogicShell.execIL(w_msg)
             return w_msg

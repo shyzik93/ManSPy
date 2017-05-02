@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """ Графематический анализ текста.
     Словарь символа: {'symbol': Символ, 'type': 'letter' OR 'punctuation_mark' OR 'other'}
     Словарь слова: {'word': СписокСимволов}
@@ -74,16 +73,16 @@ def getGraphmathA(text):
             word['around_pmark'].append('quota')
 
     # Разбиваем текст на ВОЗМОЖНЫЕ предложения
-    sentences = []
-    sentence = ObjUnit.Sentence({})
+    text = []
+    sentence = []
     for word in words:
         sentence.append(word)
         if word['end'] in ['.', '...', '!', '?']:
-            sentences.append(sentence)
-            sentence = ObjUnit.Sentence({})
+            text.append(sentence)
+            sentence = []
     if len(sentence) > 0:
-        sentences.append(sentence)
-        sentence['end'] = '.'
+        text.append(sentence)
+        #sentence_words['end'] = '.'
 
     #print len(words), len(sentences)
     #for sentence in sentences:
@@ -94,4 +93,4 @@ def getGraphmathA(text):
 
     # обработка слов, с небуквенными символами (email, url, file, etc)
 
-    return ObjUnit.Text(sentences)
+    return ObjUnit.Text([ObjUnit.Sentence(sentence) for sentence in text])

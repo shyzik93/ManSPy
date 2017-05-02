@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-# Author: Ra93POL
-# Date: 2.12.2014 - nowdays
 import copy, re
 
 class errorManager():
@@ -36,22 +33,43 @@ class _Unit():
         unit[name] - извлечение характеристики юнита
         unit[name] = value - изменение характеристики юнита
         name in unit - проверка наличия ключа характеристики юнита
-        len(unit) - извлечение длины юнита
+        len(unit) - извлечение длины юнита (количество подъюнитогв)
 
         Юнит - это предложение или слово. Подъюнит - их составляющие:
         для предложения - это слова, для слов - это символы'''
 
-    def _update_added_unit(self, subunit): pass
-
-    def _init(self, unit_info=None, subunit_info=None, properties_with_indexes=None):
-        self.unit_info = unit_info or {}
-        self.subunit_info = subunit_info or {}
+    def __init__(self, subunits=None, unit_info=None):
+        self.unit_info = {'max_index': -1}
+        self.subunit_info = {}
         self.full_info = {'unit_info': self.unit_info, 'unit': self.subunit_info}
 
-        self.properties_with_indexes = properties_with_indexes or []
-
         self.position = 0
+        self.keys = []
+
+        self.subunits_copy = {}
+
+        if unit_info: self.unit_info.update(unit_info)
+        if subunits: self.load_subunits(subunits)
+
+    def import_unit(self): pass
+    def export_unit(self): pass
+
+    def load_subunits(self, subunits):
+        """ Загружает подъюниты из списка """
+        self.unit_info['max_index'] = len(subunits) - 1
+
+        if isinstance(subunits, list): iterator = enumerate(subunits)
+        elif isinstance(subunits, dict): iterator = subunits.items() # нерекомендаовано
+
+        for index, subunit in iterator:
+            if isinstance(index, (str, float)): index = int(index) # только для словаря
+            subunit['index'] = index
+            self.subunit_info[index] = subunit
+
+
         self.keys = list(self.subunit_info.keys())
+        self.subunits_copy = self.subunit_info.copy() # делаем неглубокую копию исходного предложения.
+ 
 
     # Работа с информацией о юните в целом
     def __setitem__(self, key, value): self.unit_info[key] = value
@@ -90,7 +108,7 @@ class _Unit():
         position = list(self.keys).index(index)
         return self.__iter__(position)
     def jumpByStep(self, step=1): self.position += step # аналог next() 
-    def jumpByIndex(self, index): self.position = self.keys.index(index)
+    def jumpByIndex(self, index):self.position = self.keys.index(index)
     def delByStep(self, count=1, step=0, jump_step=-1):
         for c in range(count): del self.subunit_info[self.keys[self.position+step]]
         self.keys = list(self.subunit_info.keys())
@@ -253,19 +271,6 @@ class _Unit():
             for _subunit in _subunits: _subunit.update(new_properties)
             if subunit: subunit.update(new_properties)
 
-    def append(self, subunit):
-        indexes = []
-        for _subunit in self.subunit_info.values():
-            for key, value in _subunit.items():
-              if key in self.properties_with_indexes: indexes.append(value)
-        indexes.extend(list(self.subunit_info.keys()))
-
-        max_index = max(indexes)+1 if indexes else 0
-        self._update_added_unit(subunit)
-        subunit['index'] = max_index
-        self.subunit_info[max_index] = subunit
-        self.keys = list(self.subunit_info.keys())
-
     def pop(self):
         pass
 
@@ -330,17 +335,24 @@ class Word(_Unit):
     """ Класс объекта слова.
         При инициализации класса ему передаётся слово в виде строки. """  
     def __init__(self, str_word):
+        symbols = []
+        for index, symbol in enumerate(str_word):
+            symbols.append({'type': '', 'symbol': symbol})
+
         self.str_word = str_word
-        self._init(unit_info={'word': self.str_word, 'symbol_map': {}})
-        if isinstance(str_word, dict):
-            self.unit_info = str_word
-            self.str_word = str_word['word']
-            self.unit_info['word'] = self.str_word
-        for index in range(len(self.str_word)):
-            self.subunit_info[index] = {}
-            self.subunit_info[index]['symbol'] = self.str_word[index]
-            self.subunit_info[index]['type'] = ''
-        self.keys = list(self.subunit_info.keys())
+        _Unit.__init__(self, symbols, unit_info={
+            'word': self.str_word,
+            'symbol_map': {},
+            'feature': [],
+            'link': [],
+            'homogeneous_link': [], # ссылки на однородные члены
+            'type': 'real', # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
+            'base': '',
+            'case': '',
+            'notword': '',
+            'start_pmark': [], 'end_pmark': [], 'around_pmark': [],
+            'combine_words': []
+        })
 
     def hasSymbol(self, symbol):
         return symbol in self.str_word
@@ -352,38 +364,9 @@ class Sentence(_Unit):
     old_index = None
     new_index = None
 
-    def _update_added_unit(self, subunit):
-        _subunit = {
-        'feature': [],
-        'link': [],
-        'homogeneous_link': [], # ссылки на однородные члены
-        'type': 'real', # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
-        'base': '',
-        'case': '',
-        'notword': '',
-        'start_pmark': [], 'end_pmark': [], 'around_pmark': [],
-        'combine_words': []
-        }
-        for key, default_value in _subunit.items():
-            if key not in subunit: subunit[key] = default_value
-        #subunit.update(_subunit)
-
     def __init__(self, words):
-        self._init(properties_with_indexes=['link', 'homogeneous_link'], unit_info={'end':''})
+        _Unit.__init__(self, words, unit_info={'end':''})
         self.error = errorManager('graphmath', 'morph', 'postmorph', 'synt')
-
-        if isinstance(words, dict):
-            for index, word in words.items():
-                if isinstance(word, dict): word = Word(word)
-                if isinstance(index, (str, float)): index = int(index)
-                self.subunit_info[index] = word
-            #self.position = 0
-        else:
-            for index, word in enumerate(words):
-                self._update_added_unit(word)
-                word['index'] = index
-                self.subunit_info[index] = word
-        self.keys = list(self.subunit_info.keys())
 
     def getByCharacteristic(self, name, value):
         """ Извлекает слова, соответствующие характеристике.
@@ -499,20 +482,4 @@ class Text(_Unit):
         Возможности: анализ, обработка (изменение времени и прочее)
     """
     def __init__(self, sentences):
-        self._init()
-
-        if isinstance(sentences, dict): # из словаря
-            for index, sentence in sentences.items():
-                if isinstance(sentence, dict): sentence = Sentence(sentence)
-                if isinstance(index, (str, float)): index = int(index)
-                self.subunit_info[index] = sentence
-            #self.position = 0
-        else: # из списка
-            for index, sentence in enumerate(sentences):
-                self._update_added_unit(sentence)
-                sentence['index'] = index
-                self.subunit_info[index] = sentence
-        self.keys = list(self.subunit_info.keys())
-
-        #for index, sentence in enumerate(sentences):
-        #  self.subunit_info[index] = sentence
+        _Unit.__init__(self, sentences)
