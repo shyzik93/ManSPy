@@ -1,5 +1,5 @@
 import sys, os, time
-from . import NLModules, relation, extractor, converter, BeautySafe
+from . import NLModules, relation, extractor, converter
 
 class LangClass():
 
@@ -33,8 +33,8 @@ class LangClass():
         print('---------------------------------------')
         t1 =time.time()
 
-        BeautySafe.fwrite('\n\n'+'#'*100+'\n')
-        BeautySafe.fwrite(levels+'\n')
+        if msg and msg.IF.settings['log_all']: msg.history.header(levels)
+
 
         OR = relation.ObjRelation(settings, settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
 
@@ -60,9 +60,9 @@ class LangClass():
             elif self.levels[i-1] == "extract":
 
                 extractors = []
+                Extract = extractor.Extract(settings['assoc_version'])
                 for index, sentence in sentences:
                     OR.addWordsToDBFromDictSentence(sentence.getUnit('dict'))
-                    Extract = extractor.Extract(settings['assoc_version'])
                     extractors.append(Extract(sentence)) # заменяем объекты предложения на словари извлечений
                 sentences = extractors
 
@@ -77,8 +77,7 @@ class LangClass():
                     _ILs[index].extend(ILs)
                 sentences = _ILs
 
-            if msg:
-                if msg.IF.settings['log_all']: msg.history.log(self.levels[i-1], sentences)
+            if msg and msg.IF.settings['log_all']: msg.history.log(self.levels[i-1], sentences)
             print('   '+self.levels[i-1].rjust(9)+': ', time.time()-t)
             if end_level == self.levels[i-1]:
                 print('       Total: ', time.time()-t1)

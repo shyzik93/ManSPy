@@ -127,6 +127,11 @@ class History:
             json.dump(res, f, sort_keys=True, indent=4)#.replace('"', '')
             f.write('\n')
 
+    def header(self, levels):
+        with open('analysis.txt', 'a', encoding='utf-8') as f:
+            f.write('\n\n'+'#'*100+'\n')
+            f.write(levels+'\n')
+
 class Message:
 
     ''' Создан пока только для: логирования с учётом уникального номера сообщения; передачи настроек текущего потока '''
@@ -225,7 +230,7 @@ class API():
               'test': True, # тестовый режим, включаемый в процессе отладки и разработки
 
               # не рекомендуемые к изменению
-              'log_all': False,
+              'log_all': True,
               'storage_version': 2,
               'assoc_version': 3,
               'dir_db': None,
