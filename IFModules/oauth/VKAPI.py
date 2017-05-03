@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Author: Polyakov Konstantin (Ra93POL)
 # Date: 01.06.2015 - 06.06.2015
 import repper, internettools, restapitools
 import urllib, urllib2, cookielib, md5, json, urlparse, os

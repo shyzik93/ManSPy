@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# Author: Ra93POL
-# Date: 2014.06.01 - 2014.07.17
 '''
  Модули для lxml
  cssselect: https://codeload.github.com/SimonSapin/cssselect/zip/master

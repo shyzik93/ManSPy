@@ -2,7 +2,6 @@
 import xmpp, os, sys, codecs
 
 passwords = None
-white_list = ['ra93pol@jabber.ru']
 
 class Interface():
     def __init__(self, API):
@@ -13,9 +12,7 @@ class Interface():
         From = str(messR.getFrom()).split('/')[0]
 
         if w_text == None: return
-        if From not in white_list: r_text = 'Denied!'
-        else:
-            if w_text: self.API.write_text(self, w_text, From)
+        if w_text: self.API.write_text(self, w_text, From)
 
     def read_text(self, r_text, From):
         if From:
