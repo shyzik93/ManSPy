@@ -32,7 +32,7 @@ def get(arg0, a): return a
 
 def _is_only_numbers(numbers):
     for i in numbers:
-        if not isinstance(numbers, (int, float, complex)):
+        if not isinstance(i, (int, float, complex)):
             return False
     return True
 

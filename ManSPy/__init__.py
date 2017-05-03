@@ -53,12 +53,26 @@ class History:
              color: green;
          }
          .circumstance {
-             color: yellow
+             color: #d6d600;
          }
          .definition {
-             color: #bf8419
+             color: #bf8419;
          }
     </style>
+
+    <p style="text-align:center;">
+        <a target="blank" href="https://github.com/shyzik93/ManSPy"><img src="http://dosmth.ru/media/manspy_logo3.png"></a>
+    </p>
+
+    <ul style="float:right;">
+        <li class="supplement">supplement (дополнение)</li>
+        <li class="direct_supplement">direct supplement (прямое дополнение)</li>
+        <li class="predicate">predicate (сказуемое)</li>
+        <li class="circumstance">circumstance (обстоятельство)</li>
+        <li class="definition">definition (определение)</li>
+        <li>not member of sentence <br> (не является членом предложения)</li>
+    </ul>
+
 """)
 
     def html_row(self, sText, direction):
@@ -67,7 +81,7 @@ class History:
 
     def html_build_word(self, cWord):
         return """<span class="word{MOSentence}">{word}</span>""".format(
-            word=cWord['word'],
+            word=cWord['word'] + cWord['end'],
             MOSentence=' '+cWord['MOSentence'].replace(' ', '_') if 'MOSentence' in cWord else ''
         )
 
