@@ -1,6 +1,7 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
-import ManSPy, IFModules
+#! /usr/bin/env python3
+
+import ManSPy
+import IFModules
 
 interfaces = { # 1 - on, 0 - off
   'autofeed':    1, # Автоподатчик предложений - для теста, но можно писать "скрипты"

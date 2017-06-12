@@ -51,8 +51,11 @@ class _Unit():
         if unit_info: self.unit_info.update(unit_info)
         if subunits: self.load_subunits(subunits)
 
-    def import_unit(self): pass
-    def export_unit(self): pass
+    def import_unit(self, data):
+        self.full_info = copy.deepcopy(data)
+    def export_unit(self):
+        data =  copy.deepcopy(self.full_info)
+        return data
 
     def load_subunits(self, subunits):
         """ Загружает подъюниты из списка """
