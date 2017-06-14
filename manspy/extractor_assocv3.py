@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pprint
 
-def Extract(sentence):
+def _Extract(sentence):
     ''' Разбивает предложение на предикат и его актанты.
         Именга переменных здесь и далее в программе:
           argument - это актант, перевод на английский
@@ -29,3 +29,15 @@ def Extract(sentence):
         print("-"*10)
 
     return predicates, arguments
+
+
+
+def Extract(sentences, OR):
+    ''' Обёртка '''
+    extracts = []
+
+    for index, sentence in sentences:
+        OR.addWordsToDBFromDictSentence(sentence.getUnit('dict'))
+        extracts.append(_Extract(sentence)) # заменяем объекты предложения на словари извлечений
+
+    return extracts

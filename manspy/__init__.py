@@ -5,7 +5,7 @@
     мессенджеры, интерфейс мозг-компьютер, приёмник звонков и SMS и так далее.
 """
 import time, sys, os, copy, json, datetime
-from . import FCModule, import_action
+from . import import_action
 from .analyse_text import LangClass
 
 import sqlite3 as sql
@@ -28,10 +28,10 @@ class History:
     def __init__(self):
          if not os.path.exists('history.html'): self.html_head()
 
-    def plain(self, sText, direction, IF):
+    def plain(self, sText, direction, IFName):
         Time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()-time.altzone))
         if direction == 'R': sText = '   '+sText
-        sText = "* %s  %s  %s: %s\n" % (direction, Time, IF.IFName, sText)
+        sText = "* %s  %s  %s: %s\n" % (direction, Time, IFName, sText)
         with open('history.txt', 'ab') as f: f.write(bytearray(sText, 'utf-8'))
 
     def html_head(self):
@@ -150,16 +150,15 @@ class Message:
 
     ''' Создан пока только для: логирования с учётом уникального номера сообщения; передачи настроек текущего потока '''
 
-    def __init__(self, IF, direction=None, text=None, any_data=None):
-        self.IF = IF
+    def __init__(self, settings, text_settings, text=None, direction=None):
+        self.settings = settings
+        self.text_settings = text_settings
         self.r_texts = []
 
         self.history = History()
 
         if direction == 'W': self.from_IF(text)
         elif direction == 'R': self.to_IF(text)
-
-        self.any_data = any_data
 
         '''self.settings = settings
         self.direction = direction
@@ -214,16 +213,14 @@ class Message:
     def to_IF(self, r_text):
         r_text = self.toString(r_text)
         #if self.IF.settings['history']: self._save_history(r_text, "R")
-        if self.IF.settings['history'] and r_text: self.history.plain(r_text, "R", self.IF)
+        if self.settings['history'] and r_text: self.history.plain(r_text, "R", self.settings['ifname'])
         self.history.html(r_text, 'R')
-        self.IF.read_text(r_text, self.any_data)
+        self.settings['read_text'](r_text, self.text_settings['any_data'])
 
     def from_IF(self, w_text):
         self.w_text = w_text
         #if self.IF.settings['history']: self._save_history(w_text, "W")
-        if self.IF.settings['history'] and w_text: self.history.plain(w_text, "W", self.IF)
-
-
+        if self.settings['history'] and w_text: self.history.plain(w_text, "W", self.settings['ifname'])
 
     #def log(self, row_name, row_value):
     #    #if isinstance(row_value, (dict, list)): row_value = json.dumps(row_value)
@@ -242,6 +239,8 @@ class API():
                                # если при отключении включёна логика, то будет ошибка
               'language': 'Esperanto',
               'test': True, # тестовый режим, включаемый в процессе отладки и разработки
+              'read_text': None, # функция, в котору manspy пишет ответ.
+              'ifname': '', # уникальное имя интерфейса. Необходимо для журналов.
 
               # не рекомендуемые к изменению
               'log_all': True,
@@ -296,14 +295,40 @@ class API():
         t2 = time.time()
         print('  ', t2 - t1)
 
-        print("Init functions's module...")
-        t1 = time.time()
-        self.LogicShell = FCModule.LogicShell()
-        t2 = time.time()
-        print('  ', t2 - t1)
+        #print("Init functions's module...")
+        #t1 = time.time()
+        #self.LogicShell = FCModule.LogicShell()
+        #t2 = time.time()
+        #print('  ', t2 - t1)
         print("Ready!")
 
-    def write_text(self, IF, w_text, any_data=None):
+    def write_text(self, w_text, settings, text_settings=None):
+        '''
+            any_data - any data, if you would like to pass it to IF with answer.
+        '''
+        #print(threading.current_thread().name)
+
+        if text_settings is None: text_settings = {}
+        if 'any_data' not in text_settings: text_settings['any_data'] = None
+        if 'levels' not in text_settings: text_settings['levels'] = "graphmath exec"
+        if 'print_time' not in text_settings: text_settings['print_time'] = True
+
+        if settings['language'] not in self.was_imported:
+
+            print("Import fasifs for {0} language...".format(settings['language']))
+            t1 = time.time()
+
+            self.action_importer.import_for_lang(settings)
+            self.was_imported[settings['language']] = True
+
+            t2 = time.time()
+            print('  ', t2 - t1)
+
+        if w_text:
+            w_msg = Message(settings, text_settings, w_text, 'W')
+            return w_msg, self.LangClass.NL2IL(w_msg)
+
+    """def write_text(self, IF, w_text, any_data=None):
         '''
             any_data - any data, if you would like to pass it to IF with answer.
         '''
@@ -327,4 +352,4 @@ class API():
             w_msg.time_total = time.time()-t
             print('       Total: ', w_msg.time_total)
             ExecError = self.LogicShell.execIL(w_msg)
-            return w_msg
+            return w_msg"""

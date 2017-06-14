@@ -52,9 +52,33 @@ class _Unit():
         if subunits: self.load_subunits(subunits)
 
     def import_unit(self, data):
+
+        for index, subunit in data['unit'].items():
+            if isinstance(subunit, dict): break
+            if subunit['unit_type'] == 'dict':
+                _subunit = subunit
+            else:
+                if subunit['unit_type'] == 'Text': _subunit = Text()
+                elif subunit['unit_type'] == 'Sentence': _subunit = Sentence()
+                elif subunit['unit_type'] == 'Word': _subunit = Word()
+                _subunit.import_unit(subunit)
+            data['unit'][index] = _subunit
+
+
         self.full_info = copy.deepcopy(data)
+
     def export_unit(self):
         data =  copy.deepcopy(self.full_info)
+
+        if isinstance(self, Text): data['unit_type'] = 'Text'
+        elif isinstance(self, Sentence): data['unit_type'] = 'Sentence'
+        elif isinstance(self, Word): data['unit_type'] = 'Word'
+        else: data['unit_type'] = 'dict'
+
+        for index, subunit in data['unit'].items():
+            if isinstance(subunit, dict): break
+            data['unit'][index] = subunit.export_unit()
+
         return data
 
     def load_subunits(self, subunits):

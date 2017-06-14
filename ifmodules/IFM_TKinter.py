@@ -4,6 +4,7 @@ import tkinter, time, os
 class Interface():
     def __init__(self, API):
         self.API = API
+        self.settings = {'read_text': self.read_text}
 
     def FromUser(self, event=None):
         w_text = self.Text_In.get('1.0', tkinter.END)
@@ -11,7 +12,7 @@ class Interface():
         #if event == None: return
         self.Text_In.delete('1.0', tkinter.END)
         self.Text_Out.insert(tkinter.END, u'I said: ' + w_text + u'\n')
-        self.API.write_text(self, w_text)
+        self.API.write_text(w_text, self.settings)
 
     def read_text(self, r_text, any_data):
         self.Text_Out.insert(tkinter.END, u'ManSPy: ' + r_text + u'\n')

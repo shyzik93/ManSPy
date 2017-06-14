@@ -6,13 +6,14 @@ passwords = None
 class Interface():
     def __init__(self, API):
         self.API = API
+        self.settings = {'read_text': self.read_text}
 
     def FromUser(self, conn, messR):
         w_text = messR.getBody()
         From = str(messR.getFrom()).split('/')[0]
 
         if w_text == None: return
-        if w_text: self.API.write_text(self, w_text, From)
+        if w_text: self.API.write_text(w_text, self.settings, {'any_data':From})
 
     def read_text(self, r_text, From):
         if From:

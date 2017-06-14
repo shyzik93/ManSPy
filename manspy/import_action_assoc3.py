@@ -69,7 +69,9 @@ class _FASIF:
     def __init__(self, LangClass):
         self.LangClass = LangClass
 
-    def get_dword(self, word, settings): return list(self.LangClass.NL2IL(word, ':postmorph', settings)(0).getUnit('dict').values())[0]
+    def get_dword(self, word, settings):
+        text = self.LangClass.NL2IL(word, settings, {'levels':':postmorph', 'print_time':False})
+        return list(text(0).getUnit('dict').values())[0]
 
     def proccess_argword(self, argwords, settings):
         argwords['name'] = self.get_dword(argwords['name'], settings)
@@ -241,7 +243,7 @@ class FASIF_WordCombination(_FASIF):
                 value['verbs'][index] = OR.setRelation('synonym', self.get_dword(word_verb, settings)['base'])
 
         #print '----------------- to formule start'
-        wcomb = self.LangClass.NL2IL(fasif['wcomb'], ':synt', settings)(0)
+        wcomb = self.LangClass.NL2IL(fasif['wcomb'], settings, {'levels':':synt', 'print_time':False})(0)
         fasif['argdescr'] = {}
         for argname, data in fasif['args'].items():
             argword = data['argwords']['in_wcomb']['name']

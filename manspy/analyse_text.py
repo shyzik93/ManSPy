@@ -1,12 +1,13 @@
 import sys, os, time
-from . import NLModules, relation, extractor, converter
+from . import NLModules, relation, extractor, converter, FCModule
 
 class LangClass():
 
-    levels = ["graphmath", "morph", "postmorph", "synt", "extract", "convert"]
+    levels = ["graphmath", "morph", "postmorph", "synt", "extract", "convert", "exec"]
 
     def __init__(self):
         self.lang_modules = {}
+        self.LogicShell = FCModule.LogicShell()
 
     def get_lang_module(self, language):
         if language not in self.lang_modules:
@@ -25,50 +26,48 @@ class LangClass():
             return level, level
         return levels
 
-    def NL2IL(self, msg, levels="graphmath convert", settings=None):
+    def NL2IL(self, msg, settings=None, text_settings=None):
         """ Второй аргумент - диапазон конвертирования от первого до последнего
             включительно через пробел. Если требуется сделать лишь один уровень,
             то можно указать только одно слово. Если указан только 'convert',
             то в качестве первого аргумента передаётся список извлечений."""
 
         if settings is None:
-            settings = msg.IF.settings
+            settings = msg.settings
             sentences = msg.w_text
+            text_settings = msg.text_settings
         else:
             sentences = msg
             msg = None
 
-        print('\n---------------------------------------')
-        print('----', sentences)
-        print('---------------------------------------')
+        if text_settings['print_time']:
+            print('\n---------------------------------------')
+            print('----', sentences)
+            print('---------------------------------------')
         t1 =time.time()
 
-        if msg and msg.IF.settings['log_all']: msg.history.header(levels)
+        if msg and msg.settings['log_all']: msg.history.header(text_settings['levels'])
 
         OR = relation.ObjRelation(settings, settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
         lang_module = self.get_lang_module(settings['language'])
-        start_level, end_level = self.parse_level_string(levels)
+        start_level, end_level = self.parse_level_string(text_settings['levels'])
 
         
-        for i in range(self.levels.index(start_level)+1, len(self.levels)+1):
+        for level in self.levels[self.levels.index(start_level) : self.levels.index(end_level)+1]:
             t =time.time()
 
-            if self.levels[i-1] == "graphmath": sentences = lang_module.getGraphmathA(sentences)
-            elif self.levels[i-1] == "morph": sentences = lang_module.getMorphA(sentences)
-            elif self.levels[i-1] == "postmorph": sentences = lang_module.getPostMorphA(sentences)
-            elif self.levels[i-1] == "synt": sentences = lang_module.getSyntA(sentences)
-            elif self.levels[i-1] == "extract":
+            if level == "graphmath": sentences = lang_module.getGraphmathA(sentences)
+            elif level == "morph": sentences = lang_module.getMorphA(sentences)
+            elif level == "postmorph": sentences = lang_module.getPostMorphA(sentences)
+            elif level == "synt": sentences = lang_module.getSyntA(sentences)
+            elif level == "extract":
 
-                extractors = []
                 Extract = extractor.Extract(settings['assoc_version'])
-                for index, sentence in sentences:
-                    OR.addWordsToDBFromDictSentence(sentence.getUnit('dict'))
-                    extractors.append(Extract(sentence)) # заменяем объекты предложения на словари извлечений
-                sentences = extractors
+                sentences = Extract(sentences, OR) # заменяем объекты предложения на словари извлечений
 
-            elif self.levels[i-1] == "convert":
+            elif level == "convert":
 
-                OR = relation.ObjRelation(settings, settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
+                #OR = relation.ObjRelation(settings, settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
                 _ILs = {}
                 for index, sentence in enumerate(sentences):
                     _ILs[index] = []
@@ -77,11 +76,18 @@ class LangClass():
                     _ILs[index].extend(ILs)
                 sentences = _ILs
 
-            if msg and msg.IF.settings['log_all']: msg.history.log(self.levels[i-1], sentences)
-            print('   '+self.levels[i-1].rjust(9)+': ', time.time()-t)
-            if end_level == self.levels[i-1]:
-                print('       Total: ', time.time()-t1)
-                return sentences
+            elif level == "exec":
+
+                msg.ils = sentences
+                sentences = self.LogicShell.execIL(msg) # возвращает ошибки выполнения
+
+            if msg and msg.settings['log_all']: msg.history.log(level, sentences)
+            if text_settings['print_time']: print('   '+level.rjust(9)+': ', time.time()-t)
+
+        time_total = time.time()-t1
+        if msg: msg.time_total = time_total
+        if text_settings['print_time']: print('       Total: ', time_total)
+        return sentences
 
     def IL2NL(self, IL):
         #IL = Synthesizer.IL2resultA(IL)

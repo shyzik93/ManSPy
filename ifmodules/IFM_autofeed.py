@@ -10,6 +10,7 @@ class Interface:
 
     def __init__(self, API):
         self.API = API
+        self.settings = {'read_text': self.read_text}
 
     def read_text(self, r_text, any_data):
         if self.settings2['compare_with_origin']:
@@ -51,7 +52,8 @@ class Interface:
                 self.settings2 = settings
                 self.origin = origin
 
-                msg = self.API.write_text(self, sentence)
+                msg, res = self.API.write_text(sentence, self.settings)
+                #msg = self.API.write_text(self, sentence)
                 t += msg.time_total
 
 
