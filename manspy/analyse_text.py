@@ -15,6 +15,16 @@ class LangClass():
 
         return self.lang_modules[language]
 
+    def parse_level_string(self, levels):
+        ''' parsing level string. Return start_level, end_level. '''
+        levels = levels.split()
+        if len(levels)==1:
+            level = levels.pop()
+            if level[0] == ':': return self.levels[0], level[1:]
+            elif level[-1] == ':': return level[:-1], self.levels[-1]
+            return level, level
+        return levels
+
     def NL2IL(self, msg, levels="graphmath convert", settings=None):
         """ Второй аргумент - диапазон конвертирования от первого до последнего
             включительно через пробел. Если требуется сделать лишь один уровень,
@@ -35,19 +45,9 @@ class LangClass():
 
         if msg and msg.IF.settings['log_all']: msg.history.header(levels)
 
-
         OR = relation.ObjRelation(settings, settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
-
         lang_module = self.get_lang_module(settings['language'])
-
-        # Парсим строку диапазона
-        levels = levels.split()
-        if len(levels)==1:
-            level = levels.pop()
-            if level[0] == ':': start_level, end_level = self.levels[0], level[1:]
-            elif level[-1] == ':': start_level, end_level = level[:-1], self.levels[-1]
-            else: start_level = end_level = level
-        else: start_level, end_level = levels
+        start_level, end_level = self.parse_level_string(levels)
 
         
         for i in range(self.levels.index(start_level)+1, len(self.levels)+1):
