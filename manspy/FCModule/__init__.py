@@ -66,6 +66,6 @@ class LogicShell:
         for index_sentence, ILs in msg.ils.items():
             for IL in ILs:
                 if IL['error_convert']['function']: continue
-            self.LogicKernel.LogicKernel(ILs, msg)
+            if ILs: self.LogicKernel.LogicKernel(ILs, msg)
 
         return ExecError

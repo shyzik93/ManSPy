@@ -81,11 +81,72 @@ def setLinks(index, sentence):
                 break # это другой актант уже пойдёт.
         sentence.position = old_position
 
-def getSyntA(sentences):
-    for index, sentence in sentences:
+def goThrowLinks(index, sentence, indexes=None):
+
+    if indexes is None: indexes = []
+    indexes.append(index)
+
+    for index_link in sentence(index, 'link'):
+        goThrowLinks(index_link, sentence, indexes)
+    for index_link in sentence(index, 'homogeneous_link'):
+        goThrowLinks(index_link, sentencem, indexes)    
+
+    return indexes
+
+def split_sentence(sentence):
+
+    # manspy2 exec --synt "se dolara kurzo de laboro estas kvaron"
+    # manspy2 exec --synt "se dolara kurzo de laboro estas kvaro"
+    # manspy2 exec --synt "se dolara kurzo de laboro estas 4"
+
+    first_indexes = sentence.getIndexesOfFirstWords()
+    #first_words = [sentence(i, 'word') for i in first_indexes]
+    print([sentence(i, 'word') for i in first_indexes])
+
+    conjunctions = []
+    subjects = []
+    predicates = []
+
+    _sentences = []
+
+    for first_index in first_indexes:
+        if sentence(first_index, 'POSpeech') == 'conjuction':
+            conjunctions.append(first_index) # сочинённых союзов между однородными членами должны исчезнуть в предыдущих шагах.
+        if sentence(first_index, 'POSentence') == 'subject':
+            subjects.append(first_index)
+        if sentence(first_index, 'POSentence') == 'predicate':
+            predicates.append(first_index)    
+
+    for subject in subject:
+        _sentences.append(goThrowLinks(subject, sentence))
+
+    # определяем, в каком 
+    for conjunction in conjunctions:
+        sentence.jumpByIndex(conjunction['index'])
+        left, right = sentence.getNeighbours()
+
+    #for index, word in sentence:
+    #    left, right = sentence.getNeighbours()
+
+def split_sentence(sentence):
+    first_indexes = sentence.getIndexesOfFirstWords()
+    #first_words = [sentence(i, 'word') for i in first_indexes]
+    print([sentence(i, 'word') for i in first_indexes])
+
+    conjunctions = []
+    _sentences = []
+
+    for first_index in first_indexes:
+        _sentences.append(goThrowLinks(first_index, sentence))    
+
+def getSyntA(text):
+    for index, sentence in text:
         # определяет члены предложения
         for index, word in sentence: setMOSentence(word, sentence)
         # устанавливает связи членов предложения
         for index, word in sentence: setLinks(index, sentence)
 
-    return sentences
+        # разделяем сложноподчинённые и сложносочинённые предложения
+        split_sentence(sentence)
+
+    return text

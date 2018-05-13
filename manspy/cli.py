@@ -86,6 +86,12 @@ class CLI():
                     del word['unit_info']['max_index'], word['unit_info']['type'], word['unit_info']['notword'], word['unit_info']['end_orig'], word['unit_info']['end_pmark'], word['unit_info']['start_pmark']
                     pprint.pprint(word['unit_info'])
             #pprint.pprint(res)
+        elif args.extract:
+            pass
+        elif args.convert:
+            for index, sentence_ils in res.items():
+                print()
+                for sentence_il in sentence_ils: print(sentence_il)
 
         #print(res)
 
