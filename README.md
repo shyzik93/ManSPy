@@ -1,4 +1,4 @@
-<p align="center"><img src="http://dosmth.ru/media/manspy_logo3.png" style="width:200px;"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/shyzik93/manspy/master/manspy_logo3.png" style="width:200px;"></p>
 
 <p align="center"><h1 align="center"> ManSPy: "Programmer! Please, make me smart!" </h1></p>
 
@@ -12,7 +12,7 @@
 
 ## Краткая история диалога
 
-<img src="http://dosmth.ru/media/history_promo.png">
+<img src="https://raw.githubusercontent.com/shyzik93/manspy/master/history_promo.png">
 
 # Поверхностный взгляд
 
