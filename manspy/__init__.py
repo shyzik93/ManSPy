@@ -327,29 +327,3 @@ class API():
         if w_text:
             w_msg = Message(settings, text_settings, w_text, 'W')
             return w_msg, self.LangClass.NL2IL(w_msg)
-
-    """def write_text(self, IF, w_text, any_data=None):
-        '''
-            any_data - any data, if you would like to pass it to IF with answer.
-        '''
-        #print(threading.current_thread().name)
-
-        if IF.settings['language'] not in self.was_imported:
-
-            print("Import fasifs for {0} language...".format(IF.settings['language']))
-            t1 = time.time()
-
-            self.action_importer.import_for_lang(IF.settings)
-            self.was_imported[IF.settings['language']] = True
-
-            t2 = time.time()
-            print('  ', t2 - t1)
-
-        w_msg = Message(IF, 'W', w_text, any_data)
-        if w_text:
-            t =time.time()
-            w_msg.ils = self.LangClass.NL2IL(w_msg)
-            w_msg.time_total = time.time()-t
-            print('       Total: ', w_msg.time_total)
-            ExecError = self.LogicShell.execIL(w_msg)
-            return w_msg"""
