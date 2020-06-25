@@ -89,7 +89,7 @@ def goThrowLinks(index, sentence, indexes=None):
     for index_link in sentence(index, 'link'):
         goThrowLinks(index_link, sentence, indexes)
     for index_link in sentence(index, 'homogeneous_link'):
-        goThrowLinks(index_link, sentencem, indexes)    
+        goThrowLinks(index_link, sentence, indexes)    
 
     return indexes
 
