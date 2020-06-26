@@ -4,13 +4,15 @@
     Примеры возможных интерфейсов: текстовый чат, распознаватель речи,
     мессенджеры, интерфейс мозг-компьютер, приёмник звонков и SMS и так далее.
 """
+import sqlite3 as sql
 import time, sys, os, copy, json, datetime
 from . import import_action
 from .analyse_text import LangClass
 
-import sqlite3 as sql
+from . import message
 
 sql.enable_callback_tracebacks(True)
+
 
 def create_bd_file(language, name):
     if not os.path.exists(language) or not os.path.isdir(language):
@@ -21,212 +23,8 @@ def create_bd_file(language, name):
     cu = c.cursor()
     return c, cu
 
+
 class MainException(Exception): pass
-
-
-class History:
-    def __init__(self):
-         if not os.path.exists('history.html'): self.html_head()
-
-    def plain(self, sText, direction, IFName):
-        Time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()-time.altzone))
-        if direction == 'R': sText = '   '+sText
-        sText = "* %s  %s  %s: %s\n" % (direction, Time, IFName, sText)
-        with open('history.txt', 'ab') as f: f.write(bytearray(sText, 'utf-8'))
-
-    def html_head(self):
-        with open('history.html', 'w') as f:
-            f.write("""<!DOCTYPE html>
-<html lang="ru"><head>
-    <meta charset="utf-8">
-</head><body>
-    <style>
-        .supplement {
-            color: #007df8;
-         }
-         .subject {
-         }
-         .direct_supplement {
-             color: blue;
-         }
-         .predicate {
-             color: green;
-         }
-         .circumstance {
-             color: #d6d600;
-         }
-         .definition {
-             color: #bf8419;
-         }
-    </style>
-
-    <p style="text-align:center;">
-        <a target="blank" href="https://github.com/shyzik93/ManSPy"><img src="http://dosmth.ru/media/manspy_logo3.png"></a>
-    </p>
-
-    <ul style="float:right;">
-        <li class="supplement">supplement (дополнение)</li>
-        <li class="direct_supplement">direct supplement (прямое дополнение)</li>
-        <li class="predicate">predicate (сказуемое)</li>
-        <li class="circumstance">circumstance (обстоятельство)</li>
-        <li class="definition">definition (определение)</li>
-        <li>not member of sentence <br> (не является членом предложения)</li>
-    </ul>
-
-""")
-
-    def html_row(self, sText, direction):
-        with open('history.html', 'a') as f:
-            f.write("""    {0} &nbsp;&nbsp; {1}<br>""".format(direction, sText))
-
-    def html_build_word(self, cWord):
-        return """<span class="word{MOSentence}">{word}</span>""".format(
-            word=cWord['word'] + cWord['end'],
-            MOSentence=' '+cWord['MOSentence'].replace(' ', '_') if 'MOSentence' in cWord else ''
-        )
-
-    def html_build_text(self, cText):
-        text_ = []
-
-        for index, cSentence in cText:
-            for index, cWord in cSentence.subunits_copy.items():
-                text_.append(self.html_build_word(cWord))
-
-        return ' '.join(text_)
-
-    def html(self, mText, direction):
-        if direction == "W": self.html_row(self.html_build_text(mText), direction)
-        else: self.html_row("&nbsp;"*8 + mText, direction)
-
-
-    def log(self, title, res):
-
-        if title == "graphmath":
-            with open('analysis.txt', 'a', encoding='utf-8') as f:
-                f.write('NL-sentence: ')
-                for index, sentence in res:
-                    for index, word in sentence.subunits_copy.items(): f.write(word['word']+' ')
-                f.write('\n')
-            res = res.getUnit('dict')
-        elif title == 'morph':
-            pass
-            with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
-                flog.write('\n')
-                for index, sentence in res: flog.write('sentence: %s\n' % sentence.getUnit('str')['fwords'])
-                flog.write('\n')
-
-            res = res.getUnit('dict')            
-        elif title == 'postmorph':
-            res = res.getUnit('dict')
-        elif title == 'synt':
-            self.html(res, 'W')
-            res = res.getUnit('dict')
-        elif title == 'extract':
-            res = list(res)
-            return
-        elif title == 'convert':
-            _res = []
-            for index, ILs in res.items():
-                for IL in ILs:
-                    _res.append('IL-sentence: '+str(IL))
-            res = _res
-
-        now = datetime.datetime.now().strftime("%Y.%m.%d %H:%M:%S")
-
-        with open('analysis.txt', 'a', encoding='utf-8') as f:
-            f.write('----'+now+'\n')
-            #f.fwrite('Folding sentence: '+str(sentence.getUnit('str'))+'\n')
-            f.write(('- '*10)+title+(' -'*10)+u'\n')
-
-            json.dump(res, f, sort_keys=True, indent=4)#.replace('"', '')
-            f.write('\n')
-
-    def header(self, levels):
-        with open('analysis.txt', 'a', encoding='utf-8') as f:
-            f.write('\n\n'+'#'*100+'\n')
-            f.write(levels+'\n')
-
-class Message:
-
-    ''' Создан пока только для: логирования с учётом уникального номера сообщения; передачи настроек текущего потока '''
-
-    def __init__(self, settings, text_settings, text=None, direction=None):
-        self.settings = settings
-        self.text_settings = text_settings
-        self.r_texts = []
-
-        self.history = History()
-
-        if direction == 'W': self.from_IF(text)
-        elif direction == 'R': self.to_IF(text)
-
-        '''self.settings = settings
-        self.direction = direction
-        self.nl = message_nl # nl = Nature Language
-        self.il = None # il = Internal Language
-
-        self.c, self.cu = self.settings['db_sqlite3']
-
-        self.cu.execute(\'''
-        CREATE TABLE IF NOT EXISTS `log_history` (
-          `message_id` INTEGER PRIMARY KEY AUTOINCREMENT,
-          `direction` TEXT,
-          `thread_name` VARCHAR(255),
-          `language` INTEGER,
-          `date_add` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          `message_nl` TEXT,
-          `message_il` JSON,
-          `a_graphemath` JSON,
-          `a_morph` JSON,
-          `a_postmorph` JSON,
-          `a_synt` JSON);
-      \''')
-
-        t1 = time.time()
-        self.cu.execute(
-          'INSERT INTO `log_history` (`direction`, `thread_name`, `language`, `message_nl`) VALUES (?, ?, ?, ?);',
-          (self.direction, self.settings['thread_name'], self.settings['language'], self.nl)
-        )
-        t2 = time.time()
-        _t1 = t2 - t1
-        self.c.commit()
-        t3 = time.time()
-        _t2 = t3 - t2
-        #print(_t1, _t2)
-
-
-        self.message_id = self.cu.lastrowid
-        #print(self.message_id)"""
-        '''
-
-    '''def _save_history(self, text, Type):
-        if text:
-            Time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()-time.altzone))
-            if Type == 'R': text = '   '+text
-            text = "* %s  %s  %s: %s\n" % (Type, Time, self.IF.IFName, text)
-            with open('history.txt', 'ab') as f: f.write(bytearray(text, 'utf-8'))'''
-
-    def toString(self, r_text):
-        if isinstance(r_text, (int, float, complex)): return str(r_text)
-        else: return r_text
-
-    def to_IF(self, r_text):
-        r_text = self.toString(r_text)
-        #if self.IF.settings['history']: self._save_history(r_text, "R")
-        if self.settings['history'] and r_text: self.history.plain(r_text, "R", self.settings['ifname'])
-        self.history.html(r_text, 'R')
-        self.settings['read_text'](r_text, self.text_settings['any_data'])
-
-    def from_IF(self, w_text):
-        self.w_text = w_text
-        #if self.IF.settings['history']: self._save_history(w_text, "W")
-        if self.settings['history'] and w_text: self.history.plain(w_text, "W", self.settings['ifname'])
-
-    #def log(self, row_name, row_value):
-    #    #if isinstance(row_value, (dict, list)): row_value = json.dumps(row_value)
-    #    #self.cu.execute('UPDATE `log_history` SET `'+row_name+'`=? WHERE `message_id`=?', (row_value, self.message_id));
-    #    #self.c.commit()
-    #    pass
 
 
 class API():
@@ -325,5 +123,5 @@ class API():
             print('  ', t2 - t1)
 
         if w_text:
-            w_msg = Message(settings, text_settings, w_text, 'W')
+            w_msg = message.Message(settings, text_settings, w_text, 'W')
             return w_msg, self.LangClass.NL2IL(w_msg)
