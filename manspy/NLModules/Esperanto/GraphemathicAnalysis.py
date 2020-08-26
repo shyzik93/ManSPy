@@ -26,7 +26,7 @@ def define_type_symbol(word):
 def strip_end_of_word(word, symbols):
     """ Обрезает сивмолы `symbols` с конца слова"""
     word_stripped = word['word'].rstrip(symbols)
-    word['end_orig'] = word['word'][-len(word_stripped):]
+    word['end_orig'] = word['word'][len(word_stripped):]
     word['word'] = word_stripped
 
     # OLD_CODE
@@ -44,22 +44,21 @@ def process_end_of_word(word):
         strip_end_of_word(word, '.!?')
         if '?' in word['end_orig']: word['end'] = '?'
         elif '!' in word['end_orig']: word['end'] = '!'
-        elif '...' in word['end_orig']: word['end'] = '...'
+        elif '..' in word['end_orig']: word['end'] = '...'
         elif '.' in word['end_orig']: word['end'] = '.'
     elif sword[-1] in ',;:':
         strip_end_of_word(word, ',;:')
         word['end'] = word['end_orig'][0]
-    # слово с небуквенными символами в середине или начале
-    if not word['word'].isalpha():
-        if re.match(r'^[0-9]*[,.]?[0-9]+$', sword): word['notword'] = 'figure'
 
-def getGraphmathA(text):
+def process_words(text):
+
     # Заменяем символы
-    for k, v in ReplacedLetters.items(): text = text.replace(k, v)
-    words = text.split()
-    words = [ObjUnit.Word(word) for word in words]
+    for k, v in ReplacedLetters.items():
+        text = text.replace(k, v)
+    words = [ObjUnit.Word(word) for word in text.split()]
 
-    for word in words: define_type_symbol(word)
+    for word in words:
+        define_type_symbol(word)
 
     # Присоединяем отдельностоящие символы пунктуации к концу слова
     index = 0
@@ -72,17 +71,22 @@ def getGraphmathA(text):
             index -= 1
         index += 1
 
-    # Обработка последних символов в слове (потенциальные пунктуационные знаки)
     for word in words:
+        # Обработка последних символов в слове (потенциальные пунктуационные знаки)
         process_end_of_word(word)
 
-    # обработка кавычек вокруг одного слова
-    for word in words:
+        # слово с небуквенными символами в середине или начале
+        if not word['word'].isalpha():
+            if re.match(r'^[0-9]*[,.]?[0-9]+$', sword): word['notword'] = 'figure'
+
+        # обработка кавычек вокруг одного слова
         sword = word['word']
         if sword[-1] == sword[0] and (sword[-1] == '"' or sword[-1] == "'"):
             word['word'] = sword[1:-1]
             word['around_pmark'].append('quota')
+    return words
 
+def separate_to_sentences(words):
     # Разбиваем текст на ВОЗМОЖНЫЕ предложения
     text = []
     sentence = []
@@ -94,11 +98,18 @@ def getGraphmathA(text):
     if len(sentence) > 0:
         text.append(sentence)
         #sentence_words['end'] = '.'
+    
+    return text
+
+
+def getGraphmathA(source_string):
+    
+    words = process_words(source_string)
+    text = separate_to_sentences(words)
 
     #print len(words), len(sentences)
     #for sentence in sentences:
     #  print len(sentence)#sentence.getUnit('dict')
-
 
     # обработка кавычек
 
