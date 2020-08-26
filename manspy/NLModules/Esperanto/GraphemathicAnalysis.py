@@ -23,17 +23,17 @@ def define_type_symbol(word):
         elif symbol['symbol'] in punctuation_marks: symbol['type'] = 'pmark'
         else: symbol['type'] = 'other'
 
-def proccess_end_word(sword, word, symbols):
+def proccess_end_word(word, symbols):
     """ Обрезает сивмолы `symbols` с конца слова"""
     word_stripped = word['word'].rstrip(symbols)
     word['end_orig'] = word['word'][-len(word_stripped):]
     word['word'] = word_stripped
 
     # OLD_CODE
-    # for index in range(1, len(sword)):
-    #     if sword[-index] not in symbols: break
-    #     word['end_orig'] += sword[-index]
-    # word['word'] = sword[:-len(word['end_orig'])]
+    # for index in range(1, len(word['word'])):
+    #     if word['word'][-index] not in symbols: break
+    #     word['end_orig'] += word['word'][-index]
+    # word['word'] = word['word'][:-len(word['end_orig'])]
 
 def getGraphmathA(text):
     # Заменяем символы
@@ -60,13 +60,13 @@ def getGraphmathA(text):
         word['end'] = word['end_orig'] = ''
         # слово с пунктуационными символами на конце
         if sword[-1] in '.!?':
-            proccess_end_word(sword, word, '.!?')
+            proccess_end_word(word, '.!?')
             if '?' in word['end_orig']: word['end'] = '?'
             elif '!' in word['end_orig']: word['end'] = '!'
             elif '...' in word['end_orig']: word['end'] = '...'
             elif '.' in word['end_orig']: word['end'] = '.'
         elif sword[-1] in ',;:':
-            proccess_end_word(sword, word, ',;:')
+            proccess_end_word(word, ',;:')
             word['end'] = word['end_orig'][0]
         # слово с небуквенными символами в середине или начале
         if not word['word'].isalpha():
