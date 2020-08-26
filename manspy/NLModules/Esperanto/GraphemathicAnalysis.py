@@ -22,7 +22,7 @@ def define_type_symbol(word):
         elif symbol['symbol'] in punctuation_marks: symbol['type'] = 'pmark'
         else: symbol['type'] = 'other'
 
-def proccessEndWord(sword, word, symbols):
+def proccess_end_word(sword, word, symbols):
     for index in range(1, len(sword)):
         if sword[-index] not in symbols: break
         word['end_orig'] += sword[-index]
@@ -53,13 +53,13 @@ def getGraphmathA(text):
         word['end'] = word['end_orig'] = ''
         # слово с пунктуационными символами на конце
         if sword[-1] in '.!?':
-            proccessEndWord(sword, word, '.!?')
+            proccess_end_word(sword, word, '.!?')
             if '?' in word['end_orig']: word['end'] = '?'
             elif '!' in word['end_orig']: word['end'] = '!'
             elif '...' in word['end_orig']: word['end'] = '...'
             elif '.' in word['end_orig']: word['end'] = '.'
         elif sword[-1] in ',;:':
-            proccessEndWord(sword, word, ',;:')
+            proccess_end_word(sword, word, ',;:')
             word['end'] = word['end_orig'][0]
         # слово с небуквенными символами в середине или начале
         if not word['word'].isalpha():
