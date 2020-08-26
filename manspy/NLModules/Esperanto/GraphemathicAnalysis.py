@@ -17,16 +17,23 @@ ReplacedLetters = {u'cx' :u'ĉ', u'gx': u'ĝ', u'hx': u'ĥ',
            u'\t': u'', u'\n': u''}
 
 def define_type_symbol(word):
+    """ Устанавливаем тип символа в слове """
     for index, symbol in word:
         if symbol['symbol'] in letters: symbol['type'] = 'letter'
         elif symbol['symbol'] in punctuation_marks: symbol['type'] = 'pmark'
         else: symbol['type'] = 'other'
 
 def proccess_end_word(sword, word, symbols):
-    for index in range(1, len(sword)):
-        if sword[-index] not in symbols: break
-        word['end_orig'] += sword[-index]
-    word['word'] = sword[:-len(word['end_orig'])]
+    """ Обрезает сивмолы `symbols` с конца слова"""
+    word_stripped = word['word'].rstrip(symbols)
+    word['end_orig'] = word['word'][-len(word_stripped):]
+    word['word'] = word_stripped
+
+    # OLD_CODE
+    # for index in range(1, len(sword)):
+    #     if sword[-index] not in symbols: break
+    #     word['end_orig'] += sword[-index]
+    # word['word'] = sword[:-len(word['end_orig'])]
 
 def getGraphmathA(text):
     # Заменяем символы
