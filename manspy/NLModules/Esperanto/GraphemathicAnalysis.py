@@ -35,6 +35,24 @@ def strip_word_end(word, symbols):
     #     word['end_orig'] += word['word'][-index]
     # word['word'] = word['word'][:-len(word['end_orig'])]
 
+def process_end_of_word(word):
+    """ Обработка последних символов в слове (потенциальные пунктуационные знаки) """
+    sword = word['word']
+    word['end'] = word['end_orig'] = ''
+    # слово с пунктуационными символами на конце
+    if sword[-1] in '.!?':
+        strip_word_end(word, '.!?')
+        if '?' in word['end_orig']: word['end'] = '?'
+        elif '!' in word['end_orig']: word['end'] = '!'
+        elif '...' in word['end_orig']: word['end'] = '...'
+        elif '.' in word['end_orig']: word['end'] = '.'
+    elif sword[-1] in ',;:':
+        strip_word_end(word, ',;:')
+        word['end'] = word['end_orig'][0]
+    # слово с небуквенными символами в середине или начале
+    if not word['word'].isalpha():
+        if re.match(r'^[0-9]*[,.]?[0-9]+$', sword): word['notword'] = 'figure'
+
 def getGraphmathA(text):
     # Заменяем символы
     for k, v in ReplacedLetters.items(): text = text.replace(k, v)
@@ -56,21 +74,7 @@ def getGraphmathA(text):
 
     # Обработка последних символов в слове (потенциальные пунктуационные знаки)
     for word in words:
-        sword = word['word']
-        word['end'] = word['end_orig'] = ''
-        # слово с пунктуационными символами на конце
-        if sword[-1] in '.!?':
-            strip_word_end(word, '.!?')
-            if '?' in word['end_orig']: word['end'] = '?'
-            elif '!' in word['end_orig']: word['end'] = '!'
-            elif '...' in word['end_orig']: word['end'] = '...'
-            elif '.' in word['end_orig']: word['end'] = '.'
-        elif sword[-1] in ',;:':
-            strip_word_end(word, ',;:')
-            word['end'] = word['end_orig'][0]
-        # слово с небуквенными символами в середине или начале
-        if not word['word'].isalpha():
-            if re.match(r'^[0-9]*[,.]?[0-9]+$', sword): word['notword'] = 'figure'
+        process_end_of_word(word)
 
     # обработка кавычек вокруг одного слова
     for word in words:
