@@ -23,7 +23,7 @@ def define_type_symbol(word):
         elif symbol['symbol'] in punctuation_marks: symbol['type'] = 'pmark'
         else: symbol['type'] = 'other'
 
-def strip_word_end(word, symbols):
+def strip_end_of_word(word, symbols):
     """ Обрезает сивмолы `symbols` с конца слова"""
     word_stripped = word['word'].rstrip(symbols)
     word['end_orig'] = word['word'][-len(word_stripped):]
@@ -41,13 +41,13 @@ def process_end_of_word(word):
     word['end'] = word['end_orig'] = ''
     # слово с пунктуационными символами на конце
     if sword[-1] in '.!?':
-        strip_word_end(word, '.!?')
+        strip_end_of_word(word, '.!?')
         if '?' in word['end_orig']: word['end'] = '?'
         elif '!' in word['end_orig']: word['end'] = '!'
         elif '...' in word['end_orig']: word['end'] = '...'
         elif '.' in word['end_orig']: word['end'] = '.'
     elif sword[-1] in ',;:':
-        strip_word_end(word, ',;:')
+        strip_end_of_word(word, ',;:')
         word['end'] = word['end_orig'][0]
     # слово с небуквенными символами в середине или начале
     if not word['word'].isalpha():
