@@ -71,6 +71,15 @@ class API():
         settings['language'] = settings['language'].capitalize()
         settings['db_sqlite3'] = create_bd_file(settings['language'], 'main_data.db')
 
+    def import_fasifs(self, settings):
+        print("Import fasifs for {0} language...".format(settings['language']))
+        t1 = time.time()
+
+        self.action_importer.import_for_lang(settings)
+        self.was_imported[settings['language']] = True
+
+        print('  ', time.time() - t1)
+
     def __init__(self):
         self.default_settings['dir_db'] = self.make_db_dir(self.default_settings['dir_db'])
 
@@ -112,15 +121,7 @@ class API():
         if 'print_time' not in text_settings: text_settings['print_time'] = True
 
         if settings['language'] not in self.was_imported:
-
-            print("Import fasifs for {0} language...".format(settings['language']))
-            t1 = time.time()
-
-            self.action_importer.import_for_lang(settings)
-            self.was_imported[settings['language']] = True
-
-            t2 = time.time()
-            print('  ', t2 - t1)
+            self.import_fasifs(settings)
 
         if w_text:
             w_msg = message.Message(settings, text_settings, w_text, 'W')
