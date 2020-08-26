@@ -2,6 +2,8 @@
 
 <p align="center"><h1 align="center"> ManSPy: "Programmer! Please, make me smart!" </h1></p>
 
+[![Build Status](https://travis-ci.com/shyzik93/ManSPy.svg?branch=master)](https://travis-ci.com/shyzik93/ManSPy)
+
 - Язык программирования: Python 3.4
 - Естественный язык: Esperanto (можно написать модуль для Вашего языка)
 
