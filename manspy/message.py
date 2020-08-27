@@ -3,7 +3,7 @@ import time
 import os.path
 import datetime
 
-from manspy.utils.beautiful_repr_data import (
+from manspy.utils.beautifull_repr_data import (
     word_to_html,
     make_dialog_html_line,
     make_dialog_plain_line,
