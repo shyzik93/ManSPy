@@ -46,7 +46,8 @@ class LangClass():
             print('---------------------------------------')
         t1 =time.time()
 
-        if msg and msg.settings['log_all']: msg.history.header(text_settings['levels'])
+        if msg:
+            msg.before_analysises()
 
         OR = relation.ObjRelation(settings, settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
         lang_module = self.get_lang_module(settings['language'])
@@ -54,6 +55,9 @@ class LangClass():
 
         
         for level in self.levels[self.levels.index(start_level) : self.levels.index(end_level)+1]:
+            if msg:
+                msg.before_analysis(level)
+
             t =time.time()
 
             if level == "graphmath": sentences = lang_module.getGraphmathA(sentences)
@@ -81,14 +85,19 @@ class LangClass():
                 msg.ils = sentences
                 sentences = self.LogicShell.execIL(msg) # возвращает ошибки выполнения
 
-            if msg and msg.settings['log_all']: msg.history.log(level, sentences)
-            if text_settings['print_time']: print('   '+level.rjust(9)+': ', time.time()-t)
+            if msg:
+                msg.after_analysis(level, sentences)
+            if text_settings['print_time']:
+                print('   '+level.rjust(9)+': ', time.time()-t)
 
         time_total = time.time()-t1
-        if msg: msg.time_total = time_total
-        if text_settings['print_time']: print('       Total: ', time_total)
+        if msg:
+            msg.time_total = time_total
+        if text_settings['print_time']:
+            print('       Total: ', time_total)
         return sentences
 
+    # TODO: должна возвращать `msg` со строкой ответа
     def IL2NL(self, IL):
         #IL = Synthesizer.IL2resultA(IL)
         #result = LangModule.ResultA2NL(IL)
