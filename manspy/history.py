@@ -3,66 +3,31 @@ import time
 import datetime
 import json
 
+from manspy.utils.beautiful_repr_data import (
+    word_to_html,
+    make_dialog_plain_line,
+    make_dialog_html_line,
+    HTML_HEADER
+)
+
 class History:
     def __init__(self):
          if not os.path.exists('history.html'): self.html_head()
 
-    def plain(self, sText, direction, IFName):
-        Time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()-time.altzone))
-        if direction == 'R': sText = '   '+sText
-        sText = "* %s  %s  %s: %s\n" % (direction, Time, IFName, sText)
-        with open('history.txt', 'ab') as f: f.write(bytearray(sText, 'utf-8'))
+    def plain(self, text, direction, ifname):
+        with open('history.txt', 'ab') as f:
+            f.write(bytearray(make_dialog_plain_line(text, direction, ifname), 'utf-8'))
 
     def html_head(self):
         with open('history.html', 'w') as f:
-            f.write("""<!DOCTYPE html>
-<html lang="ru"><head>
-    <meta charset="utf-8">
-</head><body>
-    <style>
-        .supplement {
-            color: #007df8;
-         }
-         .subject {
-         }
-         .direct_supplement {
-             color: blue;
-         }
-         .predicate {
-             color: green;
-         }
-         .circumstance {
-             color: #d6d600;
-         }
-         .definition {
-             color: #bf8419;
-         }
-    </style>
+            f.write(HTML_HEADER)
 
-    <p style="text-align:center;">
-        <a target="blank" href="https://github.com/shyzik93/ManSPy"><img src="http://dosmth.ru/media/manspy_logo3.png"></a>
-    </p>
-
-    <ul style="float:right;">
-        <li class="supplement">supplement (дополнение)</li>
-        <li class="direct_supplement">direct supplement (прямое дополнение)</li>
-        <li class="predicate">predicate (сказуемое)</li>
-        <li class="circumstance">circumstance (обстоятельство)</li>
-        <li class="definition">definition (определение)</li>
-        <li>not member of sentence <br> (не является членом предложения)</li>
-    </ul>
-
-""")
-
-    def html_row(self, sText, direction):
+    def html_row(self, text, direction):
         with open('history.html', 'a') as f:
-            f.write("""    {0} &nbsp;&nbsp; {1}<br>""".format(direction, sText))
+            f.write(make_dialog_html_line(text, direction))
 
-    def html_build_word(self, cWord):
-        return """<span class="word{MOSentence}">{word}</span>""".format(
-            word=cWord['word'] + cWord['end'],
-            MOSentence=' '+cWord['MOSentence'].replace(' ', '_') if 'MOSentence' in cWord else ''
-        )
+    def html_build_word(self, word):
+        return word_to_html(word)
 
     def html_build_text(self, cText):
         text_ = []
