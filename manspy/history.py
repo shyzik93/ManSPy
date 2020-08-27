@@ -5,7 +5,6 @@ import json
 
 from manspy.utils.beautiful_repr_data import (
     word_to_html,
-    make_dialog_plain_line,
     make_dialog_html_line,
     HTML_HEADER
 )
@@ -14,33 +13,20 @@ class History:
     def __init__(self):
          if not os.path.exists('history.html'): self.html_head()
 
-    def plain(self, text, direction, ifname):
-        with open('history.txt', 'ab') as f:
-            f.write(bytearray(make_dialog_plain_line(text, direction, ifname), 'utf-8'))
-
     def html_head(self):
         with open('history.html', 'w') as f:
             f.write(HTML_HEADER)
 
-    def html_row(self, text, direction):
+    def html(self, text, direction):
+        if direction == "W":
+            text_ = []
+            for index, cSentence in text:
+                for index, cWord in cSentence.subunits_copy.items():
+                    text_.append(word_to_html(cWord))
+            text = ' '.join(text_)
+
         with open('history.html', 'a') as f:
             f.write(make_dialog_html_line(text, direction))
-
-    def html_build_word(self, word):
-        return word_to_html(word)
-
-    def html_build_text(self, cText):
-        text_ = []
-
-        for index, cSentence in cText:
-            for index, cWord in cSentence.subunits_copy.items():
-                text_.append(self.html_build_word(cWord))
-
-        return ' '.join(text_)
-
-    def html(self, mText, direction):
-        if direction == "W": self.html_row(self.html_build_text(mText), direction)
-        else: self.html_row("&nbsp;"*8 + mText, direction)
 
 
     def log(self, title, res):

@@ -1,6 +1,9 @@
 import time
 
 from . import history
+from manspy.utils.beautiful_repr_data import (
+    make_dialog_plain_line
+)
 
 class Message:
 
@@ -56,28 +59,28 @@ class Message:
         #print(self.message_id)"""
         '''
 
-    '''def _save_history(self, text, Type):
-        if text:
-            Time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()-time.altzone))
-            if Type == 'R': text = '   '+text
-            text = "* %s  %s  %s: %s\n" % (Type, Time, self.IF.IFName, text)
-            with open('history.txt', 'ab') as f: f.write(bytearray(text, 'utf-8'))'''
-
     def toString(self, r_text):
         if isinstance(r_text, (int, float, complex)): return str(r_text)
         else: return r_text
 
+    def save_plain_line(text, direction, ifname):
+        if self.settings['history'] and text
+            with open('history.txt', 'ab') as f:
+                f.write(bytearray(make_dialog_plain_line(text, direction, ifname), 'utf-8'))
+
+    # TODO: переименовать to_IF -> to_out (во вне)
+    # TODO: переименовать r_text -> text_to_out (текст во вне)
     def to_IF(self, r_text):
         r_text = self.toString(r_text)
-        #if self.IF.settings['history']: self._save_history(r_text, "R")
-        if self.settings['history'] and r_text: self.history.plain(r_text, "R", self.settings['ifname'])
+        self.save_plain_line(r_text, "R", self.settings['ifname'])
         self.history.html(r_text, 'R')
         self.settings['read_text'](r_text, self.text_settings['any_data'])
 
+    # TODO: переименовать from_IF -> from_out (из вне)
+    # TODO: переименовать w_text -> text_from_out (текст из вне)
     def from_IF(self, w_text):
         self.w_text = w_text
-        #if self.IF.settings['history']: self._save_history(w_text, "W")
-        if self.settings['history'] and w_text: self.history.plain(w_text, "W", self.settings['ifname'])
+        self.save_plain_line(w_text, "W", self.settings['ifname'])
 
     #def log(self, row_name, row_value):
     #    #if isinstance(row_value, (dict, list)): row_value = json.dumps(row_value)

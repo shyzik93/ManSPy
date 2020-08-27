@@ -1,8 +1,8 @@
 import time
 
 TEMPLATE_HTML_WORD = '''<span class="word{MOSentence}">{word}</span>'''
-TEMPLATE_HTML_ROW = '''{direction} &nbsp;&nbsp; {text}<br>'''
-TEMPLATE_PLAIN_ROW = '''"* {direction}  {date_recieved}  {ifname}: {text}\n"'''
+TEMPLATE_HTML_ROW = '''{direction} &nbsp;&nbsp; {indent}{text}<br>'''
+TEMPLATE_PLAIN_ROW = '''"* {direction}  {date_recieved}  {ifname}: {indent}{text}\n"'''
 
 HTML_HEADER = '''<!DOCTYPE html>
 <html lang="ru"><head>
@@ -51,11 +51,15 @@ def word_to_html(word):
 
 # TODO: добавить в лог: `ifname`, `date_recieved` (по аналогии с `make_dialog_plain_line`)
 def make_dialog_html_line(text: str, direction: str):
-    return TEMPLATE_HTML_ROW.format(text=text, direction=direction)
+    return TEMPLATE_HTML_ROW.format(
+        indent="&nbsp;"*8 if direction == 'R' else ''
+        text=text,
+        direction=direction)
 
 def make_dialog_plain_line(text: str, direction: str, ifname: str):
     return TEMPLATE_PLAIN_ROW.format(
-        text='   {}'.format(text) if direction == 'R' else text,
+        indent=' '*3 if direction == 'R' else ''
+        text=text,
         direction=direction,
         date_recieved=time.time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(time.time()-time.altzone)),
         ifname=ifname
