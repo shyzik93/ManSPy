@@ -1,8 +1,8 @@
 import time
 
-TEMPLATE_HTML_WORD = '''<span class="word{MOSentence}">{word}</span>'''
-TEMPLATE_HTML_ROW = '''{direction} &nbsp;&nbsp; {indent}{text}<br>'''
-TEMPLATE_PLAIN_ROW = '''"* {direction}  {date_recieved}  {ifname}: {indent}{text}\n"'''
+TEMPLATE_HTML_WORD = '<span class="word{MOSentence}">{word}</span>'
+TEMPLATE_HTML_ROW = '{direction} &nbsp;&nbsp; {indent}{text}<br>\n'
+TEMPLATE_PLAIN_ROW = '"* {direction}  {date_recieved}  {ifname}:  {indent}{text}\n"'
 
 HTML_HEADER = '''<!DOCTYPE html>
 <html lang="ru"><head>
