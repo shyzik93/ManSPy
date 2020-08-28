@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-''' Модлуль выполняет стандартный морфологический анализ слова ЕЯ Эсперанто,
+''' Модуль выполняет стандартный морфологический анализ слова ЕЯ Эсперанто,
     основывваясь только на морфологических признаках (на внешнем виде слова)
 '''
 
@@ -47,7 +47,8 @@ def defaultNoun(word_l, word):
         word['name'] = 'proper' # имя собственное
     else: word['name'] = 'common' # имя нарицательное
 
-def isNumeral(word_l, word):
+def is_numeral(word_l, word):
+    """ word_l - корень числительного, word - одно слово """
     if word_l in Dict.words['numeral']:
         word.update(Dict.words['numeral'][word_l])
         return True
@@ -97,13 +98,13 @@ def _getMorphA(word):
     # существительное
     if ends[0] == 'o':
         defaultNoun(words[0], word)
-        if isNumeral(words[0], word): word['derivative'] = 'numeral' # производное от числительного
+        if is_numeral(words[0], word): word['derivative'] = 'numeral' # производное от числительного
 
     # наречие
     elif ends[0] == 'e':
         word['POSpeech'] = 'adverb'
         word['base'] = words[0]
-        if isNumeral(words[0], word): word['derivative'] = 'numeral' # производное от числительного
+        if is_numeral(words[0], word): word['derivative'] = 'numeral' # производное от числительного
 
     # прилагательное, притяжательное местоимение или порядковое числительное
     elif ends[0] == 'a':
@@ -133,7 +134,7 @@ def _getMorphA(word):
         for i in range(2):
             if ends[i] not in Dict.dct['verb']['end']: continue
             word.update(Dict.dct['verb']['end'][ends[i]])
-            if isNumeral(words[i], word): word['derivative'] = 'numeral' # производное от числительного
+            if is_numeral(words[i], word): word['derivative'] = 'numeral' # производное от числительного
             word['base'] = words[i]
             break
 
