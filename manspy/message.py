@@ -7,9 +7,13 @@ from manspy.utils.beautifull_repr_data import (
     word_to_html,
     make_dialog_html_line,
     make_dialog_plain_line,
-    HTML_HEADER
+    HTML_HEADER,
+    INTERACTIVE_HTML_HEADER,
+    INTERACTIVE_HTML_LINE_HEADER,
+    INTERACTIVE_HTML_LINE_FOOTER
 )
 
+# TODO: добавить свойство `message_id`, состоящее из имени интерфейса, номера поотока и метки времени
 class Message:
     """ Предоставляет для ManSPy функции для работы с вопросом/ответом и историей диалога  """
 
@@ -21,6 +25,8 @@ class Message:
         if not os.path.exists('history.html'):
             with open('history.html', 'w') as f:
                 f.write(HTML_HEADER)
+        with open('history_interactive.html', 'w') as f:
+            f.write(INTERACTIVE_HTML_HEADER)
 
         if direction == 'W': self.from_IF(text)
         elif direction == 'R': self.to_IF(text)
@@ -73,7 +79,7 @@ class Message:
             with open('history.txt', 'ab') as f:
                 f.write(bytearray(make_dialog_plain_line(text, direction, ifname), 'utf-8'))
 
-    def save_html_line(self, text, direction):
+    def save_html_line(self, text, direction, ifname):
         """ Сейчас выходной текст явлется строкой, но когда он станет классом,
             то мы уберём данное условие (подусловный блок останется)"""
         if direction == "W":
@@ -86,14 +92,32 @@ class Message:
         with open('history.html', 'a') as f:
             f.write(make_dialog_html_line(text, direction))
 
+    def save_interactive_html_line_header(self, text, direction, ifname):
+        with open('history_interactive.html', 'a') as f:
+            f.write(INTERACTIVE_HTML_LINE_HEADER.format(
+                message_id='MESSAGE_ID',  # TODO: MESSAGE_ID
+                space='',
+                direction=direction,
+                thread_name='THREAD_NAME',#self.settings['thread_name'],
+                language=self.settings['language'],
+                date_add='DATE_ADD',  # TODO: DATE_ADD
+                text=text
+            ))
+
+    def save_interactive_html_line_footer(self):
+        with open('history_interactive.html', 'a') as f:
+            f.write(INTERACTIVE_HTML_LINE_FOOTER)
+
+
     # TODO: переименовать to_IF -> to_out (во вне)
     # TODO: переименовать r_text -> text_to_out (текст во вне)
     # TODO: переименовать self.settings['read_text'] -> self.settings['to_out']
+    # TODO: переименовать "W" (Write) -> "Q" (Question), "R" (Read) -> "A" (Answer) 
     def to_IF(self, r_text):
         """ Вызывается функцией-глаголом (ManSPy) для передачи ответа в Интерфейс """
         r_text = self.toString(r_text)
         self.save_plain_line(r_text, "R", self.settings['ifname'])
-        self.save_html_line(r_text, 'R')
+        self.save_html_line(r_text, 'R', self.settings['ifname'])
         self.settings['read_text'](r_text, self.text_settings['any_data'])
 
     # TODO: переименовать from_IF -> from_out (из вне)
@@ -103,13 +127,16 @@ class Message:
         """ Вызывается Интерфейсом для передачи вопроса в ManSPy """
         self.w_text = w_text
         self.save_plain_line(w_text, "W", self.settings['ifname'])
+        self.save_interactive_html_line_header(w_text, "W", self.settings['ifname'])
 
     def before_analysises(self):
+        """ Вызывается Модулем Анализа (ManSPy) """
         with open('analysis.txt', 'a', encoding='utf-8') as f:
             f.write('\n\n'+'#'*100+'\n')
             f.write(self.text_settings['levels']+'\n')
 
     def before_analysis(self, level):
+        """ Вызывается Модулем Анализа (ManSPy) """
         now = datetime.datetime.now().strftime("%Y.%m.%d %H:%M:%S")
         with open('analysis.txt', 'a', encoding='utf-8') as f:
             f.write('----'+now+'\n')
@@ -117,8 +144,9 @@ class Message:
             f.write(('- '*10)+level+(' -'*10)+u'\n')
         
     def after_analysis(self, level, sentences):
+        """ Вызывается Модулем Анализа (ManSPy) """
         if level == 'synt':
-            self.save_html_line(sentences, 'W')
+            self.save_html_line(sentences, 'W', self.settings['ifname'])
 
         if self.settings['log_all']:
             if level == "graphmath":
@@ -150,9 +178,13 @@ class Message:
                         _res.append('IL-sentence: '+str(IL))
                 sentences = _res
     
-            with open('analysis.txt', 'a', encoding='utf-8') as f:
+            with open('analysis.txt', 'a', encoding='utf-8') as f: 
                 json.dump(sentences, f, sort_keys=True, indent=4)#.replace('"', '')
                 f.write('\n')
+            
+            
+            if level == 'exec':
+                self.save_interactive_html_line_footer()
 
     #def log(self, row_name, row_value):
     #    #if isinstance(row_value, (dict, list)): row_value = json.dumps(row_value)

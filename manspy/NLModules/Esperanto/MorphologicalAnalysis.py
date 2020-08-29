@@ -118,7 +118,7 @@ def _getMorphA(word):
                 word['case'] = 'nominative'
                 word['number'] = 'singular'
                 word['base'] = words[0]
-        elif isNumeral(words[0], word): # порядковое числительное
+        elif is_numeral(words[0], word): # порядковое числительное
             word['POSpeech'] = 'numeral'
             word['class'] = 'ordinal'
             word['base'] = words[0]
@@ -150,7 +150,7 @@ def _getMorphA(word):
         word['base'] = temp_word2['base']
 
     # сложное числительное (не составные!)
-    elif isNumeral(word_l, word):#combain_numerals:#len_word >= 5:
+    elif is_numeral(word_l, word):#combain_numerals:#len_word >= 5:
         #factor1, factor2 = combain_numerals
         word['POSpeech'] = 'numeral'
         word['word'] = word_l
