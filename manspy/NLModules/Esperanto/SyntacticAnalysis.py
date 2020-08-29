@@ -83,13 +83,16 @@ def setLinks(index, sentence):
 
 def goThrowLinks(index, sentence, indexes=None):
 
-    if indexes is None: indexes = []
-    indexes.append(index)
+    if indexes is None:
+        indexes = []
 
-    for index_link in sentence(index, 'link'):
-        goThrowLinks(index_link, sentence, indexes)
-    for index_link in sentence(index, 'homogeneous_link'):
-        goThrowLinks(index_link, sentence, indexes)    
+    if index not in indexes:
+        indexes.append(index)
+    
+        for index_link in sentence(index, 'link'):
+            goThrowLinks(index_link, sentence, indexes)
+        for index_link in sentence(index, 'homogeneous_link'):
+            goThrowLinks(index_link, sentence, indexes)    
 
     return indexes
 
@@ -136,6 +139,9 @@ def split_sentence(sentence):
     conjunctions = []
     _sentences = []
 
+    # import json
+    # print('FirstIndees:', first_indexes)
+    # print('sentence:', json.dumps(sentence.export_unit(), sort_keys=True, indent=4).replace('"', ''))
     for first_index in first_indexes:
         _sentences.append(goThrowLinks(first_index, sentence))    
 

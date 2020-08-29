@@ -74,6 +74,10 @@ class _Unit():
         elif isinstance(self, Sentence): data['unit_type'] = 'Sentence'
         elif isinstance(self, Word): data['unit_type'] = 'Word'
         else: data['unit_type'] = 'dict'
+        
+        if 'feature' in data['unit_info']:
+            for index, subunit in enumerate(data['unit_info']['feature']):
+                data['unit_info']['feature'][index] = subunit.export_unit()
 
         for index, subunit in data['unit'].items():
             if isinstance(subunit, dict): break
