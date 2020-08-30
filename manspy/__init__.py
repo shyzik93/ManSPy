@@ -71,6 +71,38 @@ class API():
         settings['language'] = settings['language'].capitalize()
         settings['db_sqlite3'] = create_bd_file(settings['language'], 'main_data.db')
 
+    def import_module(self, module_type, module_name):
+        if module_type == 'action':
+            module = importlib.import_module('manspy.Action.{module_name}')
+        elif module_type == 'interface':
+            module = None
+        elif module_type == 'language':
+            module = importlib.import_module('manspy.NLModules.{module_name}')
+        elif module_type == 'logger':
+            module = None
+
+    def add_module(self, module_type, module, module_code=None):
+        if isinstance(self.modules[module_type], list):
+            self.modules[module_type].append(module)
+        elif isinstance(self.modules[module_type], dict):
+            self.modules[module_type][module_code] = module
+    
+    def import_all_modules(self):
+        import importlib, pkgutil
+        
+        #module_dir = self.paths_import['language']
+        #for module_file_name in os.listdir(module_dir):
+        #    if module_file_name.startswith('language_'):
+        #        module_path = os.path.join(module_dir, module_file_name)
+        #        module = importlib.import_module(module_path)
+        #        print(module)
+
+        for module_info in pkgutil.iter_modules(path=[self.paths_import['language']]):
+            if module_info.name.startswith('language_'):
+                module = module_info.module_finder.find_module(module_info.name).load_module()
+                self.add_module('language', module, module_info.name.split('_')[-1].capitalize())
+
+
     def import_fasifs(self, settings):
         print("Import fasifs for {0} language...".format(settings['language']))
         t1 = time.time()
@@ -81,7 +113,22 @@ class API():
         print('  ', time.time() - t1)
 
     def __init__(self):
+        self.modules = {
+            'language': {},
+            'logger': [],
+        }
+        
+        default_path_modules = os.path.dirname(os.path.dirname(__file__))
+        self.paths_import = {
+            'language': os.path.join(default_path_modules, 'manspy', 'NLModules')
+        }
+
+        #self.default_settings['modules'] = self.modules
         self.default_settings['dir_db'] = self.make_db_dir(self.default_settings['dir_db'])
+        
+        self.import_all_modules()
+        print(self.modules)
+        #exit()
 
         """ Инициализация ManSPy """
         #settings = copy.deepcopy(self.default_settings)

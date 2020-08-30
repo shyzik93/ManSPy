@@ -5,7 +5,7 @@
     Благодаря чему морфологический модуль будет уже знать, где слово, а где - не слово..
 """
 import re
-from .. import ObjUnit
+from manspy.NLModules import ObjUnit
 
 low_letters = u"ABCĈDEFGĜHĤIJĴKLMNOPRSŜTUŬVZ"
 up_letters =  u"abcĉdefgĝhĥijĵklmnoprsŝtuŭvz"
