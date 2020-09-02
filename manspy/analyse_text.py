@@ -1,5 +1,5 @@
 import sys, os, time
-from . import NLModules, relation, extractor, converter, FCModule
+from . import relation, extractor, converter, FCModule
 
 class LangClass():
 
@@ -8,13 +8,6 @@ class LangClass():
     def __init__(self):
         self.lang_modules = {}
         self.LogicShell = FCModule.LogicShell()
-
-    def get_lang_module(self, language):
-        if language not in self.lang_modules:
-            #TODO проверить наличие модуля и наличие имён в нём
-            self.lang_modules[language] = NLModules.getLangModule(language)
-
-        return self.lang_modules[language]
 
     def parse_level_string(self, levels):
         ''' parsing level string. Return start_level, end_level. '''
@@ -49,8 +42,8 @@ class LangClass():
         if msg:
             msg.before_analysises()
 
-        OR = relation.ObjRelation(settings, settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
-        lang_module = self.get_lang_module(settings['language'])
+        OR = relation.ObjRelation(settings.language, settings.storage_version) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
+        lang_module = settings.modules['language'][settings.language]
         start_level, end_level = self.parse_level_string(text_settings['levels'])
 
         
@@ -66,7 +59,7 @@ class LangClass():
             elif level == "synt": sentences = lang_module.getSyntA(sentences)
             elif level == "extract":
 
-                Extract = extractor.Extract(settings['assoc_version'])
+                Extract = extractor.Extract(settings.assoc_version)
                 sentences = Extract(sentences, OR) # заменяем объекты предложения на словари извлечений
 
             elif level == "convert":
@@ -75,7 +68,7 @@ class LangClass():
                 _ILs = {}
                 for index, sentence in enumerate(sentences):
                     _ILs[index] = []
-                    Extraction2IL = converter.Extraction2IL(settings['assoc_version'])
+                    Extraction2IL = converter.Extraction2IL(settings.assoc_version)
                     ILs = Extraction2IL(OR, settings, *sentence)
                     _ILs[index].extend(ILs)
                 sentences = _ILs

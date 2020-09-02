@@ -36,7 +36,7 @@ class Message:
         self.nl = message_nl # nl = Nature Language
         self.il = None # il = Internal Language
 
-        self.c, self.cu = self.settings['db_sqlite3']
+        self.c, self.cu = self.settings.db_sqlite3
 
         self.cu.execute(\'''
         CREATE TABLE IF NOT EXISTS `log_history` (
@@ -56,7 +56,7 @@ class Message:
         t1 = time.time()
         self.cu.execute(
           'INSERT INTO `log_history` (`direction`, `thread_name`, `language`, `message_nl`) VALUES (?, ?, ?, ?);',
-          (self.direction, self.settings['thread_name'], self.settings['language'], self.nl)
+          (self.direction, self.settings.thread_name, self.settings.language, self.nl)
         )
         t2 = time.time()
         _t1 = t2 - t1
@@ -75,7 +75,7 @@ class Message:
         else: return r_text
 
     def save_plain_line(self, text, direction, ifname):
-        if self.settings['history'] and text:
+        if self.settings.history and text:
             with open('history.txt', 'ab') as f:
                 f.write(bytearray(make_dialog_plain_line(text, direction, ifname), 'utf-8'))
 
@@ -99,7 +99,7 @@ class Message:
                 space='',
                 direction=direction,
                 thread_name='THREAD_NAME',#self.settings['thread_name'],
-                language=self.settings['language'],
+                language=self.settings.language,
                 date_add='DATE_ADD',  # TODO: DATE_ADD
                 text=text
             ))
@@ -116,9 +116,9 @@ class Message:
     def to_IF(self, r_text):
         """ Вызывается функцией-глаголом (ManSPy) для передачи ответа в Интерфейс """
         r_text = self.toString(r_text)
-        self.save_plain_line(r_text, "R", self.settings['ifname'])
-        self.save_html_line(r_text, 'R', self.settings['ifname'])
-        self.settings['read_text'](r_text, self.text_settings['any_data'])
+        self.save_plain_line(r_text, "R", self.settings.ifname)
+        self.save_html_line(r_text, 'R', self.settings.ifname)
+        self.settings.read_text(r_text, self.text_settings['any_data'])
 
     # TODO: переименовать from_IF -> from_out (из вне)
     # TODO: переименовать w_text -> text_from_out (текст из вне)
@@ -126,8 +126,8 @@ class Message:
     def from_IF(self, w_text):
         """ Вызывается Интерфейсом для передачи вопроса в ManSPy """
         self.w_text = w_text
-        self.save_plain_line(w_text, "W", self.settings['ifname'])
-        self.save_interactive_html_line_header(w_text, "W", self.settings['ifname'])
+        self.save_plain_line(w_text, "W", self.settings.ifname)
+        self.save_interactive_html_line_header(w_text, "W", self.settings.ifname)
 
     def before_analysises(self):
         """ Вызывается Модулем Анализа (ManSPy) """
@@ -146,9 +146,9 @@ class Message:
     def after_analysis(self, level, sentences):
         """ Вызывается Модулем Анализа (ManSPy) """
         if level == 'synt':
-            self.save_html_line(sentences, 'W', self.settings['ifname'])
+            self.save_html_line(sentences, 'W', self.settings.ifname)
 
-        if self.settings['log_all']:
+        if self.settings.log_all:
             if level == "graphmath":
                 with open('analysis.txt', 'a', encoding='utf-8') as f:
                     f.write('NL-sentence: ')

@@ -275,7 +275,7 @@ class FASIF_WordCombination(_FASIF):
 class ImportAction():
     def __init__(self, LangClass):
         #self.settings = settings
-        #self.OR = relation.ObjRelation(settings, settings['storage_version'])
+        #self.OR = relation.ObjRelation(settings, settings.storage_version)
         self.LangClass = LangClass#analyse_text.LangClass()
         #self.fdb = to_formule.FasifDB(settings)
 
@@ -324,7 +324,7 @@ class ImportAction():
         pass
 
 
-    def proccess(self, fasif_file, fasif_dir, settings):
+    def proccess(self, fasif_file, fasif_dir, language, settings):
         ''' Импортирует МД, извлекает и преобразует ФАСИФ  словарь. '''
         #list_FASIF = Action.getObject(module_name, 'list_FASIF')
         with open(os.path.join(fasif_dir, fasif_file)) as f: fasif = f.read()
@@ -333,7 +333,7 @@ class ImportAction():
         # Превращаем текст ФАСИФов в словарь
         dict_assoc_types = self.selector_of_function(dict_assoc_types, 'parse')
         # Отсеиваем ненужные языки
-        dict_assoc_types = self.selector_of_function(dict_assoc_types, 'siftout', settings['language'])
+        dict_assoc_types = self.selector_of_function(dict_assoc_types, 'siftout', language)
         # Обрабатываем лингвистическую информацию
         dict_assoc_types = self.selector_of_function(dict_assoc_types, 'proccess_lingvo_data', self.OR, self.fdb, settings)
 
@@ -343,9 +343,9 @@ class ImportAction():
         #pprint(dict_assoc_types)
 
 
-    def import_for_lang(self, settings):
-        self.OR = relation.ObjRelation(settings, settings['storage_version'])
-        self.fdb = to_formule.FasifDB(settings)
+    def import_for_lang(self, language, settings):
+        self.OR = relation.ObjRelation(language, settings.storage_version)
+        self.fdb = to_formule.FasifDB(language)
 
         fasif_files = get_fasif_files(self.fasif_dir)
-        for fasif_file in fasif_files: self.proccess(fasif_file, self.fasif_dir, settings)
+        for fasif_file in fasif_files: self.proccess(fasif_file, self.fasif_dir, language, settings)

@@ -6,10 +6,9 @@ from . import common
 class Relation():
     dct_speeches = {'noun': 1, 'verb': 2, 'adjective': 3, 'adverb': 4}
     
-    def __init__(self, settings):
-        self.test = settings['test']
+    def __init__(self, language):
         #self.c, self.cu = settings['db_sqlite3']
-        self.c, self.cu = common.create_bd_file(settings['language'], 'main_data.db')
+        self.c, self.cu = common.create_bd_file(language, 'main_data.db')
         #print(self.c, self.cu, 'bl')
         self.cu.executescript('''
             CREATE TABLE IF NOT EXISTS words (
@@ -190,12 +189,12 @@ class Relation():
             descr = [dict(row) for row in descr]
             return descr if descr else []
 
-class _ObjRelation(object):
+class _ObjRelation:
     """ Надкласс, реализующий высокий уровень работы с разными группами слов, абстрагируясь от БД.
         Другими словами, он задествует вышеуказанные классы для реализации своих
         функций."""
-    def __init__(self, settings):
-        self.R = Relation(settings)
+    def __init__(self, language):
+        self.R = Relation(language)
 
         # Добавление описания семантических отношений
         self.R.add_descr_relation(type_relation='line', count_members='N', type_peak='index', type_child='word',  name1='synonym',   name2=None)

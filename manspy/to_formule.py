@@ -129,9 +129,8 @@ class FasifDB():
         if isright: self.compared_fasifs[id_fasif] = (finded_args, fasif)
         return 1 if isright else 0
 
-    def __init__(self, settings):
-        self.settings = settings
-        self.c, self.cu = common.create_bd_file(settings['language'], 'main_data.db')
+    def __init__(self, language):
+        self.c, self.cu = common.create_bd_file(language, 'main_data.db')
         self.c.create_function('iseq', 3, self.iseq)
         self.cu.execute('''
             CREATE TABLE IF NOT EXISTS fasifs (

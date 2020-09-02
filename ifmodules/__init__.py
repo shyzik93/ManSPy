@@ -20,7 +20,7 @@ class Interface(threading.Thread):
         self.name = IF.IFName
 
     def run(self):
-        self.API.update_settings_for_IF(self.IF.settings)
+        self.API.update_settings_for_IF(self.IF)
         self.IF.init()
 
 class Interfaces():
@@ -49,7 +49,7 @@ class Interfaces():
                 IF = IFModule
 
             IF.IFName = IFName
-            if 'settings' not in dir(IF): IF.settings = {}
+            if 'settings' not in dir(IF): IF.settings = None
             self.interfaces[IFName][1] = IF
             t = Interface(API, IF)#threading.Thread(target=IF.init)
 
