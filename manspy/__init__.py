@@ -45,16 +45,6 @@ class API():
         IF.settings = self.Settings(**IF.settings)
         IF.settings.db_sqlite3 = create_bd_file(IF.settings.language, 'main_data.db')
 
-    def import_module(self, module_type, module_name):
-        if module_type == 'action':
-            module = importlib.import_module('manspy.Action.{module_name}')
-        elif module_type == 'interface':
-            module = None
-        elif module_type == 'language':
-            module = importlib.import_module('manspy.NLModules.{module_name}')
-        elif module_type == 'logger':
-            module = None
-
 
     def import_all_modules(self):
         import importlib, pkgutil
@@ -69,12 +59,15 @@ class API():
         for module_info in pkgutil.iter_modules(path=[self.paths_import['language']]):
             if module_info.name.startswith('language_'):
                 module = module_info.module_finder.find_module(module_info.name).load_module()
-                self.Settings.set_module('language', module, module_info.name.split('_')[-1].capitalize())
+                module_code = module_info.name
+                self.Settings.set_module('language', module, module_code[8:])
 
-        #for module_info in pkgutil.iter_modules(path=[self.paths_import['loggers']]):
-        #    if module_info.name.startswith('loggers_'):
-        #        module = module_info.module_finder.find_module(module_info.name).load_module()
-        #        self.Settings.set_module('loggers', module, module_info.name.split('_')[-1].capitalize())
+        for module_info in pkgutil.iter_modules(path=[self.paths_import['loggers']]):
+            if module_info.name.startswith('loggers_'):
+                module = module_info.module_finder.find_module(module_info.name).load_module()
+                module_code = module_info.name
+                class_name = ''.join([subname.capitalize() for subname in module_code.split('_')])
+                self.Settings.set_module('loggers', getattr(module, class_name)(), module_code[7:])
 
     def import_fasifs(self, language, settings):
         print("Import fasifs for {0} language...".format(language))

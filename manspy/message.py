@@ -2,11 +2,11 @@ import json
 import time
 import os.path
 import datetime
+import uuid
 
 from manspy.utils.beautifull_repr_data import (
     word_to_html,
     make_dialog_html_line,
-    make_dialog_plain_line,
     HTML_HEADER,
     INTERACTIVE_HTML_HEADER,
     INTERACTIVE_HTML_LINE_HEADER,
@@ -16,6 +16,17 @@ from manspy.utils.beautifull_repr_data import (
 # TODO: добавить свойство `message_id`, состоящее из имени интерфейса, номера поотока и метки времени
 class Message:
     """ Предоставляет для ManSPy функции для работы с вопросом/ответом и историей диалога  """
+
+    def get_interface_id(self):
+        return self.settings.ifname
+        
+    def get_message_id(self):
+        return uuid.uuid1()
+
+    def log(self, text, direction):
+        if self.settings.history and text:
+            for logger_name, logger_class in self.settings.modules['loggers']:
+                logger_class.log(text, direction, self, self.settings)
 
     def __init__(self, settings, text_settings, text=None, direction=None):
         self.settings = settings
@@ -74,11 +85,6 @@ class Message:
         if isinstance(r_text, (int, float, complex)): return str(r_text)
         else: return r_text
 
-    def save_plain_line(self, text, direction, ifname):
-        if self.settings.history and text:
-            with open('history.txt', 'ab') as f:
-                f.write(bytearray(make_dialog_plain_line(text, direction, ifname), 'utf-8'))
-
     def save_html_line(self, text, direction, ifname):
         """ Сейчас выходной текст явлется строкой, но когда он станет классом,
             то мы уберём данное условие (подусловный блок останется)"""
@@ -126,8 +132,9 @@ class Message:
     def from_IF(self, w_text):
         """ Вызывается Интерфейсом для передачи вопроса в ManSPy """
         self.w_text = w_text
-        self.save_plain_line(w_text, "W", self.settings.ifname)
-        self.save_interactive_html_line_header(w_text, "W", self.settings.ifname)
+        self.log(w_text, "W")
+        #self.save_plain_line(w_text, "W", self.settings.ifname)
+        #self.save_interactive_html_line_header(w_text, "W", self.settings.ifname)
 
     def before_analysises(self):
         """ Вызывается Модулем Анализа (ManSPy) """

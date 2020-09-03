@@ -1,7 +1,7 @@
 class Settings:
     modules = {
         'language': {},
-        'logger': [],
+        'loggers': {},
     }
     db = None
     db_sqlite3 = None
@@ -10,7 +10,7 @@ class Settings:
     assoc_version = 3
 
     def __init__(self, **changed_keys):
-        self.language = changed_keys.get('language', 'Esperanto')
+        self.language = changed_keys.get('language', 'esperanto')
         self.history = changed_keys.get('history', True)
         self.monitor = changed_keys.get('monitor', True)  # включает вывод на экран статистику работы ИСУ
         self.logic = changed_keys.get('logic', True)   # включает модуль логики
