@@ -75,7 +75,7 @@ def get_fasif_wcomb(fdb, argument, R, verb):
     return finded_args, fasif, function, isantonym
 
 def Extraction2IL(R, settings, predicates, arguments):
-    fdb = to_formule.FasifDB(settings)
+    fdb = to_formule.FasifDB(settings.language)
     pattern_IL = {
         'arg0': {'antonym': False}, # передаётся первым аргументом в каждую функцию
         'action': {

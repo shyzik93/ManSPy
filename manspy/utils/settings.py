@@ -17,7 +17,7 @@ class Settings:
         self.convert2IL = changed_keys.get('convert2IL', True)  # включает последний этап конвертации
                                # если при отключении включёна логика, то будет ошибка
         self.test = changed_keys.get('test', True)  # тестовый режим, включаемый в процессе отладки и разработки
-        self.read_text = changed_keys.get('read_text'), # функция, в котору manspy пишет ответ. Устанавливается Интерфейсом
+        self.read_text = changed_keys.get('read_text') # функция, в котору manspy пишет ответ. Устанавливается Интерфейсом
         self.ifname = changed_keys.get('ifname', '')  # уникальное имя интерфейса. Необходимо для журналов.
               # не рекомендуемые к изменению
         self.log_all = changed_keys.get('log_all', True)

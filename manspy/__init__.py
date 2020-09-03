@@ -41,8 +41,8 @@ class API():
         os.chdir(db_path)
         return db_path
 
-    def update_settings_for_IF(self, IF, **settings):
-        IF.settings = self.Settings(**settings)
+    def update_settings_for_IF(self, IF):
+        IF.settings = self.Settings(**IF.settings)
         IF.settings.db_sqlite3 = create_bd_file(IF.settings.language, 'main_data.db')
 
     def import_module(self, module_type, module_name):
@@ -71,6 +71,11 @@ class API():
                 module = module_info.module_finder.find_module(module_info.name).load_module()
                 self.Settings.set_module('language', module, module_info.name.split('_')[-1].capitalize())
 
+        #for module_info in pkgutil.iter_modules(path=[self.paths_import['loggers']]):
+        #    if module_info.name.startswith('loggers_'):
+        #        module = module_info.module_finder.find_module(module_info.name).load_module()
+        #        self.Settings.set_module('loggers', module, module_info.name.split('_')[-1].capitalize())
+
     def import_fasifs(self, language, settings):
         print("Import fasifs for {0} language...".format(language))
         t1 = time.time()
@@ -84,7 +89,8 @@ class API():
         
         default_path_modules = os.path.dirname(os.path.dirname(__file__))
         self.paths_import = {
-            'language': os.path.join(default_path_modules, 'manspy', 'NLModules')
+            'language': os.path.join(default_path_modules, 'manspy', 'NLModules'),
+            'loggers': os.path.join(default_path_modules, 'loggers'),
         }
 
         self.Settings.dir_db = self.make_db_dir(self.Settings.dir_db)
