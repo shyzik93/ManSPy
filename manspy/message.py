@@ -39,47 +39,10 @@ class Message:
         with open('history_interactive.html', 'w') as f:
             f.write(INTERACTIVE_HTML_HEADER)
 
+        self.pass_args_to_all_logs('on_create_message', direction, self)
+
         if direction == 'W': self.from_IF(text)
         elif direction == 'R': self.to_IF(text)
-
-        '''self.settings = settings
-        self.direction = direction
-        self.nl = message_nl # nl = Nature Language
-        self.il = None # il = Internal Language
-
-        self.c, self.cu = self.settings.db_sqlite3
-
-        self.cu.execute(\'''
-        CREATE TABLE IF NOT EXISTS `log_history` (
-          `message_id` INTEGER PRIMARY KEY AUTOINCREMENT,
-          `direction` TEXT,
-          `thread_name` VARCHAR(255),
-          `language` INTEGER,
-          `date_add` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          `message_nl` TEXT,
-          `message_il` JSON,
-          `a_graphemath` JSON,
-          `a_morph` JSON,
-          `a_postmorph` JSON,
-          `a_synt` JSON);
-      \''')
-
-        t1 = time.time()
-        self.cu.execute(
-          'INSERT INTO `log_history` (`direction`, `thread_name`, `language`, `message_nl`) VALUES (?, ?, ?, ?);',
-          (self.direction, self.settings.thread_name, self.settings.language, self.nl)
-        )
-        t2 = time.time()
-        _t1 = t2 - t1
-        self.c.commit()
-        t3 = time.time()
-        _t2 = t3 - t2
-        #print(_t1, _t2)
-
-
-        self.message_id = self.cu.lastrowid
-        #print(self.message_id)"""
-        '''
 
     def toString(self, r_text):
         if isinstance(r_text, (int, float, complex)): return str(r_text)
@@ -136,7 +99,7 @@ class Message:
             self.pass_args_to_all_logs('log', 'W', w_text, self)
         self.save_interactive_html_line_header(w_text, "W", self.settings.ifname)
 
-    def before_analysises(self):
+    def before_analyzes(self):
         """ Вызывается Модулем Анализа (ManSPy) """
         self.pass_args_to_all_logs('before_analyzes', self.text_settings['levels'], self)
 
@@ -152,9 +115,3 @@ class Message:
             self.save_html_line(sentences, 'W', self.settings.ifname)
         if level == 'exec':
                 self.save_interactive_html_line_footer()
-
-    #def log(self, row_name, row_value):
-    #    #if isinstance(row_value, (dict, list)): row_value = json.dumps(row_value)
-    #    #self.cu.execute('UPDATE `log_history` SET `'+row_name+'`=? WHERE `message_id`=?', (row_value, self.message_id));
-    #    #self.c.commit()
-    #    pass

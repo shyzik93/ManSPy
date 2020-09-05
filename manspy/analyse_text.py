@@ -40,7 +40,7 @@ class LangClass():
         t1 =time.time()
 
         if msg:
-            msg.before_analysises()
+            msg.before_analyzes()
 
         OR = relation.ObjRelation(settings.language, settings.storage_version) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
         lang_module = settings.modules['language'][settings.language]
@@ -72,7 +72,6 @@ class LangClass():
                     ILs = Extraction2IL(OR, settings, *sentence)
                     _ILs[index].extend(ILs)
                 sentences = _ILs
-                print(sentences)
 
             elif level == "exec":
 

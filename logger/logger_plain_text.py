@@ -17,6 +17,10 @@ class LoggerPlainText:
     def __init__(self):
         self.f = open('history.txt', 'ab')
     
+    def on_create_message(self, direction, msg):
+        pass
+
+    
     def log(self, direction, text, msg):
         self.f.write(bytearray(make_dialog_plain_line(text, direction, msg.settings.ifname), 'utf-8'))
 
