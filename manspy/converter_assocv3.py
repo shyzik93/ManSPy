@@ -99,7 +99,8 @@ def Extraction2IL(R, settings, predicates, arguments):
         argument = NLModules.ObjUnit.Sentence(_argument)
         IL = copy.deepcopy(pattern_IL)
         res = get_fasif_wcomb(fdb, argument, R, predicate)
-        if res is None: continue
+        if res is None:
+            continue
         finded_args, fasif, function, isantonym = res
         #if 'antonym' in predicate and predicate['antonym'] != isantonym: IL['arg0']['antonym'] = True
         IL['arg0']['antonym'] = isantonym
@@ -142,5 +143,4 @@ def Extraction2IL(R, settings, predicates, arguments):
         ILs.append(IL)
         #fwcomb = to_formule.to_formule(argument, False)
         #print x, fdb.get_hashWComb(fwcomb)
-    print 
     return ILs

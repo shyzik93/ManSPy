@@ -20,8 +20,7 @@ class Interface(threading.Thread):
         self.name = IF.IFName
 
     def run(self):
-        self.API.update_settings_for_IF(self.IF)
-        self.IF.init()
+        self.API.init_interface(self.IF)
 
 class Interfaces():
     interfaces = {}

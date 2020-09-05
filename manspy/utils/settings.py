@@ -1,7 +1,7 @@
 class Settings:
     modules = {
         'language': {},
-        'loggers': {},
+        'logger': {},
     }
     db = None
     db_sqlite3 = None

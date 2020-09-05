@@ -72,6 +72,7 @@ class LangClass():
                     ILs = Extraction2IL(OR, settings, *sentence)
                     _ILs[index].extend(ILs)
                 sentences = _ILs
+                print(sentences)
 
             elif level == "exec":
 

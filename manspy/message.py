@@ -23,10 +23,10 @@ class Message:
     def get_message_id(self):
         return uuid.uuid1()
 
-    def log(self, text, direction):
-        if self.settings.history and text:
-            for logger_name, logger_class in self.settings.modules['loggers']:
-                logger_class.log(text, direction, self, self.settings)
+    def pass_args_to_all_logs(self, method_name, *args):
+        if self.settings.history:
+            for logger_name, logger_class in self.settings.modules['logger'].items():
+                getattr(logger_class, method_name)(*args)
 
     def __init__(self, settings, text_settings, text=None, direction=None):
         self.settings = settings
@@ -114,7 +114,6 @@ class Message:
         with open('history_interactive.html', 'a') as f:
             f.write(INTERACTIVE_HTML_LINE_FOOTER)
 
-
     # TODO: переименовать to_IF -> to_out (во вне)
     # TODO: переименовать r_text -> text_to_out (текст во вне)
     # TODO: переименовать self.settings['read_text'] -> self.settings['to_out']
@@ -122,8 +121,9 @@ class Message:
     def to_IF(self, r_text):
         """ Вызывается функцией-глаголом (ManSPy) для передачи ответа в Интерфейс """
         r_text = self.toString(r_text)
-        self.save_plain_line(r_text, "R", self.settings.ifname)
         self.save_html_line(r_text, 'R', self.settings.ifname)
+        if r_text:
+            self.pass_args_to_all_logs('log', 'R', r_text, self)
         self.settings.read_text(r_text, self.text_settings['any_data'])
 
     # TODO: переименовать from_IF -> from_out (из вне)
@@ -132,65 +132,25 @@ class Message:
     def from_IF(self, w_text):
         """ Вызывается Интерфейсом для передачи вопроса в ManSPy """
         self.w_text = w_text
-        self.log(w_text, "W")
-        #self.save_plain_line(w_text, "W", self.settings.ifname)
-        #self.save_interactive_html_line_header(w_text, "W", self.settings.ifname)
+        if w_text:
+            self.pass_args_to_all_logs('log', 'W', w_text, self)
+        self.save_interactive_html_line_header(w_text, "W", self.settings.ifname)
 
     def before_analysises(self):
         """ Вызывается Модулем Анализа (ManSPy) """
-        with open('analysis.txt', 'a', encoding='utf-8') as f:
-            f.write('\n\n'+'#'*100+'\n')
-            f.write(self.text_settings['levels']+'\n')
+        self.pass_args_to_all_logs('before_analyzes', self.text_settings['levels'], self)
 
     def before_analysis(self, level):
         """ Вызывается Модулем Анализа (ManSPy) """
-        now = datetime.datetime.now().strftime("%Y.%m.%d %H:%M:%S")
-        with open('analysis.txt', 'a', encoding='utf-8') as f:
-            f.write('----'+now+'\n')
-            #f.fwrite('Folding sentence: '+str(sentence.getUnit('str'))+'\n')
-            f.write(('- '*10)+level+(' -'*10)+u'\n')
+        self.pass_args_to_all_logs('before_analysis', level, self)
         
     def after_analysis(self, level, sentences):
         """ Вызывается Модулем Анализа (ManSPy) """
+        if self.settings.log_all:
+            self.pass_args_to_all_logs('after_analysis', level, sentences, self)
         if level == 'synt':
             self.save_html_line(sentences, 'W', self.settings.ifname)
-
-        if self.settings.log_all:
-            if level == "graphmath":
-                with open('analysis.txt', 'a', encoding='utf-8') as f:
-                    f.write('NL-sentence: ')
-                    for index, sentence in sentences:
-                        for index, word in sentence.subunits_copy.items(): f.write(word['word']+' ')
-                    f.write('\n')
-                sentences = sentences.getUnit('dict')
-            elif level == 'morph':
-                pass
-                with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
-                    flog.write('\n')
-                    for index, sentence in sentences: flog.write('sentence: %s\n' % sentence.getUnit('str')['fwords'])
-                    flog.write('\n')
-    
-                sentences = sentences.getUnit('dict')            
-            elif level == 'postmorph':
-                sentences = sentences.getUnit('dict')
-            elif level == 'synt':
-                sentences = sentences.getUnit('dict')
-            elif level == 'extract':
-                sentences = list(sentences)
-                return
-            elif level == 'convert':
-                _res = []
-                for index, ILs in sentences.items():
-                    for IL in ILs:
-                        _res.append('IL-sentence: '+str(IL))
-                sentences = _res
-    
-            with open('analysis.txt', 'a', encoding='utf-8') as f: 
-                json.dump(sentences, f, sort_keys=True, indent=4)#.replace('"', '')
-                f.write('\n')
-            
-            
-            if level == 'exec':
+        if level == 'exec':
                 self.save_interactive_html_line_footer()
 
     #def log(self, row_name, row_value):

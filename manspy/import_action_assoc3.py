@@ -35,7 +35,7 @@ STRING_WCOMB = r'^ {4}('+WORD+')?([ \t]+'+WORD+')*[ \t]*$' # Не должо с�
 not_to_db = ['nombr', 'cifer']
 
 def get_fasif_files(modules_path):
-    ''' Функция возвращает мимена МУ '''
+    ''' Функция возвращает имена МУ '''
     names = os.listdir(modules_path)
     #names [name for name in names if name[-4:]=='.fsf'] # короче, но требует дополнительную память
 
@@ -89,7 +89,7 @@ class FASIF_Verb(_FASIF):
                 function = re.findall(STRING_VERBS_TITLE2, string)[0]#string.strip()
             elif re.findall(STRING_VERBS_BODY, string):
                 lang, verb = re.findall(STRING_VERBS_BODY, string)[0]#string.split(':')
-                verbs[lang.strip()] = verb.strip().split()
+                verbs[lang.strip().lower()] = verb.strip().split()
         return {'function': function, 'verbs': verbs}
 
     def siftout(self, fasif, lang):
@@ -133,7 +133,7 @@ class FASIF_WordCombination(_FASIF):
             # Язык: глаголДляФункции
             elif re.findall(STRING_DESTINATION_BODY, string): # "    Language : verbглагол"
                 lang, verb = string.split(':')
-                functions[destination]['verbs'][lang.strip()] = verb.strip().split()
+                functions[destination]['verbs'][lang.strip().lower()] = verb.strip().split()
                 #print '2 $$$$', string
             ## Блок аргументов
             # аргумент yORn ; Язык1 ; Язык2
@@ -149,8 +149,8 @@ class FASIF_WordCombination(_FASIF):
                 lang_indexes = []
                 args[arg_name] = {'isreq': isreq, 'args_as_list': args_as_list, 'argtable': {}, 'argwords': {}}
                 for lang in string:
-                    args[arg_name]['argtable'][lang.strip()] = {}
-                    lang_indexes.append(lang.strip())
+                    args[arg_name]['argtable'][lang.strip().lower()] = {}
+                    lang_indexes.append(lang.strip().lower())
 
                 arg_indexes.append(arg_name)
                 #print '3 $$$$', string
@@ -181,7 +181,7 @@ class FASIF_WordCombination(_FASIF):
             ## Блок словосочетаний
             # Язык
             elif re.findall(STRING_WCOMB_TITLE, string):
-                lang = string.strip()
+                lang = string.strip().lower()
                 for arg_name in args:
                     args[arg_name]['argwords'][lang] = {'in_wcomb': {'name': None, 'hyperonyms': []}, 'another': []}
                 arg_index = 0
@@ -203,7 +203,7 @@ class FASIF_WordCombination(_FASIF):
                 arg_index += 1
                 #print '6 $$$$', string
             elif re.findall(STRING_WCOMB, string):
-                  wcomb[lang] = string.strip()
+                  wcomb[lang.lower()] = string.strip()
         return {'functions': functions, 'wcomb': wcomb, 'args': args}
 
     def siftout(self, fasif, lang):
