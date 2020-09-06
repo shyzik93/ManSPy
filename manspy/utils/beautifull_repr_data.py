@@ -191,7 +191,7 @@ def text_to_html(text, synt_words, direction):
         text_ = []
         for index_sentence, cSentence in text:
             for index, cWord in cSentence:
-                # TODO: index должен равняться cWord['index']
+                # TODO: index должен равняться cWord['index'] (в функции ObjUnit.__iter__)
                 if cWord['index'] in synt_words:
                     cWord = synt_words[cWord['index']]
                 text_.append(word_to_html(cWord))
