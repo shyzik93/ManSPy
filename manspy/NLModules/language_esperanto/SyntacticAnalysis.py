@@ -95,7 +95,7 @@ def goThrowLinks(index, sentence, indexes=None):
             goThrowLinks(index_link, sentence, indexes)    
 
     return indexes
-
+# TODO: Две одноимённых функции!???
 def split_sentence(sentence):
 
     # manspy2 exec --synt "se dolara kurzo de laboro estas kvaron"
@@ -104,7 +104,7 @@ def split_sentence(sentence):
 
     first_indexes = sentence.getIndexesOfFirstWords()
     #first_words = [sentence(i, 'word') for i in first_indexes]
-    print([sentence(i, 'word') for i in first_indexes])
+    print('        Root words of the sentence:', [sentence(i, 'word') for i in first_indexes])
 
     conjunctions = []
     subjects = []
@@ -134,7 +134,7 @@ def split_sentence(sentence):
 def split_sentence(sentence):
     first_indexes = sentence.getIndexesOfFirstWords()
     #first_words = [sentence(i, 'word') for i in first_indexes]
-    print([sentence(i, 'word') for i in first_indexes])
+    print('            Root words of the sentence:', [sentence(i, 'word') for i in first_indexes])
 
     conjunctions = []
     _sentences = []

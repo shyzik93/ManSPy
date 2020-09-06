@@ -71,7 +71,6 @@ class Message:
     def to_IF(self, r_text):
         """ Вызывается функцией-глаголом (ManSPy) для передачи ответа в Интерфейс """
         r_text = self.toString(r_text)
-        self.save_html_line(r_text, 'R', self.settings.ifname)
         if r_text:
             self.pass_args_to_all_logs('log', 'R', r_text, self)
         self.settings.read_text(r_text, self.text_settings['any_data'])
@@ -98,7 +97,5 @@ class Message:
         """ Вызывается Модулем Анализа (ManSPy) """
         if self.settings.log_all:
             self.pass_args_to_all_logs('after_analysis', level, sentences, self)
-        if level == 'synt':
-            self.save_html_line(sentences, 'W', self.settings.ifname)
         if level == 'exec':
                 self.save_interactive_html_line_footer()

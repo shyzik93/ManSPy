@@ -4,7 +4,6 @@
     По завершению удаляются все служебные части речи.
     Можно приступать к синтаксичекому анализу предложения.
     '''
-from pprint import pprint
 
 def processArticle(word, sentence):
     if word['POSpeech'] == 'article': sentence.delByStep() # пока только удаляем

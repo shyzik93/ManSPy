@@ -93,7 +93,6 @@ class API():
 
         self.Settings.dir_db = self.make_db_dir(self.Settings.dir_db)
         self.import_all_modules()
-        print(self.Settings.modules)
 
         """ Инициализация ManSPy """
         #settings = copy.deepcopy(self.default_settings)
