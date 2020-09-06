@@ -327,7 +327,7 @@ class ImportAction():
     def proccess(self, fasif_file, fasif_dir, language, settings):
         ''' Импортирует МД, извлекает и преобразует ФАСИФ  словарь. '''
         #list_FASIF = Action.getObject(module_name, 'list_FASIF')
-        with open(os.path.join(fasif_dir, fasif_file)) as f: fasif = f.read()
+        with open(os.path.join(fasif_dir, fasif_file), encoding='utf-8') as f: fasif = f.read()
         # Отделяем ФАСИФы друг от друга
         dict_assoc_types = separate_fasifs(fasif)
         # Превращаем текст ФАСИФов в словарь

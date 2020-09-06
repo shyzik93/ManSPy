@@ -2,16 +2,16 @@ import json
 
 from manspy.NLModules.ObjUnit import Word, Sentence, Text
 
+
 class ComplexEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, (Text, Sentence, Word)):
             return obj.export_unit()
         else:
             return str(obj)
-        return json.JSONEncoder.default(self, obj)
+
 
 class LoggerDb:
-
     def connect_to_db(self, settings):
         self.c, self.cu = settings.db_sqlite3
 
@@ -45,7 +45,6 @@ class LoggerDb:
     def log(self, direction, text, msg):
         if self.c is None:
             self.connect_to_db(msg.settings)
-        print((direction, 'msg.settings.thread_name', msg.settings.language, text))
         self.cu.execute(
           'INSERT INTO `log_history` (`direction`, `thread_name`, `language`, `message_nl`) VALUES (?, ?, ?, ?);',
           (direction, 'msg.settings.thread_name', msg.settings.language, text)

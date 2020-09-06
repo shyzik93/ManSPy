@@ -36,7 +36,7 @@ class Message:
         if not os.path.exists('history.html'):
             with open('history.html', 'w') as f:
                 f.write(HTML_HEADER)
-        with open('history_interactive.html', 'w') as f:
+        with open('history_interactive.html', 'w', encoding='utf-8') as f:
             f.write(INTERACTIVE_HTML_HEADER)
 
         self.pass_args_to_all_logs('on_create_message', direction, self)
@@ -58,11 +58,11 @@ class Message:
                     text_.append(word_to_html(cWord))
             text = ' '.join(text_)
 
-        with open('history.html', 'a') as f:
+        with open('history.html', 'a', encoding='utf-8') as f:
             f.write(make_dialog_html_line(text, direction))
 
     def save_interactive_html_line_header(self, text, direction, ifname):
-        with open('history_interactive.html', 'a') as f:
+        with open('history_interactive.html', 'a', encoding='utf-8') as f:
             f.write(INTERACTIVE_HTML_LINE_HEADER.format(
                 message_id='MESSAGE_ID',  # TODO: MESSAGE_ID
                 space='',
@@ -74,7 +74,7 @@ class Message:
             ))
 
     def save_interactive_html_line_footer(self):
-        with open('history_interactive.html', 'a') as f:
+        with open('history_interactive.html', 'a', encoding='utf-8') as f:
             f.write(INTERACTIVE_HTML_LINE_FOOTER)
 
     # TODO: переименовать to_IF -> to_out (во вне)
