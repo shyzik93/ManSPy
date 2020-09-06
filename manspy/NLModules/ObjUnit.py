@@ -53,34 +53,42 @@ class _Unit():
 
     def import_unit(self, data):
 
+        if 'feature' in data['unit_info']:
+            for index, subunit in enumerate(data['unit_info']['feature']):
+                _subunit = globals()[subunit['unit_type']]({})
+                _subunit.import_unit(subunit)
+                data['unit_info']['feature'][index] = _subunit
+
         for index, subunit in data['unit'].items():
-            if isinstance(subunit, dict): break
-            if subunit['unit_type'] == 'dict':
+            # if isinstance(subunit, dict):
+            #     break
+            if 'unit_type' not in subunit or subunit['unit_type'] == 'dict':
                 _subunit = subunit
             else:
-                if subunit['unit_type'] == 'Text': _subunit = Text()
-                elif subunit['unit_type'] == 'Sentence': _subunit = Sentence()
-                elif subunit['unit_type'] == 'Word': _subunit = Word()
+                # if subunit['unit_type'] == 'Text': _subunit = Text()
+                # elif subunit['unit_type'] == 'Sentence': _subunit = Sentence()
+                # elif subunit['unit_type'] == 'Word': _subunit = Word()
+                _subunit = globals()[subunit['unit_type']]({})
                 _subunit.import_unit(subunit)
+
             data['unit'][index] = _subunit
 
-
         self.full_info = copy.deepcopy(data)
+        self.unit_info = self.full_info['unit_info']
+        self.subunit_info = self.full_info['unit']
 
     def export_unit(self):
         data =  copy.deepcopy(self.full_info)
 
-        if isinstance(self, Text): data['unit_type'] = 'Text'
-        elif isinstance(self, Sentence): data['unit_type'] = 'Sentence'
-        elif isinstance(self, Word): data['unit_type'] = 'Word'
-        else: data['unit_type'] = 'dict'
+        data['unit_type'] = self.__class__.__name__
         
         if 'feature' in data['unit_info']:
             for index, subunit in enumerate(data['unit_info']['feature']):
                 data['unit_info']['feature'][index] = subunit.export_unit()
 
         for index, subunit in data['unit'].items():
-            if isinstance(subunit, dict): break
+            if isinstance(subunit, dict):
+                break
             data['unit'][index] = subunit.export_unit()
 
         return data
@@ -93,9 +101,27 @@ class _Unit():
         elif isinstance(subunits, dict): iterator = subunits.items() # нерекомендаовано
 
         for index, subunit in iterator:
-            if isinstance(index, (str, float)): index = int(index) # только для словаря
-            subunit['index'] = index
+            if isinstance(index, str) and index.isdecimal():
+                index = int(index)  # только для словаря
+            if isinstance(subunit, dict) and isinstance(index, int):
+                subunit['index'] = index
             self.subunit_info[index] = subunit
+
+        """if isinstance(subunits, list):
+
+            for index, subunit in enumerate(subunits):
+                if isinstance(subunit, dict):
+                    subunit['index'] = index
+                self.subunit_info[index] = subunit
+
+        elif isinstance(subunits, dict):
+
+            for index, subunit in subunits.items():
+                if isinstance(index, str) and index.isdecimal():
+                    index = int(index)
+                if isinstance(subunit, dict) and isinstance(index, int):
+                    subunit['index'] = index
+                self.subunit_info[index] = subunit"""
 
 
         self.keys = list(self.subunit_info.keys())
@@ -505,7 +531,7 @@ class Sentence(_Unit):
         word = self.subunit_info[indexes.pop()]
         word['combine_type'] = type_combine_word
 
-    def getCombineWord(saelf, type_combine_word, index):
+    def getCombineWord(self, type_combine_word, index):
         return self.subunit_info[index]['combine_words']
 
 class Text(_Unit):

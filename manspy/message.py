@@ -48,19 +48,6 @@ class Message:
         if isinstance(r_text, (int, float, complex)): return str(r_text)
         else: return r_text
 
-    def save_html_line(self, text, direction, ifname):
-        """ Сейчас выходной текст явлется строкой, но когда он станет классом,
-            то мы уберём данное условие (подусловный блок останется)"""
-        if direction == "W":
-            text_ = []
-            for index, cSentence in text:
-                for index, cWord in cSentence.subunits_copy.items():
-                    text_.append(word_to_html(cWord))
-            text = ' '.join(text_)
-
-        with open('history.html', 'a', encoding='utf-8') as f:
-            f.write(make_dialog_html_line(text, direction))
-
     def save_interactive_html_line_header(self, text, direction, ifname):
         with open('history_interactive.html', 'a', encoding='utf-8') as f:
             f.write(INTERACTIVE_HTML_LINE_HEADER.format(

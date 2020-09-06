@@ -1,7 +1,7 @@
 import datetime
 import time
 
-TEMPLATE_HTML_WORD = '<span class="word{MOSentence}">{word}</span>'
+TEMPLATE_HTML_WORD = '<span class="{MOSentence}">{word}</span>'
 TEMPLATE_HTML_ROW = '{direction} &nbsp;&nbsp; {indent}{text}<br>\n'
 
 HTML_HEADER = '''<!DOCTYPE html>
@@ -155,8 +155,8 @@ INTERACTIVE_HTML_LINE_FOOTER = '''    </ul>
 
 INTERACTIVE_HTML_LINE = '''
         <li>
-            <span onclick="toggle(document.getElementById('data_a_graphemath{row[message_id]}'))">Графематический анализ</span><br>
-            <pre class="data" id="data_a_graphemath{row[message_id]}">{row[a_graphemath]}</pre>
+            <span onclick="toggle(document.getElementById('data_a_graphmath{row[message_id]}'))">Графематический анализ</span><br>
+            <pre class="data" id="data_a_graphemath{row[message_id]}">{row[a_graphmath]}</pre>
         </li><li>
             <span onclick="toggle(document.getElementById('data_a_morph{row[message_id]}'))">Морфологический анализ</span><br>
             <pre class="data" id="data_a_morph{row[message_id]}">{row[a_morph]}</pre>
@@ -176,12 +176,30 @@ INTERACTIVE_HTML_LINE = '''
 '''
 
 INTERACTIVE_HTML_FOOTER = '</ul></body></html>'
+HTML_FOOTER = '</body></html>'
 
 def word_to_html(word):
     return TEMPLATE_HTML_WORD.format(
         word=word['word'] + word['end'],
         MOSentence=word['MOSentence'].replace(' ', '_') if 'MOSentence' in word else ''
     )
+
+def text_to_html(text, synt_words, direction):
+    """ Сейчас выходной текст явлется строкой, но когда он станет классом,
+        то мы уберём данное условие (подусловный блок останется)"""
+    if direction == "W":
+        text_ = []
+        for index_sentence, cSentence in text:
+            for index, cWord in cSentence:
+                # TODO: index должен равняться cWord['index']
+                if cWord['index'] in synt_words:
+                    cWord = synt_words[cWord['index']]
+                text_.append(word_to_html(cWord))
+                # if 'feature' in cWord:
+                #     for cWord_feature in cWord['feature']:
+                #         text_.insert(cWord_feature['index'], word_to_html(cWord_feature))
+        return ' '.join(text_)
+    return text
 
 # TODO: добавить в лог: `ifname`, `date_recieved` (по аналогии с `make_dialog_plain_line`)
 def make_dialog_html_line(text: str, direction: str):
