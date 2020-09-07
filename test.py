@@ -16,18 +16,26 @@ TEST_INPUT_DATA_ESPERANTO = [
     ('montru adreson de komputilo', ['127.0.0.1']),
     ('montru adreson de androido', []),
 
-    ('dolaran kurzon montru', []),
-    ('montru de rusia banko euxran kurzon', []),
+    ('dolaran kurzon montru', ['USD-Russia']),
+    ('montru de rusia banko euxran kurzon', ['EUR-Russia']),
 
     # Повторяющиеся аргументы (однородные слова)
-    ('montru dolaran kaj dolaran kurzon de rusia banko', []),
-    ('montru dolaran kaj dolaran kurzon de rusia kaj rusia banko', []),
+    ('montru dolaran kaj dolaran kurzon de rusia banko', ['USD-Russia']),
+    ('montru dolaran kaj dolaran kurzon de rusia kaj rusia banko', ['USD-Russia']),
     # Это предложение выдаёт курс доллара только по росбанку (украинский не замечает).
     # TODO: Как вариант решения: проверять каждоый однородный член у дополнений (кроме первого)
-    ('montru dolaran kurzon de rusia banko kaj ukraina banko', []),
-    ('montru adreson de komputilo kaj androido', []),
+    #  (однородные члены должны совпадать по части речи)
+    #('montru dolaran kurzon de rusia banko kaj ukraina banko', ['USD-Russia', 'USD-Ukrain']),
+    ('montru adreson de komputilo kaj androido', ['192.168.43.167']),
     # Много аргументов (сложатся друг с другом поочерёдно - декартово произведение)
-    ('montru euxran kaj dolaran kurzon de ukrainia kaj rusia kaj belarusia banko', []),
+    ('montru euxran kaj dolaran kurzon de ukrainia kaj rusia kaj belarusia banko', [
+        'USD-Belarus',
+        'USD-Russia',
+        'USD-Ukraine',
+        'EUR-Belarus',
+        'EUR-Russia',
+        'EUR-Ukraine'
+    ]),
     ('montru euxran kaj dolaran kurzon de ukrainia kaj rusia banko', []),
     # TODO: сложатся соответственно (не реализовано пока)
     ('montru euxran kaj dolaran kurzon de ukrainia kaj rusia banko соответсвенно', []),

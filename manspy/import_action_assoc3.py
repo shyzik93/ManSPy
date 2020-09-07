@@ -9,7 +9,7 @@ WORD_WITH_PREPOSITION = '(?:'+WORD+')?[ \t]*'+WORD
 
 NAME_PYTHON_OBJ = r'[_a-zA-Z][_0-9a-zA-Z]*'
 NAME_INTERNAL_OBJ = r'\$'+NAME_PYTHON_OBJ
-PATH_FUNCTION = NAME_PYTHON_OBJ+'/'+NAME_PYTHON_OBJ
+PATH_FUNCTION = r'(?:'+NAME_PYTHON_OBJ+'/)+'+NAME_PYTHON_OBJ
 ALL_NAMES_FUNCTION = r'(?:'+PATH_FUNCTION+'|'+NAME_INTERNAL_OBJ+')'
 
 # Парсинг Verbs
@@ -326,7 +326,6 @@ class ImportAction():
 
     def proccess(self, fasif_file, fasif_dir, language, settings):
         ''' Импортирует МД, извлекает и преобразует ФАСИФ  словарь. '''
-        #list_FASIF = Action.getObject(module_name, 'list_FASIF')
         with open(os.path.join(fasif_dir, fasif_file), encoding='utf-8') as f: fasif = f.read()
         # Отделяем ФАСИФы друг от друга
         dict_assoc_types = separate_fasifs(fasif)

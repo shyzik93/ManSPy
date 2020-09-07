@@ -2,6 +2,7 @@
 
 import sys, copy
 from . import to_formule, NLModules, lingvo_math, Action
+from manspy.utils import importer
 
 """
 """
@@ -43,12 +44,6 @@ def check_args(finded_args, fasif, R):
         for argname, argvalue in checked_arg.items():
             checked_arg[argname] = convert_by_argtable(fasif, argname, argvalue)
     return checked_args
-
-def parseFunction(function_str):
-    #if function_str[0] == '$': return function_str[1:]
-    module_name, func_name = function_str.split('/')
-    module_obj = Action.getModule(module_name)
-    return getattr(module_obj, func_name)
 
 def if_verb_in_fasif(fasif, id_group): # в фасифе можно сохранять список всех глаголов для всех назначений для уменьшения кол-ва вычислений
     for destination, data in fasif['functions'].items():
@@ -123,10 +118,10 @@ def Extraction2IL(R, settings, predicates, arguments):
         IL['action']['args_as_list'] = fasif['argdescr'][argname]['args_as_list']
 
         if function: # если найдена функция, ассоциированная "глагол + словосочетание"
-            IL['action']['wcomb_verb_function'] = parseFunction(function)
+            IL['action']['wcomb_verb_function'] = importer.action(function)
         else: # иначе вынимаем функцию, ассоциированную с словосочетанием
             function = fasif['functions']['getCondition']['function']
-            IL['action']['wcomb_function'] = parseFunction(function)
+            IL['action']['wcomb_function'] = importer.action(function)
             id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')[0]
             compared_fasifs = fdb.getFASIF('Verb', id_group)
             if not compared_fasifs:
@@ -134,7 +129,7 @@ def Extraction2IL(R, settings, predicates, arguments):
                 continue
             if not compared_fasifs: sys.stderr.write('Fasif for "%s" wasn\'t found!' % predicate['base'])
             # затем вынимаем общую функцию, ассоциированую с глаголом
-            IL['action']['common_verb_function'] = parseFunction(list(compared_fasifs.values())[0][0][0])
+            IL['action']['common_verb_function'] = importer.action(list(compared_fasifs.values())[0][0][0])
 
         with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
             flog.write('\npraIL: %s\n' % str(IL))

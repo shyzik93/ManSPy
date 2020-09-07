@@ -5,12 +5,14 @@
     мессенджеры, интерфейс мозг-компьютер, приёмник звонков и SMS и так далее.
 """
 import sqlite3 as sql
-import time, sys, os, copy, json, datetime
-from . import import_action
-from .analyse_text import LangClass
-from manspy.utils.settings import Settings
+import time
+import os
 
-from . import message
+from manspy import import_action
+from manspy.analyse_text import LangClass
+from manspy.utils.settings import Settings
+from manspy.utils import importer
+from manspy import message
 
 sql.enable_callback_tracebacks(True)
 
@@ -42,57 +44,22 @@ class API():
         return db_path
 
     def init_interface(self, IF):
-        IF.settings = self.Settings(**IF.settings)
+        IF.settings = Settings(**IF.settings)
         IF.settings.db_sqlite3 = create_bd_file(IF.settings.language, 'main_data.db')
         IF.init()
 
-    def import_all_modules(self):
-        import importlib, pkgutil
-
-        #module_dir = self.paths_import['language']
-        #for module_file_name in os.listdir(module_dir):
-        #    if module_file_name.startswith('language_'):
-        #        module_path = os.path.join(module_dir, module_file_name)
-        #        module = importlib.import_module(module_path)
-        #        print(module)
-
-        for module_type, path_import in self.paths_import:
-            if module_type == 'language':
-
-                for module_info in pkgutil.iter_modules(path=[path_import]):
-                    if module_info.name.startswith('language_'):
-                        module = module_info.module_finder.find_module(module_info.name).load_module()
-                        module_code = module_info.name
-                        self.Settings.set_module('language', module, module_code[9:])
-
-            elif module_type == 'logger':
-
-                for module_info in pkgutil.iter_modules(path=[path_import]): 
-                    if module_info.name.startswith('logger_'):
-                        module = module_info.module_finder.find_module(module_info.name).load_module()
-                        module_code = module_info.name
-                        class_name = ''.join([subname.capitalize() for subname in module_code.split('_')])
-                        self.Settings.set_module('logger', getattr(module, class_name)(), module_code[7:])
-
-    def import_fasifs(self, language, settings):
-        print("Import fasifs for {0} language...".format(language))
-        t1 = time.time()
-
-        self.action_importer.import_for_lang(language, settings)
-
-        print('  ', time.time() - t1)
-
     def __init__(self):
-        self.Settings = Settings
-        
         default_path_modules = os.path.dirname(os.path.dirname(__file__))
         self.paths_import = [
             ('language', os.path.join(default_path_modules, 'manspy', 'NLModules')),
             ('logger', os.path.join(default_path_modules, 'logger')),
         ]
 
-        self.Settings.dir_db = self.make_db_dir(self.Settings.dir_db)
-        self.import_all_modules()
+        Settings.dir_db = self.make_db_dir(Settings.dir_db)
+
+        for module_type, path_import in self.paths_import:
+            for module, module_code in getattr(importer, module_type)(path_import):
+                Settings.set_module(module_type, module, module_code)
 
         """ Инициализация ManSPy """
         #settings = copy.deepcopy(self.default_settings)
@@ -107,14 +74,17 @@ class API():
         
         print("Init action's modules...")
         t1 = time.time()
-        self.action_importer = import_action.ImportAction(self.LangClass, self.Settings.assoc_version)
+        self.action_importer = import_action.ImportAction(self.LangClass, Settings.assoc_version)
         #self.action_importer.fsf2json()
         self.was_imported = {}
         t2 = time.time()
         print('  ', t2 - t1)
 
-        for language in self.Settings.modules['language']:
-            self.import_fasifs(language, self.Settings(language=language))
+        for language in Settings.modules['language']:
+            print("Import fasifs for {0} language...".format(language))
+            t1 = time.time()
+            self.action_importer.import_for_lang(language, Settings(language=language))
+            print('  ', time.time() - t1)
 
         #print("Init functions's module...")
         #t1 = time.time()
