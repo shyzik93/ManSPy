@@ -279,8 +279,6 @@ class ImportAction():
         self.LangClass = LangClass#analyse_text.LangClass()
         #self.fdb = to_formule.FasifDB(settings)
 
-        self.fasif_dir = os.path.join(os.path.dirname(__file__), 'Action')
-
     def selector_of_function(self, dict_assoc_types, _func_name, *func_args):
         for assoc_type, fasifs in dict_assoc_types.items():
 
@@ -342,9 +340,10 @@ class ImportAction():
         #pprint(dict_assoc_types)
 
 
-    def import_for_lang(self, language, settings):
+    #  TODO: переименовать в parse_fasif. Переименовать также и модуль.
+    def import_for_lang(self, path_import,  language, settings):
         self.OR = relation.ObjRelation(language, settings.storage_version)
         self.fdb = to_formule.FasifDB(language)
 
         fasif_files = get_fasif_files(self.fasif_dir)
-        for fasif_file in fasif_files: self.proccess(fasif_file, self.fasif_dir, language, settings)
+        for fasif_file in fasif_files: self.proccess(fasif_file, path_import, language, settings)

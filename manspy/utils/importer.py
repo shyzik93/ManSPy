@@ -28,10 +28,10 @@ def logger(path_import):
             yield getattr(module, class_name)(), module_code[7:]
 
 
-def action(function_str):
+def action(abs_path_to_function):
     #if function_str[0] == '$': return function_str[1:]
-    func_name = os.path.basename(function_str)
-    module_file = os.path.dirname(function_str)
+    func_name = os.path.basename(abs_path_to_function)
+    module_file = os.path.dirname(abs_path_to_function)
     module_name = os.path.basename(module_file)
     #module_path = os.path.abspath(os.path.dirname(module_file))
     module_path = os.path.dirname(module_file)

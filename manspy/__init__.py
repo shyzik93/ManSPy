@@ -53,45 +53,36 @@ class API():
         self.paths_import = [
             ('language', os.path.join(default_path_modules, 'manspy', 'NLModules')),
             ('logger', os.path.join(default_path_modules, 'logger')),
+            ('action', os.path.join(default_path_modules, 'manspy', 'Action')),
         ]
 
         Settings.dir_db = self.make_db_dir(Settings.dir_db)
 
+        self.LangClass = LangClass()
+        self.action_importer = import_action.ImportAction(self.LangClass, Settings.assoc_version)
+        #self.action_importer.fsf2json()
+        self.was_imported = {}
+
         for module_type, path_import in self.paths_import:
-            for module, module_code in getattr(importer, module_type)(path_import):
-                Settings.set_module(module_type, module, module_code)
+            #for module, module_code in getattr(importer, module_type)(path_import):
+            #    Settings.set_module(module_type, module, module_code)
+            if module_type == 'language':
+                for module, module_code in importer.language(path_import):
+                    Settings.set_module(module_type, module, module_code)
+            elif module_type == 'logger':
+                for module, module_code in importer.logger(path_import):
+                    Settings.set_module(module_type, module, module_code)
+            elif module_type == 'action':
+                # TODO: функция import_for_lang должна импоттировать лингв. информацию для всех языков, для которых импортированы языковые модули.
+                for language in Settings.modules['language']:
+                    self.action_importer.import_for_lang(path_import, language, Settings(language=language))
 
         """ Инициализация ManSPy """
         #settings = copy.deepcopy(self.default_settings)
         #self.update_settings_for_IF(settings)
         # Меняем настройки по умолчанию на пользовательские
 
-        print("Init nature language's module...")
-        t1 = time.time()
-        self.LangClass = LangClass()
-        t2 = time.time()
-        print('  ', t2 - t1)
-        
-        print("Init action's modules...")
-        t1 = time.time()
-        self.action_importer = import_action.ImportAction(self.LangClass, Settings.assoc_version)
-        #self.action_importer.fsf2json()
-        self.was_imported = {}
-        t2 = time.time()
-        print('  ', t2 - t1)
-
-        for language in Settings.modules['language']:
-            print("Import fasifs for {0} language...".format(language))
-            t1 = time.time()
-            self.action_importer.import_for_lang(language, Settings(language=language))
-            print('  ', time.time() - t1)
-
-        #print("Init functions's module...")
-        #t1 = time.time()
         #self.LogicShell = FCModule.LogicShell()
-        #t2 = time.time()
-        #print('  ', t2 - t1)
-        print("Ready!")
 
     def write_text(self, w_text, settings, text_settings=None):
         '''
