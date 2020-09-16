@@ -2,19 +2,19 @@
 
 #:Verb
 # ################################################
-Action/smart_home/printToIF
+smart_home/printToIF
     Esperanto: montri # глаголы в начальной форме, через запятую, чтобы программа сама выделила корень
     Englsh: to print # добавить возможность указания нескольких глаголов через запятую
     Russian: показывать
 #:Verb
 # ################################################
-Action/smart_home/add
+smart_home/add
     Esperanto: adicii
     Englsh: to add
     Russian: складывать
 #:Verb
 # ################################################
-Action/smart_home/multiply
+smart_home/multiply
     Esperanto: multigi, obligi
     Englsh: to multiply
     Russian: умножать
@@ -22,7 +22,7 @@ Action/smart_home/multiply
 #:WordCombination
 # ################################################
 
-getCondition: Action/CurrencyLoader/GetCourse  # Назначение: ИмяМодуляБезРасширения/ИмяФункции
+getCondition: CurrencyLoader/GetCourse  # Назначение: ИмяМодуляБезРасширения/ИмяФункции
 
 currency y ;  Esperanto ; Russian
 # пробелы в начале строки обязательны
@@ -49,7 +49,7 @@ Russian
 #:WordCombination
 # ################################################
 
-changeCondition: Action/smart_home/LightOn # это назначение требует глаголов
+changeCondition: smart_home/LightOn # это назначение требует глаголов
     Esperanto: sxalti
     English: to turn on
     Russian: включать
@@ -72,7 +72,7 @@ Russian
 #:WordCombination
 # ################################################
 
-getCondition: Action/smart_home/showAddress
+getCondition: smart_home/showAddress
 
 device y; Esperanto
     computer; komputilo
@@ -83,7 +83,7 @@ Esperanto
 
 #:WordCombination
 # ################################################
-getCondition: Action/smart_home/get
+getCondition: smart_home/get
 
 a y
 

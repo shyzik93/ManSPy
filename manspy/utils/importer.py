@@ -36,7 +36,7 @@ def action(abs_path_to_function):
     #module_path = os.path.abspath(os.path.dirname(module_file))
     module_path = os.path.dirname(module_file)
     sys.path.insert(0, module_path)
-    print(function_str, module_path, module_name)
+    print(abs_path_to_function, module_path, module_name)
     module_obj = importlib.import_module(module_name)
     del sys.path[0]
     return getattr(module_obj, func_name)

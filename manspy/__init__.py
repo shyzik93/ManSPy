@@ -51,7 +51,7 @@ class API():
     def __init__(self):
         default_path_modules = os.path.dirname(os.path.dirname(__file__))
         self.paths_import = [
-            ('language', os.path.join(default_path_modules, 'manspy', 'NLModules')),
+            ('language', os.path.join(default_path_modules, 'manspy', 'NLModules')),  # обязательно первые в списке
             ('logger', os.path.join(default_path_modules, 'logger')),
             ('action', os.path.join(default_path_modules, 'manspy', 'Action')),
         ]

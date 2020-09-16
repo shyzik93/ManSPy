@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
-import os, sys, re, json, hashlib
+import os
+import sys
+import re
+import json
+import hashlib
 from pprint import pprint
+
 from . import analyse_text, Action, relation, to_formule
 
 NAME_LANG = r'[A-Z][a-z]+'
@@ -34,16 +39,6 @@ STRING_WCOMB = r'^ {4}('+WORD+')?([ \t]+'+WORD+')*[ \t]*$' # Не должо с�
 
 not_to_db = ['nombr', 'cifer']
 
-def get_fasif_files(modules_path):
-    ''' Функция возвращает имена МУ '''
-    names = os.listdir(modules_path)
-    #names [name for name in names if name[-4:]=='.fsf'] # короче, но требует дополнительную память
-
-    x = 0 # длинее, но требует меньше памяти. Вероятно, медленней работаейт. Необходим замер времени
-    while x < len(names):
-        if names[x][-4:] != '.fsf': del names[x]
-        else: x += 1
-    return names
 
 def separate_fasifs(fasif):
     fasif = re.sub(r"#[^:].*", '', fasif) # комментарии с середины строки
@@ -64,8 +59,8 @@ def separate_fasifs(fasif):
     #pprint.pprint(dict_assoc_types)
     return dict_assoc_types
 
-class _FASIF:
 
+class _FASIF:
     def __init__(self, LangClass):
         self.LangClass = LangClass
 
@@ -80,24 +75,22 @@ class _FASIF:
 
 
 class FASIF_Verb(_FASIF):
-
-    def parse(self, _fasif):
+    def parse(self, _fasif, path_import):
         function = None
         verbs = {}
         for string in _fasif:
             if re.findall(STRING_VERBS_TITLE, string):
                 function = re.findall(STRING_VERBS_TITLE2, string)[0]#string.strip()
+                function = os.path.join(path_import, function)
             elif re.findall(STRING_VERBS_BODY, string):
                 lang, verb = re.findall(STRING_VERBS_BODY, string)[0]#string.split(':')
                 verbs[lang.strip().lower()] = verb.strip().split()
         return {'function': function, 'verbs': verbs}
 
     def siftout(self, fasif, lang):
-        verbs = fasif['verbs']
-        if lang not in verbs: return None
-        fasif['verbs'] = verbs[lang]
-        return fasif
-
+        if lang in fasif['verbs']:
+            fasif['verbs'] = fasif['verbs'][lang]
+            return fasif
 
     def proccess_lingvo_data(self, fasif, OR, fdb, settings):
         words = [self.get_dword(word_verb, settings)['base'] for word_verb in fasif['verbs']]
@@ -107,7 +100,11 @@ class FASIF_Verb(_FASIF):
 
 class FASIF_WordCombination(_FASIF):
 
-    def parse(self, _fasif): # подформат состоит из трёх блоков: описание функций, аргументов и словосочетания. Аргументы одинаковы для всех функций
+    def parse(self, _fasif, path_import):
+        """
+            подформат состоит из трёх блоков: описание функций, аргументов и словосочетания.
+            Аргументы одинаковы для всех функций
+        """
         functions = {}
         args = {}
         wcomb = {}
@@ -128,7 +125,7 @@ class FASIF_WordCombination(_FASIF):
             # Назначение: Модуль/Функция
             if re.findall(STRING_DESTINATION_TITLE, string): # "Name_01 : moduleName/funcName "
                 destination, function = string.split(':')
-                functions[destination.strip()] = {'function': function.strip(), 'verbs': {}}
+                functions[destination.strip()] = {'function': os.path.join(path_import, function.strip()), 'verbs': {}}
                 #print '1 $$$$', string
             # Язык: глаголДляФункции
             elif re.findall(STRING_DESTINATION_BODY, string): # "    Language : verbглагол"
@@ -210,19 +207,28 @@ class FASIF_WordCombination(_FASIF):
         args = {}
         for arg_name, _args in fasif['args'].items():
             argtable = _args['argtable']
-            if lang in argtable: _args['argtable'] = argtable[lang]
-            elif not argtable: _args['argtable'] = {}
-            else: return None
+            if lang in argtable:
+                _args['argtable'] = argtable[lang]
+            elif not argtable:
+                _args['argtable'] = {}
+            else:
+                return None
             argwords = _args['argwords']
-            if lang in argwords: _args['argwords'] = argwords[lang]
-            else: return None
+            if lang in argwords:
+                _args['argwords'] = argwords[lang]
+            else:
+                return None
 
         for destination, value in fasif['functions'].items():
-            if lang in value['verbs']: value['verbs'] = value['verbs'][lang]
-            else: value['verbs'] = []
+            if lang in value['verbs']:
+                value['verbs'] = value['verbs'][lang]
+            else:
+                value['verbs'] = []
 
-        if lang in fasif['wcomb']: fasif['wcomb'] = fasif['wcomb'][lang]
-        else: return None
+        if lang in fasif['wcomb']:
+            fasif['wcomb'] = fasif['wcomb'][lang]
+        else:
+            return None
 
         return fasif
 
@@ -257,10 +263,13 @@ class FASIF_WordCombination(_FASIF):
             for hyperonym in data['hyperonyms']:
                 argword = [argword for argword in wcomb.getByValues(setstring='subiv:noignore', argname=argname)][0]
                 #print argname, argword
-                if argword[1]: base = argword[1]['base']
-                else: base = argword[2][0]['base']
+                if argword[1]:
+                    base = argword[1]['base']
+                else:
+                    base = argword[2][0]['base']
                 bases = data['argtable'].keys()
-                if hyperonym['base'] not in not_to_db: OR.setRelation('hyperonym', hyperonym['base'], base, *bases)
+                if hyperonym['base'] not in not_to_db:
+                    OR.setRelation('hyperonym', hyperonym['base'], base, *bases)
 
         #pprint(fasif['args']) 
         #fwcomb = to_formule.to_formule(fasif['wcomb'], True, fasif['args'])
@@ -281,13 +290,12 @@ class ImportAction():
 
     def selector_of_function(self, dict_assoc_types, _func_name, *func_args):
         for assoc_type, fasifs in dict_assoc_types.items():
-
             #func_name = _func_name+assoc_type
             #if func_name not in globals(): continue
             cls_name = 'FASIF_' + assoc_type
             if cls_name not in dir(self):
-                if cls_name not in globals(): continue
-                self.__setattr__(cls_name, globals()[cls_name](self.LangClass))
+                if cls_name in globals():
+                    self.__setattr__(cls_name, globals()[cls_name](self.LangClass))
             cls = self.__getattribute__(cls_name)
 
             index = 0
@@ -295,7 +303,8 @@ class ImportAction():
                 fasif = fasifs[index]
 
                 new_fasif = object.__getattribute__(cls, _func_name)(fasif, *func_args) #globals()[func_name](fasif, *func_args)
-                if not new_fasif: del dict_assoc_types[assoc_type][index]
+                if not new_fasif:
+                    del dict_assoc_types[assoc_type][index]
                 else:
                     dict_assoc_types[assoc_type][index] = new_fasif
                     index += 1
@@ -321,29 +330,23 @@ class ImportAction():
         #             with open(os.path.join(fasif_json_dir, hashlib.md5(str(fasif).encode('utf-8')).hexdigest()+'.json'), 'w') as f: json.dump(fasif, f)
         pass
 
-
-    def proccess(self, fasif_file, fasif_dir, language, settings):
-        ''' Импортирует МД, извлекает и преобразует ФАСИФ  словарь. '''
-        with open(os.path.join(fasif_dir, fasif_file), encoding='utf-8') as f: fasif = f.read()
-        # Отделяем ФАСИФы друг от друга
-        dict_assoc_types = separate_fasifs(fasif)
-        # Превращаем текст ФАСИФов в словарь
-        dict_assoc_types = self.selector_of_function(dict_assoc_types, 'parse')
-        # Отсеиваем ненужные языки
-        dict_assoc_types = self.selector_of_function(dict_assoc_types, 'siftout', language)
-        # Обрабатываем лингвистическую информацию
-        dict_assoc_types = self.selector_of_function(dict_assoc_types, 'proccess_lingvo_data', self.OR, self.fdb, settings)
-
-        for assoc_type, fasifs in dict_assoc_types.items():
-            for fasif in fasifs: self.fdb.safeFASIF(assoc_type, fasif)
-
-        #pprint(dict_assoc_types)
-
-
     #  TODO: переименовать в parse_fasif. Переименовать также и модуль.
     def import_for_lang(self, path_import,  language, settings):
-        self.OR = relation.ObjRelation(language, settings.storage_version)
-        self.fdb = to_formule.FasifDB(language)
+        OR = relation.ObjRelation(language, settings.storage_version)
+        fdb = to_formule.FasifDB(language)
 
-        fasif_files = get_fasif_files(self.fasif_dir)
-        for fasif_file in fasif_files: self.proccess(fasif_file, path_import, language, settings)
+        for fasif_file_name in os.listdir(path_import):
+            if fasif_file_name.endswith('.fsf'):
+                with open(os.path.join(path_import, fasif_file_name), encoding='utf-8') as fasif_file:
+                    # Отделяем ФАСИФы друг от друга
+                    dict_assoc_types = separate_fasifs(fasif_file.read())
+                    # Превращаем текст ФАСИФов в словарь
+                    dict_assoc_types = self.selector_of_function(dict_assoc_types, 'parse', path_import)
+                    # Отсеиваем ненужные языки
+                    dict_assoc_types = self.selector_of_function(dict_assoc_types, 'siftout', language)
+                    # Обрабатываем лингвистическую информацию
+                    dict_assoc_types = self.selector_of_function(dict_assoc_types, 'proccess_lingvo_data', OR, fdb, settings)
+
+                    for assoc_type, fasifs in dict_assoc_types.items():
+                        for fasif in fasifs:
+                            fdb.safeFASIF(assoc_type, fasif)
