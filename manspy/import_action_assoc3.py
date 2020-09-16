@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
-import sys
 import re
-import json
-import hashlib
-from pprint import pprint
 
-from . import analyse_text, Action, relation, to_formule
+from . import relation, to_formule
 
 NAME_LANG = r'[A-Z][a-z]+'
 WORD = r'[a-zа-яёĉĝĥĵŝŭ]+'
@@ -281,57 +277,29 @@ class FASIF_WordCombination(_FASIF):
         return fasif
 
 
-class ImportAction():
+class FASIFParser:
     def __init__(self, LangClass):
-        #self.settings = settings
-        #self.OR = relation.ObjRelation(settings, settings.storage_version)
-        self.LangClass = LangClass#analyse_text.LangClass()
-        #self.fdb = to_formule.FasifDB(settings)
+        self.LangClass = LangClass
+        self.classes = {}
 
     def selector_of_function(self, dict_assoc_types, _func_name, *func_args):
         for assoc_type, fasifs in dict_assoc_types.items():
-            #func_name = _func_name+assoc_type
-            #if func_name not in globals(): continue
             cls_name = 'FASIF_' + assoc_type
-            if cls_name not in dir(self):
-                if cls_name in globals():
-                    self.__setattr__(cls_name, globals()[cls_name](self.LangClass))
-            cls = self.__getattribute__(cls_name)
+            if cls_name not in self.classes and cls_name in globals():
+                self.classes[cls_name] = globals()[cls_name](self.LangClass)
 
             index = 0
             while index < len(fasifs):
-                fasif = fasifs[index]
-
-                new_fasif = object.__getattribute__(cls, _func_name)(fasif, *func_args) #globals()[func_name](fasif, *func_args)
-                if not new_fasif:
-                    del dict_assoc_types[assoc_type][index]
-                else:
+                new_fasif = getattr(self.classes[cls_name], _func_name)(fasifs[index], *func_args)
+                if new_fasif:
                     dict_assoc_types[assoc_type][index] = new_fasif
                     index += 1
+                else:
+                    del dict_assoc_types[assoc_type][index]
 
         return dict_assoc_types
 
-    def fsf2json(self):
-        # fasif_files = get_fasif_files(self.fasif_dir)
- 
-        # fasif_json_dir = os.path.join(self.fasif_dir, 'fsf2json')
-        # if not os.path.exists(fasif_json_dir): os.mkdir(fasif_json_dir)
- 
-        # for fasif_file in fasif_files:
-        #     with open(os.path.join(self.fasif_dir, fasif_file)) as f: fasif = f.read()
-        #     # Отделяем ФАСИФы друг от друга
-        #     dict_assoc_types = separate_fasifs(fasif)
-        #     # Превращаем текст ФАСИФов в словарь
-        #     dict_assoc_types = selector_of_function(dict_assoc_types, 'parse')
-
-        #     for assoc_type, fasifs in dict_assoc_types.items():
-        #         for fasif in fasifs:
-        #             #with open(os.path.join(fasif_json_dir, hashlib.md5(str(fasif)).hexdigest()+'.json'), 'w') as f: json.dump(fasif, f)
-        #             with open(os.path.join(fasif_json_dir, hashlib.md5(str(fasif).encode('utf-8')).hexdigest()+'.json'), 'w') as f: json.dump(fasif, f)
-        pass
-
-    #  TODO: переименовать в parse_fasif. Переименовать также и модуль.
-    def import_for_lang(self, path_import,  language, settings):
+    def parse(self, path_import,  language, settings):
         OR = relation.ObjRelation(language, settings.storage_version)
         fdb = to_formule.FasifDB(language)
 

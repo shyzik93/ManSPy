@@ -59,7 +59,7 @@ class API():
         Settings.dir_db = self.make_db_dir(Settings.dir_db)
 
         self.LangClass = LangClass()
-        self.action_importer = import_action.ImportAction(self.LangClass, Settings.assoc_version)
+        fasif_parser = import_action.FASIFParser(self.LangClass, Settings.assoc_version)
         #self.action_importer.fsf2json()
         self.was_imported = {}
 
@@ -73,9 +73,10 @@ class API():
                 for module, module_code in importer.logger(path_import):
                     Settings.set_module(module_type, module, module_code)
             elif module_type == 'action':
-                # TODO: функция import_for_lang должна импоттировать лингв. информацию для всех языков, для которых импортированы языковые модули.
+                # TODO: функция fasif_parser.parse должна импоттировать лингв. информацию для всех языков, для которых импортированы языковые модули.
+                # TODO: функция fasif_parser.parse должна принять только path_import
                 for language in Settings.modules['language']:
-                    self.action_importer.import_for_lang(path_import, language, Settings(language=language))
+                    fasif_parser.parse(path_import, language, Settings(language=language))
 
         """ Инициализация ManSPy """
         #settings = copy.deepcopy(self.default_settings)
