@@ -72,7 +72,10 @@ def get_fasif_wcomb(fdb, argument, R, verb):
 def Extraction2IL(R, settings, predicates, arguments):
     fdb = to_formule.FasifDB(settings.language)
     pattern_IL = {
-        'arg0': {'antonym': False}, # передаётся первым аргументом в каждую функцию
+        'arg0': {  # передаётся первым аргументом в каждую функцию
+            'antonym': False,
+            'answer_type': None,
+        },
         'action': {
           'wcomb_function': None,      # функция, ассоциированная со словосочетанием. Ей передаются аргументные слова
           'common_verb_function': None,# функция, ассоциированная с глаголом. Её аргументы - возвращаемые значения предыдущей функции.
@@ -99,6 +102,7 @@ def Extraction2IL(R, settings, predicates, arguments):
         finded_args, fasif, function, isantonym = res
         #if 'antonym' in predicate and predicate['antonym'] != isantonym: IL['arg0']['antonym'] = True
         IL['arg0']['antonym'] = isantonym
+        IL['arg0']['answer_type'] = settings.answer_type
 
         # Вынимаем фасиф словосочетания  # здевсь же отсеиваем неподходящие фасифы (через continue)
         for argname, args in finded_args.items():

@@ -21,6 +21,7 @@ class Settings:
         self.ifname = changed_keys.get('ifname', '')  # уникальное имя интерфейса. Необходимо для журналов.
               # не рекомендуемые к изменению
         self.log_all = changed_keys.get('log_all', True)
+        self.answer_type = 'fake'  # 'real' - real answer, 'fake' - fake answer, 'construct' - construct answer
 
     @classmethod
     def set_module(cls, module_type, module, module_code=None):

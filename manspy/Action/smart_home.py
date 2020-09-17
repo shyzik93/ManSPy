@@ -7,21 +7,48 @@
 import socket
 from urllib import request
 
-def SmartHome(group, room, device, cond):
+
+FAKE_DATA = {
+    'light': {
+        'bedroom': {
+            0: 0
+        }
+    }
+}
+
+
+def fake_smarthome(group, room, device, cond):
+    FAKE_DATA[group][room][device] = cond
+
+
+def smarthome(group, room, device, cond):
     url = "http://192.168.0.101/manage.php?to=" +group+ "%20" +room+ "%20" +device+ "&command=" +cond+ "&string=on"
-    print(url)
     request.urlopen(url).read()
 
+
 def LightOn(arg0, room, device):
-    if arg0['antonym']: cond="0%200%200"
-    else: cond="1%201%201"
-    return cond
-    #SmartHome("light", room, device, cond)
+    if arg0['answer_type'] == 'construct':
+        return "0" if arg0['antonym'] else "1"
+    elif arg0['answer_type'] == 'fake':
+        cond = "0" if arg0['antonym'] else "1"
+        return fake_smarthome('light', room, device, cond)
+    if arg0['answer_type'] == 'real':
+        cond = "0%200%200" if arg0['antonym'] else "1%201%201"
+        return smarthome('light', room, device, cond)
+
 
 def showAddress(arg0, device):
-    if arg0['antonym']: return
-    if device == 'computer': return str(socket.gethostbyname(socket.getfqdn()))
-    return device
+    FAKE = {'computer': '192.168.0.1'}
+
+    if arg0['antonym']:
+        return
+
+    if device == 'computer':
+        if arg0['answer_type'] == 'real':
+            return str(socket.gethostbyname(socket.getfqdn()))
+        elif arg0['answer_type'] in ('fake', 'construct'):
+            return FAKE[device]
+
 
 def printToIF(arg0, *conditions):
     for condition in conditions:

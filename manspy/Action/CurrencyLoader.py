@@ -136,28 +136,53 @@ def TransformPrices(FullPrices):
         ShortPrices[key] = str(value)
     return ShortPrices 
 
+FAKE_DATA = {
+    'Russia': {
+        'USD': 60,
+        'EUR': 80,
+        'GUA': 6,
+    },
+    'Belarussia': {
+        'USD': 6000,
+        'EUR': 8000,
+        'GUA': 600,
+    },
+    'Ukraine': {
+        'USD': 6,
+        'EUR': 8,
+        'UAG': 6,
+    }
+}
+
 def GetCourse(arg0, currency, country='Russia'):
-    ''' Возвращает стоимость иностр. валюты в гос. валюте '''
-    return currency+'-'+country
-    FullPrices = GetPricesFromCB(country)
-    #print FullPrices
-    ShortPrices = TransformPrices(FullPrices)
-    if currency == 'all':
-        res = ''
-        x = 1
-        keys = ShortPrices.keys()
-        keys.sort()
-        for key in keys:
-            res_str = key +' '+ ShortPrices[key]
-            if x%4 == 0: res_str += '\n'
-            else: res_str += ' '*(20-len(res_str))
-            res += res_str
-            x += 1
-        return res
-    else:
-        price = float(ShortPrices[str(currency)])
-        print(currency, country, price)
-        return price
+    """ Возвращает стоимость иностр. валюты в гос. валюте """
+    if arg0['antonym']:
+        return
+
+    if arg0['answer_type'] == 'construct':
+        return '{}-{}'.format(currency, country)
+    elif arg0['answer_type'] == 'fake':
+        return FAKE_DATA[country][currency]
+    elif arg0['answer_type'] == 'real':
+        FullPrices = GetPricesFromCB(country)
+        #print FullPrices
+        ShortPrices = TransformPrices(FullPrices)
+        if currency == 'all':
+            res = ''
+            x = 1
+            keys = list(ShortPrices.keys())
+            keys.sort()
+            for key in keys:
+                res_str = key +' '+ ShortPrices[key]
+                if x%4 == 0: res_str += '\n'
+                else: res_str += ' '*(20-len(res_str))
+                res += res_str
+                x += 1
+            return res
+        else:
+            price = float(ShortPrices[str(currency)])
+            print(currency, country, price)
+            return price
 # Выражение курса через другие валюты
 
 def Convert(value, currency_from, currency_to, country):
