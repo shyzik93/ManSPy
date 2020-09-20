@@ -142,7 +142,7 @@ FAKE_DATA = {
         'EUR': 80,
         'GUA': 6,
     },
-    'Belarussia': {
+    'Belarus': {
         'USD': 6000,
         'EUR': 8000,
         'GUA': 600,

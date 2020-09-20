@@ -29,14 +29,12 @@ def logger(path_import):
 
 
 def action(abs_path_to_function):
-    #if function_str[0] == '$': return function_str[1:]
+    # TODO: Использование встроенных действий: if function_str[0] == '$': return function_str[1:]
     func_name = os.path.basename(abs_path_to_function)
     module_file = os.path.dirname(abs_path_to_function)
     module_name = os.path.basename(module_file)
-    #module_path = os.path.abspath(os.path.dirname(module_file))
     module_path = os.path.dirname(module_file)
     sys.path.insert(0, module_path)
-    print(abs_path_to_function, module_path, module_name)
     module_obj = importlib.import_module(module_name)
     del sys.path[0]
     return getattr(module_obj, func_name)
