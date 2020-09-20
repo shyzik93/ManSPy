@@ -1,13 +1,11 @@
-# -*- coding: utf-8 -*-
+import sys
+import copy
 
-import sys, copy
-from . import to_formule, NLModules, lingvo_math, Action
+from manspy import to_formule, NLModules, lingvo_math
 from manspy.utils import importer
 
-"""
-"""
-
 not_to_db = ['nombr', 'cifer']
+
 
 def is_in_hyperonym(hyperonyms, argvalue, R):
     for hyperonym in hyperonyms:
@@ -15,9 +13,11 @@ def is_in_hyperonym(hyperonyms, argvalue, R):
             R.isRelBetween('hyperonym', hyperonym, argvalue): return True
     return False
 
+
 def convert_by_argtable(fasif, argname, argvalue):
     if argvalue not in fasif['argdescr'][argname]['argtable']: return argvalue
     return fasif['argdescr'][argname]['argtable'][argvalue]
+
 
 def check_args(finded_args, fasif, R):
     # Проверка на наличие в абстрактной группе
@@ -45,9 +45,11 @@ def check_args(finded_args, fasif, R):
             checked_arg[argname] = convert_by_argtable(fasif, argname, argvalue)
     return checked_args
 
+
 def if_verb_in_fasif(fasif, id_group): # в фасифе можно сохранять список всех глаголов для всех назначений для уменьшения кол-ва вычислений
     for destination, data in fasif['functions'].items():
         if id_group in data['verbs']: return data['function']
+
 
 def get_fasif_wcomb(fdb, argument, R, verb):
     compared_fasifs = fdb.getFASIF('WordCombination', argument)
@@ -68,6 +70,7 @@ def get_fasif_wcomb(fdb, argument, R, verb):
 
     fasif['id'] = id_fasif
     return finded_args, fasif, function, isantonym
+
 
 def Extraction2IL(R, settings, predicates, arguments):
     fdb = to_formule.FasifDB(settings.language)

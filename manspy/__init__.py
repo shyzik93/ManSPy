@@ -53,7 +53,7 @@ class API():
         self.paths_import = [
             ('language', os.path.join(default_path_modules, 'manspy', 'NLModules')),  # обязательно первые в списке
             ('logger', os.path.join(default_path_modules, 'logger')),
-            ('action', os.path.join(default_path_modules, 'manspy', 'Action')),
+            ('action', os.path.join(default_path_modules, 'action')),
         ]
 
         Settings.dir_db = self.make_db_dir(Settings.dir_db)

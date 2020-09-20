@@ -178,11 +178,13 @@ INTERACTIVE_HTML_LINE = '''
 INTERACTIVE_HTML_FOOTER = '</ul></body></html>'
 HTML_FOOTER = '</body></html>'
 
+
 def word_to_html(word):
     return TEMPLATE_HTML_WORD.format(
         word=word['word'] + word['end'],
         MOSentence=word['MOSentence'].replace(' ', '_') if 'MOSentence' in word else ''
     )
+
 
 def text_to_html(text, synt_words, direction):
     """ Сейчас выходной текст явлется строкой, но когда он станет классом,
@@ -194,12 +196,13 @@ def text_to_html(text, synt_words, direction):
                 # TODO: index должен равняться cWord['index'] (в функции ObjUnit.__iter__)
                 if cWord['index'] in synt_words:
                     cWord = synt_words[cWord['index']]
-                text_.append(word_to_html(cWord))
+                    text_.append(word_to_html(cWord))
                 # if 'feature' in cWord:
                 #     for cWord_feature in cWord['feature']:
                 #         text_.insert(cWord_feature['index'], word_to_html(cWord_feature))
         return ' '.join(text_)
     return text
+
 
 # TODO: добавить в лог: `ifname`, `date_recieved` (по аналогии с `make_dialog_plain_line`)
 def make_dialog_html_line(text: str, direction: str):
@@ -208,6 +211,7 @@ def make_dialog_html_line(text: str, direction: str):
         text=text,
         direction=direction
     )
+
 
 # TODO: Удалить функцию
 def safe_results(l, space='', s=''):
@@ -228,4 +232,3 @@ def safe_results(l, space='', s=''):
             s += str(v) + '\n'
         if index != len(l)-1: s += '\n'
     return s
-    

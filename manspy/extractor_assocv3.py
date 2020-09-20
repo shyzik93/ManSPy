@@ -1,14 +1,9 @@
-# -*- coding: utf-8 -*-
-import pprint
-
-def _Extract(sentence):
-    ''' Разбивает предложение на предикат и его актанты.
+def _extract(sentence):
+    """ Разбивает предложение на предикат и его актанты.
         Именга переменных здесь и далее в программе:
           argument - это актант, перевод на английский
-          arg - это аргумент функции, имеет такойже первод на английский, как и актант'''
+          arg - это аргумент функции, имеет такойже первод на английский, как и актант"""
     arguments = []  # словосочетания (актанты)
-    #print(sentence.getUnit('str')['fwords'])
-    #pprint.pprint(sentence.getUnit("dict"))
 
     # Поиск сказуемого
     predicates = sentence.getByCharacteristic('MOSentence', 'predicate')
@@ -18,7 +13,8 @@ def _Extract(sentence):
     for index, word in sentence.itemsUnit():
         if word['MOSentence'] != 'supplement':
             arguments.append({})
-        if not arguments: arguments.append({}) # если в актанте остутсвуют прямые дополнения
+        if not arguments:
+            arguments.append({})  # если в актанте остутсвуют прямые дополнения
         arguments[-1][index] = word
 
     for argument in arguments:
@@ -31,13 +27,12 @@ def _Extract(sentence):
     return predicates, arguments
 
 
-
 def Extract(sentences, OR):
-    ''' Обёртка '''
+    """ Обёртка """
     extracts = []
 
     for index, sentence in sentences:
         OR.addWordsToDBFromDictSentence(sentence.getUnit('dict'))
-        extracts.append(_Extract(sentence)) # заменяем объекты предложения на словари извлечений
+        extracts.append(_extract(sentence))  # заменяем объекты предложения на словари извлечений
 
     return extracts

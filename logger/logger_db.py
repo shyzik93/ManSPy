@@ -63,7 +63,7 @@ class LoggerDb:
     def after_analysis(self, level, sentences, msg):
         sentences = json.dumps(sentences, cls=ComplexEncoder)
         self.cu.execute(
-            'UPDATE `log_history` SET `a_'+level+'`=? WHERE `message_id`=?',
+            'UPDATE `log_history` SET `a_{}`=? WHERE `message_id`=?'.format(level),
             (sentences, msg.logger_db_message_id)
-        );
+        )
         self.c.commit()

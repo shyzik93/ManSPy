@@ -1,9 +1,11 @@
-import copy, re
+import copy
+import re
 
-class errorManager():
-    ''' power_level - the dangerous' level of error
+
+class errorManager:
+    """ power_level - the dangerous' level of error
         if power_level = 0 - the error are not dangerous. It ignores.
-        if power_level = 1 - the IL will not execute. '''
+        if power_level = 1 - the IL will not execute. """
     def __init__(self, *group_names):
         self.errors = {}
         power_levels = [0, 1]
@@ -11,23 +13,30 @@ class errorManager():
             errors = {}
             for power_level in power_levels: errors[power_level] = []
             self.errors[group_name] = errors
-    def add(group_name, message, power_level):
+
+    def add(self, group_name, message, power_level):
         print(group_name, message, power_level)
         self.errors[group_name][power_level].append(message)
-    def get(group_name, power_level):
+
+    def get(self, group_name, power_level):
         return self.errors[group_name][power_level]
-    def getLen(group_name, *power_levels):
+
+    def getLen(self, group_name, *power_levels):
         l = 0
         for power_level in power_levels:
             l += len(self.errors[group_name][power_level])
         return l
+
     #def getNamesError(self): return self.errors.keys()
-    def getRaw(self): return self.errors
+    def getRaw(self):
+        return self.errors
+
     def beautyPrint():
         pass
 
-class _Unit():
-    ''' unit(index) - извлечение подъюнита
+
+class _Unit:
+    """ unit(index) - извлечение подъюнита
         unit(index, name) - извлечение характеристики подъюнита
         unit(index, name, value) - изменение характеристики подъюнита
         unit[name] - извлечение характеристики юнита
@@ -36,7 +45,7 @@ class _Unit():
         len(unit) - извлечение длины юнита (количество подъюнитогв)
 
         Юнит - это предложение или слово. Подъюнит - их составляющие:
-        для предложения - это слова, для слов - это символы'''
+        для предложения - это слова, для слов - это символы"""
 
     def __init__(self, subunits=None, unit_info=None):
         self.unit_info = {'max_index': -1}
@@ -78,7 +87,7 @@ class _Unit():
         self.subunit_info = self.full_info['unit']
 
     def export_unit(self):
-        data =  copy.deepcopy(self.full_info)
+        data = copy.deepcopy(self.full_info)
 
         data['unit_type'] = self.__class__.__name__
         
@@ -126,13 +135,20 @@ class _Unit():
 
         self.keys = list(self.subunit_info.keys())
         self.subunits_copy = self.subunit_info.copy() # делаем неглубокую копию исходного предложения.
- 
 
     # Работа с информацией о юните в целом
-    def __setitem__(self, key, value): self.unit_info[key] = value
-    def __getitem__(self, key): return self.unit_info[key] if key in self.unit_info else None
-    def __delitem__(self, key): del self.unit_info[key]
-    def __contains__(self, name): return name in self.unit_info
+
+    def __setitem__(self, key, value):
+        self.unit_info[key] = value
+
+    def __getitem__(self, key):
+        return self.unit_info[key] if key in self.unit_info else None
+
+    def __delitem__(self, key):
+        del self.unit_info[key]
+
+    def __contains__(self, name):
+        return name in self.unit_info
 
     #def __repr__(self): return self.__class__.__name__ + "(" + str(self.full_info) + ")"
     def __repr__(self): return self.__class__.__name__ + "(" + str(self.unit_info) + ")"
@@ -167,14 +183,16 @@ class _Unit():
     def jumpByStep(self, step=1): self.position += step # аналог next() 
     def jumpByIndex(self, index):self.position = self.keys.index(index)
     def delByStep(self, count=1, step=0, jump_step=-1):
-        for c in range(count): del self.subunit_info[self.keys[self.position+step]]
+        for c in range(count):
+            del self.subunit_info[self.keys[self.position+step]]
         self.keys = list(self.subunit_info.keys())
         self.position += jump_step
     def delByPos(self, position):
         del self.subunit_info[self.keys[position]]
         self.keys = list(self.subunit_info.keys())
     def delByIndex(self, *indexes):
-        for index in indexes: del self.subunit_info[index]
+        for index in indexes:
+            del self.subunit_info[index]
         self.keys = list(self.subunit_info.keys())
     def getByStep(self, step=0, name=None, value=None):
         return self.__call__(self.keys[self.position+step], name, value)
@@ -450,7 +468,8 @@ class Sentence(_Unit):
             for feature in features:
                 if name in feature and feature[name] == value:
                     results[index].append(feature)
-            if len(results[index]) == 0: del results[index]
+            if len(results[index]) == 0:
+                del results[index]
         return results
 
     def addFeature(self, index, *indexes):
