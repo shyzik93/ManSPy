@@ -7,9 +7,8 @@ from manspy.fasif.parser_fasif_verb import FASIF_Verb
 from manspy.fasif.parser_fasif_word_combination import FASIF_WordCombination
 
 
-def separate_fasifs(fasif):
-    fasif = re.sub(r"#[^:].*", '', fasif)  # комментарии с середины строки
-    #print fasif
+def remove_comments_and_separate_fasifs(fasif):
+    fasif = re.sub(r"#[^:].*", '', fasif)
     fasif = fasif.split('\n')
     version = fasif.pop(0)  # для будущей совместимости версий, возможно.
     dict_assoc_types = {}
@@ -24,7 +23,6 @@ def separate_fasifs(fasif):
             dict_assoc_types[assoc_type].append([])
             continue
         dict_assoc_types[assoc_type][-1].append(string)
-    #pprint.pprint(dict_assoc_types)
     return dict_assoc_types
 
 
@@ -58,7 +56,7 @@ class FASIFParser:
             if fasif_file_name.endswith('.fsf'):
                 with open(os.path.join(path_import, fasif_file_name), encoding='utf-8') as fasif_file:
                     # Отделяем ФАСИФы друг от друга
-                    dict_assoc_types = separate_fasifs(fasif_file.read())
+                    dict_assoc_types = remove_comments_and_separate_fasifs(fasif_file.read())
                     # Превращаем текст ФАСИФов в словарь
                     dict_assoc_types = self.selector_of_function(dict_assoc_types, 'parse', path_import)
                     # Отсеиваем ненужные языки
