@@ -30,10 +30,7 @@ def create_bd_file(language, name):
 class MainException(Exception): pass
 
 
-class API():
-    # настройки задаются один раз. Но можно написать модуль для изменения
-    # настроек через канал общения.
-
+class API:
     def make_db_dir(self, db_path=None):
         # Устанавливаем путь к директории базы данных как рабочую (текущую)
         if db_path is None: db_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))

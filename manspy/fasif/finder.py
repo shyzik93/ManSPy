@@ -59,7 +59,7 @@ def compare_word(word, index, argument, argworddescr, finded_args, flog):
         if argworddescr['argname'] not in finded_args: finded_args[argworddescr['argname']] = []
         if 'number_value' in word: argvalue = word['number_value']
         else: argvalue = word['base']
-        finded_args[argworddescr['argname']].append(argvalue)
+        finded_args[argworddescr['argname']].append(argvalue)  # TODO: #UNIQ_ARGS Нужны ли нам дубли аргументов?
     return True
 
 def jumpToObient(sentence, indexWord, indexObient):

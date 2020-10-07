@@ -1,6 +1,6 @@
 import unittest
 
-from manspy.NLModules.Esperanto import MorphologicalAnalysis
+from manspy.NLModules.language_esperanto import MorphologicalAnalysis
 from manspy.NLModules import ObjUnit
 
 class TestMorphologicalAnalysis(unittest.TestCase):

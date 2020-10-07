@@ -10,6 +10,7 @@ class Settings:
     assoc_version = 3
 
     def __init__(self, **changed_keys):
+        # TODO: описание настроек вынести в строку документации класса
         self.language = changed_keys.get('language', 'esperanto')
         self.history = changed_keys.get('history', True)
         self.monitor = changed_keys.get('monitor', True)  # включает вывод на экран статистику работы ИСУ
@@ -21,7 +22,8 @@ class Settings:
         self.ifname = changed_keys.get('ifname', '')  # уникальное имя интерфейса. Необходимо для журналов.
               # не рекомендуемые к изменению
         self.log_all = changed_keys.get('log_all', True)
-        self.answer_type = 'fake'  # 'real' - real answer, 'fake' - fake answer, 'construct' - construct answer
+        # 'real' - real answer, 'fake' - fake answer, 'construct' - construct answer
+        self.answer_type = changed_keys.get('answer_type', 'fake')
 
     @classmethod
     def set_module(cls, module_type, module, module_code=None):

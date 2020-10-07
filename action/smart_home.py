@@ -67,34 +67,48 @@ def add(arg0, *a):
     ''' Сложение '''
     a = list(a)
 
-    if not a: return 0
+    if not a:
+        return 0
 
     if _is_only_numbers(a):
 
         start = a.pop(0)
         if arg0['antonym']:
             a = [-i for i in a]
-        return sum(a, start)
+        if arg0['answer_type'] in ('real', 'fake'):
+            return sum(a, start)
+        elif arg0['answer_type'] == 'construct':
+            return ' + '.join([str(i) for i in [start] + a])
     
     else:
 
-        for index, i in enumerate(a): a[index] = str(a[index])
-        if arg0['antonym']: return ' - '.join(a)
+        for index, i in enumerate(a):
+            a[index] = str(a[index])
+        if arg0['antonym']:
+            return ' - '.join(a)
         return ' + '.join(a)
 
 def multiply(arg0, *a):
-    ''' Умножение '''
+    """ Умножение """
     a = list(a)
 
     if not a: return 0
 
     if _is_only_numbers(a):
 
-        res = float(a.pop(0))
+        res = a.pop(0)
         if arg0['antonym']:
-            for i in a: res /= i
+            if arg0['answer_type'] in ('real', 'fake'):
+                for i in a:
+                    res /= i
+            elif arg0['answer_type'] == 'construct':
+                res = ' / '.join([str(i) for i in [res] + a])
         else:
-            for i in a: res *= i
+            if arg0['answer_type'] in ('real', 'fake'):
+                for i in a:
+                    res *= i
+            elif arg0['answer_type'] == 'construct':
+                res = ' * '.join([str(i) for i in [res] + a])
         return res
 
     else:

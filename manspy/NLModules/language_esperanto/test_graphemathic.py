@@ -1,6 +1,6 @@
 import unittest
 
-from manspy.NLModules.Esperanto import GraphemathicAnalysis
+from manspy.NLModules.language_esperanto import GraphemathicAnalysis
 from manspy.NLModules import ObjUnit
 
 
