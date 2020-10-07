@@ -8,11 +8,11 @@ import sqlite3 as sql
 import time
 import os
 
-from manspy import import_action
 from manspy.analyse_text import LangClass
 from manspy.utils.settings import Settings
 from manspy.utils import importer
 from manspy import message
+from manspy.fasif.parser import FASIFParser
 
 sql.enable_callback_tracebacks(True)
 
@@ -59,7 +59,7 @@ class API():
         Settings.dir_db = self.make_db_dir(Settings.dir_db)
 
         self.LangClass = LangClass()
-        fasif_parser = import_action.FASIFParser(self.LangClass, Settings.assoc_version)
+        fasif_parser = FASIFParser(self.LangClass)
         #self.action_importer.fsf2json()
         self.was_imported = {}
 

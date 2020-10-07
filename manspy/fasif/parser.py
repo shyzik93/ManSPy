@@ -2,7 +2,8 @@
 import os
 import re
 
-from . import relation, to_formule
+from manspy import relation
+from manspy.fasif import finder
 
 NAME_LANG = r'[A-Z][a-z]+'
 WORD = r'[a-zа-яёĉĝĥĵŝŭ]+'
@@ -301,7 +302,7 @@ class FASIFParser:
 
     def parse(self, path_import,  language, settings):
         OR = relation.ObjRelation(language, settings.storage_version)
-        fdb = to_formule.FasifDB(language)
+        fdb = finder.FasifDB(language)
 
         for fasif_file_name in os.listdir(path_import):
             if fasif_file_name.endswith('.fsf'):

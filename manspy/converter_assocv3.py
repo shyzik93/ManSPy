@@ -1,7 +1,8 @@
 import sys
 import copy
 
-from manspy import to_formule, NLModules, lingvo_math
+from manspy import NLModules, lingvo_math
+from manspy.fasif import finder
 from manspy.utils import importer
 
 not_to_db = ['nombr', 'cifer']
@@ -73,7 +74,7 @@ def get_fasif_wcomb(fdb, argument, R, verb):
 
 
 def Extraction2IL(R, settings, predicates, arguments):
-    fdb = to_formule.FasifDB(settings.language)
+    fdb = finder.FasifDB(settings.language)
     pattern_IL = {
         'arg0': {  # передаётся первым аргументом в каждую функцию
             'antonym': False,
