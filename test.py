@@ -1,3 +1,15 @@
+""" TODO:
+В примерах должна присутствовать такая последловательность:
+1. Пробуем обратитьс по несуществующему синониму (или обратиться к факту. Ответ будет о не знании синонима (факта)
+2. Вводим предложение, которые заносит данные в базу (факты, синонимы и так далее).
+3. Пробуем вести предложение из шага 1 повторно. Ответ должен быть дан, т. к. программа теперь знает синониме (факте).
+"""
+
+import unittest
+
+from manspy import API, Settings
+from manspy import create_bd_file
+
 TEST_INPUT_DATA_ESPERANTO = [
     ('montru dolaran kaj euxran kurzon de rusia banko', ['USD-Russia', 'EUR-Russia']),
     ('sxaltu tablan lampon en dormcxambro', ['1']),
@@ -81,19 +93,6 @@ TEST_INPUT_DATA_ESPERANTO = [
     # ('montru dolaran kurzon de okdek', []),
     # ('montru dolaran kurzon de dek du', []),
 ]
-""" TODO:
-В примерах должна присутствовать такая последловательность:
-1. Пробуем обратитьс по несуществующему синониму (или обратиться к факту. Ответ будет о не знании синонима (факта)
-2. Вводим предложение, которые заносит данные в базу (факты, синонимы и так далее).
-3. Пробуем вести предложение из шага 1 повторно. Ответ должен быть дан, т. к. программа теперь знает синониме (факте).
-"""
-
-import unittest
-
-from manspy import API, Settings
-from manspy import create_bd_file
-
-
 
 TEST_INPUT_DATAS = {
     'esperanto': TEST_INPUT_DATA_ESPERANTO
@@ -120,8 +119,7 @@ class TestManSPy(unittest.TestCase):
                     answers[language][input_data] = []
                 if input_data not in answers_true:
                     answers_true[language][input_data] = [true_answer, input_data]
-                    print()
-                api.write_text(input_data, settings, {'any_data': [input_data, language]})
+                api.write_text(input_data, settings, {'any_data': [input_data, language], 'print_time':False})
 
         for language, _answers in answers.items():
             for input_data, output_data in _answers.items():

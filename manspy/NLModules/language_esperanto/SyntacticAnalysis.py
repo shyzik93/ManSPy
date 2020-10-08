@@ -104,7 +104,7 @@ def split_sentence(sentence):
 
     first_indexes = sentence.getIndexesOfFirstWords()
     #first_words = [sentence(i, 'word') for i in first_indexes]
-    print('        Root words of the sentence:', [sentence(i, 'word') for i in first_indexes])
+    #print('        Root words of the sentence:', [sentence(i, 'word') for i in first_indexes])
 
     conjunctions = []
     subjects = []
@@ -134,7 +134,7 @@ def split_sentence(sentence):
 def split_sentence(sentence):
     first_indexes = sentence.getIndexesOfFirstWords()
     #first_words = [sentence(i, 'word') for i in first_indexes]
-    print('            Root words of the sentence:', [sentence(i, 'word') for i in first_indexes])
+    #print('            Root words of the sentence:', [sentence(i, 'word') for i in first_indexes])
 
     conjunctions = []
     _sentences = []
