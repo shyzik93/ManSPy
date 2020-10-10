@@ -119,7 +119,7 @@ class TestManSPy(unittest.TestCase):
                     answers[language][input_data] = []
                 if input_data not in answers_true:
                     answers_true[language][input_data] = [true_answer, input_data]
-                api.write_text(input_data, settings, {'any_data': [input_data, language], 'print_time':False})
+                api.wrspaceite_text(input_data, settings, {'any_data': [input_data, language], 'print_time': False})
 
         for language, _answers in answers.items():
             for input_data, output_data in _answers.items():
