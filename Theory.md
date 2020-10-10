@@ -80,29 +80,31 @@
 
 Рассмотрим простые предложения, состоящие из сказуемого-глагола и его актантов (прямых и косвенных дополнений). 
 
-### montru kvardek kvin
+*Пожалуйста, нажмите на пример предложения, чтобы посмотреть результат его выполнения "вживую""*
+
+### [montru kvardek kvin](https://syeysk.ru/api/manspy/run?s=montru%20kvardek%20kvin)
 
 - `kvardek kvin` - актант, его состояние равно `45`
 - `montru` - глагол 1-го типа, функция которого примет число `45` в качестве аргумента. Его она и выведет.
 
-### montru dolaran kurson de rusia banko
+### [montru dolaran kurson de rusia banko](https://syeysk.ru/api/manspy/run?s=montru%20dolaran%20kurson%20de%20rusia%20banko)
 
 - `dolaran kurson de rusia banko` - актант, его состояние равно `80`
 - `montru` - глагол 1-го типа, функция которого примет число `80` в качестве аргумента. Его она и выведет.
 
-### montru kvardek kvin kaj dolaran kurson de rusia banko
+### [montru kvardek kvin kaj dolaran kurson de rusia banko](https://syeysk.ru/api/manspy/run?s=montru%20kvardek%20kvin%20kaj%20dolaran%20kurson%20de%20rusia%20banko)
 
 - `kvardek kvin` - актант, его состояние равно `45`
 - `dolaran kurson de rusia banko` - актант, его состояние равно `80`
 - `montru` - глагол 1-го типа, функция которого примет два числа: `45` и `80` в качестве аргументов. Их она и выведет.
 
-### adciu kvardek kvin kaj dolaran kurson de rusia banko
+### [adciu kvardek kvin kaj dolaran kurson de rusia banko](https://syeysk.ru/api/manspy/run?s=adciu%20kvardek%20kvin%20kaj%20dolaran%20kurson%20de%20rusia%20banko)
 
 - `kvardek kvin` - актант, его состояние равно `45`
 - `dolaran kurson de rusia banko` - актант, его состояние равно `80`
 - `adiciu` - глагол 1-го типа, функция которого примет два числа: `45` и `80` в качестве аргументов. Выведет их сумму - `125`.
 
-### malmultigu dolaran kurson de rusia banko kaj kvin
+### [malmultigu dolaran kurson de rusia banko kaj kvin](https://syeysk.ru/api/manspy/run?s=malmultigu%20dolaran%20kurson%20de%20rusia%20banko%20kaj%20kvin)
 
 - `dolaran kurson de rusia banko` - актант, его состояние равно `80`
 - `kvin` - актант, его состояние равно `5`
