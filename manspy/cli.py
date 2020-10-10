@@ -1,10 +1,10 @@
 #! /usr/bin/env python3
 
 import argparse
-import os
 import pprint
 
-import manspy
+from manspy import API, Settings
+from manspy import create_bd_file
 
 READ = '\033[0;31m'
 NORM = '\033[0;0m'
@@ -35,9 +35,9 @@ def proc_answer(is_success, arg1):
 class CLI():
     
     def __init__(self):
-        self.api = manspy.API()
-        self.settings = {'read_text': self.read_text}
-        self.api.update_settings_for_IF(self.settings)
+        self.api = API()
+        self.settings = Settings(read_text=self.read_text, language='esperanto', answer_type='construct')
+        self.settings.db_sqlite3 = create_bd_file(self.settings.language, 'main_data.db')
 
     def __enter__(self):
         ''' for 'with' statement '''
@@ -45,7 +45,7 @@ class CLI():
 
     def __exit__(self, Type, Value, Trace):
         ''' for 'with' statement '''
-        c, cu = self.settings['db_sqlite3']
+        c, cu = self.settings.db_sqlite3
         c.close()
 
         if Type is None:  # Если исключение не возникло
@@ -58,14 +58,19 @@ class CLI():
         print(r_text)
 
     def cmd_exec(self, args):
-        levels = ':exec' # усли не указан ни один анализ
-        for index, level in enumerate([args.graph, args.morph, args.pmorph, args.synt, args.extract, args.convert]): # exec не указываем, так как он поумолчанию
+        levels = []
+        for index, level in enumerate([args.graph, args.morph, args.pmorph, args.synt, args.extract, args.convert]):
             if level:
-                levels = ':' + self.api.LangClass.levels[index]
+                levels.append(self.api.LangClass.levels[index])
                 break
+        levels = ' '.join(levels)
 
-        self.settings['language'] = args.language
-        msg, res = self.api.write_text(args.msg, self.settings, {'levels': levels, 'print_time':False})
+        self.settings.language = args.language
+        text_settings = {'print_time': False}
+        if levels:
+            text_settings['levels'] = levels
+        msg, res = self.api.write_text(args.msg, self.settings)#, text_settings)
+        print(msg, res)
 
         if args.graph or args.morph or args.pmorph or args.synt:
             e = res.export_unit()
@@ -80,7 +85,7 @@ class CLI():
                 del sentence['unit_info']['max_index']
                 pprint.pprint(sentence['unit_info'])
 
-                for index, word in sentence['unit'].items():
+                for word in sentence['unit'].values():
                     print()
                     print('Properties of word:')
                     del word['unit_info']['max_index'], word['unit_info']['type'], word['unit_info']['notword'], word['unit_info']['end_orig'], word['unit_info']['end_pmark'], word['unit_info']['start_pmark']
@@ -91,9 +96,10 @@ class CLI():
         elif args.convert:
             for index, sentence_ils in res.items():
                 print()
-                for sentence_il in sentence_ils: print(sentence_il)
-
-        #print(res)
+                for sentence_il in sentence_ils:
+                    print(sentence_il)
+        else:
+            print(res)
 
     def cmd_run(self, args):
         parser = argparse.ArgumentParser()
@@ -114,9 +120,10 @@ class CLI():
             str_args = input('Insert command:\n')
             try:
                 args = parser.parse_args(str_args.split())
-            except:
+            except Exception:
                 continue
-            if args.command == 'exit': break
+            if args.command == 'exit':
+                break
 
 
 
@@ -136,7 +143,7 @@ def do_cmd():
         subparser.add_argument('--synt', action='store_true')
         subparser.add_argument('--extract', action='store_true')
         subparser.add_argument('--convert', action='store_true') # до какого уровня делать включительно
-        subparser.add_argument('-l', '--language', default='Esperanto', help='Nature language')
+        subparser.add_argument('-l', '--language', default='esperanto', help='Nature language')
         subparser.add_argument('-v', '--verbose', action='store_false', help='Print analysyses')
         subparser.add_argument('msg')
 
