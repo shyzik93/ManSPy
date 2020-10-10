@@ -20,7 +20,7 @@ setup(
     version='0.1.0',
     license='LGPL-3.0',
     description='Management system',
-    packages=['manspy', 'ifmodules'],
+    packages=['manspy', 'action', 'ifmodules', 'logger'],
     #long_description=open(os.path.join(os.path.dirname(__file__), 'README.md')).read(),
     long_description=get_long_description(),
     author='Konstantin Polyakov',
