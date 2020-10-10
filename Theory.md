@@ -74,38 +74,46 @@
 - если в предложении отсутствуют обстоятельства, откладывающие его выполнение,
 - и глагол находится в повелительном наклонении
 
-Каждый актант имеет *аргументные* и *константные слова*. *Аргументные слова* передаются в функцию получения/изменения состояния.
+Каждый актант имеет *аргументные* и *константные слова*. *Аргументные слова* передаются в функцию получения/изменения состояния, могут быть *обязательными* и *необязательными*.
 
 ## Разбор структуры конкретных предложений
 
-Рассмотрим простые предложения, состоящие из сказуемого-глагола и его актантов (прямых и косвенных дополнений). 
+**Рассмотрим простые предложения**, состоящие из сказуемого-глагола и его актантов (прямых и косвенных дополнений). 
 
 *Пожалуйста, нажмите на пример предложения, чтобы посмотреть результат его выполнения "вживую""*
 
-### [montru kvardek kvin](https://syeysk.ru/api/manspy/run?s=montru%20kvardek%20kvin)
+### [montru kvardek kvin](https://syeysk.ru/api/manspy/run_get?s=montru%20kvardek%20kvin)
 
 - `kvardek kvin` - актант, его состояние равно `45`
 - `montru` - глагол 1-го типа, функция которого примет число `45` в качестве аргумента. Его она и выведет.
 
-### [montru dolaran kurson de rusia banko](https://syeysk.ru/api/manspy/run?s=montru%20dolaran%20kurson%20de%20rusia%20banko)
+### [montru dolaran kurson de rusia banko](https://syeysk.ru/api/manspy/run_get?s=montru%20dolaran%20kurson%20de%20rusia%20banko)
 
 - `dolaran kurson de rusia banko` - актант, его состояние равно `80`
 - `montru` - глагол 1-го типа, функция которого примет число `80` в качестве аргумента. Его она и выведет.
 
-### [montru kvardek kvin kaj dolaran kurson de rusia banko](https://syeysk.ru/api/manspy/run?s=montru%20kvardek%20kvin%20kaj%20dolaran%20kurson%20de%20rusia%20banko)
+### [montru kvardek kvin kaj dolaran kurson de rusia banko](https://syeysk.ru/api/manspy/run_get?s=montru%20kvardek%20kvin%20kaj%20dolaran%20kurson%20de%20rusia%20banko)
 
 - `kvardek kvin` - актант, его состояние равно `45`
 - `dolaran kurson de rusia banko` - актант, его состояние равно `80`
 - `montru` - глагол 1-го типа, функция которого примет два числа: `45` и `80` в качестве аргументов. Их она и выведет.
 
-### [adciu kvardek kvin kaj dolaran kurson de rusia banko](https://syeysk.ru/api/manspy/run?s=adciu%20kvardek%20kvin%20kaj%20dolaran%20kurson%20de%20rusia%20banko)
+### [adciu kvardek kvin kaj dolaran kurson de rusia banko](https://syeysk.ru/api/manspy/run_get?s=adciu%20kvardek%20kvin%20kaj%20dolaran%20kurson%20de%20rusia%20banko)
 
 - `kvardek kvin` - актант, его состояние равно `45`
 - `dolaran kurson de rusia banko` - актант, его состояние равно `80`
 - `adiciu` - глагол 1-го типа, функция которого примет два числа: `45` и `80` в качестве аргументов. Выведет их сумму - `125`.
 
-### [malmultigu dolaran kurson de rusia banko kaj kvin](https://syeysk.ru/api/manspy/run?s=malmultigu%20dolaran%20kurson%20de%20rusia%20banko%20kaj%20kvin)
+### [malmultigu dolaran kurson de rusia banko kaj kvin](https://syeysk.ru/api/manspy/run_get?s=malmultigu%20dolaran%20kurson%20de%20rusia%20banko%20kaj%20kvin)
 
 - `dolaran kurson de rusia banko` - актант, его состояние равно `80`
 - `kvin` - актант, его состояние равно `5`
 - `multigu` - глагол 1-го типа (с приставкой `mal`), функция которого примет два числа: `80` и `5` в качестве аргументов. Вывела бы их произведение, но так как глагол употреблён с отрицательной приставкой, то функция выведет их частное - `16`.
+
+Кстати, в словосочетании `dolaran kurson de rusia banko` слова `rusia` и `dolaran` являются аргументными, и вместо них допустимо указывать и другие названия стран и валют, например: `montru eŭran kurson de ukrainia banko` ([проверить](https://syeysk.ru/api/manspy/run_get?s=montru%20euxran%20kurson%20de%20ukrainia%20banko).
+Причём аргумент банка необязателен, его значение по-умолчанию - это `rusia`, таким образом достаточно написать `montru ukrainian kurson`, чтобы узнать курс гривны ЦБ РФ ([проверить](https://syeysk.ru/api/manspy/run_get?s=montru%20ukrainian%20kurson)).
+А слово `banko` - константное, его менять недопустимо. Если его изменить, то получится словосочетание, которое может быть ассоциировано с совсем другой функцией
+
+Продолжаем разбор структуры...
+
+### ŝaltu tablan lampon en dormcxambro
