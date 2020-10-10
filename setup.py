@@ -30,7 +30,7 @@ setup(
     url='https://github.com/shyzik93/ManSPy',
     download_url='https://github.com/shyzik93/manspy/archive/master.zip',
 
-    install_requires=['tkinter'],
+    install_requires=[],
 
     entry_points={
         'console_scripts': ['manspy = manspy.cli:do_cmd']
