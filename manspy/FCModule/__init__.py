@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
-''' Модуль-обёртка для интеллекта'''
-import time
+""" Модуль-обёртка для интеллекта """
 
 class LogicKernel():
     def __init__(self):
@@ -34,7 +32,7 @@ class LogicKernel():
             if res is not None: msg.to_IF(res)
 
     def LogicKernel(self, ILs, msg):
-      ''' Главная функция. Работает только с ВЯ '''
+      """Главная функция. Работает только с ВЯ"""
 
       for IL in ILs:
           if IL['error_convert']['argument']: continue

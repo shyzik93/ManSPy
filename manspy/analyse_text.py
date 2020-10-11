@@ -1,5 +1,8 @@
 import sys, os, time
-from . import relation, extractor, converter, FCModule
+from manspy import relation
+from manspy import extractor
+from manspy import converter
+from manspy import FCModule
 
 class LangClass():
 
