@@ -1,7 +1,7 @@
 import time
 from manspy import relation
-from manspy import extractor
-from manspy import converter
+from manspy.extractor import extract
+from manspy.converter import convert
 from manspy import FCModule
 
 
@@ -67,17 +67,10 @@ class LangClass:
             elif level == "synt":
                 sentences = lang_module.getSyntA(sentences)
             elif level == "extract":
-                Extract = extractor.Extract(settings.assoc_version)
-                sentences = Extract(sentences, OR) # заменяем объекты предложения на словари извлечений
+                sentences = extract(sentences, OR)
             elif level == "convert":
                 #OR = relation.ObjRelation(settings, settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
-                _ILs = {}
-                for index, sentence in enumerate(sentences):
-                    _ILs[index] = []
-                    Extraction2IL = converter.Extraction2IL(settings.assoc_version)
-                    ILs = Extraction2IL(OR, settings, *sentence)
-                    _ILs[index].extend(ILs)
-                sentences = _ILs
+                sentences = convert(sentences, OR, settings)
             elif level == "exec":
                 msg.ils = sentences
                 sentences = self.LogicShell.execIL(msg)  # возвращает ошибки выполнения

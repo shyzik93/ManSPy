@@ -7,7 +7,6 @@ class Settings:
     db_sqlite3 = None
     dir_db = None
     storage_version = 2
-    assoc_version = 3
 
     def __init__(self, **changed_keys):
         # TODO: описание настроек вынести в строку документации класса
