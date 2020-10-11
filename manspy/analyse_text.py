@@ -1,11 +1,11 @@
-import sys, os, time
+import time
 from manspy import relation
 from manspy import extractor
 from manspy import converter
 from manspy import FCModule
 
-class LangClass():
 
+class LangClass:
     levels = ["graphmath", "morph", "postmorph", "synt", "extract", "convert", "exec"]
 
     def __init__(self):
@@ -13,12 +13,14 @@ class LangClass():
         self.LogicShell = FCModule.LogicShell()
 
     def parse_level_string(self, levels):
-        ''' parsing level string. Return start_level, end_level. '''
+        """ parsing level string. Return start_level, end_level. """
         levels = levels.split()
-        if len(levels)==1:
+        if len(levels) == 1:
             level = levels.pop()
-            if level[0] == ':': return self.levels[0], level[1:]
-            elif level[-1] == ':': return level[:-1], self.levels[-1]
+            if level[0] == ':':
+                return self.levels[0], level[1:]
+            elif level[-1] == ':':
+                return level[:-1], self.levels[-1]
             return level, level
         return levels
 
@@ -40,7 +42,7 @@ class LangClass():
             print('\n---------------------------------------')
             print('----', sentences)
             print('---------------------------------------')
-        t1 =time.time()
+        t1 = time.time()
 
         if msg:
             msg.before_analyzes()
@@ -54,19 +56,20 @@ class LangClass():
             if msg:
                 msg.before_analysis(level)
 
-            t =time.time()
+            t = time.time()
 
-            if level == "graphmath": sentences = lang_module.getGraphmathA(sentences)
-            elif level == "morph": sentences = lang_module.getMorphA(sentences)
-            elif level == "postmorph": sentences = lang_module.getPostMorphA(sentences)
-            elif level == "synt": sentences = lang_module.getSyntA(sentences)
+            if level == "graphmath":
+                sentences = lang_module.getGraphmathA(sentences)
+            elif level == "morph":
+                sentences = lang_module.getMorphA(sentences)
+            elif level == "postmorph":
+                sentences = lang_module.getPostMorphA(sentences)
+            elif level == "synt":
+                sentences = lang_module.getSyntA(sentences)
             elif level == "extract":
-
                 Extract = extractor.Extract(settings.assoc_version)
                 sentences = Extract(sentences, OR) # заменяем объекты предложения на словари извлечений
-
             elif level == "convert":
-
                 #OR = relation.ObjRelation(settings, settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
                 _ILs = {}
                 for index, sentence in enumerate(sentences):
@@ -75,11 +78,9 @@ class LangClass():
                     ILs = Extraction2IL(OR, settings, *sentence)
                     _ILs[index].extend(ILs)
                 sentences = _ILs
-
             elif level == "exec":
-
                 msg.ils = sentences
-                sentences = self.LogicShell.execIL(msg) # возвращает ошибки выполнения
+                sentences = self.LogicShell.execIL(msg)  # возвращает ошибки выполнения
 
             if msg:
                 msg.after_analysis(level, sentences)

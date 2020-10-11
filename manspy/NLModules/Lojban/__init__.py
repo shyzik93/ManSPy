@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 from .GraphemathicAnalysis import getGraphmathA
-from .MorphologicalAnalysis import getMorphA
-from .PostMorphologicalAnalysis import getPostMorphA
-from .SyntacticAnalysis import getSyntA
+#from .MorphologicalAnalysis import getMorphA
+#from .PostMorphologicalAnalysis import getPostMorphA
+#from .SyntacticAnalysis import getSyntA
 

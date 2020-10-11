@@ -19,7 +19,7 @@ def proc_answer(is_success, arg1):
         print_error(arg1)
         exit(2)
 
-'''
+"""
     CLI.cmd_run:
         @todo при ошибке в аргшументах эта ошибка должна только отобразиться на экране, но программа не должна завершаться.
         @todo аргументы должны парситься стандартным образом, а не с помощью split()
@@ -30,7 +30,7 @@ def proc_answer(is_success, arg1):
     - настройки интерфейса по умолчанию
     - настройки интерфейса
     - настройки интерфейса для конкретного сообщения.
-'''
+"""
 
 class CLI():
     
@@ -40,11 +40,11 @@ class CLI():
         self.settings.db_sqlite3 = create_bd_file(self.settings.language, 'main_data.db')
 
     def __enter__(self):
-        ''' for 'with' statement '''
+        """ for 'with' statement """
         return self
 
     def __exit__(self, Type, Value, Trace):
-        ''' for 'with' statement '''
+        """ for 'with' statement """
         c, cu = self.settings.db_sqlite3
         c.close()
 
@@ -58,21 +58,17 @@ class CLI():
         print(r_text)
 
     def cmd_exec(self, args):
-        levels = []
-        for index, level in enumerate([args.graph, args.morph, args.pmorph, args.synt, args.extract, args.convert]):
-            if level:
-                levels.append(self.api.LangClass.levels[index])
-                break
-        levels = ' '.join(levels)
+        levels = [args.graph, args.morph, args.pmorph, args.synt, args.extract, args.convert, args.exec]
+        levels = [self.api.LangClass.levels[index] for index, level in enumerate(levels) if level][:1]
 
         self.settings.language = args.language
         text_settings = {'print_time': False}
         if levels:
-            text_settings['levels'] = levels
-        msg, res = self.api.write_text(args.msg, self.settings)#, text_settings)
-        print(msg, res)
+            text_settings['levels'] = ':' + levels
+        msg, res = self.api.write_text(args.msg, self.settings, text_settings)
+        print(msg.r_texts, res)
 
-        if args.graph or args.morph or args.pmorph or args.synt:
+        '''if args.graph or args.morph or args.pmorph or args.synt:
             e = res.export_unit()
             print()
             print('Properties of text:')
@@ -99,7 +95,7 @@ class CLI():
                 for sentence_il in sentence_ils:
                     print(sentence_il)
         else:
-            print(res)
+            print(res)'''
 
     def cmd_run(self, args):
         parser = argparse.ArgumentParser()
@@ -126,7 +122,6 @@ class CLI():
                 break
 
 
-
 def do_cmd():
 
     with CLI() as cli:
@@ -142,7 +137,8 @@ def do_cmd():
         subparser.add_argument('--pmorph', action='store_true')
         subparser.add_argument('--synt', action='store_true')
         subparser.add_argument('--extract', action='store_true')
-        subparser.add_argument('--convert', action='store_true') # до какого уровня делать включительно
+        subparser.add_argument('--convert', action='store_true')
+        subparser.add_argument('--exec', action='store_true')
         subparser.add_argument('-l', '--language', default='esperanto', help='Nature language')
         subparser.add_argument('-v', '--verbose', action='store_false', help='Print analysyses')
         subparser.add_argument('msg')

@@ -41,12 +41,16 @@ class Message:
 
         self.pass_args_to_all_logs('on_create_message', direction, self)
 
-        if direction == 'W': self.from_IF(text)
-        elif direction == 'R': self.to_IF(text)
+        if direction == 'W':
+            self.from_IF(text)
+        elif direction == 'R':
+            self.to_IF(text)
 
     def toString(self, r_text):
-        if isinstance(r_text, (int, float, complex)): return str(r_text)
-        else: return r_text
+        if isinstance(r_text, (int, float, complex)):
+            return str(r_text)
+        else:
+            return r_text
 
     '''def save_interactive_html_line_header(self, text, direction, ifname):
         with open('history_interactive.html', 'a', encoding='utf-8') as f:

@@ -11,7 +11,7 @@ import os
 from manspy.analyse_text import LangClass
 from manspy.utils.settings import Settings
 from manspy.utils import importer
-from manspy import message
+from manspy.message import Message
 from manspy.fasif.parser import FASIFParser
 
 sql.enable_callback_tracebacks(True)
@@ -19,7 +19,7 @@ sql.enable_callback_tracebacks(True)
 
 def create_bd_file(language, name):
     if not os.path.exists(language) or not os.path.isdir(language):
-        os.mkdir(language) # хдесь бывает ошибка, так, видимо, эта функция вызывается параллельно где-то в другом потоке
+        os.mkdir(language)  # здесь бывает ошибка, так, видимо, эта функция вызывается параллельно где-то в другом потоке
     name = os.path.join(language, name)
     c = sql.connect(name)
     c.row_factory = sql.Row
@@ -27,7 +27,8 @@ def create_bd_file(language, name):
     return c, cu
 
 
-class MainException(Exception): pass
+class MainException(Exception):
+    pass
 
 
 class API:
@@ -41,6 +42,7 @@ class API:
         return db_path
 
     def init_interface(self, IF):
+        # TODO: Pycharm ругается, что `**IF.settings` - Expected a dictionary, got Settings
         IF.settings = Settings(**IF.settings)
         IF.settings.db_sqlite3 = create_bd_file(IF.settings.language, 'main_data.db')
         IF.init()
@@ -82,17 +84,17 @@ class API:
 
         #self.LogicShell = FCModule.LogicShell()
 
-    def write_text(self, w_text, settings, text_settings=None):
-        '''
-            any_data - any data, if you would like to pass it to IF with answer.
-        '''
+    def write_text(self, w_text, settings, _text_settings=None):
+        """any_data - any data, if you would like to pass it to IF with answer."""
         #print(threading.current_thread().name)
 
-        if text_settings is None: text_settings = {}
-        if 'any_data' not in text_settings: text_settings['any_data'] = None
-        if 'levels' not in text_settings: text_settings['levels'] = "graphmath exec"
-        if 'print_time' not in text_settings: text_settings['print_time'] = True
+        _text_settings = {} if _text_settings is None else _text_settings
+        text_settings = {
+            'any_data': _text_settings.get('any_data'),
+            'levels': _text_settings.get('levels', 'graphmath exec'),
+            'print_time': _text_settings.get('print_time', True)
+        }
 
         if w_text:
-            w_msg = message.Message(settings, text_settings, w_text, 'W')
-            return w_msg, self.LangClass.NL2IL(w_msg)
+            message = Message(settings, text_settings, w_text, 'W')
+            return message, self.LangClass.NL2IL(message)
