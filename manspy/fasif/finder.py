@@ -45,15 +45,20 @@ def count_wordargs(constwordexample, fasif):
 def compare_word(word, index, argument, argworddescr, finded_args, flog):
     if word['MOSentence'] in ['direct supplement', 'supplement', 'subject']:
         if argworddescr['POSpeech'] != word['POSpeech']:
-            if not (argworddescr['POSpeech'] == 'numeral' and word['derivative'] == 'numeral' and word['POSpeech'] in ['noun']): return False
-        elif not (not argument.getControl(index) or argworddescr['case'] == word['case']): return False # для первого дополнения падеж не учитывается
+            if not (argworddescr['POSpeech'] == 'numeral' and word['derivative'] == 'numeral' and word['POSpeech'] in ['noun']):
+                return False
+        elif not (not argument.getControl(index) or argworddescr['case'] == word['case']):
+            return False # для первого дополнения падеж не учитывается
     elif word['MOSentence'] in ['definition', 'circumstance']:
-        if argworddescr['POSpeech'] != word['POSpeech']: return False # для первого дополнения падеж не учитывается
-    else: return False
+        if argworddescr['POSpeech'] != word['POSpeech']:
+            return False # для первого дополнения падеж не учитывается
+    else:
+        return False
     flog.write(u'Example: "%s". Found: "%s"\n' % (argworddescr['base'], word['base']))
-    if 'argname' not in argworddescr: # если константное слово
+    if 'argname' not in argworddescr:  # если константное слово
         flog.write(u'    type: constant word\n')
-        if argworddescr['base'] != word['base']: return False
+        if argworddescr['base'] != word['base']:
+            return False
     else:
         flog.write('    type: argument word\n    argname: "%s".\n' % argworddescr['argname'])
         if argworddescr['argname'] not in finded_args: finded_args[argworddescr['argname']] = []

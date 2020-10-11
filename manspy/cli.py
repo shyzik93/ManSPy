@@ -36,7 +36,7 @@ class CLI():
     
     def __init__(self):
         self.api = API()
-        self.settings = Settings(read_text=self.read_text, language='esperanto', answer_type='construct')
+        self.settings = Settings(read_text=self.read_text, language='esperanto', answer_type='fake')
         self.settings.db_sqlite3 = create_bd_file(self.settings.language, 'main_data.db')
 
     def __enter__(self):
@@ -66,7 +66,6 @@ class CLI():
         if levels:
             text_settings['levels'] = ':' + levels
         msg, res = self.api.write_text(args.msg, self.settings, text_settings)
-        print(msg.r_texts, res)
 
         '''if args.graph or args.morph or args.pmorph or args.synt:
             e = res.export_unit()
