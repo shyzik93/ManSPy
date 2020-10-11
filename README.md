@@ -57,6 +57,10 @@
 
 # Запуск
 
+Для установки используйте команду `pip install https://github.
+com/shyzik93/manspy/archive/master.zip`
+Для удаления: `pip uninstall manspy`
+
 В программе используются следующие сторонние модули Python, которые необходимо устанавливать отдельно из-за их отсутствия в стандартной библиотеке:
 - lxml - для парсинга страниц при авторизации во "ВКонтакте" и для парсинга страниц с курсами валют от ЦБ. (для ОС Windows: http://www.lfd.uci.edu/~gohlke/pythonlibs/)  
 - cssselect - может проситься модулем lxml (https://codeload.github.com/SimonSapin/cssselect/zip/master, https://github.com/SimonSapin/cssselect/)
