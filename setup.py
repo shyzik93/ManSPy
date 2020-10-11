@@ -25,6 +25,7 @@ setup(
         'manspy/fasif',
         'manspy/FCModule',
         'manspy/NLModules',
+        'manspy/language_esperanto',
         'manspy/utils',
         'action',
         'ifmodules',
