@@ -33,11 +33,11 @@ class Message:
         self.text_settings = text_settings
         self.r_texts = []
 
-        if not os.path.exists('history.html'):
-            with open('history.html', 'w') as f:
-                f.write(HTML_HEADER)
-        with open('history_interactive.html', 'w', encoding='utf-8') as f:
-            f.write(INTERACTIVE_HTML_HEADER)
+        #if not os.path.exists('history.html'):
+        #    with open('history.html', 'w') as f:
+        #        f.write(HTML_HEADER)
+        #with open('history_interactive.html', 'w', encoding='utf-8') as f:
+        #    f.write(INTERACTIVE_HTML_HEADER)
 
         self.pass_args_to_all_logs('on_create_message', direction, self)
 
@@ -48,7 +48,7 @@ class Message:
         if isinstance(r_text, (int, float, complex)): return str(r_text)
         else: return r_text
 
-    def save_interactive_html_line_header(self, text, direction, ifname):
+    '''def save_interactive_html_line_header(self, text, direction, ifname):
         with open('history_interactive.html', 'a', encoding='utf-8') as f:
             f.write(INTERACTIVE_HTML_LINE_HEADER.format(
                 message_id='MESSAGE_ID',  # TODO: MESSAGE_ID
@@ -58,11 +58,11 @@ class Message:
                 language=self.settings.language,
                 date_add='DATE_ADD',  # TODO: DATE_ADD
                 text=text
-            ))
+            ))'''
 
-    def save_interactive_html_line_footer(self):
+    '''def save_interactive_html_line_footer(self):
         with open('history_interactive.html', 'a', encoding='utf-8') as f:
-            f.write(INTERACTIVE_HTML_LINE_FOOTER)
+            f.write(INTERACTIVE_HTML_LINE_FOOTER)'''
 
     # TODO: переименовать to_IF -> to_out (во вне)
     # TODO: переименовать r_text -> text_to_out (текст во вне)
@@ -83,7 +83,7 @@ class Message:
         self.w_text = w_text
         if w_text:
             self.pass_args_to_all_logs('log', 'W', w_text, self)
-        self.save_interactive_html_line_header(w_text, "W", self.settings.ifname)
+        #self.save_interactive_html_line_header(w_text, "W", self.settings.ifname)
 
     def before_analyzes(self):
         """ Вызывается Модулем Анализа (ManSPy) """
@@ -97,5 +97,5 @@ class Message:
         """ Вызывается Модулем Анализа (ManSPy) """
         if self.settings.log_all:
             self.pass_args_to_all_logs('after_analysis', level, sentences, self)
-        if level == 'exec':
-                self.save_interactive_html_line_footer()
+        #if level == 'exec':
+        #        self.save_interactive_html_line_footer()
