@@ -24,7 +24,7 @@ setup(
         'manspy',
         'manspy/fasif',
         'manspy/FCModule',
-        'manspy/NLModule',
+        'manspy/NLModules',
         'manspy/utils',
         'action',
         'ifmodules',
