@@ -181,7 +181,6 @@ def GetCourse(arg0, currency, country='Russia'):
             return res
         else:
             price = float(ShortPrices[str(currency)])
-            print(currency, country, price)
             return price
 # Выражение курса через другие валюты
 

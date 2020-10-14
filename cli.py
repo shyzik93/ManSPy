@@ -1,5 +1,3 @@
-#! /usr/bin/env python3
+from manspy.cli import do_cmd
 
-import manspy.cli as cli
-
-cli.do_cmd() 
+do_cmd()

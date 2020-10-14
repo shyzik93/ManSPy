@@ -9,7 +9,6 @@ class LangClass:
     levels = ["graphmath", "morph", "postmorph", "synt", "extract", "convert", "exec"]
 
     def __init__(self):
-        self.lang_modules = {}
         self.LogicShell = FCModule.LogicShell()
 
     def parse_level_string(self, levels):

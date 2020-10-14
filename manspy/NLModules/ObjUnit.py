@@ -86,19 +86,22 @@ class _Unit:
         self.unit_info = self.full_info['unit_info']
         self.subunit_info = self.full_info['unit']
 
-    def export_unit(self):
+    def export_unit(self, ignore_units=None):
         data = copy.deepcopy(self.full_info)
 
         data['unit_type'] = self.__class__.__name__
         
         if 'feature' in data['unit_info']:
             for index, subunit in enumerate(data['unit_info']['feature']):
-                data['unit_info']['feature'][index] = subunit.export_unit()
+                data['unit_info']['feature'][index] = subunit.export_unit(ignore_units)
+
+        if ignore_units and data['unit'] and isinstance(list(data['unit'].values())[0], ignore_units):
+            data['unit'].clear()
 
         for index, subunit in data['unit'].items():
             if isinstance(subunit, dict):
                 break
-            data['unit'][index] = subunit.export_unit()
+            data['unit'][index] = subunit.export_unit(ignore_units)
 
         return data
 

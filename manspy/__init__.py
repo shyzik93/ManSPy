@@ -88,7 +88,7 @@ class API:
         """any_data - any data, if you would like to pass it to IF with answer."""
         #print(threading.current_thread().name)
 
-        _text_settings = {} if _text_settings is None else _text_settings
+        _text_settings = _text_settings or {}
         text_settings = {
             'any_data': _text_settings.get('any_data'),
             'levels': _text_settings.get('levels', 'graphmath exec'),

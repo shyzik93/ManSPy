@@ -2,9 +2,13 @@
 
 import argparse
 import pprint
+import os.path
 
 from manspy import API, Settings
 from manspy import create_bd_file
+from manspy.NLModules.ObjUnit import _Unit
+
+console_cur_dir = os.path.abspath('')
 
 READ = '\033[0;31m'
 NORM = '\033[0;0m'
@@ -19,24 +23,15 @@ def proc_answer(is_success, arg1):
         print_error(arg1)
         exit(2)
 
-"""
-    CLI.cmd_run:
-        @todo при ошибке в аргшументах эта ошибка должна только отобразиться на экране, но программа не должна завершаться.
-        @todo аргументы должны парситься стандартным образом, а не с помощью split()
-    API.update_settings_for_IF:
-        @todo переименовать эту функцию в update_settings
-
-    Класс настроек, реализующий трёхуровневый стек настроек:
-    - настройки интерфейса по умолчанию
-    - настройки интерфейса
-    - настройки интерфейса для конкретного сообщения.
-"""
 
 class CLI():
     
     def __init__(self):
+        def read_text(r_text, any_data):
+            print(r_text)
+
         self.api = API()
-        self.settings = Settings(read_text=self.read_text, language='esperanto', answer_type='fake')
+        self.settings = Settings(read_text=read_text, language='esperanto', answer_type='fake')
         self.settings.db_sqlite3 = create_bd_file(self.settings.language, 'main_data.db')
 
     def __enter__(self):
@@ -54,18 +49,34 @@ class CLI():
             return False  # False - исключение не обработано
                           # True  - исключение обработано
 
-    def read_text(self, r_text, any_data):
-        print(r_text)
-
     def cmd_exec(self, args):
-        levels = [args.graph, args.morph, args.pmorph, args.synt, args.extract, args.convert, args.exec]
-        levels = [self.api.LangClass.levels[index] for index, level in enumerate(levels) if level][:1]
+        import manspy.NLModules.ObjUnit as o
+        def write_text(text, settings, text_settings):
+            msg, results = self.api.write_text(args.text, self.settings, text_settings)
+            if isinstance(results, _Unit):
+                pprint.pprint(results.export_unit(ignore_units=dict))
+            if isinstance(results, list):
+                for result in results:
+                    print(result)
 
         self.settings.language = args.language
-        text_settings = {'print_time': False}
-        if levels:
-            text_settings['levels'] = ':' + levels
-        msg, res = self.api.write_text(args.msg, self.settings, text_settings)
+        self.settings.answer_type = args.type
+
+        text_settings = {
+            'levels': args.level,
+            'print_time': args.print_time,
+        }
+
+        if args.text:
+            write_text(args.text, self.settings, text_settings)
+
+        manspy_cur_dir = os.getcwd()
+        for filename in args.filenames:
+            os.chdir(console_cur_dir)
+            filepath = os.path.abspath(filename)
+            os.chdir(manspy_cur_dir)
+            with open(filepath, 'r') as filef:
+                write_text(filef.read(), self.settings, text_settings)
 
         '''if args.graph or args.morph or args.pmorph or args.synt:
             e = res.export_unit()
@@ -96,57 +107,23 @@ class CLI():
         else:
             print(res)'''
 
-    def cmd_run(self, args):
-        parser = argparse.ArgumentParser()
-        subparsers = parser.add_subparsers(dest='command')
 
-        subparser = subparsers.add_parser('if', help='run or stop interfaces. For example: +if_name1 +if_name2 -if_name3 -if_name4')
-        subparser.add_argument('interfaces', nargs='+')
-
-        subparser = subparsers.add_parser('exec', help='execute nature language')
-
-        subparser = subparsers.add_parser('lang', help='change language for interface')
-        subparser.add_argument('interface')
-        subparser.add_argument('language')
-
-        subparser = subparsers.add_parser('exit', help='exit from ManSPy')
-
-        while 1:
-            str_args = input('Insert command:\n')
-            try:
-                args = parser.parse_args(str_args.split())
-            except Exception:
-                continue
-            if args.command == 'exit':
-                break
-
-
-def do_cmd():
+def do_cmd(args_string=None):
 
     with CLI() as cli:
 
-        parser = argparse.ArgumentParser(description='Management system')
-        subparsers = parser.add_subparsers(dest='command')
+        parser = argparse.ArgumentParser(description='ManSPy')
         parser.add_argument('--version', action='version', version='%(prog)s 0.0.0')
 
-        subparser = subparsers.add_parser('exec', help='execute nature language')
-        subparser.add_argument('-i', '--image', action='store_false', help='use unreal data source for answers. For example, if your Internet is slow, or you don\'t have one.')
-        subparser.add_argument('--graph', action='store_true')
-        subparser.add_argument('--morph', action='store_true')
-        subparser.add_argument('--pmorph', action='store_true')
-        subparser.add_argument('--synt', action='store_true')
-        subparser.add_argument('--extract', action='store_true')
-        subparser.add_argument('--convert', action='store_true')
-        subparser.add_argument('--exec', action='store_true')
-        subparser.add_argument('-l', '--language', default='esperanto', help='Nature language')
-        subparser.add_argument('-v', '--verbose', action='store_false', help='Print analysyses')
-        subparser.add_argument('msg')
+        parser.add_argument('--level', default='graphmath exec')
+        parser.add_argument('--type', default='fake', help='answer type')
 
-        subparser = subparsers.add_parser('run', help='run the manspy\'s interfaces')
-        subparser.add_argument('-i', '--image', action='store_false', help='use unreal data source for answers. For example, if your Internet is slow, or you don\'t have one.')
-        
-        args = parser.parse_args()
-         
-        if args.command is not None:
-            func = getattr(cli, 'cmd_'+args.command)
-            res = func(args)
+        parser.add_argument('--language', default='esperanto', help='nature language')
+        # arser.add_argument('--print-levels', action='store_true', help='print analysyses of every level')
+        parser.add_argument('--print-time', action='store_true', help='print time of every level')
+        parser.add_argument('--text', default=None, help='input text')
+        parser.add_argument('filenames', nargs='*', help='files with input text')
+
+        args = parser.parse_args(args_string)
+
+        cli.cmd_exec(args)
