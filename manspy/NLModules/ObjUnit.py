@@ -35,7 +35,7 @@ class errorManager:
         pass
 
 
-class _Unit:
+class Unit:
     """ unit(index) - извлечение подъюнита
         unit(index, name) - извлечение характеристики подъюнита
         unit(index, name, value) - изменение характеристики подъюнита
@@ -409,7 +409,7 @@ class _Unit:
         return result
 
 
-class Word(_Unit):
+class Word(Unit):
     """ Класс объекта слова.
         При инициализации класса ему передаётся слово в виде строки. """  
     def __init__(self, str_word):
@@ -418,7 +418,7 @@ class Word(_Unit):
             symbols.append({'type': '', 'symbol': symbol})
 
         self.str_word = str_word
-        _Unit.__init__(self, symbols, unit_info={
+        Unit.__init__(self, symbols, unit_info={
             'word': self.str_word,
             'symbol_map': {},
             'feature': [],
@@ -436,14 +436,14 @@ class Word(_Unit):
         return symbol in self.str_word
 
 
-class Sentence(_Unit):
+class Sentence(Unit):
     """ Класс объекта предложения. Индексы списка и ключи словаря должны совпадать.
         При инициализации класса ему передаётся предложение в виде списка слов."""
     old_index = None
     new_index = None
 
     def __init__(self, words):
-        _Unit.__init__(self, words, unit_info={'end':''})
+        Unit.__init__(self, words, unit_info={'end': ''})
         self.error = errorManager('graphmath', 'morph', 'postmorph', 'synt')
 
     def getByCharacteristic(self, name, value):
@@ -556,9 +556,9 @@ class Sentence(_Unit):
     def getCombineWord(self, type_combine_word, index):
         return self.subunit_info[index]['combine_words']
 
-class Text(_Unit):
+class Text(Unit):
     """ Класс объекта ткста.
         Возможности: анализ, обработка (изменение времени и прочее)
     """
     def __init__(self, sentences):
-        _Unit.__init__(self, sentences)
+        Unit.__init__(self, sentences)

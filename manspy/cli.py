@@ -6,7 +6,7 @@ import os.path
 
 from manspy import API, Settings
 from manspy import create_bd_file
-from manspy.NLModules.ObjUnit import _Unit
+from manspy.NLModules.ObjUnit import Unit
 
 console_cur_dir = os.path.abspath('')
 
@@ -50,10 +50,9 @@ class CLI():
                           # True  - исключение обработано
 
     def cmd_exec(self, args):
-        import manspy.NLModules.ObjUnit as o
         def write_text(text, settings, text_settings):
             msg, results = self.api.write_text(args.text, self.settings, text_settings)
-            if isinstance(results, _Unit):
+            if isinstance(results, Unit):
                 pprint.pprint(results.export_unit(ignore_units=dict))
             if isinstance(results, list):
                 for result in results:
