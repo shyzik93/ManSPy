@@ -28,13 +28,13 @@ def smarthome(group, room, device, cond):
 
 def LightOn(arg0, room, device):
     if arg0['answer_type'] == 'construct':
-        return "0" if arg0['antonym'] else "1"
+        yield "0" if arg0['antonym'] else "1"
     elif arg0['answer_type'] == 'fake':
         cond = "0" if arg0['antonym'] else "1"
-        return fake_smarthome('light', room, device, cond)
+        yield fake_smarthome('light', room, device, cond)
     if arg0['answer_type'] == 'real':
         cond = "0%200%200" if arg0['antonym'] else "1%201%201"
-        return smarthome('light', room, device, cond)
+        yield smarthome('light', room, device, cond)
 
 
 def showAddress(arg0, device):
@@ -45,17 +45,17 @@ def showAddress(arg0, device):
 
     if device == 'computer':
         if arg0['answer_type'] == 'real':
-            return str(socket.gethostbyname(socket.getfqdn()))
+            yield str(socket.gethostbyname(socket.getfqdn()))
         elif arg0['answer_type'] in ('fake', 'construct'):
-            return FAKE[device]
+            yield FAKE[device]
 
 
 def printToIF(arg0, *conditions):
     for condition in conditions:
-        arg0['to_IF'](condition)
+        yield condition
 
 ''' Состояние числительных '''
-def get(arg0, a): return a
+def get(arg0, a): yield a
 
 def _is_only_numbers(numbers):
     for i in numbers:
@@ -68,7 +68,7 @@ def add(arg0, *a):
     a = list(a)
 
     if not a:
-        return 0
+        yield 0
 
     if _is_only_numbers(a):
 
@@ -76,23 +76,24 @@ def add(arg0, *a):
         if arg0['antonym']:
             a = [-i for i in a]
         if arg0['answer_type'] in ('real', 'fake'):
-            return sum(a, start)
+            yield sum(a, start)
         elif arg0['answer_type'] == 'construct':
-            return ' + '.join([str(i) for i in [start] + a])
+            yield ' + '.join([str(i) for i in [start] + a])
     
     else:
 
         for index, i in enumerate(a):
             a[index] = str(a[index])
         if arg0['antonym']:
-            return ' - '.join(a)
-        return ' + '.join(a)
+            yield ' - '.join(a)
+        yield ' + '.join(a)
 
 def multiply(arg0, *a):
     """ Умножение """
     a = list(a)
 
-    if not a: return 0
+    if not a:
+        yield 0
 
     if _is_only_numbers(a):
 
@@ -109,10 +110,10 @@ def multiply(arg0, *a):
                     res *= i
             elif arg0['answer_type'] == 'construct':
                 res = ' * '.join([str(i) for i in [res] + a])
-        return res
+        yield res
 
     else:
 
         for index, i in enumerate(a): a[index] = str(a[index])
-        if arg0['antonym']: return ' / '.join(a)
-        return ' * '.join(a)
+        if arg0['antonym']: yield ' / '.join(a)
+        yield ' * '.join(a)

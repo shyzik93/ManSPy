@@ -76,8 +76,9 @@ class Message:
         """ Вызывается функцией-глаголом (ManSPy) для передачи ответа в Интерфейс """
         r_text = self.toString(r_text)
         if r_text:
+            self.r_texts.append(r_text)
             self.pass_args_to_all_logs('log', 'R', r_text, self)
-        self.settings.read_text(r_text, self.text_settings['any_data'])
+            self.settings.read_text(r_text, self.text_settings['any_data'])
 
     # TODO: переименовать from_IF -> from_out (из вне)
     # TODO: переименовать w_text -> text_from_out (текст из вне)

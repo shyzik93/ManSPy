@@ -160,9 +160,9 @@ def GetCourse(arg0, currency, country='Russia'):
         return
 
     if arg0['answer_type'] == 'construct':
-        return '{}-{}'.format(currency, country)
+        yield '{}-{}'.format(currency, country)
     elif arg0['answer_type'] == 'fake':
-        return FAKE_DATA[country][currency]
+        yield FAKE_DATA[country][currency]
     elif arg0['answer_type'] == 'real':
         FullPrices = GetPricesFromCB(country)
         #print FullPrices
@@ -178,7 +178,7 @@ def GetCourse(arg0, currency, country='Russia'):
                 else: res_str += ' '*(20-len(res_str))
                 res += res_str
                 x += 1
-            return res
+            yield res
         else:
             price = float(ShortPrices[str(currency)])
             return price

@@ -53,3 +53,15 @@ if __name__ == '__main__':
 
     resl = dproduct2(dparentl)
     print(len(resl), resl)
+
+    from itertools import chain
+
+    def f1():
+        for i in [1, 2, 3, 4]:
+            yield i
+
+    def f2():
+        return chain(*[f1() for _ in range(3)])
+
+    for j in f2():
+        print(j)

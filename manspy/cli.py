@@ -15,8 +15,10 @@ NORM = '\033[0;0m'
 GREEN= '\033[0;32m'
 ORANGE = '\033[0;33m'
 
+
 def print_error(msg):
     print('{READ} {0} {NORM}'.format(msg, READ=READ, NORM=NORM))
+
 
 def proc_answer(is_success, arg1):
     if not is_success:
@@ -24,7 +26,7 @@ def proc_answer(is_success, arg1):
         exit(2)
 
 
-class CLI():
+class CLI:
     
     def __init__(self):
         def read_text(r_text, any_data):

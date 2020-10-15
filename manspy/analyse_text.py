@@ -50,7 +50,6 @@ class LangClass:
         lang_module = settings.modules['language'][settings.language]
         start_level, end_level = self.parse_level_string(text_settings['levels'])
 
-        
         for level in self.levels[self.levels.index(start_level) : self.levels.index(end_level)+1]:
             if msg:
                 msg.before_analysis(level)
@@ -71,8 +70,7 @@ class LangClass:
                 #OR = relation.ObjRelation(settings, settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
                 sentences = convert(sentences, OR, settings)
             elif level == "exec":
-                msg.ils = sentences
-                sentences = self.LogicShell.execIL(msg)  # возвращает ошибки выполнения
+                sentences = self.LogicShell.execIL(sentences, msg.to_IF)  # возвращает ошибки выполнения
 
             if msg:
                 msg.after_analysis(level, sentences)

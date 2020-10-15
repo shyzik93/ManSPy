@@ -22,10 +22,7 @@
 
 '''
 
-import copy
-import time
 import json
-from pprint import pprint
 from manspy import common
 from manspy import NLModules
 
