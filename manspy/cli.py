@@ -108,7 +108,7 @@ class CLI():
             print(res)'''
 
 
-def do_cmd(args_string=None):
+def do_cmd(args_list=None):
 
     with CLI() as cli:
 
@@ -124,6 +124,6 @@ def do_cmd(args_string=None):
         parser.add_argument('--text', default=None, help='input text')
         parser.add_argument('filenames', nargs='*', help='files with input text')
 
-        args = parser.parse_args(args_string)
+        args = parser.parse_args(args_list)
 
         cli.cmd_exec(args)
