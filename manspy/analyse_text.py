@@ -2,14 +2,11 @@ import time
 from manspy.relation import ObjRelation
 from manspy.extractor import extract
 from manspy.converter import convert
-from manspy import FCModule
+from manspy.FCModule import execIL
 
 
 class LangClass:
     levels = ["graphmath", "morph", "postmorph", "synt", "extract", "convert", "exec"]
-
-    def __init__(self):
-        self.LogicShell = FCModule.LogicShell()
 
     def parse_level_string(self, levels):
         """ parsing level string. Return start_level, end_level. """
@@ -70,7 +67,7 @@ class LangClass:
                 #OR = ObjRelation(settings) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
                 sentences = convert(sentences, OR, settings)
             elif level == "exec":
-                sentences = self.LogicShell.execIL(sentences, msg.to_IF)  # возвращает ошибки выполнения
+                sentences = execIL(sentences, msg.to_IF)  # возвращает ошибки выполнения
 
             if msg:
                 msg.after_analysis(level, sentences)

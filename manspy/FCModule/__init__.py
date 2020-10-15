@@ -57,9 +57,8 @@ def LogicKernel(ILs, to_IF):
         to_IF(r_text)
 
 
-class LogicShell:
-    def execIL(self, ils, to_IF):
-        for index_sentence, ILs in ils.items():   # TODO: msg.ils должен содержать только внутренние предложения, не списки с предложениями
-            if ILs:
-                LogicKernel(ILs, to_IF)
-        return []
+def execIL(ils, to_IF):
+    for index_sentence, ILs in ils.items():   # TODO: msg.ils должен содержать только внутренние предложения, не списки с предложениями
+        if ILs:
+            LogicKernel(ILs, to_IF)
+    return []
