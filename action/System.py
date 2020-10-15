@@ -1,5 +1,3 @@
-from manspy import relation
-
 settings = None
 
 

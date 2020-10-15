@@ -1,7 +1,7 @@
 import os
 import re
 
-from manspy import relation
+from manspy.relation import ObjRelation
 from manspy.fasif import finder
 from manspy.fasif.parser_fasif_verb import FASIF_Verb
 from manspy.fasif.parser_fasif_word_combination import FASIF_WordCombination
@@ -49,7 +49,7 @@ class FASIFParser:
         return dict_assoc_types
 
     def parse(self, path_import,  language, settings):
-        OR = relation.ObjRelation(language, settings.storage_version)
+        OR = ObjRelation(language)
         fdb = finder.FasifDB(language)
 
         for fasif_file_name in os.listdir(path_import):

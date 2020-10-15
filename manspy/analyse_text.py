@@ -1,5 +1,5 @@
 import time
-from manspy import relation
+from manspy.relation import ObjRelation
 from manspy.extractor import extract
 from manspy.converter import convert
 from manspy import FCModule
@@ -46,7 +46,7 @@ class LangClass:
         if msg:
             msg.before_analyzes()
 
-        OR = relation.ObjRelation(settings.language, settings.storage_version) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
+        OR = ObjRelation(settings.language) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
         lang_module = settings.modules['language'][settings.language]
         start_level, end_level = self.parse_level_string(text_settings['levels'])
 
@@ -67,7 +67,7 @@ class LangClass:
             elif level == "extract":
                 sentences = extract(sentences, OR)
             elif level == "convert":
-                #OR = relation.ObjRelation(settings, settings['storage_version']) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
+                #OR = ObjRelation(settings) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
                 sentences = convert(sentences, OR, settings)
             elif level == "exec":
                 sentences = self.LogicShell.execIL(sentences, msg.to_IF)  # возвращает ошибки выполнения
