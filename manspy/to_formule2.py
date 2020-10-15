@@ -213,7 +213,6 @@ def to_hash(dct_sentence):
               'convert2IL': 1, # включает последний этап конвертации
                                # если при отключении включёна логика, то будет ошибка
               'language': 'Esperanto',
-              'storage_version': 2,
               'converter_version': 1,
               'test': True, # тестовый режим, включаемый в процессе отладки и разработки
               'dir_db': None

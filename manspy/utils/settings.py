@@ -6,7 +6,6 @@ class Settings:
     db = None
     db_sqlite3 = None
     dir_db = None
-    storage_version = 2
 
     def __init__(self, **changed_keys):
         # TODO: описание настроек вынести в строку документации класса
