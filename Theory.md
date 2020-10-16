@@ -88,30 +88,30 @@
 ### [montru kvardek kvin](https://syeysk.ru/api/manspy/run_get?s=montru%20kvardek%20kvin)
 
 - `kvardek kvin` - актант, его состояние равно `45`
-- `montru` - глагол 1-го типа, функция которого примет число `45` в качестве аргумента. Его она и выведет.
+- `montru` - глагол 1-го типа, функция которого примет число <span>`45`</span> в качестве аргумента. Его она и выведет.
 
 ### [montru dolaran kurzon de rusia banko](https://syeysk.ru/api/manspy/run_get?s=montru%20dolaran%20kurzon%20de%20rusia%20banko)
 
 - `dolaran kurzon de rusia banko` - актант, его состояние равно `60`
-- `montru` - глагол 1-го типа, функция которого примет число `60` в качестве аргумента. Его она и выведет.
+- `montru` - глагол 1-го типа, функция которого примет число <span>`60`</span> в качестве аргумента. Его она и выведет.
 
 ### [montru kvardek kvin kaj dolaran kurzon de rusia banko](https://syeysk.ru/api/manspy/run_get?s=montru%20kvardek%20kvin%20kaj%20dolaran%20kurzon%20de%20rusia%20banko)
 
 - `kvardek kvin` - актант, его состояние равно `45`
 - `dolaran kurzon de rusia banko` - актант, его состояние равно `60`
-- `montru` - глагол 1-го типа, функция которого примет два числа: `45` и `60` в качестве аргументов. Их она и выведет.
+- `montru` - глагол 1-го типа, функция которого примет два числа: <span>`45`</span> и <span>`60`</span> в качестве аргументов. Их она и выведет.
 
 ### [adciu kvardek kvin kaj dolaran kurzon de rusia banko](https://syeysk.ru/api/manspy/run_get?s=adciu%20kvardek%20kvin%20kaj%20dolaran%20kurzon%20de%20rusia%20banko)
 
 - `kvardek kvin` - актант, его состояние равно `45`
 - `dolaran kurzon de rusia banko` - актант, его состояние равно `60`
-- `adiciu` - глагол 1-го типа, функция которого примет два числа: `45` и `60` в качестве аргументов. Выведет их сумму - `105`.
+- `adiciu` - глагол 1-го типа, функция которого примет два числа: `45` и `60` в качестве аргументов. Выведет их сумму - <span>`105`</span>.
 
 ### [malmultigu dolaran kurzon de rusia banko kaj kvin](https://syeysk.ru/api/manspy/run_get?s=malmultigu%20dolaran%20kurzon%20de%20rusia%20banko%20kaj%20kvin)
 
 - `dolaran kurzon de rusia banko` - актант, его состояние равно `60`
 - `kvin` - актант, его состояние равно `5`
-- `multigu` - глагол 1-го типа (с приставкой `mal`), функция которого примет два числа: `60` и `5` в качестве аргументов. Вывела бы их произведение, но так как глагол употреблён с отрицательной приставкой, то функция выведет их частное - `12`.
+- `multigu` - глагол 1-го типа (с приставкой `mal`), функция которого примет два числа: `60` и `5` в качестве аргументов. Вывела бы их произведение, но так как глагол употреблён с отрицательной приставкой, то функция выведет их частное - <span>`12`</span>.
 
 Кстати, в словосочетании `dolaran kurzon de rusia banko` слова `rusia` и `dolaran` являются аргументными, и вместо них допустимо указывать и другие названия стран и валют, например: `montru eŭran kurzon de ukrainia banko` ([проверить](https://syeysk.ru/api/manspy/run_get?s=montru%20euxran%20kurzon%20de%20ukrainia%20banko)).
 Причём аргумент банка необязателен, его значение по-умолчанию - это `rusia`, таким образом достаточно написать `montru ukrainian kurzon`, чтобы узнать курс гривны ЦБ РФ ([проверить](https://syeysk.ru/api/manspy/run_get?s=montru%20ukrainian%20kurzon)).
