@@ -4,8 +4,6 @@
 
 [![Build Status](https://travis-ci.com/shyzik93/ManSPy.svg?branch=master)](https://travis-ci.com/shyzik93/ManSPy)
 
-Ссылки:
-- Этот файл - ознакомление с программой
 - http://github.com/shyzik93/ManSPy/wiki - описание алгоритмов
 
 ## Краткая история диалога
@@ -55,10 +53,9 @@
 - конвертация числительных, прилагаьелные и существительные (производные от числительных) в число.
 - Ваш вариант :)
 
-# Запуск
+# Установка
 
-Для установки используйте команду `pip install https://github.
-com/shyzik93/manspy/archive/master.zip`
+Для установки используйте команду `pip install https://github.com/shyzik93/manspy/archive/master.zip`
 Для удаления: `pip uninstall manspy`
 
 В программе используются следующие сторонние модули Python, которые необходимо устанавливать отдельно из-за их отсутствия в стандартной библиотеке:
@@ -67,6 +64,15 @@ com/shyzik93/manspy/archive/master.zip`
 - xmpp - реализация протокола для jabber (http://xmpppy.sourceforge.net/, http://sourceforge.net/projects/xmpppy/files/, https://raw.githubusercontent.com/freebsd/freebsd-ports/master/net-im/py-xmpppy/files/patch-xmpp-transports.py - информация об исправлении ошибки в модуле)
 - https://pypi.python.org/pypi/eonums/0.9.0 - простенький конвертер числительных на Эсперанто в числа и наоборот. На данный момент для ManSPy написан собственный код конвертирования в числа, который понимает части речи, производные от числительных.
 - TKinter - может требоваться на ОС Linux (команда для установки: "aptitude install python3-tk")
+
+# Запуск
+
+Консольная команда `manspy` должна работать аналогично `python3 manspy/cli.py`
+
+## Команданя строка - режим без интерфейсов
+
+`manspy --test "montru sesdek du kaj dolaran kurzon"` - отобразить `62` и `60`
+`manspy text_example.txt` - если Вы находитесь в корне репозитория, то программа прочтёт файл `text_example.txt` и выполнит его, выведя на экран `80` и `91`
 
 Для запуска программы служит файл run.py, размещёнеый в корне репозитория. В файле присутствуют словарь, позволяющий включать/отключать модули интерфейсов (МИ), через которые происходит взаимодействие пользователя с программой:
 ```python
