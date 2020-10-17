@@ -3,7 +3,6 @@ import os.path
 import re
 
 from manspy import API, Settings
-from manspy import create_bd_file
 
 REGEXP_MARKDOWN_LINK = r'\[([^\]]+)\]\(https://syeysk.ru/api/manspy/run_get\?s=([\w/%\d]+)\)[^>]+((?:<span>`[\w\s\d]+`</span>[\s\w]*)+)'
 
@@ -32,7 +31,6 @@ class ExamplesFromDocTest(unittest.TestCase):
         for sentence, expecting_answer in collect_examples(os.path.join(os.path.dirname(__file__), 'Theory.md')):
             language = 'esperanto'
             settings = Settings(read_text=read_text, language=language, answer_type='fake')
-            settings.db_sqlite3 = create_bd_file(settings.language, 'main_data.db')
             print(sentence, expecting_answer)
             api.write_text(sentence, settings, {'any_data': (sentence, expecting_answer), 'print_time': False})
         #self.assertEqual(True, False)

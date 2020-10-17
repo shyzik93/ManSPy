@@ -1,15 +1,8 @@
-# -*- coding: utf-8 -*-
-#import sqlite3 as sql, os
-import pickle
-from . import common
-
-class Relation():
+class Relation:
     dct_speeches = {'noun': 1, 'verb': 2, 'adjective': 3, 'adverb': 4}
     
-    def __init__(self, language):
-        #self.c, self.cu = settings['db_sqlite3']
-        self.c, self.cu = common.create_bd_file(language, 'main_data.db')
-        #print(self.c, self.cu, 'bl')
+    def __init__(self, c, cu):
+        self.c, self.cu = c, cu
         self.cu.executescript('''
             CREATE TABLE IF NOT EXISTS words (
               word TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,
@@ -32,7 +25,8 @@ class Relation():
         # В иерархических отношениях name1 обозначает вышестоящий объект, name2 - нижестоящий.
         # В линейных отношениях оба объекта равны, => для обеих обеих объектов используется одно название - name1
         self.dct_speechesR = {}
-        for k, v in self.dct_speeches.items(): self.dct_speechesR[v] = k
+        for k, v in self.dct_speeches.items():
+            self.dct_speechesR[v] = k
 
     ### Работа с таблицей words
 
@@ -189,12 +183,13 @@ class Relation():
             descr = [dict(row) for row in descr]
             return descr if descr else []
 
+
 class ObjRelation:
     """ Надкласс, реализующий высокий уровень работы с разными группами слов, абстрагируясь от БД.
         Другими словами, он задествует вышеуказанные классы для реализации своих
         функций."""
-    def __init__(self, language):
-        self.R = Relation(language)
+    def __init__(self, c, cu):
+        self.R = Relation(c, cu)
 
         # Добавление описания семантических отношений
         self.R.add_descr_relation(type_relation='line', count_members='N', type_peak='index', type_child='word',  name1='synonym',   name2=None)
@@ -366,6 +361,9 @@ class ObjRelation:
           
 
 if __name__ == '__main__':
+    # TODO: Написать тесты для модуля семантических отношений
+    # TODO: При сохранении ФАСИФа в базу также сохаранять данные для всех языков.
+    # TODO: Для каждого языка заводить не отдельную базу, а отдельную таблицу в базе. Для всех языков одна база
     R = Relation('Esperanto')
 
     rng = range(1, R.get_max_id('id_type')+1)

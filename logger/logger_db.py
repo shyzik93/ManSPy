@@ -13,7 +13,7 @@ class ComplexEncoder(json.JSONEncoder):
 
 class LoggerDb:
     def connect_to_db(self, settings):
-        self.c, self.cu = settings.db_sqlite3
+        self.c, self.cu = settings.c, settings.cu
 
         self.cu.execute('''
         CREATE TABLE IF NOT EXISTS `log_history` (

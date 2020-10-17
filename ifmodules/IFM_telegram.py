@@ -12,21 +12,23 @@ import telegram
 passwords = None
 
 class Interface():
-    def __init__(self, API):
+    def __init__(self, API, settings):
         self.API = API
-        self.settings = {'read_text': self.read_text}
+        self.settings = settings(read_text=self.read_text)
 
     def FromUser(self, m, comm_name, args, text):
         w_text = text
-        From = m['chat_id']
+        from_user = m['chat_id']
 
-        if w_text == None: return
-        if w_text: self.API.write_text(w_text, self.settings, {'any_data':From})
+        if w_text == None:
+            return
+        if w_text:
+            self.API.write_text(w_text, self.settings, {'any_data': from_user})
 
-    def read_text(self, r_text, From):
-        print(r_text, From)
-        if From:
-            self.tg.send_message(From, r_text)
+    def read_text(self, r_text, from_user):
+        print(r_text, from_user)
+        if from_user:
+            self.tg.send_message(from_user, r_text)
 
     def init(self):
         self.tg = telegram.TelegramBot(passwords['token'])

@@ -23,7 +23,7 @@
 '''
 
 import json
-from manspy import common
+from manspy import database_drivers
 from manspy import NLModules
 
 def compare_fasif_Verb(fasif, verb_base, finded_args, flog):
@@ -123,6 +123,7 @@ def compare_fasif_WordCombination(fasif, argument, finded_args, flog):
 
     return True
 
+
 class FasifDB():
     def iseq(self, id_fasif, type_fasif, fasif):
         #print 'fasif:', fasif, '\nargument:',  argument
@@ -131,11 +132,12 @@ class FasifDB():
         self.flog.write('\n')
         if type_fasif == 'WordCombination': isright = compare_fasif_WordCombination(fasif, self.argument, finded_args, self.flog)
         if type_fasif == 'Verb': isright = compare_fasif_Verb(fasif, self.argument, finded_args, self.flog)
-        if isright: self.compared_fasifs[id_fasif] = (finded_args, fasif)
+        if isright:
+            self.compared_fasifs[id_fasif] = (finded_args, fasif)
         return 1 if isright else 0
 
-    def __init__(self, language):
-        self.c, self.cu = common.create_bd_file(language, 'main_data.db')
+    def __init__(self, c, cu):
+        self.c, self.cu = c, cu
         self.c.create_function('iseq', 3, self.iseq)
         self.cu.execute('''
             CREATE TABLE IF NOT EXISTS fasifs (
@@ -154,7 +156,8 @@ class FasifDB():
         if _type=='WordCombination':
             for key, value in argument.getUnit('str').items():
                 self.flog.write('--- %s: %s\n' % (key, value))
-        elif _type=='Verb': self.flog.write('--- %s\n' % argument)
+        elif _type == 'Verb':
+            self.flog.write('--- %s\n' % argument)
 
         self.argument = argument
         self.compared_fasifs = {}

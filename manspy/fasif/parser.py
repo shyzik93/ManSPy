@@ -49,8 +49,8 @@ class FASIFParser:
         return dict_assoc_types
 
     def parse(self, path_import,  language, settings):
-        OR = ObjRelation(language)
-        fdb = finder.FasifDB(language)
+        OR = ObjRelation(settings.c, settings.cu)
+        fdb = finder.FasifDB(settings.c, settings.cu)
 
         for fasif_file_name in os.listdir(path_import):
             if fasif_file_name.endswith('.fsf'):

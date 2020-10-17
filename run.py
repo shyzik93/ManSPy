@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import manspy
-import ifmodules
 
 interfaces = {  # 1 - on, 0 - off
   'autofeed':    1,  # Автоподатчик предложений - для теста, но можно писать "скрипты"
@@ -8,12 +7,12 @@ interfaces = {  # 1 - on, 0 - off
   'jabber':      0,
   'vkcom':       0,  # с ошибками
   'Commandline': 0,  # не имеет смысла
-  'telegram': 1,
+  'telegram':    0,
   }
 interfaces = [i for i in interfaces if interfaces[i]]
 
-# Анализ и выпорлнение сообщений
-API = manspy.API()
+# Анализ и выполнение сообщений
+api = manspy.API()
 # Приём сообщения от пользователя и возврат ответа
-IF = ifmodules.Interfaces()
-IF.turnOnInterface(API, *interfaces)
+interface_runner = manspy.InterfaceRunner()
+interface_runner.turnOnInterface(api, *interfaces, settings)

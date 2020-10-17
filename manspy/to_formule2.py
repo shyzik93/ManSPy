@@ -15,7 +15,7 @@ def iseq(pattern):
 class FasifDB():
     def __init__(self, settings):
         self.settings = settings
-        self.c, self.cu = common.create_bd_file(settings['language'], 'main_data.db')
+        self.c, self.cu = common.get_sqlite3(settings['language'], 'main_data.db')
         self.c.create_function('iseq', 1, iseq)
         self.cu.executescript('''
             -- CREATE TABLE IF NOT EXISTS dicts (

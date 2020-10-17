@@ -75,7 +75,7 @@ def get_fasif_wcomb(fdb, argument, R, verb):
 
 
 def Extraction2IL(R, settings, predicates, arguments):
-    fdb = finder.FasifDB(settings.language)
+    fdb = finder.FasifDB(settings.c, settings.cu)
     pattern_IL = {
         'arg0': {  # передаётся первым аргументом в каждую функцию
             'antonym': False,

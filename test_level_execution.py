@@ -8,7 +8,6 @@
 import unittest
 
 from manspy import API, Settings
-from manspy import create_bd_file
 
 TEST_INPUT_DATA_ESPERANTO = [
     ('montru dolaran kaj euxran kurzon de rusia banko', ['USD-Russia', 'EUR-Russia']),
@@ -111,7 +110,6 @@ class TestManSPy(unittest.TestCase):
         api = API()
         for language, test_input_data in TEST_INPUT_DATAS.items():
             settings = Settings(read_text=read_text, language=language, answer_type='construct')
-            settings.db_sqlite3 = create_bd_file(settings.language, 'main_data.db')
             answers.setdefault(language, {})
             answers_true.setdefault(language, {})
             for input_data, true_answer in test_input_data:

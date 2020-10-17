@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
-
-import os, json, re, os, time
+import json
+import os
 
 file_name_origin = 'autofeed_origin.txt'
 file_name_guess = 'autofeed_results.txt'
@@ -8,9 +7,9 @@ file_name_sentences = 'autofeed_sentences.txt'
 
 class Interface:
 
-    def __init__(self, API):
-        self.API = API
-        self.settings = {'read_text': self.read_text}
+    def __init__(self, api, settings):
+        self.API = api
+        self.settings = settings(read_text=self.read_text)
 
     def read_text(self, r_text, any_data):
         if self.settings2['compare_with_origin']:
@@ -24,8 +23,10 @@ class Interface:
         elif self.settings2['write_origin']: self.origin[self.sentence].append(r_text)
 
     def init(self, settings=None):
-        if not settings: settings = {'write_origin': False, 'compare_with_origin': True}
-        if not os.path.exists(file_name_origin): settings = {'write_origin': True, 'compare_with_origin': False}
+        if not settings:
+            settings = {'write_origin': False, 'compare_with_origin': True}
+        if not os.path.exists(file_name_origin):
+            settings = {'write_origin': True, 'compare_with_origin': False}
         #if not settings: settings = {'write_origin': False, 'compare_with_origin': True}
         file_auto = os.path.join(os.path.dirname(__file__), file_name_sentences)
         if not os.path.exists(file_auto):
@@ -37,7 +38,8 @@ class Interface:
             origin = json.load(f)
             f.close()
             self.res = open(file_name_guess, 'w')
-        elif settings['write_origin']: origin = {}
+        elif settings['write_origin']:
+            origin = {}
 
         gen_res = True
         with open(file_auto, 'r') as file_sentences:
@@ -46,7 +48,8 @@ class Interface:
                 sentence = sentence.strip()
                 if not sentence or sentence[0] == '#': continue
                 if settings['compare_with_origin']: self.res.write(sentence+'\n')
-                if settings['write_origin']: origin[sentence] = []
+                if settings['write_origin']:
+                    origin[sentence] = []
 
                 self.sentence = sentence
                 self.settings2 = settings
@@ -67,5 +70,3 @@ class Interface:
             f = open(file_name_origin, 'w')
             f.write(json.dumps(origin))
             f.close()
-
-        #print('completed for '+str(t)+' secs :)')

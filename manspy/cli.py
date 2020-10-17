@@ -1,11 +1,9 @@
 #! /usr/bin/env python3
-
 import argparse
 import pprint
 import os.path
 
 from manspy import API, Settings
-from manspy import create_bd_file
 from manspy.NLModules.ObjUnit import Unit
 
 console_cur_dir = os.path.abspath('')
@@ -31,10 +29,8 @@ class CLI:
     def __init__(self):
         def read_text(r_text, any_data):
             print(r_text)
-
         self.api = API()
         self.settings = Settings(read_text=read_text, language='esperanto', answer_type='fake')
-        self.settings.db_sqlite3 = create_bd_file(self.settings.language, 'main_data.db')
 
     def __enter__(self):
         """ for 'with' statement """
@@ -42,8 +38,7 @@ class CLI:
 
     def __exit__(self, Type, Value, Trace):
         """ for 'with' statement """
-        c, cu = self.settings.db_sqlite3
-        c.close()
+        self.settings.c.close()
 
         if Type is None:  # Если исключение не возникло
             pass

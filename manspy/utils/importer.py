@@ -38,3 +38,8 @@ def action(abs_path_to_function):
     module_obj = importlib.import_module(module_name)
     del sys.path[0]
     return getattr(module_obj, func_name)
+
+
+def database(db_type):
+    module = importlib.import_module('manspy.database_drivers')
+    return getattr(module, 'get_{}'.format(db_type))

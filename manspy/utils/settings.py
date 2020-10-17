@@ -3,9 +3,20 @@ class Settings:
         'language': {},
         'logger': {},
     }
-    db = None
-    db_sqlite3 = None
-    dir_db = None
+    db_type = 'sqlite3'
+    db_settings = {
+        'sqlite3': {
+            'path': 'database.db',
+        },
+        'mysql': {
+            'host': '',
+            'user': '',
+            'password': '',
+            'port': '',
+        }
+    }
+    c = None
+    cu = None
 
     def __init__(self, **changed_keys):
         # TODO: описание настроек вынести в строку документации класса
@@ -29,4 +40,3 @@ class Settings:
             cls.modules[module_type].append(module)
         elif isinstance(cls.modules[module_type], dict):
             cls.modules[module_type][module_code] = module
-    

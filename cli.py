@@ -1,3 +1,3 @@
-from manspy.cli import do_cmd
+from manspy import do_cmd
 
 do_cmd()

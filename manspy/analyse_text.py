@@ -43,7 +43,7 @@ class LangClass:
         if msg:
             msg.before_analyzes()
 
-        OR = ObjRelation(settings.language) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
+        OR = ObjRelation(settings.c, settings.cu) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
         lang_module = settings.modules['language'][settings.language]
         start_level, end_level = self.parse_level_string(text_settings['levels'])
 
