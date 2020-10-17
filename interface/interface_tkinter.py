@@ -2,9 +2,9 @@
 import tkinter, time, os
 
 class Interface():
-    def __init__(self, API):
-        self.API = API
-        self.settings = {'read_text': self.read_text}
+    def __init__(self, api, settings, config):
+        self.API = api
+        self.settings = settings(read_text=self.read_text)
 
     def FromUser(self, event=None):
         w_text = self.Text_In.get('1.0', tkinter.END)

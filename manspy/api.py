@@ -24,6 +24,7 @@ class API:
             ('language', os.path.join(default_path_modules, 'manspy', 'NLModules')),  # обязательно первые в списке
             ('logger', os.path.join(default_path_modules, 'logger')),
             ('action', os.path.join(default_path_modules, 'action')),
+            ('interface', os.path.join(default_path_modules, 'interface')),
         ]
 
         if current_work_dir is None:
@@ -42,11 +43,8 @@ class API:
         for module_type, path_import in self.paths_import:
             #for module, module_code in getattr(importer, module_type)(path_import):
             #    Settings.set_module(module_type, module, module_code)
-            if module_type == 'language':
-                for module, module_code in importer.language(path_import):
-                    Settings.set_module(module_type, module, module_code)
-            elif module_type == 'logger':
-                for module, module_code in importer.logger(path_import):
+            if module_type in ('language', 'logger', 'interface'):
+                for module, module_code in getattr(importer, module_type)(path_import):
                     Settings.set_module(module_type, module, module_code)
             elif module_type == 'action':
                 # TODO: функция fasif_parser.parse должна импоттировать лингв. информацию для всех языков, для которых импортированы языковые модули.

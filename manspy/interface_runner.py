@@ -32,37 +32,29 @@ class InterfaceRunner():
     def __init__(self):
         password_path = os.path.join(os.path.dirname(os.path.abspath('')), 'IFM_passwords.txt')
         if not os.path.exists(password_path):
-            sys.stderr.write('Warning! The config file is absent! Some interfaces can have exceptions!\nThe config file: %s\n' % password_path)
+            sys.stderr.write('Warning! The config file is absent! Some interface can have exceptions!\nThe config file: %s\n' % password_path)
             self.conf = {}
         else: #self.conf = conftools.loadconf(password_path)
             with open(password_path, 'r') as f:
                 self.conf = json.load(f)
 
-    def turnOnInterface(self, api, *IFNames, Settings):
+    def turnOnInterface(self, api, Settings, IFNames):
 
         for IFName in IFNames:
-
-            IFModule = __import__('IFM_'+IFName)
-            if IFName in self.conf: IFModule.passwords = self.conf[IFName]
             self.interfaces[IFName] = [None, None]
+            IFModule = Settings.modules['interface'][IFName]
+            IFClass = IFModule.Interface(api, Settings, self.conf.get(IFName))
 
-            if 'Interface' in dir(IFModule):
-                IFClass = IFModule.Interface(api, Settings)
-                IF = IFClass
-            else:
-                IFModule.API = api
-                IF = IFModule
+            IFClass.IFName = IFName
+            self.interfaces[IFName][1] = IFClass
+            t = Interface(api, IFClass)  # threading.Thread(target=IFClass.init)
 
-            IF.IFName = IFName
-            self.interfaces[IFName][1] = IF
-            t = Interface(api, IF)#threading.Thread(target=IF.init)
-
-            #t.daemon = True
+            # t.daemon = True
             t.start()
             self.interfaces[IFName][0] = t
         print('Count of processes:', threading.activeCount())
 
-    def turnOffInterface(self, *IFNames):
+    def turnOffInterface(self, IFNames):
         for IFName in IFNames:
             if IFName in IFNames:
                 del self.interfaces[IFName]

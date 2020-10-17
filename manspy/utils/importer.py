@@ -11,10 +11,26 @@ import os.path
 #        print(module)
 
 
+def interface(path_import):
+    for module_info in pkgutil.iter_modules(path=[path_import]):
+        if module_info.name.startswith('interface_'):
+            try:
+                module = module_info.module_finder.find_module(module_info.name).load_module()
+            except Exception as e:
+                print('Не удалось импортировать модуль "{}" в директории "{}"'.format(module_info.name, path_import))
+                continue
+            module_code = module_info.name
+            yield module, module_code[10:]
+
+
 def language(path_import):
     for module_info in pkgutil.iter_modules(path=[path_import]):
         if module_info.name.startswith('language_'):
-            module = module_info.module_finder.find_module(module_info.name).load_module()
+            try:
+                module = module_info.module_finder.find_module(module_info.name).load_module()
+            except Exception as e:
+                print('Не удалось импортировать модуль "{}" в директории "{}"'.format(module_info.name, path_import))
+                continue
             module_code = module_info.name
             yield module, module_code[9:]
 
@@ -22,8 +38,13 @@ def language(path_import):
 def logger(path_import):
     for module_info in pkgutil.iter_modules(path=[path_import]):
         if module_info.name.startswith('logger_'):
-            module = module_info.module_finder.find_module(module_info.name).load_module()
+            try:
+                module = module_info.module_finder.find_module(module_info.name).load_module()
+            except Exception as e:
+                print('Не удалось импортировать модуль "{}" в директории "{}"'.format(module_info.name, path_import))
+                continue
             module_code = module_info.name
+            # TODO: классы логгеров также должны называться одинаково - Logger. Это позволит свести 3 этих функции в одну (interface, logger, language)
             class_name = ''.join([subname.capitalize() for subname in module_code.split('_')])
             yield getattr(module, class_name)(), module_code[7:]
 

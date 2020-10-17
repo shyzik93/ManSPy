@@ -29,7 +29,7 @@ setup(
         'manspy/NLModules/language_esperanto',
         'manspy/utils',
         'action',
-        'ifmodules',
+        'interface',
         'logger',
     ],
     #long_description=open(os.path.join(os.path.dirname(__file__), 'README.md')).read(),

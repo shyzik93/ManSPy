@@ -1,0 +1,66 @@
+# Обычные предложения
+montru dolaran kaj euxran kurzon de rusia banko
+sxaltu tablan lampon en dormcxambro
+montru adreson de komputilo
+montru adreson de androido
+
+dolaran kurzon montru
+montru de rusia banko euxran kurzon
+
+# Повторяющиеся аргументы (однородные слова)
+montru dolaran kaj dolaran kurzon de rusia banko
+montru dolaran kaj dolaran kurzon de rusia kaj rusia banko
+# Это предложение выдаёт курс доллара только по росбанку (украинский не замечает). Как вариант решения: проверять каждоый однородный член у дополнений (кроме первого)
+montru dolaran kurzon de rusia banko kaj ukraina banko
+montru adreson de komputilo kaj androido
+
+# Много аргументов (сложатся друг с другом поочерёдно - декартово произведение)
+montru euxran kaj dolaran kurzon de ukrainia kaj rusia kaj belarusia banko
+montru euxran kaj dolaran kurzon de ukrainia kaj rusia banko
+
+# сложатся соответственно (не реализовано пока)
+#montru euxran kaj dolaran kurzon de ukrainia kaj rusia banko соответсвенно
+
+# однородные слова-посредники (не реализовано пока)
+montru dolaran kurzon de ukrainia banko kaj de rusia banko
+
+# антонимия. Можно через приставку, которая антонимирует значение, а можно через глагол-антоним
+malsxaltu tablan lampon en dormcxambro kaj fermo
+malmontru dolaran kurzon de rusia banko de mia domo
+
+# однородные прямые дополнения, по сути - две разных функции (два разных действия) в одном предложении.
+montru adreson de komputilo kaj dolaran kurzon
+montru adreson de komputilo kaj dolaran kurzon de belarusia banko
+montru dolaran kurzon kaj adreson de komputilo
+
+# Пунктуация
+montru euxran, dolaran kurzon de ukrainia banko.
+montru euxran, dolaran kurzon de ukrainia banko .
+montru euxran, dolaran kurzon de ukrainia banko ...
+Montru dolaran kurzon. Montru euxran kurzon de belarusia banko
+
+# пока не поддерживаются
+#montru dolaran kurzon, kiu estas dolara
+#Se euxra cambio de belarusia banko estas sepduk kvar, do sxaltu tablan lampon en dormcxambro
+#Do sxaltu tablan lampon en dormcxambro, se euxra cambio de belarusia banko estas sepduk kvar
+
+adiciu dudekon trion
+adiciu kvardekon kaj trion kaj milionon
+maladiciu dolaran kurzon kaj trion
+adiciu dolaran kurzon kaj 1000
+multigu trion kaj kvaron
+# Синонимы
+malmultigu dolaran kurzon kaj trion
+malobligu dolaran kurzon kaj trion
+
+#montru dolaran kurzon kaj trion kaj kvardek
+montru dolaran kurzon kaj trion kaj kvardekon
+trion adiciu
+
+montru dolaran kurzon de kvarcent sesdek mil tricent dek du
+#montru dolaran kurzon de dua banko
+#montru dolaran kurzon de triiliono
+#montru dolaran kurzon de 2 banko
+#montru dolaran kurzon de du
+#montru dolaran kurzon de okdek
+#montru dolaran kurzon de dek du

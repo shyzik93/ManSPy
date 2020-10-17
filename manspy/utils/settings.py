@@ -2,6 +2,7 @@ class Settings:
     modules = {
         'language': {},
         'logger': {},
+        'interface': {},
     }
     db_type = 'sqlite3'
     db_settings = {
@@ -35,8 +36,5 @@ class Settings:
         self.answer_type = changed_keys.get('answer_type', 'fake')
 
     @classmethod
-    def set_module(cls, module_type, module, module_code=None):
-        if isinstance(cls.modules[module_type], list):
-            cls.modules[module_type].append(module)
-        elif isinstance(cls.modules[module_type], dict):
-            cls.modules[module_type][module_code] = module
+    def set_module(cls, module_type, module, module_code):
+        cls.modules[module_type][module_code] = module
