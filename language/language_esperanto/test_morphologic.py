@@ -1,6 +1,6 @@
 import unittest
 
-from manspy.NLModules.language_esperanto import analysis_morphological
+from language.language_esperanto import analysis_morphological
 from manspy import unit
 
 

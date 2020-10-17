@@ -1,6 +1,6 @@
 import unittest
 
-from manspy.NLModules.language_esperanto import analysis_graphemathic
+from language.language_esperanto import analysis_graphemathic
 from manspy import unit
 
 

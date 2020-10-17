@@ -8,7 +8,8 @@ import re
 
 #template = re.compile(r'[0-9]+(\.|\,)?[0-9]*')
 
-combain_numerals_template = re.compile(('^(%s)('+Dict.dct['numeral'][-5]+'|'+Dict.dct['numeral'][-4]+')$') % '|'.join(Dict.dct['numeral'][:-5]))
+combain_numerals_template = re.compile(('^(%s)(' + Dict.dct['numeral'][-5] + '|' + Dict.dct['numeral'][-4] + ')$') % '|'.join(
+    Dict.dct['numeral'][:-5]))
 mili_numerals_template = re.compile(('^(%s)(iliard|ilion)$') % '|'.join(Dict.dct['numeral'][:-5]))
 
 def checkByDict(word_l, word):
