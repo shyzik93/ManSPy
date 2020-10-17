@@ -2,15 +2,10 @@
 import json
 import sqlite3 as sql
 
-from manspy.NLModules import ObjUnit
+from manspy import unit
 from manspy.utils.beautifull_repr_data import (
     HTML_HEADER,
-    TEMPLATE_HTML_WORD,
-    TEMPLATE_HTML_ROW,
     HTML_FOOTER,
-    INTERACTIVE_HTML_HEADER,
-    INTERACTIVE_HTML_LINE,
-    INTERACTIVE_HTML_FOOTER,
     text_to_html,
     make_dialog_html_line
 )
@@ -31,12 +26,12 @@ with open('../DATA_BASE/esperanto/history.html', 'w', encoding='utf-8') as f:
         if row['direction'] == 'W':
 
             a_graphmath_dict = json.loads(row['a_graphmath'])
-            row['a_graphmath'] = ObjUnit.Text({})
+            row['a_graphmath'] = unit.Text({})
             row['a_graphmath'].import_unit(a_graphmath_dict)
             row['a_morph'] = json.loads(row['a_morph'])
             row['a_postmorph'] = json.loads(row['a_postmorph'])
             a_synt_dict = json.loads(row['a_synt'])
-            row['a_synt'] = ObjUnit.Text({})
+            row['a_synt'] = unit.Text({})
             row['a_synt'].import_unit(a_synt_dict)
 
             #print(row['a_graphmath'][0])

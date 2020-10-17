@@ -1,7 +1,8 @@
 import unittest
 
 from manspy.NLModules.language_esperanto import MorphologicalAnalysis
-from manspy.NLModules import ObjUnit
+from manspy import unit
+
 
 class TestMorphologicalAnalysis(unittest.TestCase):
     def test_is_numeric(self):
@@ -17,7 +18,7 @@ class TestMorphologicalAnalysis(unittest.TestCase):
         
         for numeric, alphabetics in numbers.items():
             for alphabetic in alphabetics:
-                word = ObjUnit.Word(alphabetic)
+                word = unit.Word(alphabetic)
                 is_numeric = MorphologicalAnalysis.is_numeral(word['word'], word)
                 print(is_numeric, alphabetic, numeric, word['number_value'])
 

@@ -1,6 +1,6 @@
 import json
 
-from manspy.NLModules.ObjUnit import Word, Sentence, Text
+from manspy.unit import Word, Sentence, Text
 
 
 class ComplexEncoder(json.JSONEncoder):

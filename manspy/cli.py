@@ -4,7 +4,7 @@ import pprint
 import os.path
 
 from manspy import API, Settings
-from manspy.NLModules.ObjUnit import Unit
+from manspy.unit import Unit
 
 console_cur_dir = os.path.abspath('')
 

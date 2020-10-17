@@ -2,7 +2,7 @@
     https://mw.lojban.org/index.php?title=%D0%92%D0%BE%D0%BB%D0%BD%D1%8B_%D0%9B%D0%BE%D0%B6%D0%B1%D0%B0%D0%BD%D0%B0#.D0.92.D0.BE.D0.BB.D0.BD.D0.B0_2_.28FA_.D0.B8_zo.27e.29
 """
 import re
-from .. import ObjUnit
+from ... import unit
 
 vowels_low = "aeiouy"
 vowels_up = "AEIOUY"
@@ -33,7 +33,7 @@ def proccessEndWord(sword, word, symbols):
 def getGraphmathA(text):
     # Заменяем символы
     words = text.split()
-    words = [ObjUnit.Word(word) for word in words]
+    words = [unit.Word(word) for word in words]
 
     for word in words: define_type_symbol(word, all_symbols)
 
@@ -78,4 +78,4 @@ def getGraphmathA(text):
         text.append(sentence)
         #sentence_words['end'] = '.'
 
-    return ObjUnit.Text([ObjUnit.Sentence(sentence) for sentence in text])
+    return unit.Text([unit.Sentence(sentence) for sentence in text])

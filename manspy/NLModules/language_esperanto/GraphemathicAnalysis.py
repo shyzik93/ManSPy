@@ -5,7 +5,7 @@
     Благодаря чему морфологический модуль будет уже знать, где слово, а где - не слово..
 """
 import re
-from manspy.NLModules import ObjUnit
+from manspy import unit
 
 low_letters = u"ABCĈDEFGĜHĤIJĴKLMNOPRSŜTUŬVZ"
 up_letters =  u"abcĉdefgĝhĥijĵklmnoprsŝtuŭvz"
@@ -55,7 +55,7 @@ def process_words(text):
     # Заменяем символы
     for k, v in ReplacedLetters.items():
         text = text.replace(k, v)
-    words = [ObjUnit.Word(word) for word in text.split()]
+    words = [unit.Word(word) for word in text.split()]
 
     for word in words:
         define_type_symbol(word)
@@ -115,4 +115,4 @@ def getGraphmathA(source_string):
 
     # обработка слов, с небуквенными символами (email, url, file, etc)
 
-    return ObjUnit.Text([ObjUnit.Sentence(sentence) for sentence in text])
+    return unit.Text([unit.Sentence(sentence) for sentence in text])

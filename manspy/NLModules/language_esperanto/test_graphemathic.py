@@ -1,12 +1,12 @@
 import unittest
 
 from manspy.NLModules.language_esperanto import GraphemathicAnalysis
-from manspy.NLModules import ObjUnit
+from manspy import unit
 
 
 class TestGraphemathicalAnalysis(unittest.TestCase):
     def test_define_type_symbol(self):
-        word = ObjUnit.Word('montru')
+        word = unit.Word('montru')
         word(0, 'type', 'letter')
         word(1, 'type', 'letter')
         word(2, 'type', 'letter')
@@ -14,7 +14,7 @@ class TestGraphemathicalAnalysis(unittest.TestCase):
         word(4, 'type', 'letter')
         word(5, 'type', 'letter')
 
-        word_result = ObjUnit.Word('montru')
+        word_result = unit.Word('montru')
         result = GraphemathicAnalysis.define_type_symbol(word_result)
 
         message = 'define_type_symbol: "{}" must be "{}", not "{}"'
@@ -32,12 +32,12 @@ class TestGraphemathicalAnalysis(unittest.TestCase):
     def _test_process_end_of_word(self, source, word, end, end_orig):
         message = 'word:{} end:{} end_orig:{}'
 
-        word_ethalon = ObjUnit.Word(source)
+        word_ethalon = unit.Word(source)
         word_ethalon['word'] = word
         word_ethalon['end'] = end
         word_ethalon['end_orig'] = end_orig
 
-        word_result = ObjUnit.Word(source)
+        word_result = unit.Word(source)
         GraphemathicAnalysis.process_end_of_word(word_result)
         self.assertEqual(
             message.format(word_ethalon['word'], word_ethalon['end'], word_ethalon['end_orig']),
@@ -58,7 +58,7 @@ class TestGraphemathicalAnalysis(unittest.TestCase):
 
     def test_process_words(self):
         source_string = 'montru'
-        text_ethalon = [ObjUnit.Word('montru')]
+        text_ethalon = [unit.Word('montru')]
         text_ethalon[0]['end'] = ''
         text_ethalon[0]['end_orig'] = ''
         text_result = GraphemathicAnalysis.process_words(source_string)
@@ -66,7 +66,7 @@ class TestGraphemathicalAnalysis(unittest.TestCase):
         self.assertEqual(text_ethalon[0].unit_info, text_result[0].unit_info, source_string)
 
         source_string = 'montru ,, sxaltu'
-        text_ethalon = [ObjUnit.Word('montru'), ObjUnit.Word('ŝaltu')]
+        text_ethalon = [unit.Word('montru'), unit.Word('ŝaltu')]
         text_ethalon[0]['word'] = 'montru'
         text_ethalon[0]['end'] = ','
         text_ethalon[0]['end_orig'] = ',,'
@@ -82,7 +82,7 @@ class TestGraphemathicalAnalysis(unittest.TestCase):
         print()
 
         source_string = 'montru  "kurson"?!!!'
-        text_ethalon = [ObjUnit.Word('montru'), ObjUnit.Word('"kurson"?!!!')]
+        text_ethalon = [unit.Word('montru'), unit.Word('"kurson"?!!!')]
         text_ethalon[0]['word'] = 'montru'
         text_ethalon[0]['end'] = ''
         text_ethalon[0]['end_orig'] = ''
