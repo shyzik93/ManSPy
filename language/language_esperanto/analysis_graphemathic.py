@@ -14,7 +14,7 @@ punctuation_marks = u".,;:!?-'\""
 
 ReplacedLetters = {u'cx' :u'ĉ', u'gx': u'ĝ', u'hx': u'ĥ',
            u'jx': u'ĵ', u'sx': u'ŝ', u'ux': u'ŭ',
-           u'\t': u'', u'\n': u''}
+           u'\t': u'', u'\n': u' '}
 
 def define_type_symbol(word):
     """ Устанавливаем тип символа в слове """
@@ -66,7 +66,8 @@ def process_words(text):
         word = words[index]
         sword = word['word']
         if re.match(r'(?:[.]+)|(?:[,]+)|(?:[?!]+)|(?:[:]+)', sword):
-            if index: words[index-1]['word'] += sword
+            if index:
+                words[index-1]['word'] += sword
             del words[index]
             index -= 1
         index += 1
@@ -98,7 +99,7 @@ def separate_to_sentences(words):
     if len(sentence) > 0:
         text.append(sentence)
         #sentence_words['end'] = '.'
-    
+
     return text
 
 

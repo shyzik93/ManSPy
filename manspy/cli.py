@@ -48,7 +48,7 @@ class CLI:
 
     def cmd_exec(self, args):
         def write_text(text, settings, text_settings):
-            msg, results = self.api.write_text(args.text, self.settings, text_settings)
+            msg, results = self.api.write_text(text, settings, text_settings)
             if isinstance(results, Unit):
                 pprint.pprint(results.export_unit(ignore_units=dict))
             if isinstance(results, list):

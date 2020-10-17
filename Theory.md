@@ -101,7 +101,7 @@
 - `dolaran kurzon de rusia banko` - актант, его состояние равно `60`
 - `montru` - глагол 1-го типа, функция которого примет два числа: <span>`45`</span> и <span>`60`</span> в качестве аргументов. Их она и выведет.
 
-### [adciu kvardek kvin kaj dolaran kurzon de rusia banko](https://syeysk.ru/api/manspy/run_get?s=adciu%20kvardek%20kvin%20kaj%20dolaran%20kurzon%20de%20rusia%20banko)
+### [adiciu kvardek kvin kaj dolaran kurzon de rusia banko](https://syeysk.ru/api/manspy/run_get?s=adiciu%20kvardek%20kvin%20kaj%20dolaran%20kurzon%20de%20rusia%20banko)
 
 - `kvardek kvin` - актант, его состояние равно `45`
 - `dolaran kurzon de rusia banko` - актант, его состояние равно `60`
