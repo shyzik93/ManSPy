@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 
 try:
@@ -14,7 +13,7 @@ def get_long_description():
         import pypandoc
         return pypandoc.convert(path, 'rst')
     except(IOError, ImportError, RuntimeError):
-        with open(path, 'r') as f:
+        with open(path, 'r', encoding='utf-8') as f:
             return f.read()
 
 setup(
@@ -27,9 +26,8 @@ setup(
         'manspy',
         'manspy/fasif',
         'manspy/FCModule',
-        'manspy/NLModules',
-        'manspy/NLModules/language_esperanto',
         'manspy/utils',
+        'language/language_esperanto',
         'action',
         'interface',
         'logger',
