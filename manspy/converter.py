@@ -1,12 +1,51 @@
 import sys
 import copy
+import itertools
 
-from manspy import NLModules, lingvo_math
+from manspy import NLModules
 from manspy.fasif import finder
 from manspy.utils import importer
 
 not_to_db = ['nombr', 'cifer']
 
+
+def dproduct(dparentl):
+    """
+    Выполняет декартово (прямое) произведение над словарями в списке dparent1
+    В стандартной библиотеке Python я этой функции не нашёл.
+    Функция необходима для аргументных слов.
+    :param dparentl: {'a': [1,2], 'b': [5,6]}
+    :return: [{'a': 1, 'b':5}, {'a': 1, 'b':6}, {'a': 2, 'b':5}, {'a': 2, 'b':6}]
+    """
+    def _dproduct(resl, values, key):
+        """
+        [
+            (('a',1), ('b',5)),
+            (('a',1), ('b',6)),
+            (('a',2), ('b',5)),
+            (('a',2), ('b',6))
+        ]
+        """
+        n = len(values)
+        _resl = list(resl)
+        for i, el in enumerate(resl, 0):
+            for j in range(n - 1):
+                _resl.insert(i * n, dict(el))
+            for j in range(n):
+                _resl[j + n * i][key] = values[j]
+        return _resl
+    prevchildl = [{}]
+    for key, values in dparentl.items():
+        prevchildl = _dproduct(prevchildl, values, key)
+    return prevchildl
+
+def dproduct2(dparent1):
+    """ Второй вариант функции. TODO: Необходимо обе протестировать на скорость """
+    l = [([k], v) for k, v in dparent1.items()]
+    l = [[i for i in itertools.product(*subl)] for subl in l]
+    l = [i for i in itertools.product(*l)]
+    l = [dict(i) for i in l]
+    return l
 
 def is_in_hyperonym(hyperonyms, argvalue, R):
     for hyperonym in hyperonyms:
@@ -113,7 +152,7 @@ def Extraction2IL(R, settings, predicates, arguments):
         for argname, args in finded_args.items():
             finded_args[argname] = list(args)  # TODO: #UNIQ_ARGS Нужны ли нам дубли аргументов?
             #if fasif['argdescr'][argname]['args_as_list'] == 'l': finded_args[argname] = [finded_args[argname]]
-        finded_args = lingvo_math.dproduct(finded_args)
+        finded_args = dproduct(finded_args)
         finded_args = check_args(finded_args, fasif, R)
         with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
             flog.write('\n%s\n%s\n' % (str(finded_args), str(fasif['functions'])))
