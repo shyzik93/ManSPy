@@ -11,7 +11,6 @@ from manspy.utils.settings import Settings
 from manspy.utils import importer
 from manspy.message import Message
 from manspy.fasif.parser import FASIFParser
-from manspy import database_drivers
 
 
 class MainException(Exception):
@@ -19,21 +18,7 @@ class MainException(Exception):
 
 
 class API:
-    def set_current_dir(self, db_path=None):
-        if db_path is None:
-            db_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-        db_path = os.path.join(db_path, 'LOGS')
-        if not os.path.exists(db_path) or not os.path.isdir(db_path):
-            os.mkdir(db_path)
-        os.chdir(db_path)
-        return db_path
-
-    def init_interface(self, IF):
-        # TODO: Pycharm ругается, что `**IF.settings` - Expected a dictionary, got Settings
-        IF.settings = Settings(**IF.settings)
-        IF.init()
-
-    def __init__(self):
+    def __init__(self, current_work_dir=None):
         default_path_modules = os.path.dirname(os.path.dirname(__file__))
         self.paths_import = [
             ('language', os.path.join(default_path_modules, 'manspy', 'NLModules')),  # обязательно первые в списке
@@ -41,11 +26,17 @@ class API:
             ('action', os.path.join(default_path_modules, 'action')),
         ]
 
+        if current_work_dir is None:
+            current_work_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+            current_work_dir = os.path.join(current_work_dir, 'LOGS')
+        if not os.path.exists(current_work_dir) or not os.path.isdir(current_work_dir):
+            os.mkdir(current_work_dir)
+        os.chdir(current_work_dir)
+
         Settings.c, Settings.cu = importer.database(Settings.db_type)(Settings.db_settings[Settings.db_type])
 
         self.LangClass = LangClass()
         fasif_parser = FASIFParser(self.LangClass)
-        #self.action_importer.fsf2json()
         self.was_imported = {}
 
         for module_type, path_import in self.paths_import:

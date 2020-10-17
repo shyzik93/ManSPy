@@ -10,7 +10,7 @@ console_cur_dir = os.path.abspath('')
 
 READ = '\033[0;31m'
 NORM = '\033[0;0m'
-GREEN= '\033[0;32m'
+GREEN = '\033[0;32m'
 ORANGE = '\033[0;33m'
 
 
@@ -52,6 +52,8 @@ class CLI:
             if isinstance(results, Unit):
                 pprint.pprint(results.export_unit(ignore_units=dict))
             if isinstance(results, list):
+                if results:
+                    print('При выполнении возникли следующие ошибки:')
                 for result in results:
                     print(result)
 
@@ -74,37 +76,10 @@ class CLI:
             with open(filepath, 'r') as filef:
                 write_text(filef.read(), self.settings, text_settings)
 
-        '''if args.graph or args.morph or args.pmorph or args.synt:
-            e = res.export_unit()
-            print()
-            print('Properties of text:')
-            del e['unit_info']['max_index']
-            pprint.pprint(e['unit_info'])
-
-            for index, sentence in e['unit'].items():
-                print()
-                print('Properties of sentence:')
-                del sentence['unit_info']['max_index']
-                pprint.pprint(sentence['unit_info'])
-
-                for word in sentence['unit'].values():
-                    print()
-                    print('Properties of word:')
-                    del word['unit_info']['max_index'], word['unit_info']['type'], word['unit_info']['notword'], word['unit_info']['end_orig'], word['unit_info']['end_pmark'], word['unit_info']['start_pmark']
-                    pprint.pprint(word['unit_info'])
-            #pprint.pprint(res)
-        elif args.extract:
-            pass
-        elif args.convert:
-            for index, sentence_ils in res.items():
-                print()
-                for sentence_il in sentence_ils:
-                    print(sentence_il)
-        else:
-            print(res)'''
-
 
 def do_cmd(args_list=None):
+
+    # TODO: добавить опцию `manspy --run-interfaces *` для параллельного запуска перечисленных интерфейсов
 
     with CLI() as cli:
 

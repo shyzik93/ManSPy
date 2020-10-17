@@ -13,13 +13,14 @@ def get_long_description():
         return pypandoc.convert(path, 'rst')
     except(IOError, ImportError, RuntimeError):
         with open(path, 'r') as f:
-        	return f.read()
+            return f.read()
 
 setup(
     name='manspy',
-    version='0.1.0',
+    version='0.1.1',
     license='LGPL-3.0',
     description='Management system',
+    # TODO: Написать тест на существолвание данных директорий
     packages=[
         'manspy',
         'manspy/fasif',
@@ -50,7 +51,7 @@ setup(
 		"Environment :: Console",
 		"Natural Language :: English",
         "Natural Language :: Esperanto",
-		"Programming Language :: Python :: 3.4",
+		"Programming Language :: Python :: 3.5",
 		"Topic :: Scientific/Engineering",
         "Topic :: Text Processing :: Linguistic"
     ]

@@ -8,7 +8,7 @@ from manspy.fasif.parser_fasif_word_combination import FASIF_WordCombination
 
 
 def remove_comments_and_separate_fasifs(fasif):
-    fasif = re.sub(r"#[^:].*", '', fasif)
+    fasif = re.sub(r'#[^:].*', '', fasif)
     fasif = fasif.split('\n')
     version = fasif.pop(0)  # для будущей совместимости версий, возможно.
     dict_assoc_types = {}
@@ -48,7 +48,7 @@ class FASIFParser:
 
         return dict_assoc_types
 
-    def parse(self, path_import,  language, settings):
+    def parse(self, path_import, language, settings):
         OR = ObjRelation(settings.c, settings.cu)
         fdb = finder.FasifDB(settings.c, settings.cu)
 
