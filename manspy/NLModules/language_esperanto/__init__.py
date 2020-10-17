@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
-from .GraphemathicAnalysis import getGraphmathA
-from .MorphologicalAnalysis import getMorphA
-from .PostMorphologicalAnalysis import getPostMorphA
-from .SyntacticAnalysis import getSyntA
+from .analysis_graphemathic import getGraphmathA
+from .analysis_morphological import getMorphA
+from .analysis_postmorphological import getPostMorphA
+from .analysis_syntax import getSyntA
 
 # Синтез предложения:
 # 1. Формируем анализы на основе ЯВ
