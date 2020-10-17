@@ -21,7 +21,7 @@ setup(
     version='0.1.1',
     license='LGPL-3.0',
     description='Management system',
-    # TODO: Написать тест на существолвание данных директорий
+    # TODO: Написать тест на существолвание данных директорий. Также проверять файлы из Manifest.in
     packages=[
         'manspy',
         'manspy/fasif',

@@ -1,3 +1,10 @@
+include Theory.md
 include README.md
 include LICENSE
 include test.sh
+include cli.py
+include test_cli.py
+include test_examples_from_doc.py
+include test_levels_execution.py
+include requirements.txt
+include text_example.txt
