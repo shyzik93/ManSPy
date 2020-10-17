@@ -179,7 +179,7 @@ def _getMorphA(word):
             defaultNoun(word_l, word)
         else: word['POSpeech'] = ''
 
-def getMorphA(sentences):
+def get_analysis(sentences):
     ''' Обёртка '''
     for index, sentence in sentences:
         for index, word in sentence:

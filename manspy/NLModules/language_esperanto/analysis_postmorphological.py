@@ -153,7 +153,7 @@ def runScript(sentence, names):
         func = globals()['process'+name]
         for index, word in sentence: func(word, sentence)
 
-def getPostMorphA(sentences):
+def get_analysis(sentences):
     ''' Обёртка '''
     for index, sentence in sentences:
         #TASK обстоятельства, выраженные существительным, обозначить как наречие

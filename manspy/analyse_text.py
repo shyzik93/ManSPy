@@ -55,13 +55,13 @@ class LangClass:
             t = time.time()
 
             if level == "graphmath":
-                sentences = lang_module.getGraphmathA(sentences)
+                sentences = lang_module.analysis_graphemathic.get_analysis(sentences)
             elif level == "morph":
-                sentences = lang_module.getMorphA(sentences)
+                sentences = lang_module.analysis_morphological.get_analysis(sentences)
             elif level == "postmorph":
-                sentences = lang_module.getPostMorphA(sentences)
+                sentences = lang_module.analysis_postmorphological.get_analysis(sentences)
             elif level == "synt":
-                sentences = lang_module.getSyntA(sentences)
+                sentences = lang_module.analysis_syntax.get_analysis(sentences)
             elif level == "extract":
                 sentences = extract(sentences, OR)
             elif level == "convert":

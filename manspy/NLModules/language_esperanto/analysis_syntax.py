@@ -145,7 +145,7 @@ def split_sentence(sentence):
     for first_index in first_indexes:
         _sentences.append(goThrowLinks(first_index, sentence))    
 
-def getSyntA(text):
+def get_analysis(text):
     for index, sentence in text:
         # определяет члены предложения
         for index, word in sentence: setMOSentence(word, sentence)

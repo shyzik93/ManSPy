@@ -1,8 +1,5 @@
-from .analysis_graphemathic import getGraphmathA
-from .analysis_morphological import getMorphA
-from .analysis_postmorphological import getPostMorphA
-from .analysis_syntax import getSyntA
+from . import analysis_graphemathic
+from . import analysis_morphological
+from . import analysis_postmorphological
+from . import analysis_syntax
 
-# Синтез предложения:
-# 1. Формируем анализы на основе ЯВ
-# 2. Синтезируем предложение
