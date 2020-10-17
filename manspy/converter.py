@@ -2,7 +2,7 @@ import sys
 import copy
 import itertools
 
-from manspy import NLModules
+from manspy.unit import Sentence
 from manspy.fasif import finder
 from manspy.utils import importer
 
@@ -138,7 +138,7 @@ def Extraction2IL(R, settings, predicates, arguments):
 
     # Вынимаем Фасиф
     for _argument in arguments:
-        argument = NLModules.ObjUnit.Sentence(_argument)
+        argument = Sentence(_argument)
         IL = copy.deepcopy(pattern_IL)
         res = get_fasif_wcomb(fdb, argument, R, predicate)
         if res is None:

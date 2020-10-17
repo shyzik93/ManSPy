@@ -1,5 +1,4 @@
-# -*- coding:utf-8 -*-
-'''
+"""
 Задача модуля - выдать все совпадения актантов с фасифами. Уточнение фасифа должно происходить в модуле конвертации.
 Созранение:
 1. Парсится ФАСИФ.
@@ -19,12 +18,10 @@
   2. Для определений - так же.
 
 На четвёртом шаге перед выполнением функций необходио сформировать внутренний язык. Функции выполнятся в модуле логики.
-
-'''
+"""
 
 import json
-from manspy import database_drivers
-from manspy import NLModules
+from manspy.unit import Sentence
 
 def compare_fasif_Verb(fasif, verb_base, finded_args, flog):
     if verb_base != fasif['verbs']: return False
@@ -73,10 +70,10 @@ def jumpToObient(sentence, indexWord, indexObient):
 
 def compare_fasif_WordCombination(fasif, argument, finded_args, flog):
     functions = fasif['functions']
-    _argument = NLModules.ObjUnit.Sentence(fasif['wcomb'])
+    _argument = Sentence(fasif['wcomb'])
     first_index = _argument.getIndexesOfFirstWords()
     if first_index: first_index = first_index[0] # однородные слова должны обработаться в следующем цикле
-    _argument_iter = NLModules.ObjUnit.Sentence(fasif['wcomb']).iterFromByIndex(first_index)
+    _argument_iter = Sentence(fasif['wcomb']).iterFromByIndex(first_index)
     #print _argument(first_index, 'word')
 
     first_index = argument.getIndexesOfFirstWords()
