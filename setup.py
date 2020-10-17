@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 import os
 
 try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
+
 
 def get_long_description():
     path = os.path.join(os.path.dirname(__file__), 'README.md')
