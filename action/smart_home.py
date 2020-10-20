@@ -95,7 +95,7 @@ def multiply(arg0, *a):
     if not a:
         yield 0
 
-    if _is_only_numbers(a):
+    elif _is_only_numbers(a):
 
         res = a.pop(0)
         if arg0['antonym']:
