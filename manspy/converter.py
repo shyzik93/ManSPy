@@ -39,6 +39,7 @@ def dproduct(dparentl):
         prevchildl = _dproduct(prevchildl, values, key)
     return prevchildl
 
+
 def dproduct2(dparent1):
     """ Второй вариант функции. TODO: Необходимо обе протестировать на скорость """
     l = [([k], v) for k, v in dparent1.items()]
@@ -46,6 +47,7 @@ def dproduct2(dparent1):
     l = [i for i in itertools.product(*l)]
     l = [dict(i) for i in l]
     return l
+
 
 def is_in_hyperonym(hyperonyms, argvalue, R):
     for hyperonym in hyperonyms:
@@ -88,29 +90,21 @@ def check_args(finded_args, fasif, R):
 
 def if_verb_in_fasif(fasif, id_group): # в фасифе можно сохранять список всех глаголов для всех назначений для уменьшения кол-ва вычислений
     for destination, data in fasif['functions'].items():
-        if id_group in data['verbs']: return data['function']
+        if id_group in data['verbs']:
+            return data['function']
 
-
-def get_fasif_wcomb(fdb, argument, R, verb):
-    compared_fasifs = fdb.getFASIF('WordCombination', argument)
-    if not compared_fasifs: return
-    else: id_fasif, data = list(compared_fasifs.items())[0] # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
-    finded_args, fasif = data
-
-    # Вынимаем функцию, ассоциированную с "глагол + словосочетание"
-    id_group = R.R.get_groups_by_word('synonym', 0, verb['base'], 'verb')[0]
-
-    isantonym = verb['antonym']
-    function = if_verb_in_fasif(fasif, id_group)
-    if function is None: # если глагол не найден, то пробуем антоним
-        verb_synonym_group_id = R.R.get_words_from_samegroup('antonym', 'verb', 'synonym', id_group)
-        id_antonym = id_group  #func(verb_synonym_group_id) # дописать
-        function = if_verb_in_fasif(fasif, id_antonym)
-        if function is not None:
-            isantonym = not isantonym
-
-    fasif['id'] = id_fasif
-    return finded_args, fasif, function, isantonym
+pattern_internal_sentence = {
+    'type_sentence': 'run',
+    'verb': {
+        'func_common': None,
+        'used_antonym': None,
+        'answer_type': None,
+    }, 'word_combinations': [{
+        'func_get_value': None,
+        'func_set_value': None,
+        'arguments': []
+    }]
+}
 
 
 def Extraction2IL(R, settings, predicates, arguments):
@@ -135,20 +129,45 @@ def Extraction2IL(R, settings, predicates, arguments):
     ILs = []
     predicate = list(predicates.values())[0]
     fasif_IL = {}
+    verb = {'func_common': None, 'used_antonym': False, 'answer_type': settings.answer_type}
+    word_combinations = []
+    external_sentence = {'type_sentence': None, 'verb': None, 'word_combinations': word_combinations}
 
     # Вынимаем Фасиф
     for _argument in arguments:
-        argument = Sentence(_argument)
-        IL = copy.deepcopy(pattern_IL)
-        res = get_fasif_wcomb(fdb, argument, R, predicate)
-        if res is None:
-            continue
-        finded_args, fasif, function, isantonym = res
-        #if 'antonym' in predicate and predicate['antonym'] != isantonym: IL['arg0']['antonym'] = True
-        IL['arg0']['antonym'] = isantonym
-        IL['arg0']['answer_type'] = settings.answer_type
 
-        # Вынимаем фасиф словосочетания  # здевсь же отсеиваем неподходящие фасифы (через continue)
+        argument = Sentence(_argument)
+        IL = copy.deepcopy(pattern_IL) # excess
+
+        # Вынимаем ФАСИФ словосочетания
+
+        compared_fasifs = fdb.getFASIF('WordCombination', argument)
+        if not compared_fasifs:
+            continue
+        id_fasif, data = list(compared_fasifs.items())[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
+        finded_args, fasif = data
+
+        # Ищем глагол в ФАСИФе словосочетания
+
+        # Вынимаем функцию, ассоциированную с "глагол + словосочетание"
+        id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')[0]
+
+        isantonym = predicate['antonym']
+        function = if_verb_in_fasif(fasif, id_group)
+        if function is None:  # если глагол не найден, то пробуем антоним
+            verb_synonym_group_id = R.R.get_words_from_samegroup('antonym', 'verb', 'synonym', id_group)
+            id_antonym = id_group  # func(verb_synonym_group_id) # дописать
+            function = if_verb_in_fasif(fasif, id_antonym)
+            if function is not None:
+                isantonym = not isantonym
+        verb['used_antonym'] = isantonym
+
+
+        #if 'antonym' in predicate and predicate['antonym'] != isantonym: IL['arg0']['antonym'] = True
+        IL['arg0']['antonym'] = isantonym   # excess
+        IL['arg0']['answer_type'] = settings.answer_type  # excess
+
+        # Вынимаем фасиф словосочетания  # здесь же отсеиваем неподходящие фасифы (через continue)
         for argname, args in finded_args.items():
             finded_args[argname] = list(args)  # TODO: #UNIQ_ARGS Нужны ли нам дубли аргументов?
             #if fasif['argdescr'][argname]['args_as_list'] == 'l': finded_args[argname] = [finded_args[argname]]
@@ -158,9 +177,10 @@ def Extraction2IL(R, settings, predicates, arguments):
             flog.write('\n%s\n%s\n' % (str(finded_args), str(fasif['functions'])))
 
         # добавляем аргументные слова в ВЯ
-        if fasif['id'] not in fasif_IL: fasif_IL[fasif['id']] = len(ILs) 
+        if id_fasif not in fasif_IL:
+            fasif_IL[id_fasif] = len(ILs)
         else:  # добавляем к уже существующему ВЯ для данного ФАСИФа
-            ILs[fasif_IL[fasif['id']]]['argument'].extend(finded_args)
+            ILs[fasif_IL[id_fasif]]['argument'].extend(finded_args)
             continue
         IL['argument'] = finded_args
         IL['action']['args_as_list'] = fasif['argdescr'][argname]['args_as_list']
