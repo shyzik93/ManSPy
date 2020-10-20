@@ -1,2 +1,4 @@
 lxml
 cssselect
+#future
+#eonums --install-option="--no-compile"
