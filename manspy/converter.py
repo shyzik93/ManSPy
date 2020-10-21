@@ -88,23 +88,10 @@ def check_args(finded_args, fasif, R):
     return checked_args
 
 
-def if_verb_in_fasif(fasif, id_group): # в фасифе можно сохранять список всех глаголов для всех назначений для уменьшения кол-ва вычислений
+def find_func_set_value(fasif, id_group): # в фасифе можно сохранять список всех глаголов для всех назначений для уменьшения кол-ва вычислений
     for destination, data in fasif['functions'].items():
         if id_group in data['verbs']:
             return data['function']
-
-pattern_internal_sentence = {
-    'type_sentence': 'run',
-    'verb': {
-        'func_common': None,
-        'used_antonym': None,
-        'answer_type': None,
-    }, 'word_combinations': [{
-        'func_get_value': None,
-        'func_set_value': None,
-        'arguments': []
-    }]
-}
 
 
 def Extraction2IL(R, settings, predicates, arguments):
@@ -130,14 +117,28 @@ def Extraction2IL(R, settings, predicates, arguments):
     predicate = list(predicates.values())[0]
     fasif_IL = {}
     verb = {'func_common': None, 'used_antonym': False, 'answer_type': settings.answer_type}
-    word_combinations = []
-    external_sentence = {'type_sentence': None, 'verb': None, 'word_combinations': word_combinations}
+    internal_sentence = {'type_sentence': 'fact', 'verb': verb, 'word_combinations': []}
+
+    # определяем тип предложения
+
+    if predicate['mood'] == 'imperative':
+        internal_sentence['type_sentence'] = 'run'
+
+    #  Выимаем ФАСИФ глагола
+
+    id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')[0]
+    compared_fasifs = fdb.getFASIF('Verb', id_group)
+    if compared_fasifs:
+        verb['func_common'] = importer.action(list(compared_fasifs.values())[0][0][0])
+    else:
+        # TODO: проверить антоним (), как для функции изменения состояния
+        pass
 
     # Вынимаем Фасиф
     for _argument in arguments:
 
         argument = Sentence(_argument)
-        IL = copy.deepcopy(pattern_IL) # excess
+        IL = copy.deepcopy(pattern_IL)  # excess
 
         # Вынимаем ФАСИФ словосочетания
 
@@ -147,24 +148,29 @@ def Extraction2IL(R, settings, predicates, arguments):
         id_fasif, data = list(compared_fasifs.items())[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
         finded_args, fasif = data
 
-        # Ищем глагол в ФАСИФе словосочетания
+        # Вынимаем функцию получения/изменения состояния.
 
-        # Вынимаем функцию, ассоциированную с "глагол + словосочетание"
         id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')[0]
 
-        isantonym = predicate['antonym']
-        function = if_verb_in_fasif(fasif, id_group)
-        if function is None:  # если глагол не найден, то пробуем антоним
+        verb['used_antonym'] = predicate['antonym']
+        func_get_value = fasif['functions']['getCondition']['function'] if 'getCondition' in fasif['functions'] else None
+        func_set_value = find_func_set_value(fasif, id_group)
+        if func_set_value is None:  # если глагол не найден, то пробуем антоним
+            # TODO: добавить антонимы для примера через глагол-связку. Здесь затем искать по id группы антонимов
             verb_synonym_group_id = R.R.get_words_from_samegroup('antonym', 'verb', 'synonym', id_group)
-            id_antonym = id_group  # func(verb_synonym_group_id) # дописать
-            function = if_verb_in_fasif(fasif, id_antonym)
-            if function is not None:
-                isantonym = not isantonym
-        verb['used_antonym'] = isantonym
+            id_antonym = id_group
+            func_set_value = find_func_set_value(fasif, id_antonym)
+            if func_set_value:
+                verb['used_antonym'] = not verb['used_antonym']
+        word_combination = {
+            'func_get_value': importer.action(func_get_value) if func_get_value else None,
+            'func_set_value': importer.action(func_set_value) if func_set_value else None,
+            'arguments': [],
+        }
 
 
         #if 'antonym' in predicate and predicate['antonym'] != isantonym: IL['arg0']['antonym'] = True
-        IL['arg0']['antonym'] = isantonym   # excess
+        IL['arg0']['antonym'] = verb['used_antonym']   # excess
         IL['arg0']['answer_type'] = settings.answer_type  # excess
 
         # Вынимаем фасиф словосочетания  # здесь же отсеиваем неподходящие фасифы (через continue)
@@ -185,28 +191,30 @@ def Extraction2IL(R, settings, predicates, arguments):
         IL['argument'] = finded_args
         IL['action']['args_as_list'] = fasif['argdescr'][argname]['args_as_list']
 
-        if function: # если найдена функция, ассоциированная "глагол + словосочетание"
-            IL['action']['wcomb_verb_function'] = importer.action(function)
+        if func_set_value:  # если найдена функция, ассоциированная "глагол + словосочетание"
+            IL['action']['wcomb_verb_function'] = importer.action(func_set_value)  # excess
         else:  # иначе вынимаем функцию, ассоциированную с словосочетанием
-            function = fasif['functions']['getCondition']['function']
-            IL['action']['wcomb_function'] = importer.action(function)
-            id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')[0]
-            compared_fasifs = fdb.getFASIF('Verb', id_group)
-            if not compared_fasifs:
-                sys.stderr.write('FASIF was not finded! Argument (word combination) is "'+str(argument)+'"')
-                continue
-            if not compared_fasifs: sys.stderr.write('Fasif for "%s" wasn\'t found!' % predicate['base'])
-            # затем вынимаем общую функцию, ассоциированую с глаголом
-            IL['action']['common_verb_function'] = importer.action(list(compared_fasifs.values())[0][0][0])
+            func_set_value = fasif['functions']['getCondition']['function']  # excess
+            IL['action']['wcomb_function'] = importer.action(func_set_value)  # excess
+            id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')[0]  # excess
+            compared_fasifs = fdb.getFASIF('Verb', id_group)  # excess
+            if not compared_fasifs:  # excess
+                sys.stderr.write('FASIF was not finded! Argument (word combination) is "'+str(argument)+'"')  # excess
+                continue  # excess
+            if not compared_fasifs:  # excess
+                sys.stderr.write('Fasif for "%s" wasn\'t found!' % predicate['base'])  # excess
+            # затем вынимаем общую функцию, ассоциированую с глаголом  # excess
+            IL['action']['common_verb_function'] = importer.action(list(compared_fasifs.values())[0][0][0])  # excess
 
         with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
             flog.write('\npraIL: %s\n' % str(IL))
 
-        IL['action']['mood'] = predicate['mood']
-        ILs.append(IL)
+        IL['action']['mood'] = predicate['mood']  # excess
+        ILs.append(IL)  # excess
         #fwcomb = to_formule.to_formule(argument, False)
         #print x, fdb.get_hashWComb(fwcomb)
-    return ILs
+        internal_sentence['word_combinations'].append(word_combination)
+    return ILs, internal_sentence  # excess
 
 
 def convert(sentences, OR, settings):

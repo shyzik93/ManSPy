@@ -57,8 +57,19 @@ def LogicKernel(ILs, to_IF):
         to_IF(r_text)
 
 
+def run_internal_sentence(internal_sentence):
+    if internal_sentence['type_sentence'] == 'run':
+        pass
+    elif internal_sentence['type_sentence'] == 'fact':
+        pass
+    elif internal_sentence['type_sentence'] == 'construction':
+        pass
+
+
 def execIL(ils, to_IF):
     for index_sentence, ILs in ils.items():   # TODO: msg.ils должен содержать только внутренние предложения, не списки с предложениями
+        ILs, internal_sentence = ILs
         if ILs:
             LogicKernel(ILs, to_IF)
+        run_internal_sentence(internal_sentence)
     return []
