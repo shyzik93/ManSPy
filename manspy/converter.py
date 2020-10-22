@@ -96,26 +96,7 @@ def find_func_set_value(fasif, id_group): # в фасифе можно сохр�
 
 def Extraction2IL(R, settings, predicates, arguments):
     fdb = finder.FasifDB(settings.c, settings.cu)
-    pattern_IL = {
-        'arg0': {  # передаётся первым аргументом в каждую функцию
-            'antonym': False,
-            'answer_type': None,
-        },
-        'action': {
-          'wcomb_function': None,      # функция, ассоциированная со словосочетанием. Ей передаются аргументные слова
-          'common_verb_function': None,# функция, ассоциированная с глаголом. Её аргументы - возвращаемые значения предыдущей функции.
-          'wcomb_verb_function': None, # функция, ассоциированная со связкой "словосочетание + глагол". Она принимает аргументные слова.
-          'mood': '',
-          'circumstance': '',
-          'type circumstance': ''
-          },
-        'argument': [],
-        'subject': None,
-        'error_convert': {'function':[], 'argument':[]}
-    }
-    ILs = []
     predicate = list(predicates.values())[0]
-    fasif_IL = {}
     verb = {'func_common': None, 'used_antonym': False, 'answer_type': settings.answer_type}
     internal_sentence = {'type_sentence': 'fact', 'verb': verb, 'word_combinations': []}
 
@@ -136,9 +117,7 @@ def Extraction2IL(R, settings, predicates, arguments):
 
     # Вынимаем Фасиф
     for _argument in arguments:
-
         argument = Sentence(_argument)
-        IL = copy.deepcopy(pattern_IL)  # excess
 
         # Вынимаем ФАСИФ словосочетания
 
@@ -169,11 +148,10 @@ def Extraction2IL(R, settings, predicates, arguments):
         }
 
         #if 'antonym' in predicate and predicate['antonym'] != isantonym: IL['arg0']['antonym'] = True
-        IL['arg0']['antonym'] = verb['used_antonym']   # excess
-        IL['arg0']['answer_type'] = settings.answer_type  # excess
 
         # Вынимаем фасиф словосочетания  # здесь же отсеиваем неподходящие фасифы (через continue)
         for argname, args in finded_args.items():
+            print(argname)
             finded_args[argname] = list(args)  # TODO: #UNIQ_ARGS Нужны ли нам дубли аргументов?
             #if fasif['argdescr'][argname]['args_as_list'] == 'l': finded_args[argname] = [finded_args[argname]]
         finded_args = dproduct(finded_args)
@@ -181,41 +159,18 @@ def Extraction2IL(R, settings, predicates, arguments):
         with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:  # excess
             flog.write('\n%s\n%s\n' % (str(finded_args), str(fasif['functions']))) # exxcess
 
-        # добавляем аргументные слова в ВЯ
-        if id_fasif not in fasif_IL:
-            fasif_IL[id_fasif] = len(ILs)
-        else:  # добавляем к уже существующему ВЯ для данного ФАСИФа
-            ILs[fasif_IL[id_fasif]]['argument'].extend(finded_args)
-            continue
         word_combination['arguments'] = finded_args
         word_combination['how_put_args'] = fasif['argdescr'][argname]['args_as_list']
-        IL['argument'] = finded_args  # excess
-        IL['action']['args_as_list'] = fasif['argdescr'][argname]['args_as_list']  # excess
 
-        if func_set_value:  # если найдена функция, ассоциированная "глагол + словосочетание"
-            IL['action']['wcomb_verb_function'] = importer.action(func_set_value)  # excess
-        else:  # иначе вынимаем функцию, ассоциированную с словосочетанием
-            func_set_value = fasif['functions']['getCondition']['function']  # excess
-            IL['action']['wcomb_function'] = importer.action(func_set_value)  # excess
-            id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')[0]  # excess
-            compared_fasifs = fdb.getFASIF('Verb', id_group)  # excess
-            if not compared_fasifs:  # excess
-                sys.stderr.write('FASIF was not finded! Argument (word combination) is "'+str(argument)+'"')  # excess
-                continue  # excess
-            if not compared_fasifs:  # excess
-                sys.stderr.write('Fasif for "%s" wasn\'t found!' % predicate['base'])  # excess
-            # затем вынимаем общую функцию, ассоциированую с глаголом  # excess
-            IL['action']['common_verb_function'] = importer.action(list(compared_fasifs.values())[0][0][0])  # excess
 
-        with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
-            flog.write('\npraIL: %s\n' % str(IL))
-
-        IL['action']['mood'] = predicate['mood']  # excess
-        ILs.append(IL)  # excess
         #fwcomb = to_formule.to_formule(argument, False)
         #print x, fdb.get_hashWComb(fwcomb)
         internal_sentence['word_combinations'].append(word_combination)
-    return ILs, internal_sentence  # excess
+
+    with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
+        flog.write('\npraIL: %s\n' % str(internal_sentence))
+
+    return internal_sentence  # excess
 
 
 def convert(sentences, OR, settings):
