@@ -168,7 +168,6 @@ def Extraction2IL(R, settings, predicates, arguments):
             'arguments': [],
         }
 
-
         #if 'antonym' in predicate and predicate['antonym'] != isantonym: IL['arg0']['antonym'] = True
         IL['arg0']['antonym'] = verb['used_antonym']   # excess
         IL['arg0']['answer_type'] = settings.answer_type  # excess
@@ -179,8 +178,8 @@ def Extraction2IL(R, settings, predicates, arguments):
             #if fasif['argdescr'][argname]['args_as_list'] == 'l': finded_args[argname] = [finded_args[argname]]
         finded_args = dproduct(finded_args)
         finded_args = check_args(finded_args, fasif, R)
-        with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
-            flog.write('\n%s\n%s\n' % (str(finded_args), str(fasif['functions'])))
+        with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:  # excess
+            flog.write('\n%s\n%s\n' % (str(finded_args), str(fasif['functions']))) # exxcess
 
         # добавляем аргументные слова в ВЯ
         if id_fasif not in fasif_IL:
@@ -188,8 +187,10 @@ def Extraction2IL(R, settings, predicates, arguments):
         else:  # добавляем к уже существующему ВЯ для данного ФАСИФа
             ILs[fasif_IL[id_fasif]]['argument'].extend(finded_args)
             continue
-        IL['argument'] = finded_args
-        IL['action']['args_as_list'] = fasif['argdescr'][argname]['args_as_list']
+        word_combination['arguments'] = finded_args
+        word_combination['how_put_args'] = fasif['argdescr'][argname]['args_as_list']
+        IL['argument'] = finded_args  # excess
+        IL['action']['args_as_list'] = fasif['argdescr'][argname]['args_as_list']  # excess
 
         if func_set_value:  # если найдена функция, ассоциированная "глагол + словосочетание"
             IL['action']['wcomb_verb_function'] = importer.action(func_set_value)  # excess

@@ -50,7 +50,7 @@ def showAddress(arg0, device):
             yield FAKE[device]
 
 
-def printToIF(arg0, *conditions):
+def printToIF(arg0, conditions):
     for condition in conditions:
         yield condition
 
@@ -63,7 +63,7 @@ def _is_only_numbers(numbers):
             return False
     return True
 
-def add(arg0, *a):
+def add(arg0, a):
     ''' Сложение '''
     a = list(a)
 
@@ -88,7 +88,7 @@ def add(arg0, *a):
             yield ' - '.join(a)
         yield ' + '.join(a)
 
-def multiply(arg0, *a):
+def multiply(arg0, a):
     """ Умножение """
     a = list(a)
 
