@@ -23,7 +23,7 @@ def run_wcomb_function(internal_sentence, arg0):
                     yield r_text
 
 
-def exec_internal_sentence(internal_sentence):
+def execute_internal_sentence(internal_sentence):
     """
     Выполняет внутренние предложения.
 
@@ -52,7 +52,7 @@ def exec_internal_sentence(internal_sentence):
         pass
 
 
-def execIL(ils, to_IF):
+def execute_internal_sentences(ils, to_IF):
     """
     Выполняет поочерёдно внутренние предложения в тексте, если есть условия и наречия - обусловленно.
     :param ils:
@@ -60,7 +60,7 @@ def execIL(ils, to_IF):
     :return:
     """
     for index_sentence, internal_sentence in ils.items():   # TODO: msg.ils должен содержать только внутренние предложения, не списки с предложениями
-        gen_r_texts = exec_internal_sentence(internal_sentence)
+        gen_r_texts = execute_internal_sentence(internal_sentence)
         for r_text in gen_r_texts:
             to_IF(r_text)
     return []

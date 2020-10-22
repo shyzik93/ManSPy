@@ -2,7 +2,7 @@ import time
 from manspy.relation import ObjRelation
 from manspy.extractor import extract
 from manspy.converter import convert
-from manspy.FCModule import execIL
+from manspy.FCModule import execute_internal_sentences
 
 
 class LangClass:
@@ -67,7 +67,7 @@ class LangClass:
             elif level == "convert":
                 sentences = convert(sentences, OR, settings)
             elif level == "exec":
-                sentences = execIL(sentences, msg.to_IF)  # возвращает ошибки выполнения
+                sentences = execute_internal_sentences(sentences, msg.to_IF)
 
             if msg:
                 msg.after_analysis(level, sentences)
