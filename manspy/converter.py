@@ -151,7 +151,6 @@ def Extraction2IL(R, settings, predicates, arguments):
 
         # Вынимаем фасиф словосочетания  # здесь же отсеиваем неподходящие фасифы (через continue)
         for argname, args in finded_args.items():
-            print(argname)
             finded_args[argname] = list(args)  # TODO: #UNIQ_ARGS Нужны ли нам дубли аргументов?
             #if fasif['argdescr'][argname]['args_as_list'] == 'l': finded_args[argname] = [finded_args[argname]]
         finded_args = dproduct(finded_args)
