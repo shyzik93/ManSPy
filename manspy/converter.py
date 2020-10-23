@@ -159,7 +159,7 @@ def Extraction2IL(R, settings, predicates, arguments):
             flog.write('\n%s\n%s\n' % (str(finded_args), str(fasif['functions']))) # exxcess
 
         word_combination['arguments'] = finded_args
-        word_combination['how_put_args'] = fasif['argdescr'][argname]['args_as_list'] # TODO: как правильно взять argname?
+        word_combination['how_put_args'] = fasif['args_as_list']
 
 
         #fwcomb = to_formule.to_formule(argument, False)

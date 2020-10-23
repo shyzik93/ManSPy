@@ -44,11 +44,11 @@ class FASIF_WordCombination(FASIF):
             elif re.findall(STRING_ARGUMENT_TITLE1, string):
                 string = string.split(';')
                 arg_name, isreq = string.pop(0).split()
+                args_as_list = False
 
-                if len(isreq)==2:
+                if len(isreq) == 2:
                     args_as_list = isreq[1]
                     isreq = isreq[0]
-                else: args_as_list = None
 
                 lang_indexes = []
                 args[arg_name] = {'isreq': isreq, 'args_as_list': args_as_list, 'argtable': {}, 'argwords': {}}
@@ -60,11 +60,11 @@ class FASIF_WordCombination(FASIF):
                 #print '3 $$$$', string
             elif re.findall(STRING_ARGUMENT_TITLE2, string):
                 arg_name, isreq = string.split()
+                args_as_list = False
 
-                if len(isreq)==2:
+                if len(isreq) == 2:
                     args_as_list = isreq[1]
                     isreq = isreq[0]
-                else: args_as_list = None
 
                 args[arg_name] = {'isreq': isreq, 'args_as_list': args_as_list, 'argtable': {}, 'argwords': {}}
                 arg_indexes.append(arg_name)
@@ -161,7 +161,16 @@ class FASIF_WordCombination(FASIF):
         for argname, data in fasif['args'].items():
             argword = data['argwords']['in_wcomb']['name']
             wcomb.chmanyByValues({'argname':argname}, setstring='subiv:noignore', base=argword['base'], case=argword['case'])
-            fasif['argdescr'][argname] = {'isreq':data['isreq'], 'args_as_list':data['args_as_list'], 'argtable':data['argtable'], 'argwords_another':data['argwords']['another'], 'hyperonyms':data['argwords']['in_wcomb']['hyperonyms']}
+            fasif['argdescr'][argname] = {
+                'isreq': data['isreq'],
+                'argtable': data['argtable'],
+                'argwords_another': data['argwords']['another'],
+                'hyperonyms': data['argwords']['in_wcomb']['hyperonyms']
+            }
+            if len(fasif['args']) == 1:  # а при числе аргументов более 1 мы их передаём только как именованные
+                fasif['args_as_list'] = data['args_as_list']
+            else:
+                fasif['args_as_list'] = False
         del fasif['args']
 
         fasif['wcomb'] = wcomb.getUnit('dict')
