@@ -1,9 +1,14 @@
+from manspy.message import Message
+
+
 class FASIF:
+
     def __init__(self, lang_class):
         self.LangClass = lang_class
 
     def get_dword(self, word, settings):
-        text = self.LangClass.NL2IL(word, settings, {'levels': ':postmorph', 'print_time': False})
+        message = Message(settings, {'levels': ':postmorph', 'print_time': False}, word, 'W')
+        text = self.LangClass.NL2IL(message)
         return list(text(0).getUnit('dict').values())[0]
 
     def proccess_argword(self, argwords, settings):

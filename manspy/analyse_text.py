@@ -21,37 +21,31 @@ class LangClass:
             return level, level
         return levels
 
-    def NL2IL(self, msg, settings=None, text_settings=None):
+    def NL2IL(self, msg):
         """ Второй аргумент - диапазон конвертирования от первого до последнего
             включительно через пробел. Если требуется сделать лишь один уровень,
             то можно указать только одно слово. Если указан только 'convert',
             то в качестве первого аргумента передаётся список извлечений."""
 
-        if settings is None:
-            settings = msg.settings
-            sentences = msg.w_text
-            text_settings = msg.text_settings
-        else:
-            sentences = msg
-            msg = None
+        sentences = msg.w_text
 
-        if text_settings['print_time']:
+        if msg.text_settings['print_time']:
             print('\n---------------------------------------')
             print('----', sentences)
             print('---------------------------------------')
         t1 = time.time()
 
-        if msg:
-            msg.before_analyzes()
+        msg.before_analyzes()
 
-        OR = ObjRelation(settings.c, settings.cu) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
-        lang_module = settings.modules['language'][settings.language]
-        start_level, end_level = self.parse_level_string(text_settings['levels'])
+        OR = ObjRelation(msg.settings.c, msg.settings.cu) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован
+        lang_module = msg.settings.modules['language'].get(msg.settings.language)
+        if lang_module is None:
+            print('Языковой модуль "{}" не был импортирован. Анализ невозможен.'.format(msg.settings.language))
+            return []
+        start_level, end_level = self.parse_level_string(msg.text_settings['levels'])
 
         for level in self.levels[self.levels.index(start_level) : self.levels.index(end_level)+1]:
-            if msg:
-                msg.before_analysis(level)
-
+            msg.before_analysis(level)
             t = time.time()
 
             if level == "graphmath":
@@ -65,19 +59,17 @@ class LangClass:
             elif level == "extract":
                 sentences = extract(sentences, OR)
             elif level == "convert":
-                sentences = convert(sentences, OR, settings)
+                sentences = convert(sentences, OR, msg.settings)
             elif level == "exec":
                 sentences = execute_internal_sentences(sentences, msg.to_IF)
 
-            if msg:
-                msg.after_analysis(level, sentences)
-            if text_settings['print_time']:
+            msg.after_analysis(level, sentences)
+            if msg.text_settings['print_time']:
                 print('   '+level.rjust(9)+': ', time.time()-t)
 
         time_total = time.time()-t1
-        if msg:
-            msg.time_total = time_total
-        if text_settings['print_time']:
+        msg.time_total = time_total
+        if msg.text_settings['print_time']:
             print('       Total: ', time_total)
         return sentences
 

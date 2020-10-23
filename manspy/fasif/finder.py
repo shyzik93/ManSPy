@@ -23,10 +23,13 @@
 import json
 from manspy.unit import Sentence
 
+
 def compare_fasif_Verb(fasif, verb_base, finded_args, flog):
-    if verb_base != fasif['verbs']: return False
+    if verb_base != fasif['verbs']:
+        return False
     finded_args[0] = fasif['function']
     return True
+
 
 def count_wordargs(constwordexample, fasif):
     req = noreq = 0
@@ -35,6 +38,7 @@ def count_wordargs(constwordexample, fasif):
         if fasif['argdescr'][feature['argname']]['isreq']: req += 1
         else: noreq += 1
     return req, noreq
+
 
 def compare_word(word, index, argument, argworddescr, finded_args, flog):
     if word['MOSentence'] in ['direct supplement', 'supplement', 'subject']:
@@ -61,12 +65,14 @@ def compare_word(word, index, argument, argworddescr, finded_args, flog):
         finded_args[argworddescr['argname']].append(argvalue)  # TODO: #UNIQ_ARGS Нужны ли нам дубли аргументов?
     return True
 
+
 def jumpToObient(sentence, indexWord, indexObient):
     indexes = sentence.getObient(indexWord)
     if indexes:
         sentence.jumpByIndex(indexes[indexObient])
         sentence.jumpByStep(-1)
     return True if indexes else False
+
 
 def compare_fasif_WordCombination(fasif, argument, finded_args, flog):
     functions = fasif['functions']
@@ -127,8 +133,11 @@ class FasifDB():
         fasif = json.loads(fasif)
         finded_args = {}
         self.flog.write('\n')
-        if type_fasif == 'WordCombination': isright = compare_fasif_WordCombination(fasif, self.argument, finded_args, self.flog)
-        if type_fasif == 'Verb': isright = compare_fasif_Verb(fasif, self.argument, finded_args, self.flog)
+        isright = False
+        if type_fasif == 'WordCombination':
+            isright = compare_fasif_WordCombination(fasif, self.argument, finded_args, self.flog)
+        elif type_fasif == 'Verb':
+            isright = compare_fasif_Verb(fasif, self.argument, finded_args, self.flog)
         if isright:
             self.compared_fasifs[id_fasif] = (finded_args, fasif)
         return 1 if isright else 0
@@ -140,6 +149,7 @@ class FasifDB():
             CREATE TABLE IF NOT EXISTS fasifs (
                 id_fasif INTEGER PRIMARY KEY AUTOINCREMENT,
                 type_fasif TEXT,
+                --language VARCHAR(30),
                 fasif TEXT UNIQUE ON CONFLICT IGNORE); ''')
 
     def safeFASIF(self, _type, fasif):

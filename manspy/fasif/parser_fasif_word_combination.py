@@ -3,6 +3,7 @@ import os
 
 from manspy.fasif.parser_fasif import FASIF
 from manspy.fasif.constants import *
+from manspy.message import Message
 
 
 class FASIF_WordCombination(FASIF):
@@ -156,7 +157,8 @@ class FASIF_WordCombination(FASIF):
                 value['verbs'][index] = OR.setRelation('synonym', self.get_dword(word_verb, settings)['base'])
 
         #print '----------------- to formule start'
-        wcomb = self.LangClass.NL2IL(fasif['wcomb'], settings, {'levels':':synt', 'print_time':False})(0)
+        message = Message(settings, {'levels':':synt', 'print_time':False}, fasif['wcomb'], 'W')
+        wcomb = self.LangClass.NL2IL(message)(0)
         fasif['argdescr'] = {}
         for argname, data in fasif['args'].items():
             argword = data['argwords']['in_wcomb']['name']
