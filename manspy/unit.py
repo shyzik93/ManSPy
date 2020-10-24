@@ -48,7 +48,7 @@ class Unit:
         для предложения - это слова, для слов - это символы"""
 
     def __init__(self, subunits=None, unit_info=None):
-        self.unit_info = {'max_index': -1}
+        self.unit_info = {'max_index': -1, 'index': None}
         self.subunit_info = {}
         self.full_info = {'unit_info': self.unit_info, 'unit': self.subunit_info}
 
@@ -57,8 +57,10 @@ class Unit:
 
         self.subunits_copy = {}
 
-        if unit_info: self.unit_info.update(unit_info)
-        if subunits: self.load_subunits(subunits)
+        if unit_info:
+            self.unit_info.update(unit_info)
+        if subunits:
+            self.load_subunits(subunits)
 
     def import_unit(self, data):
 
@@ -106,10 +108,13 @@ class Unit:
         return data
 
     def load_subunits(self, subunits):
-        """ Загружает подъюниты из списка """
+        """
+        Загружает подъюниты из списка либо словаря.
+        Словарь обычно используется при добавлении подъюнитов экспортированного юнита
+        """
         self.unit_info['max_index'] = len(subunits) - 1
 
-        if isinstance(subunits, list): iterator = enumerate(subunits)
+        """if isinstance(subunits, list): iterator = enumerate(subunits)
         elif isinstance(subunits, dict): iterator = subunits.items() # нерекомендаовано
 
         for index, subunit in iterator:
@@ -117,24 +122,20 @@ class Unit:
                 index = int(index)  # только для словаря
             if isinstance(subunit, dict) and isinstance(index, int):
                 subunit['index'] = index
-            self.subunit_info[index] = subunit
+            self.subunit_info[index] = subunit"""
 
-        """if isinstance(subunits, list):
+        if isinstance(subunits, list):
 
             for index, subunit in enumerate(subunits):
-                if isinstance(subunit, dict):
-                    subunit['index'] = index
+                subunit['index'] = index
                 self.subunit_info[index] = subunit
 
         elif isinstance(subunits, dict):
 
             for index, subunit in subunits.items():
-                if isinstance(index, str) and index.isdecimal():
-                    index = int(index)
-                if isinstance(subunit, dict) and isinstance(index, int):
-                    subunit['index'] = index
-                self.subunit_info[index] = subunit"""
-
+                index = index if isinstance(index, int) else int(index)
+                subunit['index'] = index
+                self.subunit_info[index] = subunit
 
         self.keys = list(self.subunit_info.keys())
         self.subunits_copy = self.subunit_info.copy() # делаем неглубокую копию исходного предложения.
@@ -177,32 +178,45 @@ class Unit:
             yield index, self.subunit_info[index]
             self.position += 1
         self.position = 0
+
     def iterFromByStep(self, step=0):
-        position = self.position+step if step!=None else 0
+        position = self.position + step if step != None else 0
         return self.__iter__(position)
+
     def iterFromByIndex(self, index):
         position = list(self.keys).index(index)
         return self.__iter__(position)
-    def jumpByStep(self, step=1): self.position += step # аналог next() 
-    def jumpByIndex(self, index):self.position = self.keys.index(index)
+
+    def jumpByStep(self, step=1):
+        self.position += step  # аналог next()
+
+    def jumpByIndex(self, index):
+        self.position = self.keys.index(index)
+
     def delByStep(self, count=1, step=0, jump_step=-1):
         for c in range(count):
             del self.subunit_info[self.keys[self.position+step]]
         self.keys = list(self.subunit_info.keys())
         self.position += jump_step
+
     def delByPos(self, position):
         del self.subunit_info[self.keys[position]]
         self.keys = list(self.subunit_info.keys())
+
     def delByIndex(self, *indexes):
         for index in indexes:
             del self.subunit_info[index]
         self.keys = list(self.subunit_info.keys())
+
     def getByStep(self, step=0, name=None, value=None):
         return self.__call__(self.keys[self.position+step], name, value)
+
     def getByPos(self, position, name=None, value=None):
         return self.__call__(self.keys[position], name, value)
       #return self.subunit_info[self.keys[position]]
-    def currentIndex(self,step=0):return self.keys[self.position+step] # derpricated
+
+    def currentIndex(self,step=0):
+        return self.keys[self.position+step]  # derpricated
 
     # Текущая позиция
     def isOutLeft(self, step=0):  return self.position+step <  0

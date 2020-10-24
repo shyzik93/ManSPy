@@ -3,6 +3,8 @@ import json
 import sqlite3 as sql
 
 from manspy import unit
+from manspy.api import API
+from manspy.utils.settings import Settings
 from manspy.utils.beautifull_repr_data import (
     HTML_HEADER,
     HTML_FOOTER,
@@ -10,11 +12,13 @@ from manspy.utils.beautifull_repr_data import (
     make_dialog_html_line
 )
 
-c = sql.connect('../DATA_BASE/esperanto/main_data.db')
-c.row_factory = sql.Row
-cu = c.cursor()
+api = API()
+c, cu = Settings.c, Settings.cu
+#c = sql.connect('../LOGS/esperanto/main_data.db')
+#c.row_factory = sql.Row
+#cu = c.cursor()
 
-with open('../DATA_BASE/esperanto/history.html', 'w', encoding='utf-8') as f:
+with open('history.html', 'w', encoding='utf-8') as f:
 
     f.write(HTML_HEADER)
 
@@ -25,6 +29,8 @@ with open('../DATA_BASE/esperanto/history.html', 'w', encoding='utf-8') as f:
 
         if row['direction'] == 'W':
 
+            if not row['a_synt']:
+                continue
             a_graphmath_dict = json.loads(row['a_graphmath'])
             row['a_graphmath'] = unit.Text({})
             row['a_graphmath'].import_unit(a_graphmath_dict)
