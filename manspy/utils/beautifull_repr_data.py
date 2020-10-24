@@ -1,46 +1,4 @@
-import datetime
-import time
 
-TEMPLATE_HTML_WORD = '<span class="{MOSentence}">{word}</span>'
-TEMPLATE_HTML_ROW = '{direction} &nbsp;&nbsp; {indent}{text}<br>\n'
-
-HTML_HEADER = '''<!DOCTYPE html>
-<html lang="ru"><head>
-    <meta charset="utf-8">
-</head><body>
-    <style>
-        .supplement {
-            color: #007df8;
-         }
-         .subject {
-         }
-         .direct_supplement {
-             color: blue;
-         }
-         .predicate {
-             color: green;
-         }
-         .circumstance {
-             color: #d6d600;
-         }
-         .definition {
-             color: #bf8419;
-         }
-    </style>
-
-    <p style="text-align:center;">
-        <a target="blank" href="https://github.com/shyzik93/ManSPy"><img src="http://dosmth.ru/media/manspy_logo3.png"></a>
-    </p>
-
-    <ul style="float:right;">
-        <li class="supplement">supplement (дополнение)</li>
-        <li class="direct_supplement">direct supplement (прямое дополнение)</li>
-        <li class="predicate">predicate (сказуемое)</li>
-        <li class="circumstance">circumstance (обстоятельство)</li>
-        <li class="definition">definition (определение)</li>
-        <li>not member of sentence <br> (не является членом предложения)</li>
-    </ul>
-'''
 
 INTERACTIVE_HTML_HEADER = '''<!DOCTYPE html>
 <html lang="ru"><head>
@@ -176,41 +134,6 @@ INTERACTIVE_HTML_LINE = '''
 '''
 
 INTERACTIVE_HTML_FOOTER = '</ul></body></html>'
-HTML_FOOTER = '</body></html>'
-
-
-def word_to_html(word):
-    return TEMPLATE_HTML_WORD.format(
-        word=word['word'] + word['end'],
-        MOSentence=word['MOSentence'].replace(' ', '_') if 'MOSentence' in word else ''
-    )
-
-
-def text_to_html(text, synt_words, direction):
-    """ Сейчас выходной текст явлется строкой, но когда он станет классом,
-        то мы уберём данное условие (подусловный блок останется)"""
-    if direction == "W":
-        text_ = []
-        for index_sentence, cSentence in text:
-            for index, cWord in cSentence:
-                # TODO: index должен равняться cWord['index'] (в функции ObjUnit.__iter__)
-                if cWord['index'] in synt_words:
-                    cWord = synt_words[cWord['index']]
-                    text_.append(word_to_html(cWord))
-                # if 'feature' in cWord:
-                #     for cWord_feature in cWord['feature']:
-                #         text_.insert(cWord_feature['index'], word_to_html(cWord_feature))
-        return ' '.join(text_)
-    return text
-
-
-# TODO: добавить в лог: `ifname`, `date_recieved` (по аналогии с `make_dialog_plain_line`)
-def make_dialog_html_line(text: str, direction: str):
-    return TEMPLATE_HTML_ROW.format(
-        indent="&nbsp;"*8 if direction == 'R' else '',
-        text=text,
-        direction=direction
-    )
 
 
 # TODO: Удалить функцию

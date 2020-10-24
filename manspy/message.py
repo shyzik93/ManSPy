@@ -1,17 +1,4 @@
-import json
-import time
-import os.path
-import datetime
 import uuid
-
-from manspy.utils.beautifull_repr_data import (
-    word_to_html,
-    make_dialog_html_line,
-    HTML_HEADER,
-    INTERACTIVE_HTML_HEADER,
-    INTERACTIVE_HTML_LINE_HEADER,
-    INTERACTIVE_HTML_LINE_FOOTER
-)
 
 # TODO: добавить свойство `message_id`, состоящее из имени интерфейса, номера поотока и метки времени
 class Message:

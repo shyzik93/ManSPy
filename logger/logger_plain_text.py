@@ -20,7 +20,6 @@ class LoggerPlainText:
     def on_create_message(self, direction, msg):
         pass
 
-    
     def log(self, direction, text, msg):
         self.f.write(bytearray(make_dialog_plain_line(text, direction, msg.settings.ifname), 'utf-8'))
 
@@ -41,14 +40,15 @@ class LoggerPlainText:
             with open('analysis.txt', 'a', encoding='utf-8') as f:
                 f.write('NL-sentence: ')
                 for index, sentence in sentences:
-                    for index, word in sentence.subunits_copy.items(): f.write(word['word']+' ')
+                    for index, word in sentence.subunits_copy.items():
+                        f.write(word['word']+' ')
                 f.write('\n')
             sentences = sentences.getUnit('dict')
         elif level == 'morph':
-            pass
             with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
                 flog.write('\n')
-                for index, sentence in sentences: flog.write('sentence: %s\n' % sentence.getUnit('str')['fwords'])
+                for index, sentence in sentences:
+                    flog.write('sentence: %s\n' % sentence.getUnit('str')['fwords'])
                 flog.write('\n')
 
             sentences = sentences.getUnit('dict')            
