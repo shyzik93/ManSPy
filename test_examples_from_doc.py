@@ -28,7 +28,7 @@ class ExamplesFromDocTest(unittest.TestCase):
 
         api = API()
 
-        for sentence, expecting_answer in collect_examples(os.path.join(os.path.dirname(__file__), 'Theory.md')):
+        for sentence, expecting_answer in collect_examples(os.path.join(os.path.dirname(__file__), 'DOC/Theory.md')):
             language = 'esperanto'
             settings = Settings(read_text=read_text, language=language, answer_type='fake')
             print(sentence, expecting_answer)

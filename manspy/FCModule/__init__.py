@@ -48,8 +48,20 @@ def execute_internal_sentence(internal_sentence):
 
     elif internal_sentence['type_sentence'] == 'fact':
         pass
-    elif internal_sentence['type_sentence'] == 'construction':
-        pass
+    elif internal_sentence['type_sentence'] == 'construction-condition':
+
+        arg0 = {
+            'antonym': internal_sentence['verb']['used_antonym'],
+            # только для функции изменения состояния и ф-ции глагола
+            'answer_type': internal_sentence['verb']['answer_type']
+        }
+
+        gen_r_texts = run_wcomb_function(internal_sentence, arg0)  # пока поддерживается лишь одно словосочетание
+        for r_text in gen_r_texts:
+
+            break
+
+
 
 
 def execute_internal_sentences(ils, to_IF):
@@ -59,7 +71,7 @@ def execute_internal_sentences(ils, to_IF):
     :param to_IF:
     :return:
     """
-    for index_sentence, internal_sentence in ils.items():   # TODO: msg.ils должен содержать только внутренние предложения, не списки с предложениями
+    for index_sentence, internal_sentence in ils.items():
         gen_r_texts = execute_internal_sentence(internal_sentence)
         for r_text in gen_r_texts:
             to_IF(r_text)
