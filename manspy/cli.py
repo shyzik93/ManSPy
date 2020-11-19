@@ -24,15 +24,15 @@ def proc_answer(is_success, arg1):
         exit(2)
 
 
-class CLI:
+class CLI(API):
     
-    def __init__(self):
+    def __init__(self, **kwargs):
         def read_text(r_text, any_data):
             print(r_text)
-        self.api = API()
         self.settings = Settings(read_text=read_text, language='esperanto', answer_type='fake')
+        API.__init__(self, **kwargs)
 
-    def __enter__(self):
+    '''def __enter__(self):
         """ for 'with' statement """
         return self
 
@@ -44,11 +44,11 @@ class CLI:
             pass
         else:             # Если возникло исключение
             return False  # False - исключение не обработано
-                          # True  - исключение обработано
+                          # True  - исключение обработано'''
 
     def cmd_exec(self, args):
         def write_text(text, settings, text_settings):
-            msg, results = self.api.write_text(text, settings, text_settings)
+            msg, results = self.write_text(text, settings, text_settings)
             if isinstance(results, Unit):
                 pprint.pprint(results.export_unit(ignore_units=dict))
             if isinstance(results, list):

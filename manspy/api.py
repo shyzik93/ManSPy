@@ -36,6 +36,22 @@ class API:
 
         Settings.c, Settings.cu = importer.database(Settings.db_type)(Settings.db_settings[Settings.db_type])
 
+    def write_text(self, w_text, settings, _text_settings=None):
+        """any_data - any data, if you would like to pass it to IF with answer."""
+        #print(threading.current_thread().name)
+
+        _text_settings = _text_settings or {}
+        text_settings = {
+            'any_data': _text_settings.get('any_data'),
+            'levels': _text_settings.get('levels', 'graphmath exec'),
+            'print_time': _text_settings.get('print_time', True)
+        }
+
+        if w_text:
+            message = Message(settings, text_settings, w_text, 'W')
+            return message, self.LangClass.NL2IL(message)
+
+    def __enter__(self):
         self.LangClass = LangClass()
         fasif_parser = FASIFParser(self.LangClass)
         self.was_imported = {}
@@ -52,17 +68,16 @@ class API:
                 for language in Settings.modules['language']:
                     fasif_parser.parse(path_import, language, Settings(language=language))
 
-    def write_text(self, w_text, settings, _text_settings=None):
-        """any_data - any data, if you would like to pass it to IF with answer."""
-        #print(threading.current_thread().name)
+        return self
 
-        _text_settings = _text_settings or {}
-        text_settings = {
-            'any_data': _text_settings.get('any_data'),
-            'levels': _text_settings.get('levels', 'graphmath exec'),
-            'print_time': _text_settings.get('print_time', True)
-        }
+    def __exit__(self, Type, Value, Trace):
 
-        if w_text:
-            message = Message(settings, text_settings, w_text, 'W')
-            return message, self.LangClass.NL2IL(message)
+        Settings.c.close()
+        for module_code, module in Settings.modules['logger'].items():
+            module.close()
+
+        if Type is None:  # Если исключение не возникло
+            pass
+        else:             # Если возникло исключение
+            return False  # False - исключение не обработано
+                          # True  - исключение обработано

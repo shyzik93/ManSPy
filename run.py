@@ -11,6 +11,6 @@ interfaces = {  # 1 - on, 0 - off
   }
 interfaces = [i for i in interfaces if interfaces[i]]
 
-api = API()
-interface_runner = InterfaceRunner()
-interface_runner.turnOnInterface(api, Settings, interfaces)
+with API() as api:
+    interface_runner = InterfaceRunner()
+    interface_runner.turnOnInterface(api, Settings, interfaces)

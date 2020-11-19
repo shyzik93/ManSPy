@@ -15,13 +15,13 @@ def make_dialog_plain_line(text: str, direction: str, ifname: str):
 
 class LoggerPlainText:
     def __init__(self):
-        self.f = open('history.txt', 'ab')
+        self.f_history = open('history.txt', 'ab')
     
     def on_create_message(self, direction, msg):
         pass
 
     def log(self, direction, text, msg):
-        self.f.write(bytearray(make_dialog_plain_line(text, direction, msg.settings.ifname), 'utf-8'))
+        self.f_history.write(bytearray(make_dialog_plain_line(text, direction, msg.settings.ifname), 'utf-8'))
 
     def before_analyzes(self, levels, msg):
         with open('analysis.txt', 'a', encoding='utf-8') as f:
@@ -69,3 +69,6 @@ class LoggerPlainText:
         with open('analysis.txt', 'a', encoding='utf-8') as f: 
             json.dump(sentences, f, sort_keys=True, indent=4)#.replace('"', '')
             f.write('\n')
+
+    def close(self):
+        self.f_history.close()

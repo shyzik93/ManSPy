@@ -107,25 +107,25 @@ class TestManSPy(unittest.TestCase):
         answers = {}
         answers_true = {}
 
-        api = API()
-        for language, test_input_data in TEST_INPUT_DATAS.items():
-            settings = Settings(read_text=read_text, language=language, answer_type='construct')
-            answers.setdefault(language, {})
-            answers_true.setdefault(language, {})
-            for input_data, true_answer in test_input_data:
-                if input_data not in answers:
-                    answers[language][input_data] = []
-                if input_data not in answers_true:
-                    answers_true[language][input_data] = [true_answer, input_data]
-                api.write_text(input_data, settings, {'any_data': [input_data, language], 'print_time': False})
+        with API() as api:
+            for language, test_input_data in TEST_INPUT_DATAS.items():
+                settings = Settings(read_text=read_text, language=language, answer_type='construct')
+                answers.setdefault(language, {})
+                answers_true.setdefault(language, {})
+                for input_data, true_answer in test_input_data:
+                    if input_data not in answers:
+                        answers[language][input_data] = []
+                    if input_data not in answers_true:
+                        answers_true[language][input_data] = [true_answer, input_data]
+                    api.write_text(input_data, settings, {'any_data': [input_data, language], 'print_time': False})
 
-        for language, _answers in answers.items():
-            for input_data, output_data in _answers.items():
-                self.assertListEqual(
-                    answers[language][input_data],
-                    answers_true[language][input_data][0],
-                    answers_true[language][input_data][1]
-                )
+            for language, _answers in answers.items():
+                for input_data, output_data in _answers.items():
+                    self.assertListEqual(
+                        answers[language][input_data],
+                        answers_true[language][input_data][0],
+                        answers_true[language][input_data][1]
+                    )
 
 
 if __name__ == '__main__':

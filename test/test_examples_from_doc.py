@@ -20,24 +20,25 @@ class ExamplesFromDocTest(unittest.TestCase):
     def test_examples(self):
 
         r_texts = {}
+
         def read_text(r_text, arg0):
             sentence, expecting = arg0
             if sentence not in r_texts:
                 r_texts[sentence] = {'real': [], 'expecting': expecting}
             r_texts[sentence]['real'].append(r_text)
 
-        api = API()
+        with API() as api:
 
-        for sentence, expecting_answer in collect_examples(os.path.join(os.path.dirname(__file__), 'DOC/Theory.md')):
-            language = 'esperanto'
-            settings = Settings(read_text=read_text, language=language, answer_type='fake')
-            print(sentence, expecting_answer)
-            api.write_text(sentence, settings, {'any_data': (sentence, expecting_answer), 'print_time': False})
-        #self.assertEqual(True, False)
+            for sentence, expecting_answer in collect_examples(os.path.join(os.path.dirname(__file__),
+                                                                            '../DOC/Theory.md')):
+                language = 'esperanto'
+                settings = Settings(read_text=read_text, language=language, answer_type='fake')
+                api.write_text(sentence, settings, {'any_data': (sentence, expecting_answer), 'print_time': False})
+            #self.assertEqual(True, False)
 
-        for sentence in r_texts:
-            real = r_texts[sentence]['real']
-            expecting = r_texts[sentence]['expecting']
-            self.assertListEqual(real, expecting, sentence)
+            for sentence in r_texts:
+                real = r_texts[sentence]['real']
+                expecting = r_texts[sentence]['expecting']
+                self.assertListEqual(real, expecting, sentence)
 
 

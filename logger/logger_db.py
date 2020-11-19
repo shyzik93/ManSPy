@@ -67,3 +67,6 @@ class LoggerDb:
             (sentences, msg.logger_db_message_id)
         )
         self.c.commit()
+
+    def close(self):
+        pass
