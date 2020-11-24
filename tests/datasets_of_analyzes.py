@@ -204,6 +204,36 @@ datasets = (
     dataset_undirect_order_of_words,
 )
 
+
+# TODO: рассортировать, добавить примеры условий
+
+TEST_INPUT_DATA_ESPERANTO = [
+    # Это предложение выдаёт курс доллара только по росбанку (украинский не замечает).
+    # TODO: Как вариант решения: проверять каждоый однородный член у дополнений (кроме первого)
+    #  (однородные члены должны совпадать по части речи)
+    #('montru dolaran kurzon de rusia banko kaj ukraina banko', ['USD-Russia', 'USD-Ukrain']),
+    # TODO: однородные слова-посредники (не реализовано пока)
+    #('montru dolaran kurzon de ukrainia banko kaj de rusia banko', ['USD-Ukraine', 'USD-Russia']),
+
+
+    # ('Montru dolaran kurzon. Montru euxran kurzon de belarusia banko', []),
+    # TODO: пока не поддерживаются
+    # ('montru dolaran kurzon, kiu estas dolara', []),
+    # ('Se euxra cambio de belarusia banko estas sepduk kvar, do sxaltu tablan lampon en dormcxambro', []),
+    # ('Do sxaltu tablan lampon en dormcxambro, se euxra cambio de belarusia banko estas sepduk kvar', []),
+
+    # ('montru dolaran kurzon kaj trion kaj kvardek', []),
+    ('montru dolaran kurzon kaj trion kaj kvardekon', ['USD-Russia', '3', '40']),
+
+    ('montru dolaran kurzon de kvarcent sesdek mil tricent dek du', ['USD-Russia']),  # TODO correct: не знаю, как нужно
+    # ('montru dolaran kurzon de dua banko', []),
+    # ('montru dolaran kurzon de triiliono', []),
+    # ('montru dolaran kurzon de 2 banko', []),
+    # ('montru dolaran kurzon de du', []),
+    # ('montru dolaran kurzon de okdek', []),
+    # ('montru dolaran kurzon de dek du', []),
+]
+
 dataset2 = {
     'dataset_description': '',
     'examples': [
