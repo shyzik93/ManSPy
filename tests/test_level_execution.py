@@ -46,8 +46,3 @@ class ManSPyTestCase(unittest.TestCase):
                         answers_true[language][input_data][0],
                         answers_true[language][input_data][1]
                     )
-
-
-if __name__ == '__main__':
-    test_manspy = TestManSPy()
-    test_manspy.test_manspy()
