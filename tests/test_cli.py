@@ -16,7 +16,7 @@ def mock_print(*args):
     outputs.extend(args)
 
 
-class TestCLI(unittest.TestCase):
+class CLITestCase(unittest.TestCase):
     @patch('manspy.cli.print', mock_print)
     def test_cli(self):
         for args_list, answers in TEST_ARG_LISTS:

@@ -16,7 +16,7 @@ def collect_examples(doc_path):
                 yield sentence, re.findall(r'<span>`([\s\w\d]+)`</span>', answer)
 
 
-class ExamplesFromDocTest(unittest.TestCase):
+class ExamplesFromDocTestCase(unittest.TestCase):
     def test_examples(self):
 
         r_texts = {}
