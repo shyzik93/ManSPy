@@ -2,7 +2,8 @@
     Содержит примеры предложений на естественном языке с указанием результата каждого этапа его обрабоотки.
     Поля длЯ каждого примера:
     - w_text - входной текст на естественном языке
-    - r_text_construct - ответ программы в режиме конструкционного ответа
+    - convert - ответ программы в стадии конертации
+    - r_text_construct - ответ программы в стадии выполнения (exec): режим конструкционного ответа
     - is_ready - если предложение полностью поддерживается программой, то равно True (оп умолчанию). Иначе - False
 """
 
@@ -19,19 +20,12 @@ dataset_verb_and_actants = {
         },
         {
             'w_text': 'montru adreson de komputilo',
+            'convert': {},
             'r_text_construct': ['192.168.0.1'],
         },
         {
             'w_text': 'montru adreson de androido',
             'r_text_construct': [],
-        },
-        {
-            'w_text': 'dolaran kurzon montru',
-            'r_text_construct': ['USD-Russia'],
-        },
-        {
-            'w_text': 'montru de rusia banko euxran kurzon',
-            'r_text_construct': ['EUR-Russia'],
         },
     ]
 }
@@ -188,6 +182,14 @@ dataset_undirect_order_of_words = {
         {
             'w_text': 'trion adiciu',
             'r_text_construct': ['3'],
+        },
+        {
+            'w_text': 'dolaran kurzon montru',
+            'r_text_construct': ['USD-Russia'],
+        },
+        {
+            'w_text': 'montru de rusia banko euxran kurzon',
+            'r_text_construct': ['EUR-Russia'],
         },
     ]
 }

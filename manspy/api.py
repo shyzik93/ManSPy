@@ -66,7 +66,7 @@ class API:
                 # TODO: функция fasif_parser.parse должна импоттировать лингв. информацию для всех языков, для которых импортированы языковые модули.
                 # TODO: функция fasif_parser.parse должна принять только path_import
                 for language in Settings.modules['language']:
-                    fasif_parser.parse(path_import, language, Settings(language=language))
+                    fasif_parser.parse(path_import, language, Settings(language=language, history=False))
 
         return self
 

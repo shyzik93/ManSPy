@@ -32,7 +32,7 @@ class ExamplesFromDocTestCase(unittest.TestCase):
             for sentence, expecting_answer in collect_examples(os.path.join(os.path.dirname(__file__),
                                                                             '../DOC/Theory.md')):
                 language = 'esperanto'
-                settings = Settings(read_text=read_text, language=language, answer_type='fake')
+                settings = Settings(read_text=read_text, language=language, answer_type='fake', history=False)
                 api.write_text(sentence, settings, {'any_data': (sentence, expecting_answer), 'print_time': False})
             #self.assertEqual(True, False)
 

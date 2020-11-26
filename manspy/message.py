@@ -11,6 +11,7 @@ class Message:
         return uuid.uuid1()
 
     def pass_args_to_all_logs(self, method_name, *args):
+       # print(self.settings.history)
         if self.settings.history:
             for logger_name, logger_class in self.settings.modules['logger'].items():
                 getattr(logger_class, method_name)(*args)
@@ -25,7 +26,6 @@ class Message:
         #        f.write(HTML_HEADER)
         #with open('history_interactive.html', 'w', encoding='utf-8') as f:
         #    f.write(INTERACTIVE_HTML_HEADER)
-
         self.pass_args_to_all_logs('on_create_message', direction, self)
 
         if direction == 'W':

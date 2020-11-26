@@ -26,7 +26,7 @@ class ManSPyTestCase(unittest.TestCase):
 
         with API() as api:
             for language, datasets in TEST_INPUT_DATAS.items():
-                settings = Settings(read_text=read_text, language=language, answer_type='construct')
+                settings = Settings(read_text=read_text, language=language, answer_type='construct', history=False)
                 answers.setdefault(language, {})
                 answers_true.setdefault(language, {})
                 for dataset in datasets:
