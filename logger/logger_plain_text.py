@@ -45,11 +45,11 @@ class LoggerPlainText:
                 f.write('\n')
             sentences = sentences.getUnit('dict')
         elif level == 'morph':
-            with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
-                flog.write('\n')
-                for index, sentence in sentences:
-                    flog.write('sentence: %s\n' % sentence.getUnit('str')['fwords'])
-                flog.write('\n')
+            # with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
+            #     flog.write('\n')
+            #     for index, sentence in sentences:
+            #         flog.write('sentence: %s\n' % sentence.getUnit('str')['fwords'])
+            #     flog.write('\n')
 
             sentences = sentences.getUnit('dict')            
         elif level == 'postmorph':

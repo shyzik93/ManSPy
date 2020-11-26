@@ -15,23 +15,23 @@ class LoggerDb:
     def connect_to_db(self, settings):
         self.c, self.cu = settings.c, settings.cu
 
-        self.cu.execute('''
-        CREATE TABLE IF NOT EXISTS `log_history` (
-          `message_id` INTEGER PRIMARY KEY AUTOINCREMENT,
-          `direction` VARCHAR(1),
-          `thread_name` VARCHAR(255),
-          `language` INTEGER,
-          `date_add` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          `message_nl` TEXT,
-          `message_il` JSON,
-          `a_graphmath` JSON,
-          `a_morph` JSON,
-          `a_postmorph` JSON,
-          `a_synt` JSON,
-          `a_extract` JSON,
-          `a_convert` JSON,
-          `a_exec` JSON);''')
-        self.c.commit()
+        # self.cu.execute('''
+        # CREATE TABLE IF NOT EXISTS `log_history` (
+        #   `message_id` INTEGER PRIMARY KEY AUTOINCREMENT,
+        #   `direction` VARCHAR(1),
+        #   `thread_name` VARCHAR(255),
+        #   `language` INTEGER,
+        #   `date_add` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        #   `message_nl` TEXT,
+        #   `message_il` JSON,
+        #   `a_graphmath` JSON,
+        #   `a_morph` JSON,
+        #   `a_postmorph` JSON,
+        #   `a_synt` JSON,
+        #   `a_extract` JSON,
+        #   `a_convert` JSON,
+        #   `a_exec` JSON);''')
+        # self.c.commit()
 
     def __init__(self):
         self.c = None

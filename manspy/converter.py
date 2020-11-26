@@ -155,8 +155,8 @@ def Extraction2IL(R, settings, predicates, arguments):
             #if fasif['argdescr'][argname]['args_as_list'] == 'l': finded_args[argname] = [finded_args[argname]]
         finded_args = dproduct(finded_args)
         finded_args = check_args(finded_args, fasif, R)
-        with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:  # excess
-            flog.write('\n%s\n%s\n' % (str(finded_args), str(fasif['functions']))) # exxcess
+        #with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:  # excess
+        #    flog.write('\n%s\n%s\n' % (str(finded_args), str(fasif['functions']))) # exxcess
 
         word_combination['arguments'] = finded_args
         word_combination['how_put_args'] = fasif['args_as_list']
@@ -166,8 +166,8 @@ def Extraction2IL(R, settings, predicates, arguments):
         #print x, fdb.get_hashWComb(fwcomb)
         internal_sentence['word_combinations'].append(word_combination)
 
-    with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
-        flog.write('\npraIL: %s\n' % str(internal_sentence))
+    #with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
+    #    flog.write('\npraIL: %s\n' % str(internal_sentence))
 
     return internal_sentence  # excess
 
