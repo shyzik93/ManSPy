@@ -8,41 +8,86 @@
 import unittest
 
 from manspy import API, Settings
-from tests.datasets_of_analyzes import datasets
+from tests.datasets_of_analyzes import (
+    dataset_verb_and_actants,
+    dataset_verb_and_repeated_actants,
+    dataset_verb_and_homogeneous_actants,
+    dataset_antonym_of_verb,
+    dataset_verb_and_homogeneous_direct_supplement,
+    dataset_punctuation,
+    dataset_numbers_and_simple_math,
+    dataset_synonyms_of_verb,
+    dataset_undirect_order_of_words
+)
 
-TEST_INPUT_DATAS = {
-    'esperanto': datasets
-}
 
+class LevelRTextTestCase(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.settings = Settings(answer_type='construct', history=False)
+        cls.api = API().__enter__()
 
-class ManSPyTestCase(unittest.TestCase):
-    def test_manspy(self):
-        def read_text(r_text, any_data):
-            input_data, language = any_data
-            answers[language][input_data].append(r_text)
+    def setUp(self):
+        self.answers = {}
+        self.answers_true = {}
+        self.settings.read_text = self.read_text
 
-        answers = {}
-        answers_true = {}
+    def tearDown(self):
+        for input_data, output_data in self.answers.items():
+            self.assertListEqual(
+                self.answers[input_data],
+                self.answers_true[input_data][0],
+                self.answers_true[input_data][1]
+            )
 
-        with API() as api:
-            for language, datasets in TEST_INPUT_DATAS.items():
-                settings = Settings(read_text=read_text, language=language, answer_type='construct', history=False)
-                answers.setdefault(language, {})
-                answers_true.setdefault(language, {})
-                for dataset in datasets:
-                    for example in dataset['examples']:
-                        input_data = example['w_text']
-                        true_answer = example['r_text_construct']
-                        if input_data not in answers:
-                            answers[language][input_data] = []
-                        if input_data not in answers_true:
-                            answers_true[language][input_data] = [true_answer, input_data]
-                        api.write_text(input_data, settings, {'any_data': [input_data, language], 'print_time': False})
+    @classmethod
+    def tearDownClass(cls):
+        cls.api.__exit__(None, None, None)
 
-            for language, _answers in answers.items():
-                for input_data, output_data in _answers.items():
-                    self.assertListEqual(
-                        answers[language][input_data],
-                        answers_true[language][input_data][0],
-                        answers_true[language][input_data][1]
-                    )
+    def read_text(self, r_text, any_data):
+        input_data = any_data
+        self.answers[input_data].append(r_text)
+
+    def pass_example_to_manspy(self, example):
+        self.settings.language = example.get('language', 'esperanto')
+        input_data = example['w_text']
+        true_answer = example['r_text_construct']
+        self.answers.setdefault(input_data, [])
+        self.answers_true.setdefault(input_data, [true_answer, input_data])
+        self.api.write_text(input_data, self.settings, {'any_data': input_data, 'print_time': False})
+
+    def test_verb_and_actants(self):
+        for example in dataset_verb_and_actants['examples']:
+            self.pass_example_to_manspy(example)
+
+    def test_verb_and_repeated_actants(self):
+        for example in dataset_verb_and_repeated_actants['examples']:
+            self.pass_example_to_manspy(example)
+
+    def test_verb_and_homogeneous_actants(self):
+        for example in dataset_verb_and_homogeneous_actants['examples']:
+            self.pass_example_to_manspy(example)
+
+    def test_antonym_of_verb(self):
+        for example in dataset_antonym_of_verb['examples']:
+            self.pass_example_to_manspy(example)
+
+    def test_verb_and_homogeneous_direct_supplement(self):
+        for example in dataset_verb_and_homogeneous_direct_supplement['examples']:
+            self.pass_example_to_manspy(example)
+
+    def test_punctuation(self):
+        for example in dataset_punctuation['examples']:
+            self.pass_example_to_manspy(example)
+
+    def test_numbers_and_simple_math(self):
+        for example in dataset_numbers_and_simple_math['examples']:
+            self.pass_example_to_manspy(example)
+
+    def test_synonyms_of_verb(self):
+        for example in dataset_synonyms_of_verb['examples']:
+            self.pass_example_to_manspy(example)
+
+    def test_undirect_order_of_words(self):
+        for example in dataset_undirect_order_of_words['examples']:
+            self.pass_example_to_manspy(example)
