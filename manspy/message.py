@@ -10,7 +10,7 @@ class Message:
 
     def get_message_id(self):
         if not self.message_id:
-            self.message_id = uuid.uuid1()
+            self.message_id = uuid.uuid1().hex
 
         return self.message_id
 
@@ -31,7 +31,7 @@ class Message:
         #        f.write(HTML_HEADER)
         # with open('history_interactive.html', 'w', encoding='utf-8') as f:
         #    f.write(INTERACTIVE_HTML_HEADER)
-        self.pass_args_to_all_logs('on_create_message', direction, self)
+        self.pass_args_to_all_logs('on_create_message', direction, text, self)
 
         if direction == 'W':
             self.from_IF(text)

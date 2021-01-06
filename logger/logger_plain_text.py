@@ -17,7 +17,7 @@ class LoggerPlainText:
     def __init__(self):
         self.f_history = open('history.txt', 'ab')
     
-    def on_create_message(self, direction, msg):
+    def on_create_message(self, direction, w_text, msg):
         pass
 
     def log(self, direction, text, msg):

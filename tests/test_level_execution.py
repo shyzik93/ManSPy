@@ -32,7 +32,7 @@ class LevelRTextTestCase(unittest.TestCase):
         self.answers_true = {}
         self.settings.read_text = self.read_text
 
-    def tearDown(self):
+    def check_answers(self):
         for input_data, output_data in self.answers.items():
             self.assertListEqual(
                 self.answers[input_data],
@@ -60,34 +60,52 @@ class LevelRTextTestCase(unittest.TestCase):
         for example in dataset_verb_and_actants['examples']:
             self.pass_example_to_manspy(example)
 
+        self.check_answers()
+
     def test_verb_and_repeated_actants(self):
         for example in dataset_verb_and_repeated_actants['examples']:
             self.pass_example_to_manspy(example)
+
+        self.check_answers()
 
     def test_verb_and_homogeneous_actants(self):
         for example in dataset_verb_and_homogeneous_actants['examples']:
             self.pass_example_to_manspy(example)
 
+        self.check_answers()
+
     def test_antonym_of_verb(self):
         for example in dataset_antonym_of_verb['examples']:
             self.pass_example_to_manspy(example)
+
+        self.check_answers()
 
     def test_verb_and_homogeneous_direct_supplement(self):
         for example in dataset_verb_and_homogeneous_direct_supplement['examples']:
             self.pass_example_to_manspy(example)
 
+        self.check_answers()
+
     def test_punctuation(self):
         for example in dataset_punctuation['examples']:
             self.pass_example_to_manspy(example)
+
+        self.check_answers()
 
     def test_numbers_and_simple_math(self):
         for example in dataset_numbers_and_simple_math['examples']:
             self.pass_example_to_manspy(example)
 
+        self.check_answers()
+
     def test_synonyms_of_verb(self):
         for example in dataset_synonyms_of_verb['examples']:
             self.pass_example_to_manspy(example)
 
+        self.check_answers()
+
     def test_undirect_order_of_words(self):
         for example in dataset_undirect_order_of_words['examples']:
             self.pass_example_to_manspy(example)
+
+        self.check_answers()
