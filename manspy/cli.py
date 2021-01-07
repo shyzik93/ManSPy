@@ -51,6 +51,8 @@ class CLI(API):
             msg, results = self.write_text(text, settings, text_settings)
             if isinstance(results, Unit):
                 pprint.pprint(results.export_unit(ignore_units=dict))
+            if isinstance(results, dict):
+                pprint.pprint(results)
             if isinstance(results, list):
                 if results:
                     print('При выполнении возникли следующие ошибки:')
@@ -88,12 +90,12 @@ def do_cmd(args_list=None):
         parser.add_argument('--version', action='version', version='%(prog)s 0.0.0')
 
         parser.add_argument('--level', default='graphmath exec')
-        parser.add_argument('--type', default='fake', help='answer type')
+        parser.add_argument('--type', default='fake', help='answer type: fake (default), construct, real')
 
         parser.add_argument('--language', default='esperanto', help='nature language')
-        # arser.add_argument('--print-levels', action='store_true', help='print analysyses of every level')
+        # parser.add_argument('--print-levels', action='store_true', help='print analysyses of every level')
         parser.add_argument('--print-time', action='store_true', help='print time of every level')
-        parser.add_argument('--history', action='store_true', help='print time of every level')
+        parser.add_argument('--history', action='store_true', help='save the history of dialog')
         parser.add_argument('--text', default=None, help='input text')
         parser.add_argument('filenames', nargs='*', help='files with input text')
 
