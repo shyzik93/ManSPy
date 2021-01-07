@@ -51,6 +51,9 @@ def showAddress(arg0, device):
 
 
 def printToIF(arg0, conditions):
+    if arg0['antonym']:
+        return
+
     for condition in conditions:
         yield condition
 
@@ -71,7 +74,6 @@ def add(arg0, a):
         yield 0
 
     if _is_only_numbers(a):
-
         start = a.pop(0)
         if arg0['antonym']:
             a = [-i for i in a]
@@ -81,12 +83,13 @@ def add(arg0, a):
             yield ' + '.join([str(i) for i in [start] + a])
     
     else:
-
         for index, i in enumerate(a):
             a[index] = str(a[index])
+
         if arg0['antonym']:
             yield ' - '.join(a)
-        yield ' + '.join(a)
+        else:
+            yield ' + '.join(a)
 
 def multiply(arg0, a):
     """ Умножение """
@@ -96,7 +99,6 @@ def multiply(arg0, a):
         yield 0
 
     elif _is_only_numbers(a):
-
         res = a.pop(0)
         if arg0['antonym']:
             if arg0['answer_type'] in ('real', 'fake'):
@@ -110,10 +112,15 @@ def multiply(arg0, a):
                     res *= i
             elif arg0['answer_type'] == 'construct':
                 res = ' * '.join([str(i) for i in [res] + a])
+
         yield res
 
     else:
 
-        for index, i in enumerate(a): a[index] = str(a[index])
-        if arg0['antonym']: yield ' / '.join(a)
-        yield ' * '.join(a)
+        for index, i in enumerate(a):
+            a[index] = str(a[index])
+
+        if arg0['antonym']:
+            yield ' / '.join(a)
+        else:
+            yield ' * '.join(a)

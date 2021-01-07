@@ -11,7 +11,6 @@ def run_wcomb_function(internal_sentence, arg0):
     :param internal_sentence:
     :return: генератор с ответами
     """
-
     function_name = 'func_get_value' if internal_sentence['verb']['func_common'] else 'func_set_value'
 
     for word_combination in internal_sentence['word_combinations']:

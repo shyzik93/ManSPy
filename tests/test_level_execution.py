@@ -17,7 +17,8 @@ from tests.datasets_of_analyzes import (
     dataset_punctuation,
     dataset_numbers_and_simple_math,
     dataset_synonyms_of_verb,
-    dataset_undirect_order_of_words
+    dataset_undirect_order_of_words,
+    dataset_mistakes
 )
 
 
@@ -106,6 +107,12 @@ class LevelRTextTestCase(unittest.TestCase):
 
     def test_undirect_order_of_words(self):
         for example in dataset_undirect_order_of_words['examples']:
+            self.pass_example_to_manspy(example)
+
+        self.check_answers()
+
+    def test_mistakes(self):
+        for example in dataset_mistakes['examples']:
             self.pass_example_to_manspy(example)
 
         self.check_answers()

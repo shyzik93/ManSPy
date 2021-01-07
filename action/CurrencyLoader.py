@@ -156,8 +156,8 @@ FAKE_DATA = {
 
 def GetCourse(arg0, currency, country='Russia'):
     """ Возвращает стоимость иностр. валюты в гос. валюте """
-    if arg0['antonym']:
-        return
+    #if arg0['antonym']:
+    #    return
 
     if arg0['answer_type'] == 'construct':
         yield '{}-{}'.format(currency, country)

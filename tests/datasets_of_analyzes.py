@@ -8,24 +8,149 @@
     - language - естественный язык (если не указан, то подразумевается Эсперанто
 """
 
+montru_euxran_dolaran_kurzon_de_ukrainia_banko = {
+    0: {
+        'type_sentence': 'run',
+        'verb': {
+            'func_common': '<function printToIF at 0x7fda49755400>',
+            'used_antonym': None,
+            'answer_type': 'construct'
+        },
+        'word_combinations': [
+            {
+                'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                'func_set_value': None,
+                'arguments': [
+                    {'currency': 'EUR', 'country': 'Ukraine'},
+                    {'currency': 'USD', 'country': 'Ukraine'}
+                ],
+                'how_put_args': False
+            }
+        ]
+    }
+}
+
+montru_dolaran_kurzon = {
+    0: {
+        'type_sentence': 'run',
+        'verb': {
+            'func_common': '<function printToIF at 0x7fda49755400>',
+            'used_antonym': None,
+            'answer_type': 'construct'
+        },
+        'word_combinations': [
+            {
+                'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                'func_set_value': None,
+                'arguments': [
+                    {'currency': 'USD'}
+                ],
+                'how_put_args': False
+            }
+        ]
+    }
+}
+
 dataset_verb_and_actants = {
     'dataset_description': 'глагол + его актанты',
     'examples': [
         {
+            'w_text': 'montru dolaran kurzon',
+            'convert': montru_dolaran_kurzon,
+            'r_text_construct': ['USD-Russia'],
+        },
+        {
             'w_text': 'montru dolaran kaj euxran kurzon de rusia banko',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'used_antonym': None,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'currency': 'USD', 'country': 'Russia'},
+                                {'currency': 'EUR', 'country': 'Russia'}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': ['USD-Russia', 'EUR-Russia'],
         },
         {
             'w_text': 'sxaltu tablan lampon en dormcxambro',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': None,
+                        'used_antonym': None,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': None,
+                            'func_set_value': '<function LightOn at 0x7fda497552f0>',
+                            'arguments': [
+                                {'device': '0', 'room': 'bedroom'}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': ['1'],
         },
         {
             'w_text': 'montru adreson de komputilo',
-            'convert': {},
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'used_antonym': None,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {'func_get_value': '<function showAddress at 0x7fda49755378>',
+                         'func_set_value': None,
+                         'arguments': [
+                             {'device': 'computer'}
+                         ],
+                         'how_put_args': False
+                         }
+                    ]
+                }
+            },
             'r_text_construct': ['192.168.0.1'],
         },
         {
             'w_text': 'montru adreson de androido',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'used_antonym': None,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function showAddress at 0x7fda49755378>',
+                            'func_set_value': None,
+                            'arguments': [],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': [],
         },
     ]
@@ -36,10 +161,54 @@ dataset_verb_and_repeated_actants = {
     'examples': [
         {
             'w_text': 'montru dolaran kaj dolaran kurzon de rusia banko',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'used_antonym': None,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'currency': 'USD', 'country': 'Russia'},
+                                {'currency': 'USD', 'country': 'Russia'}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': ['USD-Russia', 'USD-Russia'],
         },
         {
             'w_text': 'montru dolaran kaj dolaran kurzon de rusia kaj rusia banko',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'used_antonym': None,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'currency': 'USD', 'country': 'Russia'},
+                                {'currency': 'USD', 'country': 'Russia'},
+                                {'currency': 'USD', 'country': 'Russia'},
+                                {'currency': 'USD', 'country': 'Russia'}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': [
                 'USD-Russia',
                 'USD-Russia',
@@ -55,10 +224,55 @@ dataset_verb_and_homogeneous_actants = {
     'examples': [
         {
             'w_text': 'montru adreson de komputilo kaj androido',  # TODO: должен вывести инфу, что `androido` не распознан
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'used_antonym': None,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function showAddress at 0x7fda49755378>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'device': 'computer'}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': ['192.168.0.1'],
         },
         {
             'w_text': 'montru euxran kaj dolaran kurzon de ukrainia kaj rusia kaj belarusia banko',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'used_antonym': None,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'currency': 'EUR', 'country': 'Russia'},
+                                {'currency': 'EUR', 'country': 'Belarus'},
+                                {'currency': 'EUR', 'country': 'Ukraine'},
+                                {'currency': 'USD', 'country': 'Russia'},
+                                {'currency': 'USD', 'country': 'Belarus'},
+                                {'currency': 'USD', 'country': 'Ukraine'}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': [
                 'EUR-Russia',
                 'EUR-Belarus',
@@ -70,6 +284,29 @@ dataset_verb_and_homogeneous_actants = {
         },
         {
             'w_text': 'montru euxran kaj dolaran kurzon de ukrainia kaj rusia banko',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'used_antonym': None,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'currency': 'EUR', 'country': 'Russia'},
+                                {'currency': 'EUR', 'country': 'Ukraine'},
+                                {'currency': 'USD', 'country': 'Russia'},
+                                {'currency': 'USD', 'country': 'Ukraine'}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': [
                 'EUR-Russia',
                 'EUR-Ukraine',
@@ -92,10 +329,50 @@ dataset_antonym_of_verb = {
     'examples': [
         {
             'w_text': 'malsxaltu tablan lampon en dormcxambro kaj fermo',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': None,
+                        'used_antonym': True,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': None,
+                            'func_set_value': '<function LightOn at 0x7fda497552f0>',
+                            'arguments': [
+                                 {'device': '0', 'room': 'bedroom'}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': ['0'],
         },
         {
             'w_text': 'malmontru dolaran kurzon de rusia banko de mia domo',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'used_antonym': True,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'currency': 'USD', 'country': 'Russia'}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': [],
         },
     ]
@@ -106,14 +383,95 @@ dataset_verb_and_homogeneous_direct_supplement = {
     'examples': [
         {
             'w_text': 'montru adreson de komputilo kaj dolaran kurzon',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'used_antonym': None,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function showAddress at 0x7fda49755378>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'device': 'computer'}
+                            ],
+                            'how_put_args': False
+                        }, {
+                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'currency': 'USD'}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': ['192.168.0.1', 'USD-Russia'],
         },
         {
             'w_text': 'montru adreson de komputilo kaj dolaran kurzon de belarusia banko',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'used_antonym': None,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function showAddress at 0x7fda49755378>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'device': 'computer'}
+                            ],
+                            'how_put_args': False
+                        }, {
+                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'currency': 'USD', 'country': 'Belarus'}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': ['192.168.0.1', 'USD-Belarus'],
         },
         {
             'w_text': 'montru dolaran kurzon kaj adreson de komputilo',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'used_antonym': None,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'currency': 'USD'}
+                            ],
+                            'how_put_args': False
+                        }, {
+                            'func_get_value': '<function showAddress at 0x7fda49755378>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'device': 'computer'}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': ['USD-Russia', '192.168.0.1'],
         },
     ]
@@ -124,14 +482,22 @@ dataset_punctuation = {
     'examples': [
         {
             'w_text': 'montru euxran, dolaran kurzon de ukrainia banko',
+            'convert': montru_euxran_dolaran_kurzon_de_ukrainia_banko,
             'r_text_construct': ['EUR-Ukraine', 'USD-Ukraine'],
         },
         {
             'w_text': 'montru euxran, dolaran kurzon de ukrainia banko .',
+            'convert': montru_euxran_dolaran_kurzon_de_ukrainia_banko,
             'r_text_construct': ['EUR-Ukraine', 'USD-Ukraine'],
         },
         {
             'w_text': 'montru euxran, dolaran kurzon de ukrainia banko ...',
+            'convert': montru_euxran_dolaran_kurzon_de_ukrainia_banko,
+            'r_text_construct': ['EUR-Ukraine', 'USD-Ukraine'],
+        },
+        {
+            'w_text': 'montru euxran kaj dolaran kurzon de ukrainia banko',
+            'convert': montru_euxran_dolaran_kurzon_de_ukrainia_banko,
             'r_text_construct': ['EUR-Ukraine', 'USD-Ukraine'],
         },
     ]
@@ -142,22 +508,150 @@ dataset_numbers_and_simple_math = {
     'examples': [
         {
             'w_text': 'adiciu dudekon trion',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function add at 0x7fda49755598>',
+                        'used_antonym': None,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'a': 23}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': ['23'],
         },
         {
             'w_text': 'adiciu kvardekon kaj trion kaj milionon',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function add at 0x7fda49755598>',
+                        'used_antonym': None,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'a': 40}
+                            ],
+                            'how_put_args': False
+                        }, {
+                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'a': 3}
+                            ],
+                            'how_put_args': False
+                        }, {
+                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'a': 1000000}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': ['40 + 3 + 1000000'],
         },
         {
             'w_text': 'maladiciu dolaran kurzon kaj trion',
-            'r_text_construct': ['3'],  # TODO correct: ['USD-Russia + -3']
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function add at 0x7fda49755598>',
+                        'used_antonym': True,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'currency': 'USD'}
+                            ],
+                            'how_put_args': False
+                        }, {
+                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'a': 3}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
+            'r_text_construct': ['USD-Russia - 3'],
         },
         {
             'w_text': 'adiciu dolaran kurzon kaj 1000',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function add at 0x7fda49755598>',
+                        'used_antonym': None,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'currency': 'USD'}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': ['USD-Russia'],  # TODO correct: ['USD-Russia + 1000]
         },
         {
             'w_text': 'multigu trion kaj kvaron',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function multiply at 0x7fda49755620>',
+                        'used_antonym': None,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'a': 3}
+                            ],
+                            'how_put_args': False
+                        }, {
+                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'a': 4}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': ['3 * 4'],
         },
     ]
@@ -168,11 +662,64 @@ dataset_synonyms_of_verb = {
     'examples': [
         {
             'w_text': 'malmultigu dolaran kurzon kaj trion',
-            'r_text_construct': ['3'],  # TODO correct: ['USD-Russia / 3']
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function multiply at 0x7fda49755620>',
+                        'used_antonym': True,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'currency': 'USD'}
+                            ],
+                            'how_put_args': False
+                        }, {
+                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'a': 3}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
+            'r_text_construct': ['USD-Russia / 3'],
         },
         {
             'w_text': 'malobligu dolaran kurzon kaj trion',
-            'r_text_construct': ['3'],  # TODO correct: не помню перевод obligu
+            'convert': {
+                0: {
+                    'type_sentence': 'run', 'verb': {
+                        'func_common': '<function multiply at 0x7fda49755620>',
+                        'used_antonym': True,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'currency': 'USD'}
+                            ],
+                            'how_put_args': False
+                        }, {
+                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'a': 3}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
+            'r_text_construct': ['USD-Russia / 3'],
         },
     ]
 }
@@ -182,15 +729,77 @@ dataset_undirect_order_of_words = {
     'examples': [
         {
             'w_text': 'trion adiciu',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function add at 0x7fda49755598>',
+                        'used_antonym': None,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'a': 3}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': ['3'],
         },
         {
             'w_text': 'dolaran kurzon montru',
+            'convert': montru_dolaran_kurzon,
             'r_text_construct': ['USD-Russia'],
         },
         {
             'w_text': 'montru de rusia banko euxran kurzon',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'used_antonym': None,
+                        'answer_type': 'construct'
+                    },
+                    'word_combinations': [
+                        {
+                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'currency': 'EUR'}
+                            ],
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
             'r_text_construct': ['EUR-Russia'],
+        },
+    ]
+}
+
+dataset_mistakes = {
+    'dataset_description': 'ошибки',
+    'examples': [
+        {
+            'w_text': 'montru dolara kurzon',
+            'convert': montru_dolaran_kurzon,
+            'r_text_construct': ['USD-Russia'],
+        },
+        {
+            'w_text': 'montru dolara kurzo',
+            'convert': montru_dolaran_kurzon,
+            'r_text_construct': ['USD-Russia'],
+        },
+        {
+            'w_text': 'montru dolaran kurzo',
+            'convert': montru_dolaran_kurzon,
+            'r_text_construct': ['USD-Russia'],
         },
     ]
 }
@@ -205,6 +814,7 @@ datasets = (
     dataset_numbers_and_simple_math,
     dataset_synonyms_of_verb,
     dataset_undirect_order_of_words,
+    dataset_mistakes,
 )
 
 
