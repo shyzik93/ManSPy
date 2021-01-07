@@ -12,13 +12,13 @@ montru_euxran_dolaran_kurzon_de_ukrainia_banko = {
     0: {
         'type_sentence': 'run',
         'verb': {
-            'func_common': '<function printToIF at 0x7fda49755400>',
+            'func_common': 'smart_home/printToIF',
             'used_antonym': None,
             'answer_type': 'construct'
         },
         'word_combinations': [
             {
-                'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                'func_get_value': 'CurrencyLoader/GetCourse',
                 'func_set_value': None,
                 'arguments': [
                     {'currency': 'EUR', 'country': 'Ukraine'},
@@ -34,13 +34,13 @@ montru_dolaran_kurzon = {
     0: {
         'type_sentence': 'run',
         'verb': {
-            'func_common': '<function printToIF at 0x7fda49755400>',
+            'func_common': 'smart_home/printToIF',
             'used_antonym': None,
             'answer_type': 'construct'
         },
         'word_combinations': [
             {
-                'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                'func_get_value': 'CurrencyLoader/GetCourse',
                 'func_set_value': None,
                 'arguments': [
                     {'currency': 'USD'}
@@ -65,13 +65,13 @@ dataset_verb_and_actants = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'func_common': 'smart_home/printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_get_value': 'CurrencyLoader/GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD', 'country': 'Russia'},
@@ -97,7 +97,7 @@ dataset_verb_and_actants = {
                     'word_combinations': [
                         {
                             'func_get_value': None,
-                            'func_set_value': '<function LightOn at 0x7fda497552f0>',
+                            'func_set_value': 'smart_home/LightOn',
                             'arguments': [
                                 {'device': '0', 'room': 'bedroom'}
                             ],
@@ -114,12 +114,12 @@ dataset_verb_and_actants = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'func_common': 'smart_home/printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
-                        {'func_get_value': '<function showAddress at 0x7fda49755378>',
+                        {'func_get_value': 'smart_home/showAddress',
                          'func_set_value': None,
                          'arguments': [
                              {'device': 'computer'}
@@ -137,13 +137,13 @@ dataset_verb_and_actants = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'func_common': 'smart_home/printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function showAddress at 0x7fda49755378>',
+                            'func_get_value': 'smart_home/showAddress',
                             'func_set_value': None,
                             'arguments': [],
                             'how_put_args': False
@@ -165,13 +165,13 @@ dataset_verb_and_repeated_actants = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'func_common': 'smart_home/printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_get_value': 'CurrencyLoader/GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD', 'country': 'Russia'},
@@ -190,13 +190,13 @@ dataset_verb_and_repeated_actants = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'func_common': 'smart_home/printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_get_value': 'CurrencyLoader/GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD', 'country': 'Russia'},
@@ -228,13 +228,13 @@ dataset_verb_and_homogeneous_actants = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'func_common': 'smart_home/printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function showAddress at 0x7fda49755378>',
+                            'func_get_value': 'smart_home/showAddress',
                             'func_set_value': None,
                             'arguments': [
                                 {'device': 'computer'}
@@ -252,13 +252,13 @@ dataset_verb_and_homogeneous_actants = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'func_common': 'smart_home/printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_get_value': 'CurrencyLoader/GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'EUR', 'country': 'Russia'},
@@ -288,13 +288,13 @@ dataset_verb_and_homogeneous_actants = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'func_common': 'smart_home/printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_get_value': 'CurrencyLoader/GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'EUR', 'country': 'Russia'},
@@ -340,7 +340,7 @@ dataset_antonym_of_verb = {
                     'word_combinations': [
                         {
                             'func_get_value': None,
-                            'func_set_value': '<function LightOn at 0x7fda497552f0>',
+                            'func_set_value': 'smart_home/LightOn',
                             'arguments': [
                                  {'device': '0', 'room': 'bedroom'}
                             ],
@@ -357,13 +357,13 @@ dataset_antonym_of_verb = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'func_common': 'smart_home/printToIF',
                         'used_antonym': True,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_get_value': 'CurrencyLoader/GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD', 'country': 'Russia'}
@@ -387,20 +387,20 @@ dataset_verb_and_homogeneous_direct_supplement = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'func_common': 'smart_home/printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function showAddress at 0x7fda49755378>',
+                            'func_get_value': 'smart_home/showAddress',
                             'func_set_value': None,
                             'arguments': [
                                 {'device': 'computer'}
                             ],
                             'how_put_args': False
                         }, {
-                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_get_value': 'CurrencyLoader/GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD'}
@@ -418,20 +418,20 @@ dataset_verb_and_homogeneous_direct_supplement = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'func_common': 'smart_home/printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function showAddress at 0x7fda49755378>',
+                            'func_get_value': 'smart_home/showAddress',
                             'func_set_value': None,
                             'arguments': [
                                 {'device': 'computer'}
                             ],
                             'how_put_args': False
                         }, {
-                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_get_value': 'CurrencyLoader/GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD', 'country': 'Belarus'}
@@ -449,20 +449,20 @@ dataset_verb_and_homogeneous_direct_supplement = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'func_common': 'smart_home/printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_get_value': 'CurrencyLoader/GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD'}
                             ],
                             'how_put_args': False
                         }, {
-                            'func_get_value': '<function showAddress at 0x7fda49755378>',
+                            'func_get_value': 'smart_home/showAddress',
                             'func_set_value': None,
                             'arguments': [
                                 {'device': 'computer'}
@@ -512,13 +512,13 @@ dataset_numbers_and_simple_math = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function add at 0x7fda49755598>',
+                        'func_common': 'smart_home/add',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_get_value': 'smart_home/get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 23}
@@ -536,27 +536,27 @@ dataset_numbers_and_simple_math = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function add at 0x7fda49755598>',
+                        'func_common': 'smart_home/add',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_get_value': 'smart_home/get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 40}
                             ],
                             'how_put_args': False
                         }, {
-                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_get_value': 'smart_home/get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 3}
                             ],
                             'how_put_args': False
                         }, {
-                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_get_value': 'smart_home/get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 1000000}
@@ -574,20 +574,20 @@ dataset_numbers_and_simple_math = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function add at 0x7fda49755598>',
+                        'func_common': 'smart_home/add',
                         'used_antonym': True,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_get_value': 'CurrencyLoader/GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD'}
                             ],
                             'how_put_args': False
                         }, {
-                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_get_value': 'smart_home/get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 3}
@@ -605,13 +605,13 @@ dataset_numbers_and_simple_math = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function add at 0x7fda49755598>',
+                        'func_common': 'smart_home/add',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_get_value': 'CurrencyLoader/GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD'}
@@ -629,20 +629,20 @@ dataset_numbers_and_simple_math = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function multiply at 0x7fda49755620>',
+                        'func_common': 'smart_home/multiply',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_get_value': 'smart_home/get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 3}
                             ],
                             'how_put_args': False
                         }, {
-                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_get_value': 'smart_home/get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 4}
@@ -666,20 +666,20 @@ dataset_synonyms_of_verb = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function multiply at 0x7fda49755620>',
+                        'func_common': 'smart_home/multiply',
                         'used_antonym': True,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_get_value': 'CurrencyLoader/GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD'}
                             ],
                             'how_put_args': False
                         }, {
-                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_get_value': 'smart_home/get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 3}
@@ -696,20 +696,20 @@ dataset_synonyms_of_verb = {
             'convert': {
                 0: {
                     'type_sentence': 'run', 'verb': {
-                        'func_common': '<function multiply at 0x7fda49755620>',
+                        'func_common': 'smart_home/multiply',
                         'used_antonym': True,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_get_value': 'CurrencyLoader/GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD'}
                             ],
                             'how_put_args': False
                         }, {
-                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_get_value': 'smart_home/get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 3}
@@ -733,13 +733,13 @@ dataset_undirect_order_of_words = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function add at 0x7fda49755598>',
+                        'func_common': 'smart_home/add',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function get at 0x7fda49755488>',
+                            'func_get_value': 'smart_home/get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 3}
@@ -762,13 +762,13 @@ dataset_undirect_order_of_words = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': '<function printToIF at 0x7fda49755400>',
+                        'func_common': 'smart_home/printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': '<function GetCourse at 0x7fda48674048>',
+                            'func_get_value': 'CurrencyLoader/GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'EUR'}
