@@ -28,7 +28,7 @@
 
 Программа построена по принципу подключаемых модулей:
 - заменяемый лингвистический модуль синтеза текста на языке Эсперанто (реализованы графематический, морфологический и постморфологический, синтаксический анализы) ([/language/*](https://github.com/shyzik93/manspy/blob/master/language))
-- заменяемые интерфейсные модули ([/interface/*](https://github.com/shyzik93/blob/master/interface))
+- заменяемые интерфейсные модули ([/interface/*](https://github.com/shyzik93/manspy/blob/master/interface))
 - заменяемые исполнительные модули ([/action/*](https://github.com/shyzik93/manspy/blob/master/action))
 - заменяемые логирующие модули ([/logger/*](https://github.com/shyzik93/manspy/blob/master/logger))
 - модуль хранения семантических отношений ([/manspy/relation.py](https://github.com/shyzik93/manspy/blob/master/manspy/relation.py))
