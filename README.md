@@ -28,7 +28,7 @@
 
 Программа построена по принципу подключаемых модулей:
 - заменяемый лингвистический модуль синтеза текста на языке Эсперанто (реализованы графематический, морфологический и постморфологический, синтаксический анализы) ([/language/*](https://github.com/shyzik93/manspy/blob/master/language))
-- заменяемые интерфейсные модули ([/interfaces/*](https://github.com/shyzik93/blob/master/interfaces))
+- заменяемые интерфейсные модули ([/interface/*](https://github.com/shyzik93/blob/master/interface))
 - заменяемые исполнительные модули ([/action/*](https://github.com/shyzik93/manspy/blob/master/action))
 - заменяемые логирующие модули ([/logger/*](https://github.com/shyzik93/manspy/blob/master/logger))
 - модуль хранения семантических отношений ([/manspy/relation.py](https://github.com/shyzik93/manspy/blob/master/manspy/relation.py))
@@ -44,7 +44,7 @@
 1. Из анализов каждого предложения вынимается сказуемое и его актанты
 1. Из базы данных вынимаются ФАСИФы для актантов глагола (словосочетаний)
 1. На основании анализов и ФАСИФа получаем функции и аргуметы: своеобразный "внутренний язык"
-1. Функция и аргументы выполняются (модулем выполнения функций)[https://github.com/shyzik93/manspy/blob/master/manspy/FCModule]
+1. Функция и аргументы выполняются [модулем выполнения функций](https://github.com/shyzik93/manspy/blob/master/manspy/FCModule)
 1. Ответ из функции поступает в модуль интерфейса к пользователю
 
 ## А как ManSPy можно использовать уже сейчас?
@@ -57,6 +57,7 @@
 # Установка
 
 Для установки используйте команду `pip install https://github.com/shyzik93/manspy/archive/master.zip`
+
 Для удаления: `pip uninstall manspy`
 
 В программе используются следующие сторонние модули Python, которые необходимо устанавливать отдельно из-за их отсутствия в стандартной библиотеке:
