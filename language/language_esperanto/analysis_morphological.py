@@ -174,7 +174,7 @@ def _getMorphA(word):
             word['antonym'] = Dict.dct['prefix'][base[:3]]['antonym']
             word['base'] = base[3:]
 
-    if len(word) == 1: # то есть {'word': word}
+    if 'POSpeech' not in word or word['POSpeech'] == '':
         # нераспознанное слово с большой буквы - существительное
         if not word['word'][0].islower():
             defaultNoun(word_l, word)

@@ -617,11 +617,19 @@ dataset_numbers_and_simple_math = {
                                 {'currency': 'USD'}
                             ],
                             'how_put_args': False
+                        },
+                        {
+                            'func_get_value': 'smart_home/get',
+                            'func_set_value': None,
+                            'arguments': [
+                                {'a': 1000}
+                            ],
+                            'how_put_args': False
                         }
                     ]
                 }
             },
-            'r_text_construct': ['USD-Russia'],  # TODO correct: ['USD-Russia + 1000]
+            'r_text_construct': ['USD-Russia + 1000.0'],
         },
         {
             'w_text': 'multigu trion kaj kvaron',

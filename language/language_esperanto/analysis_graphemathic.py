@@ -78,7 +78,7 @@ def process_words(text):
 
         # слово с небуквенными символами в середине или начале
         if not word['word'].isalpha():
-            if re.match(r'^[0-9]*[,.]?[0-9]+$', sword): word['notword'] = 'figure'
+            if re.match(r'^[0-9]*[,.]?[0-9]+$', word['word']): word['notword'] = 'figure'
 
         # обработка кавычек вокруг одного слова
         sword = word['word']
