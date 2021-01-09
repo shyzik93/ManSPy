@@ -4,6 +4,7 @@ import os
 from manspy.fasif.parser_fasif import FASIF
 from manspy.fasif.constants import *
 from manspy.message import Message
+from manspy.analyse_text import nature2internal
 
 
 class FASIF_WordCombination(FASIF):
@@ -158,7 +159,7 @@ class FASIF_WordCombination(FASIF):
 
         #print '----------------- to formule start'
         message = Message(settings, {'levels':':synt', 'print_time':False}, fasif['wcomb'], 'W')
-        wcomb = self.LangClass.NL2IL(message)(0)
+        wcomb = nature2internal(message)(0)
         fasif['argdescr'] = {}
         for argname, data in fasif['args'].items():
             argword = data['argwords']['in_wcomb']['name']

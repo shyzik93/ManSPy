@@ -27,15 +27,14 @@ def remove_comments_and_separate_fasifs(fasif):
 
 
 class FASIFParser:
-    def __init__(self, LangClass):
-        self.LangClass = LangClass
+    def __init__(self):
         self.classes = {}
 
     def selector_of_function(self, dict_assoc_types, _func_name, *func_args):
         for assoc_type, fasifs in dict_assoc_types.items():
             cls_name = 'FASIF_' + assoc_type
             if cls_name not in self.classes and cls_name in globals():
-                self.classes[cls_name] = globals()[cls_name](self.LangClass)
+                self.classes[cls_name] = globals()[cls_name]()
 
             index = 0
             while index < len(fasifs):

@@ -6,7 +6,7 @@
 """
 import os
 
-from manspy.analyse_text import LangClass
+from manspy.analyse_text import nature2internal
 from manspy.utils.settings import Settings
 from manspy.utils import importer
 from manspy.message import Message
@@ -49,11 +49,10 @@ class API:
 
         if w_text:
             message = Message(settings, text_settings, w_text, 'W')
-            return message, self.LangClass.NL2IL(message)
+            return message, nature2internal(message)
 
     def __enter__(self):
-        self.LangClass = LangClass()
-        fasif_parser = FASIFParser(self.LangClass)
+        fasif_parser = FASIFParser()
         self.was_imported = {}
 
         for module_type, path_import in self.paths_import:
