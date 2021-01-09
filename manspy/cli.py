@@ -89,7 +89,7 @@ def do_cmd(args_list=None):
         parser = argparse.ArgumentParser(description='ManSPy')
         parser.add_argument('--version', action='version', version='%(prog)s 0.0.0')
 
-        parser.add_argument('--level', default='graphmath exec')
+        parser.add_argument('--level', default='graphmath:exec')
         parser.add_argument('--type', default='fake', help='answer type: fake (default), construct, real')
 
         parser.add_argument('--language', default='esperanto', help='nature language')

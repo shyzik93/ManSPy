@@ -8,19 +8,6 @@ from manspy.FCModule import execute_internal_sentences
 class LangClass:
     levels = ["graphmath", "morph", "postmorph", "synt", "extract", "convert", "exec"]
 
-    def parse_level_string(self, levels):
-        """ parsing level string. Return start_level, end_level. """
-        # TODO: написать тесты для данной функции
-        levels = levels.split()
-        if len(levels) == 1:
-            level = levels.pop()
-            if level[0] == ':':
-                return self.levels[0], level[1:]
-            elif level[-1] == ':':
-                return level[:-1], self.levels[-1]
-            return level, level
-        return levels
-
     def NL2IL(self, msg):
         """ Второй аргумент - диапазон конвертирования от первого до последнего
             включительно через пробел. Если требуется сделать лишь один уровень,
@@ -42,9 +29,13 @@ class LangClass:
         if lang_module is None:
             print('Языковой модуль "{}" не был импортирован. Анализ невозможен.'.format(msg.settings.language))
             return []
-        start_level, end_level = self.parse_level_string(msg.text_settings['levels'])
 
-        for level in self.levels[self.levels.index(start_level) : self.levels.index(end_level)+1]:
+        levels = msg.text_settings['levels'].replace(' ', ':')
+        start_level, end_level = levels.split(':')
+        start_level = start_level if start_level else self.levels[0]
+        end_level = end_level if end_level else self.levels[-1]
+
+        for level in self.levels[self.levels.index(start_level):self.levels.index(end_level)+1]:
             msg.before_analysis(level)
             t = time.time()
 

@@ -45,7 +45,7 @@ class LevelRTextTestCase(unittest.TestCase):
         self.settings.language = example.get('language', 'esperanto')
         input_data = example['w_text']
         true_answer = example['convert']
-        msg, answers = self.api.write_text(input_data, self.settings, {'print_time': False, 'levels': 'graphmath convert'})
+        msg, answers = self.api.write_text(input_data, self.settings, {'print_time': False, 'levels': 'graphmath:convert'})
         self.assertDictEqual(answers, true_answer, input_data)
 
     def test_verb_and_actants(self):
