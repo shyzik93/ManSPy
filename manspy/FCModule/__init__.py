@@ -47,10 +47,6 @@ def execute_internal_sentence(internal_sentence):
         else:
             gen_r_texts = run_wcomb_function(internal_sentence, arg0, 'func_set_value')
 
-        # function_name = 'func_get_value' if internal_sentence['verb']['func_common'] else 'func_set_value'
-        # gen_r_texts = run_wcomb_function(internal_sentence, arg0, function_name)
-        # if internal_sentence['verb']['func_common']:  # для глагола 1-го типа
-        #     gen_r_texts = internal_sentence['verb']['func_common'](arg0, gen_r_texts)
         return gen_r_texts
 
     elif internal_sentence['type_sentence'] == 'fact':
