@@ -17,7 +17,8 @@ from tests.datasets_of_analyzes import (
     dataset_numbers_and_simple_math,
     dataset_synonyms_of_verb,
     dataset_undirect_order_of_words,
-    dataset_mistakes
+    dataset_mistakes,
+    dataset_homogeneous_sentences
 )
 
 
@@ -111,6 +112,12 @@ class LevelRTextTestCase(TestCase):
 
     def test_mistakes(self):
         for example in dataset_mistakes['examples']:
+            self.pass_example_to_manspy(example)
+
+        self.check_answers()
+
+    def test_homogeneous_sentences(self):
+        for example in dataset_homogeneous_sentences['examples']:
             self.pass_example_to_manspy(example)
 
         self.check_answers()

@@ -94,9 +94,9 @@ def find_func_set_value(fasif, id_group): # в фасифе можно сохр�
             return data['function']
 
 
-def Extraction2IL(R, settings, predicates, arguments):
+def Extraction2IL(R, settings, predicate, arguments):
     fdb = finder.FasifDB(settings.c, settings.cu)
-    predicate = list(predicates.values())[0]
+    #predicate = list(predicates.values())[0]
     verb = {'func_common': None, 'used_antonym': False, 'answer_type': settings.answer_type}
     internal_sentence = {'type_sentence': 'fact', 'verb': verb, 'word_combinations': []}
 
@@ -105,7 +105,7 @@ def Extraction2IL(R, settings, predicates, arguments):
     if predicate['mood'] == 'imperative':
         internal_sentence['type_sentence'] = 'run'
 
-    #  Выимаем ФАСИФ глагола
+    #  Вынимаем ФАСИФ глагола
 
     id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')[0]
     compared_fasifs = fdb.getFASIF('Verb', id_group)
@@ -116,7 +116,7 @@ def Extraction2IL(R, settings, predicates, arguments):
         pass
 
     # Вынимаем Фасиф
-    for _argument in arguments:
+    for _argument in arguments:  # у подпредложения может быть несколько актантов
         argument = Sentence(_argument)
 
         # Вынимаем ФАСИФ словосочетания
@@ -174,7 +174,12 @@ def Extraction2IL(R, settings, predicates, arguments):
 
 def convert(sentences, OR, settings):
     internal_sentences = {}
-    for index, sentence in enumerate(sentences):
-        predicates, arguments = sentence
-        internal_sentences[index] = Extraction2IL(OR, settings, predicates, arguments)
+    # перебираем предложения
+    il_index = 0
+    for sentence in sentences:
+        predicates, arguments_by_predicate = sentence
+        # перебираем однородные, придаточные и главные подпредложения
+        for predicate, arguments in zip(predicates, arguments_by_predicate):
+            internal_sentences[il_index] = Extraction2IL(OR, settings, predicate, arguments)
+            il_index += 1
     return internal_sentences

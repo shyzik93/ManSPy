@@ -265,24 +265,30 @@ class ObjRelation:
             if descr['count_members'] == 'N':
                 pass
 
-
-
-
+    # TODO: удалить данную функцию (нигде более не используется)
     def addWordsToDBFromDictSentence(self, dict_sentence):
-        if isinstance(dict_sentence, dict): items = dict_sentence.items()
-        elif isinstance(dict_sentence, list): items = enumerate(dict_sentence)
-
-        words = []
-        for index, word in items:
+        def is_word_to_db(word):
             # числительные в базу не добавляем
-            #if word['POSpeech'] == 'numeral' or word['derivative'] == 'numeral' or word['word'] == '' or word['base'] == '': continue
-            if 'number_value' in word or word['word'] == '' or word['base'] == '': continue
-            #if word['POSpeech'] == 'numeral': continue
-            words.append(word['base'])
-            if len(word['feature']) != 0: self.addWordsToDBFromDictSentence(word['feature'])
+            # if word['POSpeech'] == 'numeral' or word['derivative'] == 'numeral' or word['word'] == '' or word['base'] == '':
+            #     False
+            if 'number_value' in word or word['word'] == '' or word['base'] == '':
+                return False
+            # if word['POSpeech'] == 'numeral': continue
+            return True
+
+        new_words = []
+        for index, word in dict_sentence.items():
+            if is_word_to_db(word):
+                new_words.append(word['base'])
+
+            for feature_word in word['feature']:
+                if is_word_to_db(feature_word):
+                    new_words.append(feature_word['base'])
+
             if word['MOSentence'] == 'predicate' and word['POSpeech'] == 'verb':
                 self.R.add_words2group('synonym', word['POSpeech'], None, 0, word['base'])
-        self.R.add_word(*words)
+
+        self.R.add_word(*new_words)
 
     # Временные функции-обёртки, для понимания задачи.
     def isRelBetween(self, relation, word1, word2):

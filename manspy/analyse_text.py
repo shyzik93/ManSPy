@@ -46,7 +46,7 @@ def nature2internal(msg):
         elif level == "synt":
             sentences = lang_module.analysis_syntax.get_analysis(sentences)
         elif level == "extract":
-            sentences = extract(sentences, OR)
+            sentences = extract(sentences)
         elif level == "convert":
             sentences = convert(sentences, OR, msg.settings)
         elif level == "exec":

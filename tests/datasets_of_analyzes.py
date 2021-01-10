@@ -799,16 +799,74 @@ dataset_mistakes = {
             'convert': montru_dolaran_kurzon,
             'r_text_construct': ['USD-Russia'],
         },
+        # TODO: решить, самоисправлять ли такие ошибки или задать уточняющий вопрос
+        # {
+        #     'w_text': 'montru dolara kurzo',
+        #     'convert': montru_dolaran_kurzon,
+        #     'r_text_construct': ['USD-Russia'],
+        # },
+        # {
+        #     'w_text': 'montru dolaran kurzo',
+        #     'convert': montru_dolaran_kurzon,
+        #     'r_text_construct': ['USD-Russia'],
+        # },
+    ]
+}
+
+dataset_homogeneous_sentences = {
+    'dataset_description': 'Однородные предложения (предложеня, разделённые запятой)',
+    'examples': [
         {
-            'w_text': 'montru dolara kurzo',
-            'convert': montru_dolaran_kurzon,
-            'r_text_construct': ['USD-Russia'],
-        },
+            'w_text': 'montru euxran kurzon de rusia banko, sxaltu tablan lampon en dormcxambro',
+            'convert': {
+                0: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'answer_type': 'construct',
+                        'func_common': 'smart_home/printToIF',
+                        'used_antonym': None
+                    },
+                    'word_combinations': [
+                        {
+                            'arguments': [
+                                {'country': 'Russia', 'currency': 'EUR'}
+                            ],
+                            'func_get_value': 'CurrencyLoader/GetCourse',
+                            'func_set_value': None,
+                            'how_put_args': False
+                        }
+                    ]
+                },
+                1: {
+                    'type_sentence': 'run',
+                    'verb': {
+                        'answer_type': 'construct',
+                        'func_common': None,
+                        'used_antonym': None
+                    },
+                    'word_combinations': [
+                        {
+                            'arguments': [
+                                {'device': '0', 'room': 'bedroom'}
+                            ],
+                            'func_get_value': None,
+                            'func_set_value': 'smart_home/LightOn',
+                            'how_put_args': False
+                        }
+                    ]
+                }
+            },
+            'r_text_construct': ['EUR-Russia', '1'],
+        }
+    ]
+}
+
+dataset_construct_condition = {
+    'dataset_description': 'Условные конструкции',
+    'examples': [
         {
-            'w_text': 'montru dolaran kurzo',
-            'convert': montru_dolaran_kurzon,
-            'r_text_construct': ['USD-Russia'],
-        },
+            'w_text': 'Se euxra kurzo de rusia banko estas sepdek kvin, sxaltu tablan lampon en dormcxambro'
+        }
     ]
 }
 
@@ -854,137 +912,3 @@ TEST_INPUT_DATA_ESPERANTO = [
     # ('montru dolaran kurzon de okdek', []),
     # ('montru dolaran kurzon de dek du', []),
 ]
-
-dataset2 = {
-    'dataset_description': '',
-    'examples': [
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-        {
-            'w_text': '',
-            'r_text_construct': [],
-        },
-    ]
-}
