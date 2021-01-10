@@ -11,9 +11,6 @@ def run_wcomb_function(internal_sentence, arg0, function_name, prefix=''):
     :param internal_sentence:
     :return: генератор с ответами
     """
-    #function_name = 'func_get_value' if internal_sentence['verb']['func_common'] else 'func_set_value'
-
-
     for word_combination in internal_sentence['{}word_combinations'.format(prefix)]:
         if word_combination['how_put_args'] == 'l':  # однородные передаются разом как позиционные аргументы
             yield word_combination[function_name](arg0, *word_combination['arguments'])

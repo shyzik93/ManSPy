@@ -7,9 +7,12 @@
 def forPronounAndNoun(word):
     ''' Определяет член предложения для имени существительного
         и притяжательного местоимепния по падежу '''
-    if word['case'] == 'accusative': return 'direct supplement'
-    elif word['case'] == 'nominative': return 'subject'
+    if word['case'] == 'accusative':
+        return 'direct supplement'
+    elif word['case'] == 'nominative':
+        return 'subject'
     return 'supplement'
+
 
 def setMOS_ToSign(features):
     """ Определение члена предложения у признаков:
@@ -19,7 +22,9 @@ def setMOS_ToSign(features):
             feature['MOSentence'] = 'definition'
         elif feature['POSpeech'] == 'adverb':
             feature['MOSentence'] = 'circumstance'
-        if feature['feature']: setMOS_ToSign(feature['feature'])
+        if feature['feature']:
+            setMOS_ToSign(feature['feature'])
+
 
 def setMOSentence(word, sentence):
     if word['POSpeech'] == 'verb':
@@ -39,13 +44,16 @@ def setMOSentence(word, sentence):
             word['MOSentence'] = 'definition'    # ? Появилось определение
         elif word['category'] == 'personal':
             word['MOSentence'] = forPronounAndNoun(word)
-        else: word['MOSentence'] = '' # не притяжательное и не личное местоимение
+        else:
+            word['MOSentence'] = '' # не притяжательное и не личное местоимение
 
     # прилагательное без существительного
     elif 'praPOSpeech' in word and word['praMOSentence'] == 'freemember':
         word['MOSentence'] = 'supplement'
     #elif word['POSpeech'] == 'adjective': word['MOSentence'] = 'definition'  
-    else: word['MOSentence'] = ''
+    else:
+        word['MOSentence'] = ''
+
 
 def setLinks(index, sentence):
     ''' Устанавливает связи членов предложения. Обстоятельства и определения
@@ -59,7 +67,8 @@ def setLinks(index, sentence):
         for index2, word2 in sentence.iterFromByStep(1):
             if sentence(index2, 'MOSentence') == 'direct supplement':
                 sentence.addLink(index, index2)
-            elif sentence(index2, 'MOSentence') == 'predicate': break
+            elif sentence(index2, 'MOSentence') == 'predicate':
+                break
         sentence.position = old_position
 
     #TASK если у прямого дополнения нескеолько дополнений, то они проигнорируются
@@ -74,12 +83,11 @@ def setLinks(index, sentence):
                 #if sentence(index2, 'case') in ['genetive']: sentence.addLink(index, index2)#word['link'].append(index2)"""
                 if not case:
                     case = word['case']
-                    sentence.addLink(index, index2)
-                elif case :
-                    sentence.addLink(index, index2)
+                sentence.addLink(index, index2)
             elif word2['MOSentence'] in ['direct supplement', 'subject']:
                 break # это другой актант уже пойдёт.
         sentence.position = old_position
+
 
 def goThrowLinks(index, sentence, indexes=None):
 
@@ -95,6 +103,8 @@ def goThrowLinks(index, sentence, indexes=None):
             goThrowLinks(index_link, sentence, indexes)    
 
     return indexes
+
+
 # TODO: Две одноимённых функции!???
 def split_sentence(sentence):
 
@@ -120,7 +130,7 @@ def split_sentence(sentence):
         if sentence(first_index, 'POSentence') == 'predicate':
             predicates.append(first_index)    
 
-    for subject in subject:
+    for subject in subjects:
         _sentences.append(goThrowLinks(subject, sentence))
 
     # определяем, в каком 
@@ -130,6 +140,7 @@ def split_sentence(sentence):
 
     #for index, word in sentence:
     #    left, right = sentence.getNeighbours()
+
 
 def split_sentence(sentence):
     first_indexes = sentence.getIndexesOfFirstWords()
@@ -145,12 +156,15 @@ def split_sentence(sentence):
     for first_index in first_indexes:
         _sentences.append(goThrowLinks(first_index, sentence))    
 
+
 def get_analysis(text):
     for index, sentence in text:
         # определяет члены предложения
-        for index, word in sentence: setMOSentence(word, sentence)
+        for index, word in sentence:
+            setMOSentence(word, sentence)
         # устанавливает связи членов предложения
-        for index, word in sentence: setLinks(index, sentence)
+        for index, word in sentence:
+            setLinks(index, sentence)
 
         # разделяем сложноподчинённые и сложносочинённые предложения
         split_sentence(sentence)

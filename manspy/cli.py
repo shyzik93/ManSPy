@@ -51,13 +51,8 @@ class CLI(API):
             msg, results = self.write_text(text, settings, text_settings)
             if isinstance(results, Unit):
                 pprint.pprint(results.export_unit(ignore_units=dict))
-            if isinstance(results, dict):
+            if isinstance(results, (dict, list)):
                 pprint.pprint(results)
-            if isinstance(results, list):
-                if results:
-                    print('При выполнении возникли следующие ошибки:')
-                for result in results:
-                    print(result)
 
         self.settings.language = args.language
         self.settings.answer_type = args.type
