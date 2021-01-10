@@ -3,7 +3,7 @@
 """
 
 
-def run_wcomb_function(internal_sentence, arg0):
+def run_wcomb_function(internal_sentence, arg0, function_name, prefix=''):
     """
     Выполняем функции словосочетаний:
     - получения состояния - для глаголов 1-го типа
@@ -11,9 +11,10 @@ def run_wcomb_function(internal_sentence, arg0):
     :param internal_sentence:
     :return: генератор с ответами
     """
-    function_name = 'func_get_value' if internal_sentence['verb']['func_common'] else 'func_set_value'
+    #function_name = 'func_get_value' if internal_sentence['verb']['func_common'] else 'func_set_value'
 
-    for word_combination in internal_sentence['word_combinations']:
+
+    for word_combination in internal_sentence['{}word_combinations'.format(prefix)]:
         if word_combination['how_put_args'] == 'l':  # однородные передаются разом как позиционные аргументы
             yield word_combination[function_name](arg0, *word_combination['arguments'])
         else:  # однородные передаются по очереди как именованные
@@ -40,13 +41,30 @@ def execute_internal_sentence(internal_sentence):
             'answer_type': internal_sentence['verb']['answer_type']
         }
 
-        gen_r_texts = run_wcomb_function(internal_sentence, arg0)
         if internal_sentence['verb']['func_common']:  # для глагола 1-го типа
+            gen_r_texts = run_wcomb_function(internal_sentence, arg0, 'func_get_value')
             gen_r_texts = internal_sentence['verb']['func_common'](arg0, gen_r_texts)
+        else:
+            gen_r_texts = run_wcomb_function(internal_sentence, arg0, 'func_set_value')
+
+        # function_name = 'func_get_value' if internal_sentence['verb']['func_common'] else 'func_set_value'
+        # gen_r_texts = run_wcomb_function(internal_sentence, arg0, function_name)
+        # if internal_sentence['verb']['func_common']:  # для глагола 1-го типа
+        #     gen_r_texts = internal_sentence['verb']['func_common'](arg0, gen_r_texts)
         return gen_r_texts
 
     elif internal_sentence['type_sentence'] == 'fact':
-        pass
+
+        arg0 = {
+            'antonym': internal_sentence['verb']['used_antonym'],
+            # только для функции изменения состояния и ф-ции глагола
+            'answer_type': internal_sentence['verb']['answer_type']
+        }
+
+        gen_r_texts = run_wcomb_function(internal_sentence, arg0, 'func_get_value', 'subjects_')
+
+        return gen_r_texts
+
     elif internal_sentence['type_sentence'] == 'construction-condition':
 
         arg0 = {

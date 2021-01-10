@@ -86,89 +86,112 @@ def check_args(finded_args, fasif, R):
     return checked_args
 
 
-def find_func_set_value(fasif, id_group): # в фасифе можно сохранять список всех глаголов для всех назначений для уменьшения кол-ва вычислений
-    if id_group is not None:
-        for destination, data in fasif['functions'].items():
-            if id_group in data['verbs']:
-                return data['function']
+def il_build_func_value(fasif, type_func, verb_id_group=None, check_verb=False, try_antonym=True):
+    """
+
+    :param fasif:
+    :param type_func:
+    :param verb_id_group:
+    :param check_verb:
+    :param try_antonym:
+    :return: (Данные функции, найдена ли финкция по антониму)
+    """
+    data_func = fasif['functions'].get(type_func)
+    if data_func and check_verb:
+        if verb_id_group not in data_func['verbs']:
+            if try_antonym:
+                # TODO: добавить антонимы для примера через глагол-связку. Здесь затем искать по id группы антонимов
+                # verb_synonym_group_id = R.R.get_words_from_samegroup('antonym', 'verb', 'synonym', id_group)
+                id_antonym = verb_id_group
+                if id_antonym not in data_func['verbs']:
+                    return data_func, True
+
+            return False
+
+    return data_func, False
 
 
-def Extraction2IL(R, settings, predicate, arguments):
+def il_build_word_combination(data_get_value, data_set_value, finded_args, fasif, R):
+    for argname, args in finded_args.items():
+        finded_args[argname] = list(args)  # TODO: #UNIQ_ARGS Нужны ли нам дубли аргументов?
+
+    finded_args = dproduct(finded_args)
+    finded_args = check_args(finded_args, fasif, R)
+
+    word_combination = {
+        'func_get_value': importer.action(data_get_value['function']) if data_get_value else None,
+        'func_set_value': importer.action(data_set_value['function']) if data_set_value else None,
+        'arguments': finded_args,
+        'how_put_args': fasif['args_as_list'],
+    }
+    return word_combination
+
+
+def Extraction2IL(R, settings, subjects, predicate, arguments):
     fdb = finder.FasifDB(settings.c, settings.cu)
-    #predicate = list(predicates.values())[0]
     verb = {'func_common': None, 'used_antonym': False, 'answer_type': settings.answer_type}
-    internal_sentence = {'type_sentence': 'fact', 'verb': verb, 'word_combinations': []}
+    internal_sentence = {
+        'type_sentence': 'fact',
+        'verb': verb,
+        'word_combinations': [],
+        'subjects_word_combinations': []
+    }
 
     # определяем тип предложения
 
     if predicate['mood'] == 'imperative':
         internal_sentence['type_sentence'] = 'run'
+    elif predicate['mood'] == 'indicative' and predicate['tense'] == 'present':
+        internal_sentence['type_sentence'] = 'fact'
 
-    #  Вынимаем ФАСИФ глагола
+    #  Вынимаем ФАСИФ глагола - сказуемого
 
     id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')
     id_group = id_group[0] if id_group else None
     if id_group is not None:
         compared_fasifs = fdb.getFASIF('Verb', id_group)
         if compared_fasifs:
-            verb['func_common'] = importer.action(list(compared_fasifs.values())[0][0][0])
+            verb['func_common'] = importer.action(compared_fasifs[0][0][0])
         else:
             # TODO: проверить антоним (), как для функции изменения состояния
             pass
 
-    # Вынимаем Фасиф
+    # Вынимаем Фасиф словосочетаний - актантов
     for _argument in arguments:  # у подпредложения может быть несколько актантов
         argument = Sentence(_argument)
-
-        # Вынимаем ФАСИФ словосочетания
-
         compared_fasifs = fdb.getFASIF('WordCombination', argument)
-        if not compared_fasifs:
-            continue
-        id_fasif, data = list(compared_fasifs.items())[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
-        finded_args, fasif = data
+        if compared_fasifs:
+            finded_args, fasif = compared_fasifs[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
 
-        # Вынимаем функцию получения/изменения состояния.
+            # Вынимаем функцию получения/изменения состояния.
 
-        verb['used_antonym'] = predicate['antonym']
-        func_get_value = fasif['functions']['getCondition']['function'] if 'getCondition' in fasif['functions'] else None
-        func_set_value = find_func_set_value(fasif, id_group)
-        if not func_set_value:  # если глагол не найден, то пробуем антоним
-            # TODO: добавить антонимы для примера через глагол-связку. Здесь затем искать по id группы антонимов
-            #verb_synonym_group_id = R.R.get_words_from_samegroup('antonym', 'verb', 'synonym', id_group)
-            id_antonym = id_group
-            func_set_value = find_func_set_value(fasif, id_antonym)
-            if func_set_value:
+            verb['used_antonym'] = predicate['antonym']
+            data_get_value, finded_by_antonym = il_build_func_value(fasif, 'getCondition')
+            data_set_value, finded_by_antonym = il_build_func_value(fasif, 'changeCondition', id_group, check_verb=True)
+            if finded_by_antonym:
                 verb['used_antonym'] = not verb['used_antonym']
-        word_combination = {
-            'func_get_value': importer.action(func_get_value) if func_get_value else None,
-            'func_set_value': importer.action(func_set_value) if func_set_value else None,
-            'arguments': [],
-        }
 
-        #if 'antonym' in predicate and predicate['antonym'] != isantonym: IL['arg0']['antonym'] = True
+            word_combination = il_build_word_combination(data_get_value, data_set_value, finded_args, fasif, R)
+            internal_sentence['word_combinations'].append(word_combination)
 
-        # Вынимаем фасиф словосочетания  # здесь же отсеиваем неподходящие фасифы (через continue)
-        for argname, args in finded_args.items():
-            finded_args[argname] = list(args)  # TODO: #UNIQ_ARGS Нужны ли нам дубли аргументов?
-            #if fasif['argdescr'][argname]['args_as_list'] == 'l': finded_args[argname] = [finded_args[argname]]
-        finded_args = dproduct(finded_args)
-        finded_args = check_args(finded_args, fasif, R)
-        #with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:  # excess
-        #    flog.write('\n%s\n%s\n' % (str(finded_args), str(fasif['functions']))) # exxcess
+    # Вынимаем Фасиф словосочетаний - субъектов
+    for _subject in subjects:
+        subject = Sentence(_subject)
+        compared_fasifs = fdb.getFASIF('WordCombination', subject)
+        if compared_fasifs:
+            finded_args, fasif = compared_fasifs[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
 
-        word_combination['arguments'] = finded_args
-        word_combination['how_put_args'] = fasif['args_as_list']
+            # Вынимаем функцию получения состояния.
 
-
-        #fwcomb = to_formule.to_formule(argument, False)
-        #print x, fdb.get_hashWComb(fwcomb)
-        internal_sentence['word_combinations'].append(word_combination)
+            verb['used_antonym'] = predicate['antonym']
+            data_get_value, finded_by_antonym = il_build_func_value(fasif, 'getCondition')
+            word_combination = il_build_word_combination(data_get_value, None, finded_args, fasif, R)
+            internal_sentence['subjects_word_combinations'].append(word_combination)
 
     #with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
     #    flog.write('\npraIL: %s\n' % str(internal_sentence))
 
-    return internal_sentence  # excess
+    return internal_sentence
 
 
 def convert(sentences, OR, settings):
@@ -176,9 +199,9 @@ def convert(sentences, OR, settings):
     # перебираем предложения
     il_index = 0
     for sentence in sentences:
-        predicates, arguments_by_predicate = sentence
+        subjects_by_predicate, predicates, arguments_by_predicate = sentence
         # перебираем однородные, придаточные и главные подпредложения
-        for predicate, arguments in zip(predicates, arguments_by_predicate):
-            internal_sentences[il_index] = Extraction2IL(OR, settings, predicate, arguments)
+        for subjects, predicate, arguments in zip(subjects_by_predicate, predicates, arguments_by_predicate):
+            internal_sentences[il_index] = Extraction2IL(OR, settings, subjects, predicate, arguments)
             il_index += 1
     return internal_sentences

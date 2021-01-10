@@ -170,4 +170,4 @@ class FasifDB():
         self.compared_fasifs = {}
         res = self.cu.execute('SELECT id_fasif FROM fasifs WHERE type_fasif=? AND iseq(id_fasif, type_fasif, fasif)=1', (_type,)).fetchall()
         #self.flog.close()
-        return self.compared_fasifs
+        return list(self.compared_fasifs.values())

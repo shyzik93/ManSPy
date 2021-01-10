@@ -26,7 +26,8 @@ montru_euxran_dolaran_kurzon_de_ukrainia_banko = {
                 ],
                 'how_put_args': False
             }
-        ]
+        ],
+        'subjects_word_combinations': []
     }
 }
 
@@ -47,7 +48,8 @@ montru_dolaran_kurzon = {
                 ],
                 'how_put_args': False
             }
-        ]
+        ],
+        'subjects_word_combinations': []
     }
 }
 
@@ -79,7 +81,8 @@ dataset_verb_and_actants = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['USD-Russia', 'EUR-Russia'],
@@ -103,7 +106,8 @@ dataset_verb_and_actants = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['1'],
@@ -126,7 +130,8 @@ dataset_verb_and_actants = {
                          ],
                          'how_put_args': False
                          }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['192.168.0.1'],
@@ -148,7 +153,8 @@ dataset_verb_and_actants = {
                             'arguments': [],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': [],
@@ -179,7 +185,8 @@ dataset_verb_and_repeated_actants = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['USD-Russia', 'USD-Russia'],
@@ -206,7 +213,8 @@ dataset_verb_and_repeated_actants = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': [
@@ -241,7 +249,8 @@ dataset_verb_and_homogeneous_actants = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['192.168.0.1'],
@@ -270,7 +279,8 @@ dataset_verb_and_homogeneous_actants = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': [
@@ -304,7 +314,8 @@ dataset_verb_and_homogeneous_actants = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': [
@@ -346,7 +357,8 @@ dataset_antonym_of_verb = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['0'],
@@ -370,7 +382,8 @@ dataset_antonym_of_verb = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': [],
@@ -407,7 +420,8 @@ dataset_verb_and_homogeneous_direct_supplement = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['192.168.0.1', 'USD-Russia'],
@@ -438,7 +452,8 @@ dataset_verb_and_homogeneous_direct_supplement = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['192.168.0.1', 'USD-Belarus'],
@@ -469,7 +484,8 @@ dataset_verb_and_homogeneous_direct_supplement = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['USD-Russia', '192.168.0.1'],
@@ -525,7 +541,8 @@ dataset_numbers_and_simple_math = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['23'],
@@ -563,7 +580,8 @@ dataset_numbers_and_simple_math = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['40 + 3 + 1000000'],
@@ -594,7 +612,8 @@ dataset_numbers_and_simple_math = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['USD-Russia - 3'],
@@ -626,7 +645,8 @@ dataset_numbers_and_simple_math = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['USD-Russia + 1000.0'],
@@ -657,7 +677,8 @@ dataset_numbers_and_simple_math = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['3 * 4'],
@@ -694,7 +715,8 @@ dataset_synonyms_of_verb = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['USD-Russia / 3'],
@@ -724,7 +746,8 @@ dataset_synonyms_of_verb = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['USD-Russia / 3'],
@@ -754,7 +777,8 @@ dataset_undirect_order_of_words = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['3'],
@@ -783,7 +807,8 @@ dataset_undirect_order_of_words = {
                             ],
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['EUR-Russia'],
@@ -835,7 +860,8 @@ dataset_homogeneous_sentences = {
                             'func_set_value': None,
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 },
                 1: {
                     'type_sentence': 'run',
@@ -853,7 +879,8 @@ dataset_homogeneous_sentences = {
                             'func_set_value': 'smart_home/LightOn',
                             'how_put_args': False
                         }
-                    ]
+                    ],
+                    'subjects_word_combinations': []
                 }
             },
             'r_text_construct': ['EUR-Russia', '1'],

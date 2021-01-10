@@ -34,25 +34,37 @@ def _extract(sentence):
           arg - это аргумент функции, имеет такойже первод на английский, как и актант"""
     arguments_by_predicate = []  # словосочетания (актанты)
     predicates = []
-    predicate_indexes = []
+    predicate_indexes_for_delete = []
     argument_indexes_for_delete = []
+    subjects_by_predicate = []
+    subject_indexes_for_delete = []
 
     current_predicate_index = None
     arguments = None
+    subjects = None
     orphan_words = []
     for index, word in sentence.itemsUnit():
-        if word['MOSentence'] == 'predicate':
+        if word['MOSentence'] == 'subject':
+            subjects = []
+            subjects_by_predicate.append(subjects)
+            subject = collect_by_link(sentence, word)
+            subjects.append(subject)
+            subject_indexes_for_delete.extend(list(subject.keys()))
+        elif word['MOSentence'] == 'predicate':
             current_predicate_index = index
             arguments = []
             arguments_by_predicate.append(arguments)
-            predicate_indexes.append(current_predicate_index)
+            predicate_indexes_for_delete.append(current_predicate_index)
             predicates.append(word)
+
+            if len(predicates) != len(subjects_by_predicate):
+                subjects_by_predicate.append([])
 
             for orphan_word in orphan_words:
                 separate_argument(sentence, orphan_word, arguments_by_predicate[-1], argument_indexes_for_delete)
                 orphan_words.clear()
 
-        if index in argument_indexes_for_delete or index in predicate_indexes:
+        if index in argument_indexes_for_delete or index in predicate_indexes_for_delete or index in subject_indexes_for_delete:
             continue
 
         if current_predicate_index is None:
@@ -61,14 +73,15 @@ def _extract(sentence):
 
         separate_argument(sentence, word, arguments, argument_indexes_for_delete)
 
+    sentence.delByIndex(*subject_indexes_for_delete)
+    sentence.delByIndex(*predicate_indexes_for_delete)
     sentence.delByIndex(*argument_indexes_for_delete)
-    sentence.delByIndex(*predicate_indexes)
 
     if sentence.getUnit("dict"):
         print(u"       Необработанные остатки 3 ФАСИФ \n", sentence.getUnit("dict"))
         print("-"*10)
 
-    return predicates, arguments_by_predicate
+    return subjects_by_predicate, predicates, arguments_by_predicate
 
 
 def extract(sentences):
