@@ -1,5 +1,3 @@
-import sys
-import copy
 import itertools
 
 from manspy.unit import Sentence
@@ -89,9 +87,10 @@ def check_args(finded_args, fasif, R):
 
 
 def find_func_set_value(fasif, id_group): # в фасифе можно сохранять список всех глаголов для всех назначений для уменьшения кол-ва вычислений
-    for destination, data in fasif['functions'].items():
-        if id_group in data['verbs']:
-            return data['function']
+    if id_group is not None:
+        for destination, data in fasif['functions'].items():
+            if id_group in data['verbs']:
+                return data['function']
 
 
 def Extraction2IL(R, settings, predicate, arguments):
@@ -107,13 +106,15 @@ def Extraction2IL(R, settings, predicate, arguments):
 
     #  Вынимаем ФАСИФ глагола
 
-    id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')[0]
-    compared_fasifs = fdb.getFASIF('Verb', id_group)
-    if compared_fasifs:
-        verb['func_common'] = importer.action(list(compared_fasifs.values())[0][0][0])
-    else:
-        # TODO: проверить антоним (), как для функции изменения состояния
-        pass
+    id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')
+    id_group = id_group[0] if id_group else None
+    if id_group is not None:
+        compared_fasifs = fdb.getFASIF('Verb', id_group)
+        if compared_fasifs:
+            verb['func_common'] = importer.action(list(compared_fasifs.values())[0][0][0])
+        else:
+            # TODO: проверить антоним (), как для функции изменения состояния
+            pass
 
     # Вынимаем Фасиф
     for _argument in arguments:  # у подпредложения может быть несколько актантов
@@ -129,14 +130,12 @@ def Extraction2IL(R, settings, predicate, arguments):
 
         # Вынимаем функцию получения/изменения состояния.
 
-        id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')[0]
-
         verb['used_antonym'] = predicate['antonym']
         func_get_value = fasif['functions']['getCondition']['function'] if 'getCondition' in fasif['functions'] else None
         func_set_value = find_func_set_value(fasif, id_group)
-        if func_set_value is None:  # если глагол не найден, то пробуем антоним
+        if not func_set_value:  # если глагол не найден, то пробуем антоним
             # TODO: добавить антонимы для примера через глагол-связку. Здесь затем искать по id группы антонимов
-            verb_synonym_group_id = R.R.get_words_from_samegroup('antonym', 'verb', 'synonym', id_group)
+            #verb_synonym_group_id = R.R.get_words_from_samegroup('antonym', 'verb', 'synonym', id_group)
             id_antonym = id_group
             func_set_value = find_func_set_value(fasif, id_antonym)
             if func_set_value:
