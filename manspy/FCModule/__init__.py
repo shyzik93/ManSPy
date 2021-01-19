@@ -68,21 +68,17 @@ def execute_internal_sentence(internal_sentence):
 
         gen_r_texts = run_wcomb_function(internal_sentence, arg0)  # пока поддерживается лишь одно словосочетание
         for r_text in gen_r_texts:
-
             break
 
 
-
-
-def execute_internal_sentences(ils, to_IF):
+def execute_internal_sentences(ils, send_to_out):
     """
-    Выполняет поочерёдно внутренние предложения в тексте, если есть условия и наречия - обусловленно.
+    Выполняет внутренние предложения в тексте поочерёдно, если есть условия и наречия - обусловленно.
     :param ils:
-    :param to_IF:
+    :param send_to_out:
     :return:
     """
     for index_sentence, internal_sentence in ils.items():
         gen_r_texts = execute_internal_sentence(internal_sentence)
         for r_text in gen_r_texts:
-            to_IF(r_text)
-    return []
+            send_to_out(r_text)

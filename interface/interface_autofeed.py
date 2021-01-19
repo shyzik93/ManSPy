@@ -9,9 +9,9 @@ class Interface:
 
     def __init__(self, api, settings, config):
         self.API = api
-        self.settings = settings(read_text=self.read_text)
+        self.settings = settings(send_to_out=self.send_to_out)
 
-    def read_text(self, r_text, any_data):
+    def send_to_out(self, r_text, any_data):
         if self.settings2['compare_with_origin']:
             if self.sentence in self.origin:
                 if r_text in self.origin[self.sentence]: self.res.write('    True >>> '+r_text+'\n')
@@ -55,8 +55,8 @@ class Interface:
                 self.settings2 = settings
                 self.origin = origin
 
-                msg, res = self.API.write_text(sentence, self.settings)
-                #msg = self.API.write_text(self, sentence)
+                msg, res = self.API.send_to_in(sentence, self.settings)
+                #msg = self.API.send_to_in(self, sentence)
                 t += msg.time_total
 
 

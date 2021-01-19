@@ -5,7 +5,7 @@ import xmp
 class Interface():
     def __init__(self, api, settings, config):
         self.API = api
-        self.settings = settings(read_text=self.read_text)
+        self.settings = settings(send_to_out=self.send_to_out)
         self.config = config
 
     def FromUser(self, conn, messR):
@@ -13,9 +13,9 @@ class Interface():
         From = str(messR.getFrom()).split('/')[0]
 
         if w_text == None: return
-        if w_text: self.API.write_text(w_text, self.settings, {'any_data':From})
+        if w_text: self.API.send_to_in(w_text, self.settings, any_data=From)
 
-    def read_text(self, r_text, From):
+    def send_to_out(self, r_text, From):
         if From:
             self.bot.send(xmpp.Message(From, r_text))
 

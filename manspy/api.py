@@ -36,19 +36,12 @@ class API:
 
         Settings.c, Settings.cu = importer.database(Settings.db_type)(Settings.db_settings[Settings.db_type])
 
-    def write_text(self, w_text, settings, _text_settings=None):
+    def send_to_in(self, w_text, settings, any_data=None):
         """any_data - any data, if you would like to pass it to IF with answer."""
         #print(threading.current_thread().name)
 
-        _text_settings = _text_settings or {}
-        text_settings = {
-            'any_data': _text_settings.get('any_data'),
-            'levels': _text_settings.get('levels', 'graphmath exec'),
-            'print_time': _text_settings.get('print_time', True)
-        }
-
         if w_text:
-            message = Message(settings, text_settings, w_text, 'W')
+            message = Message(settings, any_data, w_text, 'W')
             return message, nature2internal(message)
 
     def __enter__(self):

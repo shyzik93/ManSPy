@@ -7,19 +7,7 @@
 from unittest import TestCase
 
 from manspy import API, Settings
-from tests.datasets_of_analyzes import (
-    dataset_verb_and_actants,
-    dataset_verb_and_repeated_actants,
-    dataset_verb_and_homogeneous_actants,
-    dataset_antonym_of_verb,
-    dataset_verb_and_homogeneous_direct_supplement,
-    dataset_punctuation,
-    dataset_numbers_and_simple_math,
-    dataset_synonyms_of_verb,
-    dataset_undirect_order_of_words,
-    dataset_mistakes,
-    dataset_homogeneous_sentences
-)
+from tests.datasets_of_analyzes import datasets
 
 
 class LevelRTextTestCase(TestCase):
@@ -28,96 +16,21 @@ class LevelRTextTestCase(TestCase):
         cls.api = API().__enter__()
 
     def setUp(self):
-        self.answers = {}
-        self.answers_true = {}
-        self.settings = Settings(answer_type='construct', history=False, read_text=self.read_text)
-
-    def check_answers(self):
-        for input_data, output_data in self.answers.items():
-            self.assertListEqual(
-                self.answers[input_data],
-                self.answers_true[input_data][0],
-                self.answers_true[input_data][1]
-            )
+        self.settings = Settings(answer_type='construct', history=False, send_to_out=self.send_to_out)
+        self.answers = []
 
     @classmethod
     def tearDownClass(cls):
         cls.api.__exit__(None, None, None)
 
-    def read_text(self, r_text, any_data):
-        input_data = any_data
-        self.answers[input_data].append(r_text)
+    def send_to_out(self, r_text, _):
+        self.answers.append(r_text)
 
-    def pass_example_to_manspy(self, example):
-        self.settings.language = example.get('language', 'esperanto')
-        input_data = example['w_text']
-        true_answer = example['r_text_construct']
-        self.answers.setdefault(input_data, [])
-        self.answers_true.setdefault(input_data, [true_answer, input_data])
-        self.api.write_text(input_data, self.settings, {'any_data': input_data, 'print_time': False})
-
-    def test_verb_and_actants(self):
-        for example in dataset_verb_and_actants['examples']:
-            self.pass_example_to_manspy(example)
-
-        self.check_answers()
-
-    def test_verb_and_repeated_actants(self):
-        for example in dataset_verb_and_repeated_actants['examples']:
-            self.pass_example_to_manspy(example)
-
-        self.check_answers()
-
-    def test_verb_and_homogeneous_actants(self):
-        for example in dataset_verb_and_homogeneous_actants['examples']:
-            self.pass_example_to_manspy(example)
-
-        self.check_answers()
-
-    def test_antonym_of_verb(self):
-        for example in dataset_antonym_of_verb['examples']:
-            self.pass_example_to_manspy(example)
-
-        self.check_answers()
-
-    def test_verb_and_homogeneous_direct_supplement(self):
-        for example in dataset_verb_and_homogeneous_direct_supplement['examples']:
-            self.pass_example_to_manspy(example)
-
-        self.check_answers()
-
-    def test_punctuation(self):
-        for example in dataset_punctuation['examples']:
-            self.pass_example_to_manspy(example)
-
-        self.check_answers()
-
-    def test_numbers_and_simple_math(self):
-        for example in dataset_numbers_and_simple_math['examples']:
-            self.pass_example_to_manspy(example)
-
-        self.check_answers()
-
-    def test_synonyms_of_verb(self):
-        for example in dataset_synonyms_of_verb['examples']:
-            self.pass_example_to_manspy(example)
-
-        self.check_answers()
-
-    def test_undirect_order_of_words(self):
-        for example in dataset_undirect_order_of_words['examples']:
-            self.pass_example_to_manspy(example)
-
-        self.check_answers()
-
-    def test_mistakes(self):
-        for example in dataset_mistakes['examples']:
-            self.pass_example_to_manspy(example)
-
-        self.check_answers()
-
-    def test_homogeneous_sentences(self):
-        for example in dataset_homogeneous_sentences['examples']:
-            self.pass_example_to_manspy(example)
-
-        self.check_answers()
+    def test_level_execution(self):
+        for dataset in datasets:
+            for example in dataset['examples']:
+                with self.subTest(dataset['description']):
+                    self.answers.clear()
+                    self.settings.language = example.get('language', 'esperanto')
+                    self.api.send_to_in(example['w_text'], self.settings)
+                    self.assertListEqual(self.answers, example['r_text_construct'], example['w_text'])

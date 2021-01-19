@@ -13,7 +13,7 @@ import telegram
 class Interface:
     def __init__(self, API, settings, config):
         self.API = API
-        self.settings = settings(read_text=self.read_text)
+        self.settings = settings(send_to_out=self.send_to_out)
         self.config = config
 
     def FromUser(self, m, comm_name, args, text):
@@ -23,9 +23,9 @@ class Interface:
         if w_text == None:
             return
         if w_text:
-            self.API.write_text(w_text, self.settings, {'any_data': from_user})
+            self.API.send_to_in(w_text, self.settings, any_data=From_user)
 
-    def read_text(self, r_text, from_user):
+    def send_to_out(self, r_text, from_user):
         print(r_text, from_user)
         if from_user:
             self.tg.send_message(from_user, r_text)

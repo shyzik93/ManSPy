@@ -7,9 +7,9 @@ import time
 class Interface:
     def __init__(self, api, settings, config):
         self.api = api
-        self.settings = settings(read_text=self.read_text)
+        self.settings = settings(send_to_out=self.send_to_out)
 
-    def read_text(self, r_text, any_data):
+    def send_to_out(self, r_text, any_data):
         print(r_text)
 
     def init(self):
@@ -17,5 +17,5 @@ class Interface:
             w_text = input()
             if w_text == '\\exit':
                 exit(0)
-            self.api.write_text(w_text, self.settings)
+            self.api.send_to_in(w_text, self.settings)
             #time.sleep(0.01)

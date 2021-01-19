@@ -54,7 +54,7 @@ montru_dolaran_kurzon = {
 }
 
 dataset_verb_and_actants = {
-    'dataset_description': 'глагол + его актанты',
+    'description': 'глагол + его актанты',
     'examples': [
         {
             'w_text': 'montru dolaran kurzon',
@@ -163,7 +163,7 @@ dataset_verb_and_actants = {
 }
 
 dataset_verb_and_repeated_actants = {
-    'dataset_description': 'Повторяющиеся одинаковые аргументы',
+    'description': 'Повторяющиеся одинаковые аргументы',
     'examples': [
         {
             'w_text': 'montru dolaran kaj dolaran kurzon de rusia banko',
@@ -228,7 +228,7 @@ dataset_verb_and_repeated_actants = {
 }
 
 dataset_verb_and_homogeneous_actants = {
-    'dataset_description': 'Повторяющиеся разные аргументы (сложатся друг с другом поочерёдно - декартово произведение)',
+    'description': 'Повторяющиеся разные аргументы (сложатся друг с другом поочерёдно - декартово произведение)',
     'examples': [
         {
             'w_text': 'montru adreson de komputilo kaj androido',  # TODO: должен вывести инфу, что `androido` не распознан
@@ -336,7 +336,7 @@ dataset_verb_and_homogeneous_actants = {
 }
 
 dataset_antonym_of_verb = {
-    'dataset_description': 'Антонимия через приставку, которая антонимирует значение, либо через глагол-антоним',
+    'description': 'Антонимия через приставку, которая антонимирует значение, либо через глагол-антоним',
     'examples': [
         {
             'w_text': 'malsxaltu tablan lampon en dormcxambro kaj fermo',
@@ -392,7 +392,7 @@ dataset_antonym_of_verb = {
 }
 
 dataset_verb_and_homogeneous_direct_supplement = {
-    'dataset_description': 'Однородные прямые дополнения, по сути - две разных функции (два разных действия) в одном предложении',
+    'description': 'Однородные прямые дополнения, по сути - две разных функции (два разных действия) в одном предложении',
     'examples': [
         {
             'w_text': 'montru adreson de komputilo kaj dolaran kurzon',
@@ -494,7 +494,7 @@ dataset_verb_and_homogeneous_direct_supplement = {
 }
 
 dataset_punctuation = {
-    'dataset_description': 'Пунктуация',
+    'description': 'Пунктуация',
     'examples': [
         {
             'w_text': 'montru euxran, dolaran kurzon de ukrainia banko',
@@ -520,7 +520,7 @@ dataset_punctuation = {
 }
 
 dataset_numbers_and_simple_math = {
-    'dataset_description': 'Числительные и простая арифметика',
+    'description': 'Числительные и простая арифметика',
     'examples': [
         {
             'w_text': 'adiciu dudekon trion',
@@ -687,7 +687,7 @@ dataset_numbers_and_simple_math = {
 }
 
 dataset_synonyms_of_verb = {
-    'dataset_description': 'Синонимы',
+    'description': 'Синонимы',
     'examples': [
         {
             'w_text': 'malmultigu dolaran kurzon kaj trion',
@@ -756,7 +756,7 @@ dataset_synonyms_of_verb = {
 }
 
 dataset_undirect_order_of_words = {
-    'dataset_description': 'Непрямой порядок слов',
+    'description': 'Непрямой порядок слов',
     'examples': [
         {
             'w_text': 'trion adiciu',
@@ -817,7 +817,7 @@ dataset_undirect_order_of_words = {
 }
 
 dataset_mistakes = {
-    'dataset_description': 'ошибки',
+    'description': 'ошибки',
     'examples': [
         {
             'w_text': 'montru dolara kurzon',
@@ -839,7 +839,7 @@ dataset_mistakes = {
 }
 
 dataset_homogeneous_sentences = {
-    'dataset_description': 'Однородные предложения (предложеня, разделённые запятой)',
+    'description': 'Однородные предложения (предложеня, разделённые запятой)',
     'examples': [
         {
             'w_text': 'montru euxran kurzon de rusia banko, sxaltu tablan lampon en dormcxambro',
@@ -889,7 +889,7 @@ dataset_homogeneous_sentences = {
 }
 
 dataset_construct_condition = {
-    'dataset_description': 'Условные конструкции',
+    'description': 'Условные конструкции',
     'examples': [
         {
             'w_text': 'Se euxra kurzo de rusia banko estas sepdek kvin, sxaltu tablan lampon en dormcxambro'

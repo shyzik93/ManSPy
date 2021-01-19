@@ -27,9 +27,9 @@ def proc_answer(is_success, arg1):
 class CLI(API):
     
     def __init__(self, **kwargs):
-        def read_text(r_text, any_data):
+        def send_to_out(r_text, any_data):
             print(r_text)
-        self.settings = Settings(read_text=read_text, language='esperanto', answer_type='fake')
+        self.settings = Settings(send_to_out=send_to_out, language='esperanto', answer_type='fake')
         API.__init__(self, **kwargs)
 
     '''def __enter__(self):
@@ -47,8 +47,8 @@ class CLI(API):
                           # True  - исключение обработано'''
 
     def cmd_exec(self, args):
-        def write_text(text, settings, text_settings):
-            msg, results = self.write_text(text, settings, text_settings)
+        def send_to_in(text, settings, any_data=None):
+            msg, results = self.send_to_in(text, settings, any_data)
             if isinstance(results, Unit):
                 pprint.pprint(results.export_unit(ignore_units=dict))
             if isinstance(results, (dict, list)):
@@ -57,14 +57,11 @@ class CLI(API):
         self.settings.language = args.language
         self.settings.answer_type = args.type
         self.settings.history = args.history
-
-        text_settings = {
-            'levels': args.level,
-            'print_time': args.print_time,
-        }
+        self.settings.print_time = args.print_time
+        self.settings.levels = args.level
 
         if args.text:
-            write_text(args.text, self.settings, text_settings)
+            send_to_in(args.text, self.settings)
 
         manspy_cur_dir = os.getcwd()
         for filename in args.filenames:
@@ -72,7 +69,7 @@ class CLI(API):
             filepath = os.path.abspath(filename)
             os.chdir(manspy_cur_dir)
             with open(filepath, 'r') as filef:
-                write_text(filef.read(), self.settings, text_settings)
+                send_to_in(filef.read(), self.settings)
 
 
 def do_cmd(args_list=None):

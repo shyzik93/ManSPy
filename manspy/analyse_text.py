@@ -12,9 +12,9 @@ def nature2internal(msg):
         включительно через пробел. Если требуется сделать лишь один уровень,
         то можно указать только одно слово. Если указан только 'convert',
         то в качестве первого аргумента передаётся список извлечений."""
-    sentences = msg.w_text
+    sentences = msg.text
 
-    if msg.text_settings['print_time']:
+    if msg.settings.print_time:
         print('\n---------------------------------------')
         print('----', sentences)
         print('---------------------------------------')
@@ -28,7 +28,7 @@ def nature2internal(msg):
         print('Языковой модуль "{}" не был импортирован. Анализ невозможен.'.format(msg.settings.language))
         return []
 
-    levels = msg.text_settings['levels'].replace(' ', ':')
+    levels = msg.settings.levels.replace(' ', ':')
     start_level, end_level = levels.split(':')
     start_level = start_level if start_level else all_levels[0]
     end_level = end_level if end_level else all_levels[-1]
@@ -50,14 +50,14 @@ def nature2internal(msg):
         elif level == "convert":
             sentences = convert(sentences, OR, msg.settings)
         elif level == "exec":
-            sentences = execute_internal_sentences(sentences, msg.to_IF)
+            sentences = execute_internal_sentences(sentences, msg.send_to_out)
 
         msg.after_analysis(level, sentences)
-        if msg.text_settings['print_time']:
+        if msg.settings.print_time:
             print('   '+level.rjust(9)+': ', time.time()-t)
 
     msg.time_total = time.time() - t1
-    if msg.text_settings['print_time']:
+    if msg.settings.print_time:
         print('       Total: ', msg.time_total)
 
     return sentences

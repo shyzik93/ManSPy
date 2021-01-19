@@ -21,7 +21,7 @@ class ExamplesFromDocTestCase(unittest.TestCase):
 
         r_texts = {}
 
-        def read_text(r_text, arg0):
+        def send_to_out(r_text, arg0):
             sentence, expecting = arg0
             if sentence not in r_texts:
                 r_texts[sentence] = {'real': [], 'expecting': expecting}
@@ -32,8 +32,8 @@ class ExamplesFromDocTestCase(unittest.TestCase):
             for sentence, expecting_answer in collect_examples(os.path.join(os.path.dirname(__file__),
                                                                             '../DOC/Theory.md')):
                 language = 'esperanto'
-                settings = Settings(read_text=read_text, language=language, answer_type='fake', history=False)
-                api.write_text(sentence, settings, {'any_data': (sentence, expecting_answer), 'print_time': False})
+                settings = Settings(send_to_out=send_to_out, language=language, answer_type='fake', history=False)
+                api.send_to_in(sentence, settings, any_data=(sentence, expecting_answer))
             #self.assertEqual(True, False)
 
             for sentence in r_texts:

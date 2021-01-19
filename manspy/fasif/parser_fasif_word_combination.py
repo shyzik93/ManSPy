@@ -158,8 +158,11 @@ class FASIF_WordCombination(FASIF):
                 value['verbs'][index] = OR.setRelation('synonym', self.get_dword(word_verb, settings)['base'])
 
         #print '----------------- to formule start'
-        message = Message(settings, {'levels':':synt', 'print_time':False}, fasif['wcomb'], 'W')
+        levels = settings.levels
+        settings.levels = ':synt'
+        message = Message(settings, {}, fasif['wcomb'], 'W')
         wcomb = nature2internal(message)(0)
+        settings.levels = levels
         fasif['argdescr'] = {}
         for argname, data in fasif['args'].items():
             argword = data['argwords']['in_wcomb']['name']
