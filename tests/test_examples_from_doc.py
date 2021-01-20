@@ -18,27 +18,18 @@ def collect_examples(doc_path):
 
 class ExamplesFromDocTestCase(unittest.TestCase):
     def test_examples(self):
-
-        r_texts = {}
-
         def send_to_out(r_text, arg0):
-            sentence, expecting = arg0
-            if sentence not in r_texts:
-                r_texts[sentence] = {'real': [], 'expecting': expecting}
-            r_texts[sentence]['real'].append(r_text)
+            r_texts.append(r_text)
 
+        r_texts = []
+        gen_examples = collect_examples(os.path.join(os.path.dirname(__file__), '../DOC/Theory.md'))
+        settings = Settings(send_to_out=send_to_out, answer_type='fake', history=False)
         with API() as api:
-
-            for sentence, expecting_answer in collect_examples(os.path.join(os.path.dirname(__file__),
-                                                                            '../DOC/Theory.md')):
-                language = 'esperanto'
-                settings = Settings(send_to_out=send_to_out, language=language, answer_type='fake', history=False)
-                api.send_to_in(sentence, settings, any_data=(sentence, expecting_answer))
-            #self.assertEqual(True, False)
-
-            for sentence in r_texts:
-                real = r_texts[sentence]['real']
-                expecting = r_texts[sentence]['expecting']
-                self.assertListEqual(real, expecting, sentence)
+            for sentence, expecting_answer in gen_examples:
+                with self.subTest():
+                    settings.language = 'esperanto'
+                    api.send_to_in(sentence, settings)
+                    self.assertListEqual(r_texts, expecting_answer, sentence)
+                    r_texts.clear()
 
 
