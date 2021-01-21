@@ -36,16 +36,18 @@ class errorManager:
 
 
 class Unit:
-    """ unit(index) - извлечение подъюнита
-        unit(index, name) - извлечение характеристики подъюнита
-        unit(index, name, value) - изменение характеристики подъюнита
-        unit[name] - извлечение характеристики юнита
-        unit[name] = value - изменение характеристики юнита
-        name in unit - проверка наличия ключа характеристики юнита
-        len(unit) - извлечение длины юнита (количество подъюнитогв)
+    """
+    unit(index) - извлечение подъюнита
+    unit(index, name) - извлечение характеристики подъюнита
+    unit(index, name, value) - изменение характеристики подъюнита
+    unit[name] - извлечение характеристики юнита
+    unit[name] = value - изменение характеристики юнита
+    name in unit - проверка наличия ключа характеристики юнита
+    len(unit) - извлечение длины юнита (количество подъюнитогв)
 
-        Юнит - это предложение или слово. Подъюнит - их составляющие:
-        для предложения - это слова, для слов - это символы"""
+    Юнит - это предложение или слово. Подъюнит - их составляющие:
+    для предложения - это слова, для слов - это символы
+    """
 
     def __init__(self, subunits=None, unit_info=None):
         self.unit_info = {'max_index': -1, 'index': None}
@@ -143,10 +145,13 @@ class Unit:
     # Работа с информацией о юните в целом
 
     def __setitem__(self, key, value):
+        if key in self.unit_info and key is None:
+            del self.unit_info[key]
+
         self.unit_info[key] = value
 
     def __getitem__(self, key):
-        return self.unit_info[key] if key in self.unit_info else None
+        return self.unit_info.get(key)
 
     def __delitem__(self, key):
         del self.unit_info[key]
@@ -165,8 +170,11 @@ class Unit:
     # Работа с информацией о составляющих юнит (подюнитов)
     def __len__(self): return len(self.subunit_info)
     def __call__(self, index, name=None, value=None): # типа getByIndex()
-        if name == None: return self.subunit_info[index]
-        elif value == None: return self.subunit_info[index][name]
+        if name is None:
+            return self.subunit_info[index]
+        elif value is None:
+            return self.subunit_info[index][name]
+
         self.subunit_info[index][name] = value
 
     # Итератор
@@ -313,17 +321,26 @@ class Unit:
     def _compare_subunit(self, subunit, properties, setdict):
         counter = len(properties)
         for name, value in properties.items():
-            if not isinstance(value, tuple): value = (value,)
+            if not isinstance(value, tuple):
+                value = (value,)
+
             if isinstance(value[0], (list, tuple, dict)) and setdict['setvalue'] == 'in':
-                if name not in subunit: continue
+                if name not in subunit:
+                    continue
+
                 _counter = len(value)
                 for _value in value:
-                    if _value in subunit[name]: _counter -= 1
-                if not _counter: counter -= 1
+                    if _value in subunit[name]:
+                        _counter -= 1
+
+                if not _counter:
+                    counter -= 1
             else:
-                if name in subunit and subunit[name] in value: counter -= 1
-                #if 'index' in subunit: print '  ;;;;', subunit['word'], counter
-        if not counter: return True
+                if subunit[name] in value:
+                    counter -= 1
+
+        if not counter:
+            return True
 
     def _compare_subunits_in_values(self, subunit, properties, setdict):
         _subunits = []
@@ -424,8 +441,26 @@ class Unit:
 
 
 class Word(Unit):
-    """ Класс объекта слова.
-        При инициализации класса ему передаётся слово в виде строки. """  
+    """
+    Класс объекта слова.
+    При инициализации класса ему передаётся слово в виде строки.
+
+    Свойства юнита слова:
+    - word - строковое представление слова
+    - symbol_map -
+    - feature - список определений слова
+    - link - список на слова, зависимые от данного
+    - homogeneous_link - список однородных членов
+    - type
+    - base - корень слова
+    - case - падеж. Обычно только существительного,
+    но также и для других частей речи, если, например, язык поддерживает согласование падежей для определений
+    - notword
+    - start_pmark
+    - end_pmark
+    - around_pmark
+    - combine_words - список слов, являющихся составными для данного
+    """
     def __init__(self, str_word):
         symbols = []
         for index, symbol in enumerate(str_word):
@@ -439,9 +474,6 @@ class Word(Unit):
             'link': [],
             'homogeneous_link': [], # ссылки на однородные члены
             'type': 'real', # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
-            'base': '',
-            'case': '',
-            'notword': '',
             'start_pmark': [], 'end_pmark': [], 'around_pmark': [],
             'combine_words': []
         })
@@ -570,9 +602,10 @@ class Sentence(Unit):
     def getCombineWord(self, type_combine_word, index):
         return self.subunit_info[index]['combine_words']
 
+
 class Text(Unit):
     """ Класс объекта ткста.
-        Возможности: анализ, обработка (изменение времени и прочее)
+        Возможности: анализ, обработка (изменение времени, стиля текста (публистический, официальный) и прочее)
     """
     def __init__(self, sentences):
         Unit.__init__(self, sentences)

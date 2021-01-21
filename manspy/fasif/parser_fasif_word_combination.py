@@ -166,7 +166,7 @@ class FASIF_WordCombination(FASIF):
         fasif['argdescr'] = {}
         for argname, data in fasif['args'].items():
             argword = data['argwords']['in_wcomb']['name']
-            wcomb.chmanyByValues({'argname':argname}, setstring='subiv:noignore', base=argword['base'], case=argword['case'])
+            wcomb.chmanyByValues({'argname':argname}, setstring='subiv:noignore', base=argword.get('base'), case=argword.get('case'))
             fasif['argdescr'][argname] = {
                 'isreq': data['isreq'],
                 'argtable': data['argtable'],
