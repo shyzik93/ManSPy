@@ -19,7 +19,6 @@
 
 На четвёртом шаге перед выполнением функций необходио сформировать внутренний язык. Функции выполнятся в модуле логики.
 """
-
 import json
 from manspy.unit import Sentence
 
@@ -128,46 +127,36 @@ def compare_fasif_WordCombination(fasif, argument, finded_args):
 
 
 class FasifDB():
-    def iseq(self, id_fasif, type_fasif, fasif):
-        #print 'fasif:', fasif, '\nargument:',  argument
-        fasif = json.loads(fasif)
-        finded_args = {}
-        #self.flog.write('\n')
-        isright = False
-        if type_fasif == 'WordCombination':
-            isright = compare_fasif_WordCombination(fasif, self.argument, finded_args)
-        elif type_fasif == 'Verb':
-            isright = compare_fasif_Verb(fasif, self.argument, finded_args)
-        if isright:
-            self.compared_fasifs[id_fasif] = (finded_args, fasif)
-        return 1 if isright else 0
-
     def __init__(self, c, cu):
         self.c, self.cu = c, cu
-        self.c.create_function('iseq', 3, self.iseq)
         self.cu.execute('''
             CREATE TABLE IF NOT EXISTS fasifs (
                 id_fasif INTEGER PRIMARY KEY AUTOINCREMENT,
                 type_fasif TEXT,
-                --language VARCHAR(30),
-                fasif TEXT UNIQUE ON CONFLICT IGNORE); ''')
+                fasif TEXT UNIQUE ON CONFLICT IGNORE
+        );''')
 
-    def safeFASIF(self, _type, fasif):
-        self.cu.execute('INSERT INTO fasifs (type_fasif, fasif) VALUES (?,?)',
-                       (_type, json.dumps(fasif, sort_keys=True)))
+    def safe(self, type_fasif, fasif):
+        self.cu.execute(
+            'INSERT INTO fasifs (type_fasif, fasif) VALUES (?,?)',
+            (type_fasif, json.dumps(fasif, sort_keys=True))
+        )
         self.c.commit()
 
-    def getFASIF(self, _type, argument):
-        #self.flog = open('comparing_fasif.txt', 'a', encoding='utf-8') # file log
-        #self.flog.write('\n--- %s\n' % _type)
-        #if _type=='WordCombination':
-        #    for key, value in argument.getUnit('str').items():
-        #        self.flog.write('--- %s: %s\n' % (key, value))
-        #elif _type == 'Verb':
-        #    self.flog.write('--- %s\n' % argument)
+    def find(self, type_fasif, argument):
+        compared_fasifs = []
+        rows = self.cu.execute('SELECT id_fasif, fasif FROM fasifs WHERE type_fasif=?', (type_fasif,))
+        for row in rows:
+            id_fasif = row['id_fasif']
+            fasif = json.loads(row['fasif'])
+            finded_args = {}
+            isright = False
+            if type_fasif == 'WordCombination':
+                isright = compare_fasif_WordCombination(fasif, argument, finded_args)
+            elif type_fasif == 'Verb':
+                isright = compare_fasif_Verb(fasif, argument, finded_args)
 
-        self.argument = argument
-        self.compared_fasifs = {}
-        res = self.cu.execute('SELECT id_fasif FROM fasifs WHERE type_fasif=? AND iseq(id_fasif, type_fasif, fasif)=1', (_type,)).fetchall()
-        #self.flog.close()
-        return list(self.compared_fasifs.values())
+            if isright:
+                compared_fasifs.append([finded_args, fasif])
+
+        return compared_fasifs

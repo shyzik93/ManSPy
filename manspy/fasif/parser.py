@@ -65,4 +65,4 @@ class FASIFParser:
 
                     for assoc_type, fasifs in dict_assoc_types.items():
                         for fasif in fasifs:
-                            fdb.safeFASIF(assoc_type, fasif)
+                            fdb.safe(assoc_type, fasif)

@@ -149,7 +149,7 @@ def Extraction2IL(R, settings, subjects, predicate, arguments):
     id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')
     id_group = id_group[0] if id_group else None
     if id_group is not None:
-        compared_fasifs = fdb.getFASIF('Verb', id_group)
+        compared_fasifs = fdb.find('Verb', id_group)
         if compared_fasifs:
             verb['func_common'] = importer.action(compared_fasifs[0][0][0])
         else:
@@ -159,7 +159,7 @@ def Extraction2IL(R, settings, subjects, predicate, arguments):
     # Вынимаем Фасиф словосочетаний - актантов
     for _argument in arguments:  # у подпредложения может быть несколько актантов
         argument = Sentence(_argument)
-        compared_fasifs = fdb.getFASIF('WordCombination', argument)
+        compared_fasifs = fdb.find('WordCombination', argument)
         if compared_fasifs:
             finded_args, fasif = compared_fasifs[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
 
@@ -177,7 +177,7 @@ def Extraction2IL(R, settings, subjects, predicate, arguments):
     # Вынимаем Фасиф словосочетаний - субъектов
     for _subject in subjects:
         subject = Sentence(_subject)
-        compared_fasifs = fdb.getFASIF('WordCombination', subject)
+        compared_fasifs = fdb.find('WordCombination', subject)
         if compared_fasifs:
             finded_args, fasif = compared_fasifs[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
 
