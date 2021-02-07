@@ -20,33 +20,16 @@ def remove_comments_and_separate_fasifs(fasif):
             assoc_type = string[2:]
             if assoc_type not in dict_assoc_types:
                 dict_assoc_types[assoc_type] = []
+
             dict_assoc_types[assoc_type].append([])
             continue
+
         dict_assoc_types[assoc_type][-1].append(string)
+
     return dict_assoc_types
 
 
 class FASIFParser:
-    def __init__(self):
-        self.classes = {}
-
-    def selector_of_function(self, dict_assoc_types, _func_name, *func_args):
-        for assoc_type, fasifs in dict_assoc_types.items():
-            cls_name = 'FASIF_' + assoc_type
-            if cls_name not in self.classes and cls_name in globals():
-                self.classes[cls_name] = globals()[cls_name]()
-
-            index = 0
-            while index < len(fasifs):
-                new_fasif = getattr(self.classes[cls_name], _func_name)(fasifs[index], *func_args)
-                if new_fasif:
-                    dict_assoc_types[assoc_type][index] = new_fasif
-                    index += 1
-                else:
-                    del dict_assoc_types[assoc_type][index]
-
-        return dict_assoc_types
-
     def parse(self, path_import, language, settings):
         OR = ObjRelation(settings.c, settings.cu)
         fdb = finder.FasifDB(settings.c, settings.cu)
@@ -56,13 +39,13 @@ class FASIFParser:
                 with open(os.path.join(path_import, fasif_file_name), encoding='utf-8') as fasif_file:
                     # Отделяем ФАСИФы друг от друга
                     dict_assoc_types = remove_comments_and_separate_fasifs(fasif_file.read())
-                    # Превращаем текст ФАСИФов в словарь
-                    dict_assoc_types = self.selector_of_function(dict_assoc_types, 'parse', path_import)
-                    # Отсеиваем ненужные языки
-                    dict_assoc_types = self.selector_of_function(dict_assoc_types, 'siftout', language)
-                    # Обрабатываем лингвистическую информацию
-                    dict_assoc_types = self.selector_of_function(dict_assoc_types, 'proccess_lingvo_data', OR, fdb, settings)
-
                     for assoc_type, fasifs in dict_assoc_types.items():
+                        cls = globals()['FASIF_{}'.format(assoc_type)]()
                         for fasif in fasifs:
-                            fdb.safe(assoc_type, fasif)
+                            # Превращаем текст ФАСИФов в словарь
+                            fasif = cls.parse(fasif, path_import, settings)
+                            if fasif:
+                                # Обрабатываем лингвистическую информацию
+                                fasif = cls.proccess_lingvo_data(fasif, OR, fdb, settings)
+                                if fasif:
+                                    fdb.safe(assoc_type, fasif)

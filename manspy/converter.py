@@ -54,15 +54,17 @@ def is_in_hyperonym(hyperonyms, argvalue, R):
     return False
 
 
-def convert_by_argtable(fasif, argname, argvalue):
-    if argvalue not in fasif['argdescr'][argname]['argtable']: return argvalue
-    return fasif['argdescr'][argname]['argtable'][argvalue]
+def convert_by_argtable(argdescr, argname, argvalue):
+    if argvalue not in argdescr[argname]['argtable']:
+        return argvalue
+
+    return argdescr[argname]['argtable'][argvalue]
 
 
-def check_args(finded_args, fasif, R):
+def check_args(finded_args, fasif, R, language):
     # Проверка на наличие в абстрактной группе
     hyperonyms = {}
-    for argname, data in fasif['argdescr'].items():
+    for argname, data in fasif['argdescr'][language].items():
         # пока только основные гиперонимы вытягиваем
         hyperonyms[argname] = [word['base'] for word in data['hyperonyms']]
     for finded_arg in finded_args:
@@ -73,7 +75,7 @@ def check_args(finded_args, fasif, R):
     checked_args = []
     for finded_arg in finded_args:
         isright = True
-        for argname, argdescr in fasif['argdescr'].items():
+        for argname, argdescr in fasif['argdescr'][language].items():
             if argname not in finded_arg and argdescr['isreq']:  # если отсутствует обязательный аргумент
                 isright = False
                 break
@@ -82,28 +84,29 @@ def check_args(finded_args, fasif, R):
     # Конвертирование аргументных слов по таблице из фасифа
     for checked_arg in checked_args:
         for argname, argvalue in checked_arg.items():
-            checked_arg[argname] = convert_by_argtable(fasif, argname, argvalue)
+            checked_arg[argname] = convert_by_argtable(fasif['argdescr'][language], argname, argvalue)
     return checked_args
 
 
-def il_build_func_value(fasif, type_func, verb_id_group=None, check_verb=False, try_antonym=True):
+def il_build_func_value(fasif, type_func, language, verb_id_group=None, check_verb=False, try_antonym=True):
     """
 
     :param fasif:
     :param type_func:
+    :param language:
     :param verb_id_group:
     :param check_verb:
     :param try_antonym:
-    :return: (Данные функции, найдена ли финкция по антониму)
+    :return: Кортеж вида (Данные функции, найдена ли финкция по антониму)
     """
     data_func = fasif['functions'].get(type_func)
     if data_func and check_verb:
-        if verb_id_group not in data_func['verbs']:
+        if verb_id_group not in data_func['verbs'][language]:
             if try_antonym:
                 # TODO: добавить антонимы для примера через глагол-связку. Здесь затем искать по id группы антонимов
                 # verb_synonym_group_id = R.R.get_words_from_samegroup('antonym', 'verb', 'synonym', id_group)
                 id_antonym = verb_id_group
-                if id_antonym not in data_func['verbs']:
+                if id_antonym not in data_func['verbs'][language]:
                     return data_func, True
 
             return False
@@ -111,12 +114,12 @@ def il_build_func_value(fasif, type_func, verb_id_group=None, check_verb=False, 
     return data_func, False
 
 
-def il_build_word_combination(data_get_value, data_set_value, finded_args, fasif, R):
+def il_build_word_combination(data_get_value, data_set_value, finded_args, fasif, R, language):
     for argname, args in finded_args.items():
         finded_args[argname] = list(args)  # TODO: #UNIQ_ARGS Нужны ли нам дубли аргументов?
 
     finded_args = dproduct(finded_args)
-    finded_args = check_args(finded_args, fasif, R)
+    finded_args = check_args(finded_args, fasif, R, language)
 
     word_combination = {
         'func_get_value': importer.action(data_get_value['function']) if data_get_value else None,
@@ -149,7 +152,7 @@ def Extraction2IL(R, settings, subjects, predicate, arguments):
     id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')
     id_group = id_group[0] if id_group else None
     if id_group is not None:
-        compared_fasifs = fdb.find('Verb', id_group)
+        compared_fasifs = fdb.find('Verb', id_group, settings.language)
         if compared_fasifs:
             verb['func_common'] = importer.action(compared_fasifs[0][0][0])
         else:
@@ -159,33 +162,39 @@ def Extraction2IL(R, settings, subjects, predicate, arguments):
     # Вынимаем Фасиф словосочетаний - актантов
     for _argument in arguments:  # у подпредложения может быть несколько актантов
         argument = Sentence(_argument)
-        compared_fasifs = fdb.find('WordCombination', argument)
+        compared_fasifs = fdb.find('WordCombination', argument, settings.language)
         if compared_fasifs:
             finded_args, fasif = compared_fasifs[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
 
             # Вынимаем функцию получения/изменения состояния.
 
             verb['used_antonym'] = predicate['antonym']
-            data_get_value, finded_by_antonym = il_build_func_value(fasif, 'getCondition')
-            data_set_value, finded_by_antonym = il_build_func_value(fasif, 'changeCondition', id_group, check_verb=True)
+            data_get_value, finded_by_antonym = il_build_func_value(fasif, 'getCondition', settings.language)
+            data_set_value, finded_by_antonym = il_build_func_value(
+                fasif,
+                'changeCondition',
+                settings.language,
+                id_group,
+                check_verb=True
+            )
             if finded_by_antonym:
                 verb['used_antonym'] = not verb['used_antonym']
 
-            word_combination = il_build_word_combination(data_get_value, data_set_value, finded_args, fasif, R)
+            word_combination = il_build_word_combination(data_get_value, data_set_value, finded_args, fasif, R, settings.language)
             internal_sentence['word_combinations'].append(word_combination)
 
     # Вынимаем Фасиф словосочетаний - субъектов
     for _subject in subjects:
         subject = Sentence(_subject)
-        compared_fasifs = fdb.find('WordCombination', subject)
+        compared_fasifs = fdb.find('WordCombination', subject, settings.language)
         if compared_fasifs:
             finded_args, fasif = compared_fasifs[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
 
             # Вынимаем функцию получения состояния.
 
             verb['used_antonym'] = predicate['antonym']
-            data_get_value, finded_by_antonym = il_build_func_value(fasif, 'getCondition')
-            word_combination = il_build_word_combination(data_get_value, None, finded_args, fasif, R)
+            data_get_value, finded_by_antonym = il_build_func_value(fasif, 'getCondition', settings.language)
+            word_combination = il_build_word_combination(data_get_value, None, finded_args, fasif, R, settings.language)
             internal_sentence['subjects_word_combinations'].append(word_combination)
 
     #with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:

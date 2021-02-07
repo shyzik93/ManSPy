@@ -23,19 +23,22 @@ import json
 from manspy.unit import Sentence
 
 
-def compare_fasif_Verb(fasif, verb_base, finded_args):
-    if verb_base != fasif['verbs']:
+def compare_fasif_Verb(fasif, verb_base, finded_args, language):
+    if verb_base != fasif['verbs'][language]:
         return False
     finded_args[0] = fasif['function']
     return True
 
 
-def count_wordargs(constwordexample, fasif):
+def count_wordargs(constwordexample, fasif, language):
     req = noreq = 0
     for feature in constwordexample['feature']:
-        if 'argname' not in feature: continue
-        if fasif['argdescr'][feature['argname']]['isreq']: req += 1
-        else: noreq += 1
+        if 'argname' in feature:
+            if fasif['argdescr'][language][feature['argname']]['isreq']:
+                req += 1
+            else:
+                noreq += 1
+
     return req, noreq
 
 
@@ -73,27 +76,23 @@ def jumpToObient(sentence, indexWord, indexObient):
     return True if indexes else False
 
 
-def compare_fasif_WordCombination(fasif, argument, finded_args):
-    functions = fasif['functions']
-    _argument = Sentence(fasif['wcomb'])
+def compare_fasif_WordCombination(fasif, argument, finded_args, language):
+    _argument = Sentence(fasif['wcomb'][language])
     first_index = _argument.getIndexesOfFirstWords()
     if first_index: first_index = first_index[0] # однородные слова должны обработаться в следующем цикле
-    _argument_iter = Sentence(fasif['wcomb']).iterFromByIndex(first_index)
-    #print _argument(first_index, 'word')
+    _argument_iter = Sentence(fasif['wcomb'][language]).iterFromByIndex(first_index)
 
     first_index = argument.getIndexesOfFirstWords()
     if first_index: first_index = first_index[0] # однородные слова должны обработаться в следующем цикле
     else: return False # "закольцованный" актант - на каждое слово ссылается другое слово.
-    #print argument(first_index, 'word')
     for index, word in argument.iterFromByIndex(first_index):
         _index, _word = next(_argument_iter)
 
         # "Проходимся" по дополнениям (прямые, косвенные, а также подлежащие)
         isright = compare_word(word, index, argument, _word, finded_args) # new
-        #print word['word'], ' ', _word['word'], isright
         if not isright:
             # Если инородная константа, то проверяем, не пропущен ли необязательный аргумент среди фичей константы.
-            req, noreq = count_wordargs(_word, fasif)
+            req, noreq = count_wordargs(_word, fasif, language)
             #print word['base'], _word['base'], req, noreq
             if (not req and not noreq) or req: # если это константное слово без аргументных слов среди определений или есть обязательные аргументный слова среди определений
                 #flog.write('    "%s" is not native between native members. Not native members can only be in the end of sentence.\n' % word['base'])
@@ -119,14 +118,13 @@ def compare_fasif_WordCombination(fasif, argument, finded_args):
         # "Проходимся" по однородным дополнениям (прямые, косвенные, а также подлежащие), если это не первый член
   
         # игнорируем лишние косвенные дополнения (на хвосте)
-        if not (indexes and _indexes): 
-            #flog.write('    "%s" - has %s obients. "%s" - has %s obients.\n' % (word['base'], str(indexes), _word['base'], str(_indexes)))
+        if not (indexes and _indexes):
             break
 
     return True
 
 
-class FasifDB():
+class FasifDB:
     def __init__(self, c, cu):
         self.c, self.cu = c, cu
         self.cu.execute('''
@@ -143,18 +141,17 @@ class FasifDB():
         )
         self.c.commit()
 
-    def find(self, type_fasif, argument):
+    def find(self, type_fasif, argument, language='esperanto'):
         compared_fasifs = []
-        rows = self.cu.execute('SELECT id_fasif, fasif FROM fasifs WHERE type_fasif=?', (type_fasif,))
+        rows = self.cu.execute('SELECT fasif FROM fasifs WHERE type_fasif=?', (type_fasif,))
         for row in rows:
-            id_fasif = row['id_fasif']
             fasif = json.loads(row['fasif'])
             finded_args = {}
             isright = False
             if type_fasif == 'WordCombination':
-                isright = compare_fasif_WordCombination(fasif, argument, finded_args)
+                isright = compare_fasif_WordCombination(fasif, argument, finded_args, language)
             elif type_fasif == 'Verb':
-                isright = compare_fasif_Verb(fasif, argument, finded_args)
+                isright = compare_fasif_Verb(fasif, argument, finded_args, language)
 
             if isright:
                 compared_fasifs.append([finded_args, fasif])
