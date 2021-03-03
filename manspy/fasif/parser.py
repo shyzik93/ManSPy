@@ -1,5 +1,6 @@
 import os
 import re
+import json
 
 from manspy.relation import ObjRelation
 from manspy.fasif import finder
@@ -8,6 +9,8 @@ from manspy.fasif.parser_fasif_word_combination import FASIF_WordCombination
 
 
 def remove_comments_and_separate_fasifs(fasif):
+    if fasif.startswith("["):
+        return {'Verb': json.loads(fasif)}
     fasif = re.sub(r'#[^:].*', '', fasif)
     fasif = fasif.split('\n')
     version = fasif.pop(0)  # для будущей совместимости версий, возможно.
@@ -35,7 +38,7 @@ class FASIFParser:
         fdb = finder.FasifDB(settings.c, settings.cu)
 
         for fasif_file_name in os.listdir(path_import):
-            if fasif_file_name.endswith('.fsf'):
+            if fasif_file_name.endswith('.fsf') or fasif_file_name.endswith('.json'):
                 with open(os.path.join(path_import, fasif_file_name), encoding='utf-8') as fasif_file:
                     # Отделяем ФАСИФы друг от друга
                     dict_assoc_types = remove_comments_and_separate_fasifs(fasif_file.read())

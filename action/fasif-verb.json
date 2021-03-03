@@ -1,0 +1,26 @@
+[
+  {
+    "function": "smart_home/printToIF",
+    "verbs": {
+      "esperanto": ["montri"],
+      "english": ["to print"],
+      "russian": ["показывать"]
+    }
+  },
+  {
+    "function": "smart_home/add",
+    "verbs": {
+      "esperanto": ["adicii"],
+      "english": ["to add"],
+      "russian": ["складывать"]
+    }
+  },
+  {
+    "function": "smart_home/multiply",
+    "verbs": {
+      "esperanto": ["multigi", "obligi"],
+      "english": ["to multiply"],
+      "russian": ["умножать"]
+    }
+  }
+]
