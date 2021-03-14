@@ -5,24 +5,35 @@
     Можно приступать к синтаксичекому анализу предложения.
     '''
 
+
 def processArticle(word, sentence):
-    if word['POSpeech'] == 'article': sentence.delByStep() # пока только удаляем
+    if word['POSpeech'] == 'article':
+        sentence.delByStep() # пока только удаляем
+
 
 def processPreposition(word, sentence):
-    if word['POSpeech'] != 'preposition': return
+    if word['POSpeech'] != 'preposition':
+        return
+
     left, right = sentence.getNeighbours()
-    if right == None: sentence.delByStep()
+    if right is None:
+        sentence.delByStep()
+
     elif right['POSpeech'] in ['noun', 'pronoun', 'numeral']:
         sentence.getByStep(1, 'case', word['give_case'])
         sentence.delByStep()
     else:
         sentence.error.add("postmorph", 'After preposition "'+word['word']+'" must be a noun or a pronoun or a cardinal numeral! Found '+str(sentence.getByStep(1)), 0)
 
+
 def processConjunction(word, sentence):
-    if word['POSpeech'] != 'conjunction' or word['value'] != 'coordinating': return
+    if word['POSpeech'] != 'conjunction' or word['value'] != 'coordinating':
+        return
+
     left, right = sentence.getNeighbours()
-    if left == None or right == None: # если союз первый или последний в предложении
-      sentence.delByStep()
+    if left is None or right is None: # если союз первый или последний в предложении
+        sentence.delByStep()
+
     # сочинительный союз
     #if word['word'] == 'kaj': # заменить логическими символами (kaj = &)
     #print word['base']
@@ -35,11 +46,13 @@ def processConjunction(word, sentence):
         if ('case' in right and right['case'] == 'accusative') and ('case' in left and left['case'] != 'accusative'):
             sentence.delByStep(jump_step=0)
             return
+
         # устанавливаем однородность
         sentence.addHomogeneous(-1, 1) # для дополнений
         sentence.delByStep() # удаляем союз
     #elif left['POSpeech'] == 'noun' and right['POSpeech'] == 'preposition':
     # Однородности нужны лишь для дополнения связей. В коверторе должны фигурировать лишь связи, но не однородности!
+
 
 def mark_freemembers(sentence, indexes):
     for index in indexes:
@@ -47,33 +60,47 @@ def mark_freemembers(sentence, indexes):
     #sentence.addHomogeneous(*indexes) # не совсем корректно
     #sentence.jumpByStep(-len(indexes))
 
+
 def processDefinition(word, sentence, indexes=None):
-    if indexes == None: indexes = []
+    if indexes == None:
+        indexes = []
     #print 'findDefinition:', word['word'], index, sentence.getLen()
     if word['POSpeech'] == 'adjective' or (word['POSpeech'] == 'pronoun' and word['category'] == 'possessive') or word['POSpeech']=='numeral':
         indexes.append(sentence.currentIndex())
         if sentence.isLast():
             mark_freemembers(sentence, indexes)
             return # завершаем цикл, ибо прилагательные без существительного. Их мы не удаляем, так как они могут следовать после глагола esti
+
         sentence.jumpByStep()
         processDefinition(sentence.getByStep(), sentence, indexes)
     elif word['POSpeech'] in ['noun'] and indexes: # если перед существительным стояли прилагательные
         sentence.addFeature(sentence.currentIndex(), *indexes)
         sentence.jumpByStep(-len(indexes))
-    else: mark_freemembers(sentence, indexes)
+    else:
+        mark_freemembers(sentence, indexes)
+
 
 def checkAdverbBefore(sentence):
-    if sentence.position+1 >= sentence.getLen(): return False# т. е. является последним
-    #if adverb['base'] == u'ankaŭ': # стоит перед словом, к которому относится
+    if sentence.position+1 >= sentence.getLen():
+        return False  # т. е. является последним
+
+    # if adverb['base'] == u'ankaŭ': # стоит перед словом, к которому относится
     return sentence.getByStep(1, 'POSpeech') in ['verb', 'adjective', 'adverb']
+
+
 def checkAdverbAfter(sentence):
-    if sentence.isFirst(): return False
+    if sentence.isFirst():
+        return False
+
     return sentence.getByStep(-1, 'POSpeech') in ('verb', 'adjective', 'adverb')
 
+
 def processAdverb(word, sentence):
-    if sentence.getByStep()['POSpeech'] != 'adverb': return
+    if sentence.getByStep()['POSpeech'] != 'adverb':
+        return
+
     index = sentence.currentIndex()
-    if checkAdverbBefore(sentence): # порядок менять не рекомендуется: покажи ОЧЕНЬ СИНИЙ цвет.
+    if checkAdverbBefore(sentence):  # порядок менять не рекомендуется: покажи ОЧЕНЬ СИНИЙ цвет.
         # ПОКАЖИ БЫСТРО синий цвет - а вот здесь необходимо расставлять приоритеты для прилагательных и глаголов.
         # БЫСТРО - относится только к глаголам,
         # ПОКАЖИ ОЧЕНЬ синий цвет - стоит перед словом, к которому относится (глагол, наречие, прил)
@@ -90,17 +117,23 @@ def processAdverb(word, sentence):
             if word['POSpeech'] == 'verb':
                 sentence.addFeature(index2, index) #EX_ERROR если последний  index2, то возникает интересная рекурсивная ошибка.
                 break
+
         sentence.position = old_position
         #Error print index бесконечный цикл, если в предложении одни только наречия. Решение - сделать добавление мнимых слов.
+
 
 def exchangeDataBetweenHomo(sentence):
     done_indexes = []
     for index, word in sentence:
-        if index in done_indexes: continue
+        if index in done_indexes:
+            continue
         index_homos = word['homogeneous_link']
         for index_homo in index_homos:
-            if 'case' in word: sentence(index_homo, 'case', word['case'])
+            if 'case' in word:
+                sentence(index_homo, 'case', word['case'])
+
             done_indexes.append(index_homo)
+
 
 def numeral2number(sentence, indexes):
     """ Числительное в число """
@@ -113,27 +146,38 @@ def numeral2number(sentence, indexes):
     for index in indexes:
         nv = sentence(index, 'number_value')
         if nv > 999:
-            if temp_sum==0 and not first_iter: temp_sum = 1
+            if temp_sum == 0 and not first_iter:
+                temp_sum = 1
+
             numeral_value += temp_sum * multiplier
             temp_sum = 0
             multiplier = nv
         else:
             temp_sum += nv
+
         first_iter = False
-    if temp_sum==0: temp_sum = 1
+
+    if temp_sum == 0:
+        temp_sum = 1
+
     numeral_value += temp_sum * multiplier
     indexes.reverse()
     return numeral_value, glued_numeral
 
+
 def processNumeral(word, sentence, indexes=None):
-    if indexes == None: indexes = []
+    if indexes == None:
+        indexes = []
+
     if word['POSpeech'] == 'numeral' or (word['POSpeech'] == 'noun' and 'derivative' in word and word['derivative'] == 'numeral'):
         indexes.append(sentence.currentIndex())
         if not sentence.isLast():
             sentence.jumpByStep()
             processNumeral(sentence.getByStep(), sentence, indexes)
             return
-    if len(indexes) <= 1: return
+
+    if len(indexes) <= 1:
+        return
 
     # "Склейка" числительных
     ########## необязательное TASK: индексы в списке заменить на слова! #################333
@@ -147,11 +191,14 @@ def processNumeral(word, sentence, indexes=None):
     sentence.delByIndex(*indexes[:-1])
     sentence.jumpByStep(-len(indexes))
 
+
 def runScript(sentence, names):
     names = names.split()
     for name in names:
         func = globals()['process'+name]
-        for index, word in sentence: func(word, sentence)
+        for index, word in sentence:
+            func(word, sentence)
+
 
 def get_analysis(sentences):
     ''' Обёртка '''

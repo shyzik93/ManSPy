@@ -148,9 +148,9 @@ class FasifDB:
             fasif = json.loads(row['fasif'])
             finded_args = {}
             isright = False
-            if type_fasif == 'WordCombination':
+            if type_fasif == 'word_combination':
                 isright = compare_fasif_WordCombination(fasif, argument, finded_args, language)
-            elif type_fasif == 'Verb':
+            elif type_fasif == 'verb':
                 isright = compare_fasif_Verb(fasif, argument, finded_args, language)
 
             if isright:

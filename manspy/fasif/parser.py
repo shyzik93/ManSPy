@@ -22,7 +22,7 @@ def proccess_argword(argwords, settings):
         argwords['hyperonyms'][index] = get_dword(argword, settings)
 
 
-def process_verb(fasif, OR, fdb, settings, path_import):
+def process_verb(fasif, OR, settings, path_import):
     fasif['function'] = os.path.join(path_import, fasif['function'])
     for language, verbs in fasif['verbs'].items():
         if language in settings.modules['language']:
@@ -36,7 +36,7 @@ def process_verb(fasif, OR, fdb, settings, path_import):
     return fasif
 
 
-def process_word_combination(fasif, OR, fdb, settings, path_import):
+def process_word_combination(fasif, OR, settings, path_import):
     not_to_db = ['nombr', 'cifer']
     get_condition = fasif['functions'].get('getCondition')
     if get_condition:
@@ -108,6 +108,6 @@ def fasif_parser(path_import, settings):
                 for fasif in fasifs:
                     fasif_processor = 'process_{}'.format(fasif["type"])
                     fasif_processor = globals()[fasif_processor]
-                    fasif = fasif_processor(fasif, OR, fdb, settings, path_import)
+                    fasif = fasif_processor(fasif, OR, settings, path_import)
                     if fasif:
                         fdb.safe(fasif["type"], fasif)

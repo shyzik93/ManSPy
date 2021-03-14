@@ -153,7 +153,7 @@ def Extraction2IL(R, settings, subjects, predicate, arguments):
     id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')
     id_group = id_group[0] if id_group else None
     if id_group is not None:
-        compared_fasifs = fdb.find('Verb', id_group, settings.language)
+        compared_fasifs = fdb.find('verb', id_group, settings.language)
         if compared_fasifs:
             verb['func_common'] = importer.action(compared_fasifs[0][0][0])
         else:
@@ -163,7 +163,7 @@ def Extraction2IL(R, settings, subjects, predicate, arguments):
     # Вынимаем Фасиф словосочетаний - актантов
     for _argument in arguments:  # у подпредложения может быть несколько актантов
         argument = Sentence(_argument)
-        compared_fasifs = fdb.find('WordCombination', argument, settings.language)
+        compared_fasifs = fdb.find('word_combination', argument, settings.language)
         if compared_fasifs:
             finded_args, fasif = compared_fasifs[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
 
@@ -187,7 +187,7 @@ def Extraction2IL(R, settings, subjects, predicate, arguments):
     # Вынимаем Фасиф словосочетаний - субъектов
     for _subject in subjects:
         subject = Sentence(_subject)
-        compared_fasifs = fdb.find('WordCombination', subject, settings.language)
+        compared_fasifs = fdb.find('word_combination', subject, settings.language)
         if compared_fasifs:
             finded_args, fasif = compared_fasifs[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
 
@@ -197,9 +197,6 @@ def Extraction2IL(R, settings, subjects, predicate, arguments):
             data_get_value, finded_by_antonym = il_build_func_value(fasif, 'getCondition', settings.language)
             word_combination = il_build_word_combination(data_get_value, None, finded_args, fasif, R, settings.language)
             internal_sentence['subjects_word_combinations'].append(word_combination)
-
-    #with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
-    #    flog.write('\npraIL: %s\n' % str(internal_sentence))
 
     return internal_sentence
 
