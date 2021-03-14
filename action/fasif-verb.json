@@ -1,5 +1,6 @@
 [
   {
+    "type": "verb",
     "function": "smart_home/printToIF",
     "verbs": {
       "esperanto": ["montri"],
@@ -8,6 +9,7 @@
     }
   },
   {
+    "type": "verb",
     "function": "smart_home/add",
     "verbs": {
       "esperanto": ["adicii"],
@@ -16,6 +18,7 @@
     }
   },
   {
+    "type": "verb",
     "function": "smart_home/multiply",
     "verbs": {
       "esperanto": ["multigi", "obligi"],

@@ -10,7 +10,7 @@ from manspy.analyse_text import nature2internal
 from manspy.utils.settings import Settings
 from manspy.utils import importer
 from manspy.message import Message
-from manspy.fasif.parser import FASIFParser
+from manspy.fasif.parser import fasif_parser
 
 
 class MainException(Exception):
@@ -45,7 +45,6 @@ class API:
             return message, nature2internal(message)
 
     def __enter__(self):
-        fasif_parser = FASIFParser()
         self.was_imported = {}
 
         for module_type, path_import in self.paths_import:
@@ -55,10 +54,9 @@ class API:
                 for module, module_code in getattr(importer, module_type)(path_import):
                     Settings.set_module(module_type, module, module_code)
             elif module_type == 'action':
-                # TODO: функция fasif_parser.parse должна импоттировать лингв. информацию для всех языков, для которых импортированы языковые модули.
                 # TODO: функция fasif_parser.parse должна принять только path_import
                 for language in Settings.modules['language']:
-                    fasif_parser.parse(path_import, language, Settings(language=language, history=False))
+                    fasif_parser(path_import, Settings(language=language, history=False))
 
         return self
 

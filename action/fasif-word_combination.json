@@ -1,5 +1,6 @@
 [
   {
+    "type": "word_combination",
     "functions": {
       "getCondition": {
         "function": "CurrencyLoader/GetCourse",
@@ -70,6 +71,7 @@
   },
 
   {
+    "type": "word_combination",
     "functions": {
       "changeCondition": {
         "function": "smart_home/LightOn",
@@ -109,7 +111,7 @@
         "args_as_list": false,
         "argtable": {
           "esperanto": {
-            "tabla": 0
+            "tabla": "0"
           }
         },
         "argwords": {
@@ -135,6 +137,7 @@
   },
 
   {
+    "type": "word_combination",
     "functions": {
       "getCondition": {
         "function": "smart_home/showAddress",
@@ -164,6 +167,7 @@
   },
 
   {
+    "type": "word_combination",
     "functions": {
       "getCondition": {
         "function": "smart_home/get",
