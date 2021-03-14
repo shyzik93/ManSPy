@@ -86,7 +86,7 @@ def _extract(sentence):
 
 def extract(sentences):
     extracts = []
-    for index, sentence in sentences:
+    for sentence in sentences:
         extracts.append(_extract(sentence))
 
     return extracts

@@ -164,7 +164,7 @@ class Unit:
     def items(self): return self.subunit_info.items() # аналогично itemsUnit() без индекса. Не рекомендуется. Только для внутреннего использования.
     def itemsInfo(self): return self.unit_info.items()
     def itemsUnit(self, index=None):
-        return self.subunit_info.items() if index == None else self.subunit_info[index].items()
+        return self.subunit_info.items() if index is None else self.subunit_info[index].items()
     def update(self, _dict): self.unit_info.update(_dict)
 
     # Работа с информацией о составляющих юнит (подюнитов)
@@ -177,13 +177,17 @@ class Unit:
 
         self.subunit_info[index][name] = value
 
+    @property
+    def index(self):
+        return self.unit_info['index']
+
     # Итератор
     def __iter__(self, position=0): # # аналогично itemsUnit() без индекса, но с возможностью управления текущей позицией. Для цикла for.
         self.position = position
         self.keys = list(self.subunit_info.keys())
         while self.position < len(self.keys) and self.position >= 0:
             index = self.keys[self.position]
-            yield index, self.subunit_info[index]
+            yield self.subunit_info[index]
             self.position += 1
         self.position = 0
 
@@ -539,10 +543,10 @@ class Sentence(Unit):
     def getFeature(self, index):
         return self.subunit_info[index]['feature']
 
-    def addLink(self, index_parent, index_obient): # parent = control
+    def addLink(self, word_parent, word_obient): # parent = control
         """ Устанавливает ссылку """
-        if index_obient not in self.subunit_info[index_parent]["link"]:
-            self.subunit_info[index_parent]["link"].append(index_obient)
+        if word_obient.index not in self.subunit_info[word_parent.index]["link"]:
+            self.subunit_info[word_parent.index]["link"].append(word_obient.index)
 
     def getObient(self, index):
         """ Возвращает индексы тех слов, которые подчиняются слову по

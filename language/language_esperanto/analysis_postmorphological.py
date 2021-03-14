@@ -8,7 +8,7 @@
 
 def processArticle(word, sentence):
     if word['POSpeech'] == 'article':
-        sentence.delByStep() # пока только удаляем
+        sentence.delByStep()  # пока только удаляем
 
 
 def processPreposition(word, sentence):
@@ -31,7 +31,7 @@ def processConjunction(word, sentence):
         return
 
     left, right = sentence.getNeighbours()
-    if left is None or right is None: # если союз первый или последний в предложении
+    if left is None or right is None:  # если союз первый или последний в предложении
         sentence.delByStep()
 
     # сочинительный союз
@@ -62,7 +62,7 @@ def mark_freemembers(sentence, indexes):
 
 
 def processDefinition(word, sentence, indexes=None):
-    if indexes == None:
+    if indexes is None:
         indexes = []
     #print 'findDefinition:', word['word'], index, sentence.getLen()
     if word['POSpeech'] == 'adjective' or (word['POSpeech'] == 'pronoun' and word['category'] == 'possessive') or word['POSpeech']=='numeral':
@@ -113,9 +113,9 @@ def processAdverb(word, sentence):
         sentence.jumpByStep(-1)
     else:
         old_position = sentence.position
-        for index2, word in sentence: # "свободноплавающее" нарчие. Добавим его к глаголу.
+        for word in sentence: # "свободноплавающее" нарчие. Добавим его к глаголу.
             if word['POSpeech'] == 'verb':
-                sentence.addFeature(index2, index) #EX_ERROR если последний  index2, то возникает интересная рекурсивная ошибка.
+                sentence.addFeature(word.index, index) #EX_ERROR если последний  index2, то возникает интересная рекурсивная ошибка.
                 break
 
         sentence.position = old_position
@@ -124,8 +124,8 @@ def processAdverb(word, sentence):
 
 def exchangeDataBetweenHomo(sentence):
     done_indexes = []
-    for index, word in sentence:
-        if index in done_indexes:
+    for word in sentence:
+        if word.index in done_indexes:
             continue
         index_homos = word['homogeneous_link']
         for index_homo in index_homos:
@@ -166,7 +166,7 @@ def numeral2number(sentence, indexes):
 
 
 def processNumeral(word, sentence, indexes=None):
-    if indexes == None:
+    if indexes is None:
         indexes = []
 
     if word['POSpeech'] == 'numeral' or (word['POSpeech'] == 'noun' and 'derivative' in word and word['derivative'] == 'numeral'):
@@ -196,16 +196,16 @@ def runScript(sentence, names):
     names = names.split()
     for name in names:
         func = globals()['process'+name]
-        for index, word in sentence:
+        for word in sentence:
             func(word, sentence)
 
 
 def get_analysis(sentences):
     ''' Обёртка '''
-    for index, sentence in sentences:
+    for sentence in sentences:
         #TASK обстоятельства, выраженные существительным, обозначить как наречие
         runScript(sentence, 'Numeral Article Conjunction Adverb Conjunction Definition Conjunction Preposition Conjunction')
-        exchangeDataBetweenHomo(sentence) # копируем характеристики с первого однородного ко последующим ему однородным.
+        exchangeDataBetweenHomo(sentence)  # копируем характеристики с первого однородного ко последующим ему однородным.
 
         # здесь нужно найти однородные косвенные дополнения, чтобы им установить однородность.
         # При синтаксическом анализе на них будет ссылаться их родитель.

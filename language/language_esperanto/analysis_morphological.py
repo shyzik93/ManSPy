@@ -9,7 +9,8 @@ import re
 #template = re.compile(r'[0-9]+(\.|\,)?[0-9]*')
 
 combain_numerals_template = re.compile(('^(%s)(' + Dict.dct['numeral'][-5] + '|' + Dict.dct['numeral'][-4] + ')$') % '|'.join(
-    Dict.dct['numeral'][:-5]))
+    Dict.dct['numeral'][:-5]
+))
 mili_numerals_template = re.compile(('^(%s)(iliard|ilion)$') % '|'.join(Dict.dct['numeral'][:-5]))
 
 def checkByDict(word_l, word):
@@ -45,8 +46,9 @@ def defaultNoun(word_l, word):
     word['number'] = 'singular'
     # определение по первой букве:
     if not word['word'][0].islower():
-        word['name'] = 'proper' # имя собственное
-    else: word['name'] = 'common' # имя нарицательное
+        word['name'] = 'proper'  # имя собственное
+    else:
+        word['name'] = 'common'  # имя нарицательное
 
 def is_numeral(word_l, word):
     """ word_l - корень числительного, word - одно слово """
@@ -55,9 +57,12 @@ def is_numeral(word_l, word):
         return True
 
     combain_numerals = combain_numerals_template.findall(word_l)
-    if combain_numerals: combain_numerals = combain_numerals[0]
+    if combain_numerals:
+        combain_numerals = combain_numerals[0]
+
     mili_numerals = mili_numerals_template.findall(word_l)
-    if mili_numerals: mili_numerals = mili_numerals[0]
+    if mili_numerals:
+        mili_numerals = mili_numerals[0]
 
     if combain_numerals:
         factor1, factor2 = combain_numerals
@@ -65,16 +70,17 @@ def is_numeral(word_l, word):
     elif mili_numerals:
         factor1, factor2 = mili_numerals
         number_value = int(Dict.dct['numeral_d']['milion']) ** int(Dict.dct['numeral_d'][factor1])
-        if factor2 == 'iliard': number_value *= 1000
-    else: return False
+        if factor2 == 'iliard':
+            number_value *= 1000
+    else:
+        return False
 
     word['number_value'] = number_value
     return True
 
+
 def _getMorphA(word):
-
     word_l = word['word'].lower()
-
     # Определение части речи по словарю
     # (для неизменяемых или почти неизменяемых частей речи)
     if checkByDict(word_l, word): return
@@ -99,22 +105,24 @@ def _getMorphA(word):
     # существительное
     if ends[0] == 'o':
         defaultNoun(words[0], word)
-        if is_numeral(words[0], word): word['derivative'] = 'numeral' # производное от числительного
+        if is_numeral(words[0], word):
+            word['derivative'] = 'numeral'  # производное от числительного
 
     # наречие
     elif ends[0] == 'e':
         word['POSpeech'] = 'adverb'
         word['base'] = words[0]
-        if is_numeral(words[0], word): word['derivative'] = 'numeral' # производное от числительного
+        if is_numeral(words[0], word):
+            word['derivative'] = 'numeral'  # производное от числительного
 
     # прилагательное, притяжательное местоимение или порядковое числительное
     elif ends[0] == 'a':
-        if checkByDict(words[0], word): # прилагательное
-            if word['POSpeech'] == 'pronoun': # притяжательное иестоимение
+        if checkByDict(words[0], word):  # прилагательное
+            if word['POSpeech'] == 'pronoun':  # притяжательное иестоимение
                 word['category'] = 'possessive'
-            elif word['POSpeech'] == 'numeral': # порядковое числительное
+            elif word['POSpeech'] == 'numeral':  # порядковое числительное
                 word['class'] = 'ordinal'
-            else: # прилагательное (есть ли такие: dea, laa, kaja и подобные?)
+            else:  # прилагательное (есть ли такие: dea, laa, kaja и подобные?)
                 word['POSpeech'] = 'adjective'
                 word['case'] = 'nominative'
                 word['number'] = 'singular'
@@ -133,9 +141,13 @@ def _getMorphA(word):
     elif ends[0] in Dict.dct['verb']['end'].keys() or ends[1] in Dict.dct['verb']['end'].keys():
         word['POSpeech'] = 'verb'
         for i in range(2):
-            if ends[i] not in Dict.dct['verb']['end']: continue
+            if ends[i] not in Dict.dct['verb']['end']:
+                continue
+
             word.update(Dict.dct['verb']['end'][ends[i]])
-            if is_numeral(words[i], word): word['derivative'] = 'numeral' # производное от числительного
+            if is_numeral(words[i], word):
+                word['derivative'] = 'numeral'  # производное от числительного
+
             word['base'] = words[i]
             break
 
@@ -178,12 +190,13 @@ def _getMorphA(word):
         # нераспознанное слово с большой буквы - существительное
         if not word['word'][0].islower():
             defaultNoun(word_l, word)
-        else: word['POSpeech'] = ''
+        else:
+            word['POSpeech'] = ''
 
 def get_analysis(sentences):
     ''' Обёртка '''
-    for index, sentence in sentences:
-        for index, word in sentence:
+    for sentence in sentences:
+        for word in sentence:
             _getMorphA(word)
     return sentences
 

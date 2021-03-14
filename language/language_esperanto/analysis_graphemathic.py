@@ -18,7 +18,7 @@ ReplacedLetters = {u'cx' :u'ĉ', u'gx': u'ĝ', u'hx': u'ĥ',
 
 def define_type_symbol(word):
     """ Устанавливаем тип символа в слове """
-    for index, symbol in word:
+    for symbol in word:
         if symbol['symbol'] in letters: symbol['type'] = 'letter'
         elif symbol['symbol'] in punctuation_marks: symbol['type'] = 'pmark'
         else: symbol['type'] = 'other'

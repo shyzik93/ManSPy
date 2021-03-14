@@ -79,39 +79,42 @@ def jumpToObient(sentence, indexWord, indexObient):
 def compare_fasif_WordCombination(fasif, argument, finded_args, language):
     _argument = Sentence(fasif['wcomb'][language])
     first_index = _argument.getIndexesOfFirstWords()
-    if first_index: first_index = first_index[0] # однородные слова должны обработаться в следующем цикле
+    if first_index:
+        first_index = first_index[0]  # однородные слова должны обработаться в следующем цикле
+
     _argument_iter = Sentence(fasif['wcomb'][language]).iterFromByIndex(first_index)
 
     first_index = argument.getIndexesOfFirstWords()
     if first_index: first_index = first_index[0] # однородные слова должны обработаться в следующем цикле
     else: return False # "закольцованный" актант - на каждое слово ссылается другое слово.
-    for index, word in argument.iterFromByIndex(first_index):
-        _index, _word = next(_argument_iter)
+    for word in argument.iterFromByIndex(first_index):
+        _word = next(_argument_iter)
 
         # "Проходимся" по дополнениям (прямые, косвенные, а также подлежащие)
-        isright = compare_word(word, index, argument, _word, finded_args) # new
+        isright = compare_word(word, word.index, argument, _word, finded_args) # new
         if not isright:
             # Если инородная константа, то проверяем, не пропущен ли необязательный аргумент среди фичей константы.
             req, noreq = count_wordargs(_word, fasif, language)
             #print word['base'], _word['base'], req, noreq
-            if (not req and not noreq) or req: # если это константное слово без аргументных слов среди определений или есть обязательные аргументный слова среди определений
+            if (not req and not noreq) or req:  # если это константное слово без аргументных слов среди определений или есть обязательные аргументный слова среди определений
                 #flog.write('    "%s" is not native between native members. Not native members can only be in the end of sentence.\n' % word['base'])
-                return False # если посреди связей чужой член - актант не соответсвует фасифу
+                return False  # если посреди связей чужой член - актант не соответсвует фасифу
             else: # если всен аргументные слова - необязательные, то константа может быть пропущена
                 argument.jumpByStep(-1)
-                _indexes = jumpToObient(_argument, _index, 0)
+                _indexes = jumpToObient(_argument, _word['index'], 0)
                 if not _indexes: 
                     #flog.write('    "%s" - has %s obients. \n' % (_word['base'], str(_indexes)))
                     break
+
         #flog.write('    Result of comparing word is right: index - %i, base - "%s".\n' % (index, word['base']))
-        indexes = jumpToObient(argument, index, 0)
-        _indexes = jumpToObient(_argument, _index, 0)
+        indexes = jumpToObient(argument, word.index, 0)
+        _indexes = jumpToObient(_argument, _word['index'], 0)
         # "Проходимся" по обстоятельствам и определениям
         features = word['feature']
         _features = _word['feature']
         for feature in features:
             for _feature in _features:
-                isright = compare_word(feature, index, argument, _feature, finded_args)
+                isright = compare_word(feature, word.index, argument, _feature, finded_args)
                 #flog.write('    Result of comparing word is %s: index - %i, base - "%s".\n' % (str(isright), index, word['base']))
                 # не проверяем на верность.
 
