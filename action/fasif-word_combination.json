@@ -1,0 +1,191 @@
+[
+  {
+    "functions": {
+      "getCondition": {
+        "function": "CurrencyLoader/GetCourse",
+        "verbs": {}
+      }
+    },
+    "args": {
+      "currency": {
+        "isreq": true,
+        "args_as_list": false,
+        "argtable": {
+          "esperanto": {
+            "dolara": "USD",
+            "rubla": "RUB",
+            "euxra": "EUR",
+            "hrivna": "UAH"
+          },
+          "russian": {
+            "доллара": "USD"
+          }
+        },
+        "argwords": {
+          "esperanto": {
+            "in_wcomb": {
+              "name": "dolara",
+              "hyperonyms": ["mono"]
+            }
+          },
+          "russian": {
+            "in_wcomb": {
+              "name": "доллара",
+              "hyperonyms": ["валюта"]
+            }
+          }
+        }
+      },
+      "country": {
+        "isreq": false,
+        "args_as_list": false,
+        "argtable": {
+          "esperanto": {
+            "rusia": "Russia",
+            "belarusia": "Belarus",
+            "ukrainia": "Ukraine",
+            "kartvela": "Georgia"
+          }
+        },
+        "argwords": {
+          "esperanto": {
+            "in_wcomb": {
+              "name": "rusia",
+              "hyperonyms": ["lando"]
+            }
+          },
+          "russian": {
+            "in_wcomb": {
+              "name": "русскому",
+              "hyperonyms": ["страна", "национальность"]
+            }
+          }
+        }
+      }
+    },
+    "wcomb": {
+      "esperanto": "dolara kurzo de rusia banko",
+      "russian": "курс доллара согласно русскому банку"
+    }
+  },
+
+  {
+    "functions": {
+      "changeCondition": {
+        "function": "smart_home/LightOn",
+        "verbs": {
+          "esperanto": ["sxalti"],
+          "english": ["to turn on"],
+          "russian": ["включать"]
+        }
+      }
+    },
+    "args": {
+      "room": {
+        "isreq": true,
+        "args_as_list": false,
+        "argtable": {
+          "esperanto": {
+            "dormĉambro": "bedroom"
+          }
+        },
+        "argwords": {
+          "esperanto": {
+            "in_wcomb": {
+              "name": "en dormcxambro",
+              "hyperonyms": ["cxambro"]
+            }
+          },
+          "russian": {
+            "in_wcomb": {
+              "name": "спальне",
+              "hyperonyms": ["комната"]
+            }
+          }
+        }
+      },
+      "device": {
+        "isreq": true,
+        "args_as_list": false,
+        "argtable": {
+          "esperanto": {
+            "tabla": 0
+          }
+        },
+        "argwords": {
+          "esperanto": {
+            "in_wcomb": {
+              "name": "tabla",
+              "hyperonyms": ["meblaro"]
+            },
+            "russian": {
+            "in_wcomb": {
+              "name": "настольный",
+              "hyperonyms": ["мебель", "местонахождение"]
+            }
+          }
+          }
+        }
+      }
+    },
+    "wcomb": {
+      "esperanto": "tabla lampo en dormcxambro",
+      "russian":  "настольный свет в спальне"
+    }
+  },
+
+  {
+    "functions": {
+      "getCondition": {
+        "function": "smart_home/showAddress",
+        "verbs": {}
+      }
+    },
+    "args": {
+      "device": {
+        "isreq": true,
+        "args_as_list": false,
+        "argtable": {
+          "esperanto": {
+            "komputilo": "computer"
+          }
+        },
+        "argwords": {
+          "esperanto": {
+            "in_wcomb": {
+              "name": "de komputilo",
+              "hyperonyms": ["aparato"]
+            }
+          }
+        }
+      }
+    },
+    "wcomb": {"esperanto": "adreso de komputilo"}
+  },
+
+  {
+    "functions": {
+      "getCondition": {
+        "function": "smart_home/get",
+        "verbs": {}
+      }
+    },
+    "text": "Esperanto\n    : \n    ",
+    "args": {
+      "a": {
+        "isreq": true,
+        "args_as_list": false,
+        "argtable": {},
+        "argwords": {
+          "esperanto": {
+            "in_wcomb": {
+              "name": "kvin",
+              "hyperonyms": ["nombro"]
+            }
+          }
+        }
+      }
+    },
+    "wcomb": {"esperanto":  "kvin"}
+  }
+]

@@ -84,6 +84,7 @@ def check_args(finded_args, fasif, R, language):
     # Конвертирование аргументных слов по таблице из фасифа
     for checked_arg in checked_args:
         for argname, argvalue in checked_arg.items():
+            # TODO: раскрыть функцию convert_by_argtable
             checked_arg[argname] = convert_by_argtable(fasif['argdescr'][language], argname, argvalue)
     return checked_args
 

@@ -8,9 +8,10 @@ from manspy.fasif.parser_fasif_verb import FASIF_Verb
 from manspy.fasif.parser_fasif_word_combination import FASIF_WordCombination
 
 
-def remove_comments_and_separate_fasifs(fasif):
+def remove_comments_and_separate_fasifs(fasif, file_name):
     if fasif.startswith("["):
-        return {'Verb': json.loads(fasif)}
+        fasif_type = 'Verb' if 'verb' in file_name else 'WordCombination'
+        return {fasif_type: json.loads(fasif)}
     fasif = re.sub(r'#[^:].*', '', fasif)
     fasif = fasif.split('\n')
     version = fasif.pop(0)  # для будущей совместимости версий, возможно.
@@ -41,7 +42,7 @@ class FASIFParser:
             if fasif_file_name.endswith('.fsf') or fasif_file_name.endswith('.json'):
                 with open(os.path.join(path_import, fasif_file_name), encoding='utf-8') as fasif_file:
                     # Отделяем ФАСИФы друг от друга
-                    dict_assoc_types = remove_comments_and_separate_fasifs(fasif_file.read())
+                    dict_assoc_types = remove_comments_and_separate_fasifs(fasif_file.read(), fasif_file_name)
                     for assoc_type, fasifs in dict_assoc_types.items():
                         cls = globals()['FASIF_{}'.format(assoc_type)]()
                         for fasif in fasifs:

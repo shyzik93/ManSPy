@@ -9,109 +9,94 @@ from manspy.analyse_text import nature2internal
 
 class FASIF_WordCombination(FASIF):
 
-    def parse(self, _fasif, path_import, settings):
+    def parse(self, fasif, path_import, settings):
         """
             подформат состоит из трёх блоков: описание функций, аргументов и словосочетания.
             Аргументы одинаковы для всех функций
         """
-        functions = {}
-        args = {}
-        wcomb = {}
+        if not isinstance(fasif, dict):
+            return
 
-        ## Блок функций
-        destination = None
-        ## Блок аргументов
-        arg_name = None
-        lang_indexes = []
-        ## Блок словосочетаний
-        language = None
+        getCondition = fasif['functions'].get('getCondition')
+        if getCondition:
+            getCondition['function'] = os.path.join(path_import, getCondition['function'])
 
-        arg_indexes = []
-        arg_index = 0
+        changeCondition = fasif['functions'].get('changeCondition')
+        if changeCondition:
+            changeCondition['function'] = os.path.join(path_import, changeCondition['function'])
 
-        for string in _fasif:
-            ## Блок функций
-            # Назначение: Модуль/Функция
-            if re.findall(STRING_DESTINATION_TITLE, string):  # "Name_01 : moduleName/funcName "
-                destination, function = string.split(':')
-                functions[destination.strip()] = {'function': os.path.join(path_import, function.strip()), 'verbs': {}}
-            # Язык: глаголДляФункции
-            elif re.findall(STRING_DESTINATION_BODY, string): # "    Language : verbглагол"
-                language, verb = string.split(':')
-                language = language.strip().lower()
-                if language in settings.modules['language']:
-                    functions[destination]['verbs'][language] = verb.strip().split()
-            ## Блок аргументов
-            # аргумент yORn ; Язык1 ; Язык2
-            elif re.findall(STRING_ARGUMENT_TITLE1, string):
-                string = string.split(';')
-                arg_name, isreq = string.pop(0).split()
-                args_as_list = False
+        # _fasif = fasif['text'].split('\n')
+        #
+        # args = fasif['args']
+        # wcomb = {}
+        #
+        # ## Блок аргументов
+        # #arg_name = None
+        # #lang_indexes = []
+        # ## Блок словосочетаний
+        # language = None
+        #
+        # arg_indexes = fasif['arg_indexes']
+        # arg_index = 0
+        #
+        # for string in _fasif:
+        #     if string.startswith('#'):
+        #         continue
+        #     string = string.split('#')[0]
+        #     ## Блок аргументов
+        #     # аргумент yORn ; Язык1 ; Язык2
+        #     # if re.findall(STRING_ARGUMENT_TITLE1, string):
+        #     #     string = string.split(';')
+        #     #     arg_name, isreq = string.pop(0).split()
+        #     #
+        #     #     lang_indexes = []
+        #     #     args[arg_name] = {'isreq': isreq, 'args_as_list': False, 'argtable': {}, 'argwords': {}}
+        #     #     for language in string:
+        #     #         language = language.strip().lower()
+        #     #         if language in settings.modules['language']:
+        #     #             args[arg_name]['argtable'][language] = {}
+        #     #         lang_indexes.append(language)
+        #     #
+        #     #     arg_indexes.append(arg_name)
+        #     # Аргумент ; АргументноеСловоНаЯзыке1 ; АргументноеСловоНаЯзыке2
+        #     # if re.findall(STRING_ARGUMENT_BODY, string):
+        #     #     string = string.strip().split(';')
+        #     #     arg_value = string.pop(0).strip()
+        #     #     for index, word in enumerate(string):
+        #     #         word = word.strip()
+        #     #         language = lang_indexes[index]
+        #     #         if language in settings.modules['language'] and word:
+        #     #             args[arg_name]['argtable'][language][word] = arg_value
+        #     ## Блок словосочетаний
+        #     # Язык
+        #     if re.findall(STRING_WCOMB_TITLE, string):
+        #         language = string.strip().lower()
+        #         if language in settings.modules['language']:
+        #             for arg_name in args:
+        #                 args[arg_name]['argwords'][language] = {'in_wcomb': {'name': None, 'hyperonyms': []}, 'another': []}
+        #         arg_index = 0
+        #     # АргументноеСлово: АбстрактнаяГруппа1, АбстрактнаяГруппа2     Необходимо заменитиь на: # АргументноеСлово: ВходитАбстрГруппа1, ВходитАбстрГруппа2; НеВХодитАбстрГрупп, НеВХодитАбстрГрупп
+        #     elif re.findall(STRING_WCOMB_ARGWORD, string):
+        #         if language in settings.modules['language']:
+        #             arg_words = string.strip().split(';')
+        #             arg_word, hyperonyms = arg_words.pop(0).split(':')
+        #             args[arg_indexes[arg_index]]['argwords'][language]['in_wcomb']['name'] = arg_word
+        #             for hyperonym in hyperonyms.split(','):
+        #                 args[arg_indexes[arg_index]]['argwords'][language]['in_wcomb']['hyperonyms'].append(hyperonym.strip())
+        #
+        #             for _arg_word in arg_words:
+        #                 arg_word, hyperonyms = _arg_word.split(':')
+        #                 args[arg_indexes[arg_index]]['argwords'][language]['another']['name'] = arg_word
+        #                 for hyperonym in hyperonyms.split(','):
+        #                     args[arg_indexes[arg_index]]['argwords'][language]['another']['hyperonyms'].append(hyperonym.strip())
+        #         arg_index += 1
+        #     elif re.findall(STRING_WCOMB, string):
+        #         if language in settings.modules['language']:
+        #             wcomb[language.lower()] = string.strip()
 
-                if len(isreq) == 2:
-                    args_as_list = isreq[1]
-                    isreq = isreq[0]
+        # return {'functions': fasif['functions'], 'wcomb': wcomb, 'args': args}
 
-                lang_indexes = []
-                args[arg_name] = {'isreq': isreq, 'args_as_list': args_as_list, 'argtable': {}, 'argwords': {}}
-                for language in string:
-                    language = language.strip().lower()
-                    if language in settings.modules['language']:
-                        args[arg_name]['argtable'][language] = {}
-                    lang_indexes.append(language)
-
-                arg_indexes.append(arg_name)
-            elif re.findall(STRING_ARGUMENT_TITLE2, string):
-                arg_name, isreq = string.split()
-                args_as_list = False
-
-                if len(isreq) == 2:
-                    args_as_list = isreq[1]
-                    isreq = isreq[0]
-
-                args[arg_name] = {'isreq': isreq, 'args_as_list': args_as_list, 'argtable': {}, 'argwords': {}}
-                arg_indexes.append(arg_name)
-            # Аргумент ; АргументноеСловоНаЯзыке1 ; АргументноеСловоНаЯзыке2
-            elif re.findall(STRING_ARGUMENT_BODY, string):
-                string = string.strip().split(';')
-                arg_value = string.pop(0).strip()
-                for index, word in enumerate(string):
-                    word = word.strip()
-                    language = lang_indexes[index]
-                    if language in settings.modules['language'] and word:
-                        args[arg_name]['argtable'][language][word] = arg_value
-            elif re.findall(STRING_ARGUMENT_TITLE2, string):
-                arg_name, isreq = string.split()
-                args[arg_name] = {'isreq': isreq, 'argtable': {}, 'argwords': {}}
-                arg_indexes.append(arg_name)
-            ## Блок словосочетаний
-            # Язык
-            elif re.findall(STRING_WCOMB_TITLE, string):
-                language = string.strip().lower()
-                if language in settings.modules['language']:
-                    for arg_name in args:
-                        args[arg_name]['argwords'][language] = {'in_wcomb': {'name': None, 'hyperonyms': []}, 'another': []}
-                arg_index = 0
-            # АргументноеСлово: АбстрактнаяГруппа1, АбстрактнаяГруппа2     Необходимо заменитиь на: # АргументноеСлово: ВходитАбстрГруппа1, ВходитАбстрГруппа2; НеВХодитАбстрГрупп, НеВХодитАбстрГрупп
-            elif re.findall(STRING_WCOMB_ARGWORD, string):
-                if language in settings.modules['language']:
-                    arg_words = string.strip().split(';')
-                    arg_word, hyperonyms = arg_words.pop(0).split(':')
-                    args[arg_indexes[arg_index]]['argwords'][language]['in_wcomb']['name'] = arg_word
-                    for hyperonym in hyperonyms.split(','):
-                        args[arg_indexes[arg_index]]['argwords'][language]['in_wcomb']['hyperonyms'].append(hyperonym.strip())
-
-                    for _arg_word in arg_words:
-                        arg_word, hyperonyms = _arg_word.split(':')
-                        args[arg_indexes[arg_index]]['argwords'][language]['another']['name'] = arg_word
-                        for hyperonym in hyperonyms.split(','):
-                            args[arg_indexes[arg_index]]['argwords'][language]['another']['hyperonyms'].append(hyperonym.strip())
-                arg_index += 1
-            elif re.findall(STRING_WCOMB, string):
-                if language in settings.modules['language']:
-                    wcomb[language.lower()] = string.strip()
-
-        return {'functions': functions, 'wcomb': wcomb, 'args': args}
+        return fasif
 
     def proccess_lingvo_data(self, fasif, OR, fdb, settings):
         fasif['argdescr'] = {}
@@ -124,8 +109,6 @@ class FASIF_WordCombination(FASIF):
                     data['argtable'][language][arg_word] = argtable
 
                 self.proccess_argword(data['argwords'][language]['in_wcomb'], settings)
-                for argword in data['argwords'][language]['another']:
-                    self.proccess_argword(argword, settings)
 
             for destination, value in fasif['functions'].items():
                 verbs = value['verbs'].setdefault(language, {})
@@ -145,7 +128,6 @@ class FASIF_WordCombination(FASIF):
                 fasif['argdescr'][language][argname] = {
                     'isreq': data['isreq'],
                     'argtable': data['argtable'][language],
-                    'argwords_another': data['argwords'][language]['another'],
                     'hyperonyms': data['argwords'][language]['in_wcomb']['hyperonyms']
                 }
                 if len(fasif['args']) == 1:  # а при числе аргументов более 1 мы их передаём только как именованные

@@ -10,6 +10,9 @@ class FASIF_Verb(FASIF):
         if not isinstance(_fasif, dict):
             return
 
+        if 'functions' in _fasif:
+            return
+
         _fasif['function'] = os.path.join(path_import, _fasif['function'])
         return _fasif
 

@@ -1,23 +1,4 @@
 #FASIF-Version: 3.00
-
-#:Verb
-# ################################################
-smart_home/printToIF
-    Esperanto: montri # глаголы в начальной форме, через запятую, чтобы программа сама выделила корень
-    Englsh: to print # добавить возможность указания нескольких глаголов через запятую
-    Russian: показывать
-#:Verb
-# ################################################
-smart_home/add
-    Esperanto: adicii
-    Englsh: to add
-    Russian: складывать
-#:Verb
-# ################################################
-smart_home/multiply
-    Esperanto: multigi, obligi
-    Englsh: to multiply
-    Russian: умножать
     
 #:WordCombination
 # ################################################
@@ -35,7 +16,6 @@ country n ;  Esperanto
     Belarus ;  belarusia
     Ukraine ;  ukrainia
     Georgia ;  kartvela
-#country n #- если не требуется замена значения аргумента
 
 Esperanto
     dolara: mono # аргументное слова: абстрактные группы через запятую
@@ -53,7 +33,6 @@ changeCondition: smart_home/LightOn # это назначение требует
     Esperanto: sxalti
     English: to turn on
     Russian: включать
-#getCondition: - # пока нет(
 
 room y; Esperanto
     bedroom; dormĉambro

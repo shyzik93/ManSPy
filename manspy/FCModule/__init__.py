@@ -12,7 +12,7 @@ def run_wcomb_function(internal_sentence, arg0, function_name, prefix=''):
     :return: генератор с ответами
     """
     for word_combination in internal_sentence['{}word_combinations'.format(prefix)]:
-        if word_combination['how_put_args'] == 'l':  # однородные передаются разом как позиционные аргументы
+        if word_combination['how_put_args'] == 'positional':  # однородные передаются разом как позиционные аргументы
             yield word_combination[function_name](arg0, *word_combination['arguments'])
         else:  # однородные передаются по очереди как именованные
             for argument in word_combination['arguments']:
