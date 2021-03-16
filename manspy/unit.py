@@ -49,7 +49,7 @@ class Unit:
     для предложения - это слова, для слов - это символы
     """
 
-    def __init__(self, subunits=None, unit_info=None):
+    def __init__(self, subunits=None, unit_info=None, parent=None):
         self.unit_info = {'max_index': -1, 'index': None}
         self.subunit_info = {}
         self.full_info = {'unit_info': self.unit_info, 'unit': self.subunit_info}
@@ -62,7 +62,9 @@ class Unit:
         if unit_info:
             self.unit_info.update(unit_info)
         if subunits:
-            self.load_subunits(subunits)
+            self.load_subunits(subunits, parent)
+
+        self.parent = parent
 
     def import_unit(self, data):
 
@@ -109,7 +111,7 @@ class Unit:
 
         return data
 
-    def load_subunits(self, subunits):
+    def load_subunits(self, subunits, parent=None):
         """
         Загружает подъюниты из списка либо словаря.
         Словарь обычно используется при добавлении подъюнитов экспортированного юнита
@@ -131,6 +133,8 @@ class Unit:
             for index, subunit in enumerate(subunits):
                 subunit['index'] = index
                 self.subunit_info[index] = subunit
+                if parent and subunit.get('unit_type') in ('Word', 'Sentence', 'Text'):
+                    setattr(subunit, parent['name'], parent['value'])
 
         elif isinstance(subunits, dict):
 
@@ -140,7 +144,7 @@ class Unit:
                 self.subunit_info[index] = subunit
 
         self.keys = list(self.subunit_info.keys())
-        self.subunits_copy = self.subunit_info.copy() # делаем неглубокую копию исходного предложения.
+        self.subunits_copy = self.subunit_info.copy()  # делаем неглубокую копию исходного предложения.
 
     # Работа с информацией о юните в целом
 
@@ -228,10 +232,10 @@ class Unit:
       #return self.subunit_info[self.keys[position]]
 
     def currentIndex(self,step=0):
-        return self.keys[self.position+step]  # derpricated
+        return self.keys[self.position+step]  # TODO: delete this method
 
     # Текущая позиция
-    def isOutLeft(self, step=0):  return self.position+step <  0
+    def isOutLeft(self, step=0):  return self.position+step < 0
     def isFirst(self, step=0):    return self.position+step == 0
     def isBetween(self, step=0):  return self.position+step <  len(self.subunit_info) - 1 and self.position+step > 0
     def isLast(self, step=0):     return self.position+step == len(self.subunit_info) - 1
@@ -244,10 +248,6 @@ class Unit:
         return left, right
 
     # Прочее
-    def getLen(self, func=None):
-        """ Возвращает длину юнита (кол-во подюнитов). Может применить к длине функцию,
-            например range, после этого возвратится список """
-        return func(len(self.subunit_info)) if func else len(self.subunit_info)
 
     def _go_depth(self, el, info0, info1, info2):
         if isinstance(el, Sentence): return el.getUnit('dict', info0, info1, info2)
@@ -384,9 +384,6 @@ class Unit:
             for _subunit in _subunits: _subunit.update(new_properties)
             if subunit: subunit.update(new_properties)
 
-    def pop(self):
-        pass
-
     def _getByProperty(self, result, eq, not_eq, everywhere, list_names, units):
         ''' units - список из словарей символов или объектов Слово, Предложение, Текст '''
         for unit in units:
@@ -443,6 +440,14 @@ class Unit:
 
         return result
 
+    def get(self, key):
+        return self.unit_info.get(key)
+
+    def remove(self):
+        if self.parent:
+            index = self.unit_info['index']
+            del self.parent['value'].subunit_info[index]
+
 
 class Word(Unit):
     """
@@ -466,21 +471,25 @@ class Word(Unit):
     - combine_words - список слов, являющихся составными для данного
     """
     def __init__(self, str_word):
+        self.str_word = str_word
+        self.sentence = None
         symbols = []
-        for index, symbol in enumerate(str_word):
+        for symbol in str_word:
             symbols.append({'type': '', 'symbol': symbol})
 
-        self.str_word = str_word
-        Unit.__init__(self, symbols, unit_info={
+        unit_info = {
             'word': self.str_word,
             'symbol_map': {},
             'feature': [],
             'link': [],
-            'homogeneous_link': [], # ссылки на однородные члены
-            'type': 'real', # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
+            'homogeneous_link': [],  # ссылки на однородные члены
+            'type': 'real',
+            # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
             'start_pmark': [], 'end_pmark': [], 'around_pmark': [],
             'combine_words': []
-        })
+        }
+        parent = {'name': 'word', 'value': self}
+        Unit.__init__(self, symbols, unit_info, parent)
 
     def hasSymbol(self, symbol):
         return symbol in self.str_word
@@ -493,7 +502,7 @@ class Sentence(Unit):
     new_index = None
 
     def __init__(self, words):
-        Unit.__init__(self, words, unit_info={'end': ''})
+        Unit.__init__(self, words, unit_info={'end': ''}, parent={'name': 'sentence', 'value': self})
         self.error = errorManager('graphmath', 'morph', 'postmorph', 'synt')
 
     def getByCharacteristic(self, name, value):
@@ -612,4 +621,4 @@ class Text(Unit):
         Возможности: анализ, обработка (изменение времени, стиля текста (публистический, официальный) и прочее)
     """
     def __init__(self, sentences):
-        Unit.__init__(self, sentences)
+        Unit.__init__(self, sentences, parent={'name': 'text', 'value': self})
