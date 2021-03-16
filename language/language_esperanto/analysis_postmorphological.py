@@ -200,9 +200,9 @@ def runScript(sentence, names):
             func(word, sentence)
 
 
-def get_analysis(sentences):
+def get_analysis(text):
     ''' Обёртка '''
-    for sentence in sentences:
+    for sentence in text:
         #TASK обстоятельства, выраженные существительным, обозначить как наречие
         runScript(sentence, 'Numeral Article Conjunction Adverb Conjunction Definition Conjunction Preposition Conjunction')
         exchangeDataBetweenHomo(sentence)  # копируем характеристики с первого однородного ко последующим ему однородным.
@@ -210,4 +210,4 @@ def get_analysis(sentences):
         # здесь нужно найти однородные косвенные дополнения, чтобы им установить однородность.
         # При синтаксическом анализе на них будет ссылаться их родитель.
 
-    return sentences
+    return text

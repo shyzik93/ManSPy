@@ -193,12 +193,12 @@ def _getMorphA(word):
         else:
             word['POSpeech'] = ''
 
-def get_analysis(sentences):
+def get_analysis(text):
     ''' Обёртка '''
-    for sentence in sentences:
+    for sentence in text:
         for word in sentence:
             _getMorphA(word)
-    return sentences
+    return text
 
 #sentence = 'vi montru kursojn de mia dolaro'
 #sentence = '1444 123.78654 345,976 0.7 9,8'
