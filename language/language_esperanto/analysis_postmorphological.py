@@ -6,12 +6,12 @@
     '''
 
 
-def processArticle(word, sentence):
+def process_article(word, sentence):
     if word['POSpeech'] == 'article':
         sentence.delByStep()  # пока только удаляем
 
 
-def processPreposition(word, sentence):
+def process_preposition(word, sentence):
     if word['POSpeech'] != 'preposition':
         return
 
@@ -26,7 +26,7 @@ def processPreposition(word, sentence):
         sentence.error.add("postmorph", 'After preposition "'+word['word']+'" must be a noun or a pronoun or a cardinal numeral! Found '+str(sentence.getByStep(1)), 0)
 
 
-def processConjunction(word, sentence):
+def process_conjunction(word, sentence):
     if word['POSpeech'] != 'conjunction' or word['value'] != 'coordinating':
         return
 
@@ -61,7 +61,7 @@ def mark_freemembers(sentence, indexes):
     #sentence.jumpByStep(-len(indexes))
 
 
-def processDefinition(word, sentence, indexes=None):
+def process_definition(word, sentence, indexes=None):
     if indexes is None:
         indexes = []
     #print 'findDefinition:', word['word'], index, len(sentence.subunit_info)
@@ -72,7 +72,7 @@ def processDefinition(word, sentence, indexes=None):
             return # завершаем цикл, ибо прилагательные без существительного. Их мы не удаляем, так как они могут следовать после глагола esti
 
         sentence.jumpByStep()
-        processDefinition(sentence.getByStep(), sentence, indexes)
+        process_definition(sentence.getByStep(), sentence, indexes)
     elif word['POSpeech'] in ['noun'] and indexes: # если перед существительным стояли прилагательные
         sentence.addFeature(sentence.currentIndex(), *indexes)
         sentence.jumpByStep(-len(indexes))
@@ -95,7 +95,7 @@ def checkAdverbAfter(sentence):
     return sentence.getByStep(-1, 'POSpeech') in ('verb', 'adjective', 'adverb')
 
 
-def processAdverb(word, sentence):
+def process_adverb(word, sentence):
     if sentence.getByStep()['POSpeech'] != 'adverb':
         return
 
@@ -165,7 +165,7 @@ def numeral2number(sentence, indexes):
     return numeral_value, glued_numeral
 
 
-def processNumeral(word, sentence, indexes=None):
+def process_numeral(word, sentence, indexes=None):
     if indexes is None:
         indexes = []
 
@@ -173,7 +173,7 @@ def processNumeral(word, sentence, indexes=None):
         indexes.append(sentence.currentIndex())
         if not sentence.isLast():
             sentence.jumpByStep()
-            processNumeral(sentence.getByStep(), sentence, indexes)
+            process_numeral(sentence.getByStep(), sentence, indexes)
             return
 
     if len(indexes) <= 1:
@@ -192,19 +192,24 @@ def processNumeral(word, sentence, indexes=None):
     sentence.jumpByStep(-len(indexes))
 
 
-def runScript(sentence, names):
-    names = names.split()
-    for name in names:
-        func = globals()['process'+name]
-        for word in sentence:
-            func(word, sentence)
-
-
 def get_analysis(text):
     ''' Обёртка '''
     for sentence in text:
         #TASK обстоятельства, выраженные существительным, обозначить как наречие
-        runScript(sentence, 'Numeral Article Conjunction Adverb Conjunction Definition Conjunction Preposition Conjunction')
+        processors = [
+            process_numeral,
+            process_article,
+            process_conjunction,
+            process_adverb,
+            process_conjunction,
+            process_definition,
+            process_conjunction,
+            process_preposition,
+            process_conjunction
+        ]
+        for processor in processors:
+            for word in sentence:
+                processor(word, sentence)
         exchangeDataBetweenHomo(sentence)  # копируем характеристики с первого однородного ко последующим ему однородным.
 
         # здесь нужно найти однородные косвенные дополнения, чтобы им установить однородность.
