@@ -113,7 +113,7 @@ def process_adverb(word, sentence):
         sentence.jumpByStep(-1)
     else:
         old_position = sentence.position
-        for word in sentence: # "свободноплавающее" нарчие. Добавим его к глаголу.
+        for word in sentence:  # "свободноплавающее" нарчие. Добавим его к глаголу.
             if word['POSpeech'] == 'verb':
                 sentence.addFeature(word.index, index) #EX_ERROR если последний  index2, то возникает интересная рекурсивная ошибка.
                 break
@@ -127,8 +127,8 @@ def exchangeDataBetweenHomo(sentence):
     for word in sentence:
         if word.index in done_indexes:
             continue
-        index_homos = word['homogeneous_link']
-        for index_homo in index_homos:
+
+        for index_homo in word['homogeneous_link']:
             if 'case' in word:
                 sentence(index_homo, 'case', word['case'])
 
