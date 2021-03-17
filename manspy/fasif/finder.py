@@ -128,6 +128,35 @@ def compare_fasif_WordCombination(fasif, argument, finded_args, language):
 
 
 class FasifDB:
+    fasifs = {}
+
+    def __init__(self, c, cu):
+        pass
+
+    def safe(self, type_fasif, fasif):
+        fasifs = self.fasifs.setdefault(type_fasif, set())
+        fasif = json.dumps(fasif, sort_keys=True)
+        fasifs.add(fasif)
+
+    def find(self, type_fasif, argument, language='esperanto'):
+        compared_fasifs = []
+
+        for fasif in self.fasifs.get(type_fasif, set()):
+            fasif = json.loads(fasif)
+            finded_args = {}
+            isright = False
+            if type_fasif == 'word_combination':
+                isright = compare_fasif_WordCombination(fasif, argument, finded_args, language)
+            elif type_fasif == 'verb':
+                isright = compare_fasif_Verb(fasif, argument, finded_args, language)
+
+            if isright:
+                compared_fasifs.append([finded_args, fasif])
+
+        return compared_fasifs
+
+
+class FasifDB_old:
     def __init__(self, c, cu):
         self.c, self.cu = c, cu
         self.cu.execute('''
