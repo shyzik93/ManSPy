@@ -48,14 +48,14 @@ def process_word_combination(fasif, OR, settings, path_import):
 
     fasif['argdescr'] = {}
     for language in settings.modules['language']:
-        for arg_name, data in fasif['args'].items():
-            _data = data['argtable'].setdefault(language, {}).copy().items()
-            for arg_word, argtable in _data:
-                del data['argtable'][language][arg_word]
+        for arg_name, args in fasif['args'].items():
+            argtables = args['argtable'].setdefault(language, {})
+            for arg_word, argtable in argtables.copy().items():
+                del argtables[arg_word]
                 arg_word = get_dword(arg_word, settings)['base']
-                data['argtable'][language][arg_word] = argtable
+                argtables[arg_word] = argtable
 
-            proccess_argword(data['argwords'][language]['in_wcomb'], settings)
+            proccess_argword(args['argwords'][language]['in_wcomb'], settings)
 
         for destination, value in fasif['functions'].items():
             verbs = value['verbs'].setdefault(language, {})
