@@ -22,16 +22,12 @@
         },
         "argwords": {
           "esperanto": {
-            "in_wcomb": {
-              "name": "dolara",
-              "hyperonyms": ["mono"]
-            }
+            "name": "dolara",
+            "hyperonyms": ["mono"]
           },
           "russian": {
-            "in_wcomb": {
-              "name": "доллара",
-              "hyperonyms": ["валюта"]
-            }
+            "name": "доллара",
+            "hyperonyms": ["валюта"]
           }
         }
       },
@@ -46,16 +42,12 @@
         },
         "argwords": {
           "esperanto": {
-            "in_wcomb": {
-              "name": "rusia",
-              "hyperonyms": ["lando"]
-            }
+            "name": "rusia",
+            "hyperonyms": ["lando"]
           },
           "russian": {
-            "in_wcomb": {
-              "name": "русскому",
-              "hyperonyms": ["страна", "национальность"]
-            }
+            "name": "русскому",
+            "hyperonyms": ["страна", "национальность"]
           }
         }
       }
@@ -87,16 +79,12 @@
         },
         "argwords": {
           "esperanto": {
-            "in_wcomb": {
-              "name": "en dormcxambro",
-              "hyperonyms": ["cxambro"]
-            }
+            "name": "en dormcxambro",
+            "hyperonyms": ["cxambro"]
           },
           "russian": {
-            "in_wcomb": {
-              "name": "спальне",
-              "hyperonyms": ["комната"]
-            }
+            "name": "спальне",
+            "hyperonyms": ["комната"]
           }
         }
       },
@@ -108,16 +96,12 @@
         },
         "argwords": {
           "esperanto": {
-            "in_wcomb": {
-              "name": "tabla",
-              "hyperonyms": ["meblaro"]
+            "name": "tabla",
+            "hyperonyms": ["meblaro"]
             },
-            "russian": {
-            "in_wcomb": {
-              "name": "настольный",
-              "hyperonyms": ["мебель", "местонахождение"]
-            }
-          }
+          "russian": {
+            "name": "настольный",
+            "hyperonyms": ["мебель", "местонахождение"]
           }
         }
       }
@@ -145,10 +129,8 @@
         },
         "argwords": {
           "esperanto": {
-            "in_wcomb": {
-              "name": "de komputilo",
-              "hyperonyms": ["aparato"]
-            }
+            "name": "de komputilo",
+            "hyperonyms": ["aparato"]
           }
         }
       }
@@ -164,16 +146,13 @@
         "verbs": {}
       }
     },
-    "text": "Esperanto\n    : \n    ",
     "args": {
       "a": {
         "argtable": {},
         "argwords": {
           "esperanto": {
-            "in_wcomb": {
-              "name": "kvin",
-              "hyperonyms": ["nombro"]
-            }
+            "name": "kvin",
+            "hyperonyms": ["nombro"]
           }
         }
       }

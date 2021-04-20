@@ -86,7 +86,7 @@ def process_word_combination(fasif, OR, settings, path_import):
                 arg_word = get_dword(arg_word, settings)['base']
                 argtables[arg_word] = argtable
 
-            proccess_argword(args['argwords'][language]['in_wcomb'], settings)
+            proccess_argword(args['argwords'][language], settings)
 
         for destination, value in fasif['functions'].items():
             verbs = value['verbs'].setdefault(language, {})
@@ -100,12 +100,12 @@ def process_word_combination(fasif, OR, settings, path_import):
         settings.levels = levels
         fasif['argdescr'][language] = {}
         for argname, data in fasif['args'].items():
-            argword = data['argwords'][language]['in_wcomb']['name']
+            argword = data['argwords'][language]['name']
             wcomb.chmanyByValues({'argname':argname}, setstring='subiv:noignore', base=argword.get('base'), case=argword.get('case'))
             fasif['argdescr'][language][argname] = {
                 'isreq': is_required[argname],
                 'argtable': data['argtable'][language],
-                'hyperonyms': data['argwords'][language]['in_wcomb']['hyperonyms']
+                'hyperonyms': data['argwords'][language]['hyperonyms']
             }
         del fasif['args']
 
