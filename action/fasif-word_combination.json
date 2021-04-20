@@ -9,8 +9,6 @@
     },
     "args": {
       "currency": {
-        "isreq": true,
-        "args_as_list": false,
         "argtable": {
           "esperanto": {
             "dolara": "USD",
@@ -38,8 +36,6 @@
         }
       },
       "country": {
-        "isreq": false,
-        "args_as_list": false,
         "argtable": {
           "esperanto": {
             "rusia": "Russia",
@@ -84,8 +80,6 @@
     },
     "args": {
       "room": {
-        "isreq": true,
-        "args_as_list": false,
         "argtable": {
           "esperanto": {
             "dormĉambro": "bedroom"
@@ -107,8 +101,6 @@
         }
       },
       "device": {
-        "isreq": true,
-        "args_as_list": false,
         "argtable": {
           "esperanto": {
             "tabla": "0"
@@ -146,8 +138,6 @@
     },
     "args": {
       "device": {
-        "isreq": true,
-        "args_as_list": false,
         "argtable": {
           "esperanto": {
             "komputilo": "computer"
@@ -177,8 +167,6 @@
     "text": "Esperanto\n    : \n    ",
     "args": {
       "a": {
-        "isreq": true,
-        "args_as_list": false,
         "argtable": {},
         "argwords": {
           "esperanto": {

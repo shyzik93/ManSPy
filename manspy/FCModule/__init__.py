@@ -9,15 +9,15 @@ def run_wcomb_function(internal_sentence, arg0, function_name, prefix=''):
     - получения состояния - для глаголов 1-го типа
     - изменения состояния - для глаголов 2-го типа
     :param internal_sentence:
+    :param arg0:
+    :param function_name:
+    :param prefix:
     :return: генератор с ответами
     """
     for word_combination in internal_sentence['{}word_combinations'.format(prefix)]:
-        if word_combination['how_put_args'] == 'positional':  # однородные передаются разом как позиционные аргументы
-            yield word_combination[function_name](arg0, *word_combination['arguments'])
-        else:  # однородные передаются по очереди как именованные
-            for argument in word_combination['arguments']:
-                for r_text in word_combination[function_name](arg0, **argument):
-                    yield r_text
+        for argument in word_combination['arguments']:
+            for r_text in word_combination[function_name](arg0, **argument):
+                yield r_text
 
 
 def execute_internal_sentence(internal_sentence):

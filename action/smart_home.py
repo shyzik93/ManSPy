@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 #Включи настольный свет в спальне.
 #Запрос отсутствующего аргумента:
 #-Включи свет в спальне. -Какой именно свет? -Настольный.
@@ -7,6 +5,9 @@
 import socket
 from urllib import request
 
+#  ##############################
+#      SmartHome actions
+#  ##############################
 
 FAKE_DATA = {
     'light': {
@@ -49,6 +50,10 @@ def showAddress(arg0, device):
         elif arg0['answer_type'] in ('fake', 'construct'):
             yield FAKE[device]
 
+#  ##############################
+#      Basic actions
+#  ##############################
+
 
 def printToIF(arg0, conditions):
     if arg0['antonym']:
@@ -57,8 +62,11 @@ def printToIF(arg0, conditions):
     for condition in conditions:
         yield condition
 
-''' Состояние числительных '''
-def get(arg0, a): yield a
+
+def get(arg0, a):
+    """ Состояние числительных """
+    yield a
+
 
 def _is_only_numbers(numbers):
     for i in numbers:
@@ -66,8 +74,9 @@ def _is_only_numbers(numbers):
             return False
     return True
 
+
 def add(arg0, a):
-    ''' Сложение '''
+    """ Сложение """
     a = list(a)
 
     if not a:
@@ -90,6 +99,7 @@ def add(arg0, a):
             yield ' - '.join(a)
         else:
             yield ' + '.join(a)
+
 
 def multiply(arg0, a):
     """ Умножение """

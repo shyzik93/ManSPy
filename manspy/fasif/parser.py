@@ -1,10 +1,28 @@
 import os
 import json
+import inspect
 
 from manspy.relation import ObjRelation
 from manspy.fasif import finder
 from manspy.message import Message
 from manspy.analyse_text import nature2internal
+from manspy.utils import importer
+
+
+def get_is_required(func):
+    if not func.__code__.co_argcount:
+        raise Exception('The function must have 1 or more arguments')
+
+    first_arg_name = func.__code__.co_varnames[0]
+    signature = inspect.signature(func)
+    is_required = {}
+    for k, v in signature.parameters.items():
+        if k == first_arg_name:
+            continue
+
+        is_required[k] = v.default is inspect.Parameter.empty
+
+    return is_required
 
 
 def get_dword(word, settings):
@@ -38,13 +56,26 @@ def process_verb(fasif, OR, settings, path_import):
 
 def process_word_combination(fasif, OR, settings, path_import):
     not_to_db = ['nombr', 'cifer']
+
     get_condition = fasif['functions'].get('getCondition')
+    get_condition_is_required = None
     if get_condition:
         get_condition['function'] = os.path.join(path_import, get_condition['function'])
+        function = importer.action(get_condition['function'])
+        get_condition_is_required = get_is_required(function)
 
     change_condition = fasif['functions'].get('changeCondition')
+    change_condition_is_required = None
     if change_condition:
         change_condition['function'] = os.path.join(path_import, change_condition['function'])
+        function = importer.action(change_condition['function'])
+        change_condition_is_required = get_is_required(function)
+
+    if None not in (get_condition_is_required, change_condition_is_required):
+        if get_condition_is_required != change_condition_is_required:
+            raise Exception('arguments for `get_condition` and `change_condition` must be equals')
+
+    is_required = get_condition_is_required or change_condition_is_required
 
     fasif['argdescr'] = {}
     for language in settings.modules['language']:
@@ -72,14 +103,10 @@ def process_word_combination(fasif, OR, settings, path_import):
             argword = data['argwords'][language]['in_wcomb']['name']
             wcomb.chmanyByValues({'argname':argname}, setstring='subiv:noignore', base=argword.get('base'), case=argword.get('case'))
             fasif['argdescr'][language][argname] = {
-                'isreq': data['isreq'],
+                'isreq': is_required[argname],
                 'argtable': data['argtable'][language],
                 'hyperonyms': data['argwords'][language]['in_wcomb']['hyperonyms']
             }
-            if len(fasif['args']) == 1:  # а при числе аргументов более 1 мы их передаём только как именованные
-                fasif['args_as_list'] = data['args_as_list']
-            else:
-                fasif['args_as_list'] = False
         del fasif['args']
 
         fasif['wcomb'][language] = wcomb.getUnit('dict')

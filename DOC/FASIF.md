@@ -179,7 +179,6 @@ Russian
      {'func_get_value': None,
       'func_set_value': None,
       'arguments': [],
-      'how_put_args': None,
      }
  ]
 }

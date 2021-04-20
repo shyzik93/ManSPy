@@ -126,7 +126,6 @@ def il_build_word_combination(data_get_value, data_set_value, finded_args, fasif
         'func_get_value': importer.action(data_get_value['function']) if data_get_value else None,
         'func_set_value': importer.action(data_set_value['function']) if data_set_value else None,
         'arguments': finded_args,
-        'how_put_args': fasif['args_as_list'],
     }
     return word_combination
 

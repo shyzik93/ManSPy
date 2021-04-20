@@ -24,7 +24,6 @@ montru_euxran_dolaran_kurzon_de_ukrainia_banko = {
                     {'currency': 'EUR', 'country': 'Ukraine'},
                     {'currency': 'USD', 'country': 'Ukraine'}
                 ],
-                'how_put_args': False
             }
         ],
         'subjects_word_combinations': []
@@ -46,7 +45,6 @@ montru_dolaran_kurzon = {
                 'arguments': [
                     {'currency': 'USD'}
                 ],
-                'how_put_args': False
             }
         ],
         'subjects_word_combinations': []
@@ -79,7 +77,6 @@ dataset_verb_and_actants = {
                                 {'currency': 'USD', 'country': 'Russia'},
                                 {'currency': 'EUR', 'country': 'Russia'}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -104,7 +101,6 @@ dataset_verb_and_actants = {
                             'arguments': [
                                 {'device': '0', 'room': 'bedroom'}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -128,7 +124,6 @@ dataset_verb_and_actants = {
                          'arguments': [
                              {'device': 'computer'}
                          ],
-                         'how_put_args': False
                          }
                     ],
                     'subjects_word_combinations': []
@@ -151,7 +146,6 @@ dataset_verb_and_actants = {
                             'func_get_value': 'smart_home/showAddress',
                             'func_set_value': None,
                             'arguments': [],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -183,7 +177,6 @@ dataset_verb_and_repeated_actants = {
                                 {'currency': 'USD', 'country': 'Russia'},
                                 {'currency': 'USD', 'country': 'Russia'}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -211,7 +204,6 @@ dataset_verb_and_repeated_actants = {
                                 {'currency': 'USD', 'country': 'Russia'},
                                 {'currency': 'USD', 'country': 'Russia'}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -247,7 +239,6 @@ dataset_verb_and_homogeneous_actants = {
                             'arguments': [
                                 {'device': 'computer'}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -277,7 +268,6 @@ dataset_verb_and_homogeneous_actants = {
                                 {'currency': 'USD', 'country': 'Belarus'},
                                 {'currency': 'USD', 'country': 'Ukraine'}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -312,7 +302,6 @@ dataset_verb_and_homogeneous_actants = {
                                 {'currency': 'USD', 'country': 'Russia'},
                                 {'currency': 'USD', 'country': 'Ukraine'}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -355,7 +344,6 @@ dataset_antonym_of_verb = {
                             'arguments': [
                                  {'device': '0', 'room': 'bedroom'}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -380,7 +368,6 @@ dataset_antonym_of_verb = {
                             'arguments': [
                                 {'currency': 'USD', 'country': 'Russia'}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -411,14 +398,12 @@ dataset_verb_and_homogeneous_direct_supplement = {
                             'arguments': [
                                 {'device': 'computer'}
                             ],
-                            'how_put_args': False
                         }, {
                             'func_get_value': 'CurrencyLoader/GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD'}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -443,14 +428,12 @@ dataset_verb_and_homogeneous_direct_supplement = {
                             'arguments': [
                                 {'device': 'computer'}
                             ],
-                            'how_put_args': False
                         }, {
                             'func_get_value': 'CurrencyLoader/GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD', 'country': 'Belarus'}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -475,14 +458,12 @@ dataset_verb_and_homogeneous_direct_supplement = {
                             'arguments': [
                                 {'currency': 'USD'}
                             ],
-                            'how_put_args': False
                         }, {
                             'func_get_value': 'smart_home/showAddress',
                             'func_set_value': None,
                             'arguments': [
                                 {'device': 'computer'}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -539,7 +520,6 @@ dataset_numbers_and_simple_math = {
                             'arguments': [
                                 {'a': 23}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -564,21 +544,18 @@ dataset_numbers_and_simple_math = {
                             'arguments': [
                                 {'a': 40}
                             ],
-                            'how_put_args': False
                         }, {
                             'func_get_value': 'smart_home/get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 3}
                             ],
-                            'how_put_args': False
                         }, {
                             'func_get_value': 'smart_home/get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 1000000}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -603,14 +580,12 @@ dataset_numbers_and_simple_math = {
                             'arguments': [
                                 {'currency': 'USD'}
                             ],
-                            'how_put_args': False
                         }, {
                             'func_get_value': 'smart_home/get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 3}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -635,7 +610,6 @@ dataset_numbers_and_simple_math = {
                             'arguments': [
                                 {'currency': 'USD'}
                             ],
-                            'how_put_args': False
                         },
                         {
                             'func_get_value': 'smart_home/get',
@@ -643,7 +617,6 @@ dataset_numbers_and_simple_math = {
                             'arguments': [
                                 {'a': 1000}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -668,14 +641,12 @@ dataset_numbers_and_simple_math = {
                             'arguments': [
                                 {'a': 3}
                             ],
-                            'how_put_args': False
                         }, {
                             'func_get_value': 'smart_home/get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 4}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -706,14 +677,12 @@ dataset_synonyms_of_verb = {
                             'arguments': [
                                 {'currency': 'USD'}
                             ],
-                            'how_put_args': False
                         }, {
                             'func_get_value': 'smart_home/get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 3}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -737,14 +706,12 @@ dataset_synonyms_of_verb = {
                             'arguments': [
                                 {'currency': 'USD'}
                             ],
-                            'how_put_args': False
                         }, {
                             'func_get_value': 'smart_home/get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 3}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -775,7 +742,6 @@ dataset_undirect_order_of_words = {
                             'arguments': [
                                 {'a': 3}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -805,7 +771,6 @@ dataset_undirect_order_of_words = {
                             'arguments': [
                                 {'currency': 'EUR'}
                             ],
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -858,7 +823,6 @@ dataset_homogeneous_sentences = {
                             ],
                             'func_get_value': 'CurrencyLoader/GetCourse',
                             'func_set_value': None,
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
@@ -877,7 +841,6 @@ dataset_homogeneous_sentences = {
                             ],
                             'func_get_value': None,
                             'func_set_value': 'smart_home/LightOn',
-                            'how_put_args': False
                         }
                     ],
                     'subjects_word_combinations': []
