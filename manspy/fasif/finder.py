@@ -134,15 +134,13 @@ class FasifDB:
         pass
 
     def safe(self, type_fasif, fasif):
-        fasifs = self.fasifs.setdefault(type_fasif, set())
-        fasif = json.dumps(fasif, sort_keys=True)
-        fasifs.add(fasif)
+        fasifs = self.fasifs.setdefault(type_fasif, [])
+        fasifs.append(fasif)
 
     def find(self, type_fasif, argument, language='esperanto'):
         compared_fasifs = []
 
-        for fasif in self.fasifs.get(type_fasif, set()):
-            fasif = json.loads(fasif)
+        for fasif in self.fasifs.get(type_fasif, []):
             finded_args = {}
             isright = False
             if type_fasif == 'word_combination':
