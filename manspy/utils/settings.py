@@ -7,7 +7,7 @@ class Settings:
     db_type = 'sqlite3'
     db_settings = {
         'sqlite3': {
-            'path': 'database.db',
+            'path': ':memory:',
         },
         'mysql': {
             'host': '',
@@ -22,7 +22,7 @@ class Settings:
     def __init__(self, **changed_keys):
         # TODO: описание настроек вынести в строку документации класса
         self.language = changed_keys.get('language', 'esperanto')
-        self.history = changed_keys.get('history', True)
+        self.history = changed_keys.get('history', False)
         self.monitor = changed_keys.get('monitor', True)  # включает вывод на экран статистику работы ИСУ
         self.logic = changed_keys.get('logic', True)   # включает модуль логики
         self.convert2IL = changed_keys.get('convert2IL', True)  # включает последний этап конвертации
