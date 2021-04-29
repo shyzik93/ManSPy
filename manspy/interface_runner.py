@@ -27,7 +27,7 @@ class Interface(threading.Thread):
         self.IF.init()
 
 
-class InterfaceRunner():
+class InterfaceRunner:
     interfaces = {}
     def __init__(self):
         password_path = os.path.join(os.path.dirname(os.path.abspath('')), 'IFM_passwords.txt')
@@ -38,7 +38,7 @@ class InterfaceRunner():
             with open(password_path, 'r') as f:
                 self.conf = json.load(f)
 
-    def turnOnInterface(self, api, Settings, IFNames):
+    def turn_on_interface(self, api, Settings, IFNames):
 
         for IFName in IFNames:
             self.interfaces[IFName] = [None, None]

@@ -13,7 +13,7 @@ def make_dialog_plain_line(text: str, direction: str, ifname: str):
     )
 
 
-class LoggerPlainText:
+class Logger:
     def __init__(self):
         self.f_history = open('history.txt', 'ab')
     

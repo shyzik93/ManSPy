@@ -1,4 +1,4 @@
-from manspy.api import API
+from manspy.api import API, DEFAULT_PATHS_IMPORT, DEFAULT_PATH_MODULES
 from manspy.utils.settings import Settings
 from manspy.cli import do_cmd
 from manspy.interface_runner import InterfaceRunner

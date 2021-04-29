@@ -17,15 +17,17 @@ class MainException(Exception):
     pass
 
 
+DEFAULT_PATH_MODULES = os.path.dirname(os.path.dirname(__file__))
+DEFAULT_PATHS_IMPORT = [
+    ('language', os.path.join(DEFAULT_PATH_MODULES, 'language')),  # модуль языка должен быть перед модулем действий
+    ('logger', os.path.join(DEFAULT_PATH_MODULES, 'logger')),
+    ('action', os.path.join(DEFAULT_PATH_MODULES, 'action')),
+]
+
+
 class API:
-    def __init__(self, current_work_dir=None):
-        default_path_modules = os.path.dirname(os.path.dirname(__file__))
-        self.paths_import = [
-            ('language', os.path.join(default_path_modules, 'language')),  # обязательно первые в списке
-            ('logger', os.path.join(default_path_modules, 'logger')),
-            ('action', os.path.join(default_path_modules, 'action')),
-            ('interface', os.path.join(default_path_modules, 'interface')),
-        ]
+    def __init__(self, paths_import=None, current_work_dir=None):
+        self.paths_import = DEFAULT_PATHS_IMPORT + (paths_import if paths_import else [])
 
         if current_work_dir is None:
             current_work_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
@@ -45,18 +47,15 @@ class API:
             return message, nature2internal(message)
 
     def __enter__(self):
-        self.was_imported = {}
-
         for module_type, path_import in self.paths_import:
-            #for module, module_code in getattr(importer, module_type)(path_import):
-            #    Settings.set_module(module_type, module, module_code)
-            if module_type in ('language', 'logger', 'interface'):
-                for module, module_code in getattr(importer, module_type)(path_import):
+            if module_type == 'action':
+                fasif_parser(path_import, Settings(history=False))
+            else:
+                for module, module_code in importer.import_modules(path_import, module_type):
+                    if module_type == 'logger':
+                        module = module.Logger()
+
                     Settings.set_module(module_type, module, module_code)
-            elif module_type == 'action':
-                # TODO: функция fasif_parser.parse должна принять только path_import
-                for language in Settings.modules['language']:
-                    fasif_parser(path_import, Settings(language=language, history=False))
 
         return self
 

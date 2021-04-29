@@ -34,23 +34,14 @@ def get_dword(word, settings):
     return list(text(0).getUnit('dict').values())[0]
 
 
-def proccess_argword(argwords, settings):
-    argwords['name'] = get_dword(argwords['name'], settings)
-    for index, argword in enumerate(argwords['hyperonyms']):
-        argwords['hyperonyms'][index] = get_dword(argword, settings)
-
-
 def process_verb(fasif, OR, settings, path_import):
     fasif['function'] = os.path.join(path_import, fasif['function'])
     for language, verbs in fasif['verbs'].items():
         if language in settings.modules['language']:
             words = [get_dword(word_verb, settings)['base'] for word_verb in verbs]
-            id_group = OR.setRelation('synonym',
-                                      *words)  # функция должна возвратить группу, если добавлен хотя бы один синоним
-            fasif['verbs'][
-                language] = id_group  # TODO: если идентификатор группы отсутсвует (None), то фасиф считается недействительным и не добавляется в базу (игнорируется)
-        else:
-            fasif['verbs'][language] = None
+            id_group = OR.setRelation('synonym', *words)
+            fasif['verbs'][language] = id_group
+
     return fasif
 
 
@@ -86,7 +77,10 @@ def process_word_combination(fasif, OR, settings, path_import):
                 arg_word = get_dword(arg_word, settings)['base']
                 argtables[arg_word] = argtable
 
-            proccess_argword(args['argwords'][language], settings)
+            argwords = args['argwords'][language]
+            argwords['name'] = get_dword(argwords['name'], settings)
+            for index, argword in enumerate(argwords['hyperonyms']):
+                argwords['hyperonyms'][index] = get_dword(argword, settings)
 
         for destination, value in fasif['functions'].items():
             verbs = value['verbs'].setdefault(language, {})
@@ -101,12 +95,18 @@ def process_word_combination(fasif, OR, settings, path_import):
         fasif['argdescr'][language] = {}
         for argname, data in fasif['args'].items():
             argword = data['argwords'][language]['name']
-            wcomb.chmanyByValues({'argname':argname}, setstring='subiv:noignore', base=argword.get('base'), case=argword.get('case'))
+            wcomb.chmanyByValues(
+                {'argname': argname},
+                setstring='subiv:noignore',
+                base=argword.get('base'),
+                case=argword.get('case')
+            )
             fasif['argdescr'][language][argname] = {
                 'isreq': is_required[argname],
                 'argtable': data['argtable'][language],
                 'hyperonyms': data['argwords'][language]['hyperonyms']
             }
+
         del fasif['args']
 
         fasif['wcomb'][language] = wcomb.getUnit('dict')
@@ -117,6 +117,7 @@ def process_word_combination(fasif, OR, settings, path_import):
                     base = argword[1]['base']
                 else:
                     base = argword[2][0]['base']
+
                 bases = data['argtable'].keys()
                 if hyperonym['base'] not in not_to_db:
                     OR.setRelation('hyperonym', hyperonym['base'], base, *bases)
