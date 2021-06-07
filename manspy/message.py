@@ -14,7 +14,7 @@ class Message:
 
         return self.message_id
 
-    def __init__(self, settings, any_data, text=None, direction=None):
+    def __init__(self, settings, text=None, any_data=None, direction='W'):
         self.settings = settings
         self.any_data = any_data
         self.text = text

@@ -5,8 +5,8 @@ file_name_origin = 'autofeed_origin.txt'
 file_name_guess = 'autofeed_results.txt'
 file_name_sentences = 'autofeed_sentences.txt'
 
-class Interface:
 
+class Interface:
     def __init__(self, api, settings, config):
         self.API = api
         self.settings = settings(send_to_out=self.send_to_out)
@@ -56,7 +56,6 @@ class Interface:
                 self.origin = origin
 
                 msg, res = self.API.send_to_in(sentence, self.settings)
-                #msg = self.API.send_to_in(self, sentence)
                 t += msg.time_total
 
 

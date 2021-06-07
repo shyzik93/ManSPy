@@ -6,9 +6,11 @@
 """
 import os
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 
-from manspy import API, Settings
+from manspy.analyse_text import nature2internal
+from manspy.message import Message
+from manspy.utils.settings import Settings
 from tests.datasets_of_analyzes import datasets
 
 
@@ -23,36 +25,28 @@ def mock_action(path):
 class LevelsTestCase(unittest.TestCase):
     @patch('manspy.converter.importer')
     def test_level_convert(self, importer):
-        def send_to_out(r_text, _):
-            pass
-
         importer.action = mock_action
 
         settings = Settings(
             answer_type='construct',
             history=False,
-            send_to_out=send_to_out,
             levels='graphmath:convert'
         )
-        with API() as api:
+        with Settings():
             for dataset in datasets:
                 for example in dataset['examples']:
                     with self.subTest(dataset['description']):
                         settings.language = example.get('language', 'esperanto')
-                        msg, answers = api.send_to_in(example['w_text'], settings)
+                        answers = nature2internal(Message(settings, example['w_text']))
                         self.assertDictEqual(answers, example['convert'], example['w_text'])
 
     def test_level_execution(self):
-        def send_to_out(r_text, _):
-            answers.append(r_text)
-
-        answers = []
-        settings = Settings(answer_type='construct', history=False, send_to_out=send_to_out)
-        with API() as api:
+        settings = Settings(answer_type='construct', history=False)
+        with Settings():
             for dataset in datasets:
                 for example in dataset['examples']:
                     with self.subTest(dataset['description']):
-                        answers.clear()
                         settings.language = example.get('language', 'esperanto')
-                        api.send_to_in(example['w_text'], settings)
+                        answers = nature2internal(Message(settings, example['w_text']))
+                        answers = [answer for answer in answers]
                         self.assertListEqual(answers, example['r_text_construct'], example['w_text'])

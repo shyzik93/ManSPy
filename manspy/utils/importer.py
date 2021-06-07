@@ -35,6 +35,17 @@ def action(abs_path_to_function):
     return getattr(module_obj, func_name)
 
 
-def database(db_type):
+def import_database(settings):
     module = importlib.import_module('manspy.database_drivers')
-    return getattr(module, 'get_{}'.format(db_type))
+    database_function = getattr(module, 'get_{}'.format(settings.db_type))
+    config = settings.db_settings[settings.db_type]
+    settings.c, settings.cu = database_function(config)
+
+
+def set_cur_directory(current_work_dir=None):
+    if current_work_dir is None:
+        current_work_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+        current_work_dir = os.path.join(current_work_dir, 'LOGS')
+    if not os.path.exists(current_work_dir) or not os.path.isdir(current_work_dir):
+        os.mkdir(current_work_dir)
+    os.chdir(current_work_dir)

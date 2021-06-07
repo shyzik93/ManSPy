@@ -28,7 +28,7 @@ def get_is_required(func):
 def get_dword(word, settings):
     levels = settings.levels
     settings.levels = ':postmorph'
-    message = Message(settings, {}, word, 'W')
+    message = Message(settings, word)
     text = nature2internal(message)
     settings.levels = levels
     return list(text(0).getUnit('dict').values())[0]
@@ -89,7 +89,7 @@ def process_word_combination(fasif, OR, settings, path_import):
 
         levels = settings.levels
         settings.levels = ':synt'
-        message = Message(settings, {}, fasif['wcomb'][language], 'W')
+        message = Message(settings, fasif['wcomb'][language])
         wcomb = nature2internal(message)(0)
         settings.levels = levels
         fasif['argdescr'][language] = {}

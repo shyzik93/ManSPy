@@ -75,10 +75,10 @@ def execute_internal_sentences(ils, send_to_out):
     """
     Выполняет внутренние предложения в тексте поочерёдно, если есть условия и наречия - обусловленно.
     :param ils:
-    :param send_to_out:
-    :return:
+    :param send_to_out: функция, куда будут поступать отложенные сообщения
+    :return: генератор с сообщениями
     """
     for index_sentence, internal_sentence in ils.items():
         gen_r_texts = execute_internal_sentence(internal_sentence)
         for r_text in gen_r_texts:
-            send_to_out(r_text)
+            yield r_text

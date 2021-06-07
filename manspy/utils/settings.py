@@ -1,3 +1,17 @@
+import os
+
+from manspy.fasif.parser import fasif_parser
+from manspy.utils import importer
+
+
+DEFAULT_PATH_MODULES = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+DEFAULT_PATHS_IMPORT = [
+    ('language', os.path.join(DEFAULT_PATH_MODULES, 'language')),  # модуль языка должен быть перед модулем действий
+    ('logger', os.path.join(DEFAULT_PATH_MODULES, 'logger')),
+    ('action', os.path.join(DEFAULT_PATH_MODULES, 'action')),
+]
+
+
 class Settings:
     modules = {
         'language': {},
@@ -37,6 +51,11 @@ class Settings:
         self.print_time = changed_keys.get('print_time', False)
         self.levels = changed_keys.get('levels', 'graphmath exec')
 
+        paths_import = changed_keys.get('paths_import')
+        self.paths_import = DEFAULT_PATHS_IMPORT + (paths_import if paths_import else [])
+
+        importer.import_database(Settings)
+
     @classmethod
     def set_module(cls, module_type, module, module_code):
         cls.modules[module_type][module_code] = module
@@ -45,3 +64,25 @@ class Settings:
         if self.history:
             for logger_name, logger_class in self.modules['logger'].items():
                 getattr(logger_class, method_name)(*args)
+
+    def __enter__(self):
+        for module_type, path_import in self.paths_import:
+            if module_type == 'action':
+                fasif_parser(path_import, Settings(history=False))
+            else:
+                for module, module_code in importer.import_modules(path_import, module_type):
+                    if module_type == 'logger':
+                        module = module.Logger()
+
+                    Settings.set_module(module_type, module, module_code)
+
+    def __exit__(self, Type, Value, Trace):
+        Settings.c.close()
+        for module_code, module in Settings.modules['logger'].items():
+            module.close()
+
+        if Type is None:  # Если исключение не возникло
+            pass
+        else:             # Если возникло исключение
+            return False  # False - исключение не обработано
+                          # True  - исключение обработано
