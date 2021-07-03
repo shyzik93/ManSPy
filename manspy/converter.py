@@ -148,7 +148,7 @@ def Extraction2IL(R, settings, subjects, predicate, arguments):
 
     #  Вынимаем ФАСИФ глагола - сказуемого
 
-    id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')
+    id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'])
     id_group = id_group[0] if id_group else None
     if id_group is not None:
         compared_fasifs = find(settings, 'verb', id_group, settings.language)

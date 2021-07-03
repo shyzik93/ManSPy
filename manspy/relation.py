@@ -95,14 +95,16 @@ class Relation:
             Если id_group = None, то создастся новая группа'''
         id_groups = []
         _exists = id_group
-        if id_group==None: id_group = self.get_max_id('id_group', self._type2id(id_type)) + 1
+        if id_group is None:
+            id_group = self.get_max_id('id_group', self._type2id(id_type)) + 1
         for id_word in id_words:
             _id_group = self.check_copy_row(id_type, id_speech, id_group, id_word, isword, _exists)
-            if _id_group == False:
+            if _id_group is False:
                 self.cu.execute('INSERT INTO relations (id_type, id_speech, id_group, id_word, isword) VALUES (?,?,?,?,?);',
                             (self._type2id(id_type), self._speech2id(id_speech), self._word2id(id_group), self._word2id(id_word), self._type2id(isword)))
                 id_groups.append(id_group)
-            else: id_groups.append(_id_group)
+            else:
+                id_groups.append(_id_group)
         self.c.commit()
         return id_group
 
