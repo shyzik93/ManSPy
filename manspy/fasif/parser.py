@@ -3,7 +3,7 @@ import json
 import inspect
 
 from manspy.relation import ObjRelation
-from manspy.fasif import finder
+from manspy.fasif.db import FasifDB
 from manspy.message import Message
 from manspy.analyse_text import nature2internal
 from manspy.utils import importer
@@ -34,18 +34,18 @@ def get_dword(word, settings):
     return list(text(0).getUnit('dict').values())[0]
 
 
-def process_verb(fasif, OR, settings, path_import):
+def process_verb(fasif, obj_relation, settings, path_import):
     fasif['function'] = os.path.join(path_import, fasif['function'])
     for language, verbs in fasif['verbs'].items():
         if language in settings.modules['language']:
             words = [get_dword(word_verb, settings)['base'] for word_verb in verbs]
-            id_group = OR.setRelation('synonym', *words)
+            id_group = obj_relation.setRelation('synonym', *words)
             fasif['verbs'][language] = id_group
 
     return fasif
 
 
-def process_word_combination(fasif, OR, settings, path_import):
+def process_word_combination(fasif, obj_relation, settings, path_import):
     not_to_db = ['nombr', 'cifer']
 
     get_condition = fasif['functions'].get('getCondition')
@@ -85,7 +85,7 @@ def process_word_combination(fasif, OR, settings, path_import):
         for destination, value in fasif['functions'].items():
             verbs = value['verbs'].setdefault(language, {})
             for index, word_verb in enumerate(verbs):
-                verbs[index] = OR.setRelation('synonym', get_dword(word_verb, settings)['base'])
+                verbs[index] = obj_relation.setRelation('synonym', get_dword(word_verb, settings)['base'])
 
         levels = settings.levels
         settings.levels = ':synt'
@@ -120,14 +120,14 @@ def process_word_combination(fasif, OR, settings, path_import):
 
                 bases = data['argtable'].keys()
                 if hyperonym['base'] not in not_to_db:
-                    OR.setRelation('hyperonym', hyperonym['base'], base, *bases)
+                    obj_relation.setRelation('hyperonym', hyperonym['base'], base, *bases)
 
     return fasif
 
 
 def fasif_parser(path_import, settings):
-    OR = ObjRelation(settings.c, settings.cu)
-    fdb = finder.FasifDB(settings.c, settings.cu)
+    obj_relation = ObjRelation(settings.c, settings.cu)
+    fdb = FasifDB(settings.c, settings.cu)
 
     for fasif_file_name in os.listdir(path_import):
         if fasif_file_name.endswith('.json'):
@@ -136,6 +136,6 @@ def fasif_parser(path_import, settings):
                 for fasif in fasifs:
                     fasif_processor = 'process_{}'.format(fasif["type"])
                     fasif_processor = globals()[fasif_processor]
-                    fasif = fasif_processor(fasif, OR, settings, path_import)
+                    fasif = fasif_processor(fasif, obj_relation, settings, path_import)
                     if fasif:
                         fdb.safe(fasif["type"], fasif)

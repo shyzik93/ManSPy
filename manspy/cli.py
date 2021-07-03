@@ -20,30 +20,10 @@ def print_error(msg):
     print('{READ} {0} {NORM}'.format(msg, READ=READ, NORM=NORM))
 
 
-def proc_answer(is_success, arg1):
-    if not is_success:
-        print_error(arg1)
-        exit(2)
-
-
 class CLI:
     
     def __init__(self):
         self.settings = Settings(language='esperanto', answer_type='fake')
-
-    '''def __enter__(self):
-        """ for 'with' statement """
-        return self
-
-    def __exit__(self, Type, Value, Trace):
-        """ for 'with' statement """
-        self.settings.c.close()
-
-        if Type is None:  # Если исключение не возникло
-            pass
-        else:             # Если возникло исключение
-            return False  # False - исключение не обработано
-                          # True  - исключение обработано'''
 
     def cmd_exec(self, args):
         def send_to_in(text, settings):

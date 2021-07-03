@@ -1,7 +1,7 @@
 import itertools
 
 from manspy.unit import Sentence
-from manspy.fasif import finder
+from manspy.fasif.finder import find
 from manspy.utils import importer
 
 not_to_db = ['nombr', 'cifer']
@@ -131,7 +131,6 @@ def il_build_word_combination(data_get_value, data_set_value, finded_args, fasif
 
 
 def Extraction2IL(R, settings, subjects, predicate, arguments):
-    fdb = finder.FasifDB(settings.c, settings.cu)
     verb = {'func_common': None, 'used_antonym': False, 'answer_type': settings.answer_type}
     internal_sentence = {
         'type_sentence': 'fact',
@@ -152,7 +151,7 @@ def Extraction2IL(R, settings, subjects, predicate, arguments):
     id_group = R.R.get_groups_by_word('synonym', 0, predicate['base'], 'verb')
     id_group = id_group[0] if id_group else None
     if id_group is not None:
-        compared_fasifs = fdb.find('verb', id_group, settings.language)
+        compared_fasifs = find(settings, 'verb', id_group, settings.language)
         if compared_fasifs:
             verb['func_common'] = importer.action(compared_fasifs[0][0][0])
         else:
@@ -162,7 +161,7 @@ def Extraction2IL(R, settings, subjects, predicate, arguments):
     # Вынимаем Фасиф словосочетаний - актантов
     for _argument in arguments:  # у подпредложения может быть несколько актантов
         argument = Sentence(_argument)
-        compared_fasifs = fdb.find('word_combination', argument, settings.language)
+        compared_fasifs = find(settings, 'word_combination', argument, settings.language)
         if compared_fasifs:
             finded_args, fasif = compared_fasifs[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
 
@@ -186,7 +185,7 @@ def Extraction2IL(R, settings, subjects, predicate, arguments):
     # Вынимаем Фасиф словосочетаний - субъектов
     for _subject in subjects:
         subject = Sentence(_subject)
-        compared_fasifs = fdb.find('word_combination', subject, settings.language)
+        compared_fasifs = find(settings, 'word_combination', subject, settings.language)
         if compared_fasifs:
             finded_args, fasif = compared_fasifs[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
 
