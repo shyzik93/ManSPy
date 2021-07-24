@@ -54,7 +54,8 @@ class Settings:
         paths_import = changed_keys.get('paths_import')
         self.paths_import = DEFAULT_PATHS_IMPORT + (paths_import if paths_import else [])
 
-        importer.import_database(Settings)
+        if Settings.c is None:
+            importer.import_database(Settings)
 
     @classmethod
     def set_module(cls, module_type, module, module_code):
@@ -78,6 +79,8 @@ class Settings:
 
     def __exit__(self, Type, Value, Trace):
         Settings.c.close()
+        Settings.c = None
+        Settings.cu = None
         for module_code, module in Settings.modules['logger'].items():
             module.close()
 

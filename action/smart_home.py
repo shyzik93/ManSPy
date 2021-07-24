@@ -60,7 +60,7 @@ def printToIF(arg0, conditions):
         return
 
     for condition in conditions:
-        yield condition
+        yield condition if isinstance(condition, str) else str(condition)
 
 
 def get(arg0, a):
@@ -87,7 +87,7 @@ def add(arg0, a):
         if arg0['antonym']:
             a = [-i for i in a]
         if arg0['answer_type'] in ('real', 'fake'):
-            yield sum(a, start)
+            yield str(sum(a, start))
         elif arg0['answer_type'] == 'construct':
             yield ' + '.join([str(i) for i in [start] + a])
     
@@ -123,7 +123,7 @@ def multiply(arg0, a):
             elif arg0['answer_type'] == 'construct':
                 res = ' * '.join([str(i) for i in [res] + a])
 
-        yield res
+        yield str(res)
 
     else:
 
