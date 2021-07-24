@@ -5,7 +5,7 @@ import os.path
 
 from manspy.analyse_text import nature2internal
 from manspy.message import Message
-from manspy.utils.settings import Settings
+from manspy.utils.settings import Settings, InitSettings
 from manspy.unit import Unit
 
 console_cur_dir = os.path.abspath('')
@@ -58,7 +58,7 @@ def do_cmd(args_list=None):
 
     # TODO: добавить опцию `manspy --run-interface *` для параллельного запуска перечисленных интерфейсов. Соответственно, файл manspy/run.py следует удалить.
 
-    with Settings():
+    with InitSettings():
         cli = CLI()
 
         parser = argparse.ArgumentParser(description='ManSPy')

@@ -13,6 +13,8 @@ DEFAULT_PATHS_IMPORT = [
 
 
 class Settings:
+    """Класс, хранящий настройки"""
+    paths_import = DEFAULT_PATHS_IMPORT
     modules = {
         'language': {},
         'logger': {},
@@ -51,11 +53,9 @@ class Settings:
         self.print_time = changed_keys.get('print_time', False)
         self.levels = changed_keys.get('levels', 'graphmath exec')
 
-        paths_import = changed_keys.get('paths_import')
-        self.paths_import = DEFAULT_PATHS_IMPORT + (paths_import if paths_import else [])
+        paths_import = changed_keys.get('paths_import', [])
+        self.paths_import.extend(paths_import)
 
-        if Settings.c is None:
-            importer.import_database(Settings)
 
     @classmethod
     def set_module(cls, module_type, module, module_code):
@@ -66,8 +66,18 @@ class Settings:
             for logger_name, logger_class in self.modules['logger'].items():
                 getattr(logger_class, method_name)(*args)
 
+
+class InitSettings:
+    """Класс, инициализирующий настройки"""
+    _IS_ENTERED = False
+
     def __enter__(self):
-        for module_type, path_import in self.paths_import:
+        if self._IS_ENTERED:
+            raise Exception('You should init `InitSettings` only one!')
+
+        self._IS_ENTERED = True
+        importer.import_database(Settings)
+        for module_type, path_import in Settings.paths_import:
             if module_type == 'action':
                 fasif_parser(path_import, Settings(history=False))
             else:
@@ -79,8 +89,6 @@ class Settings:
 
     def __exit__(self, Type, Value, Trace):
         Settings.c.close()
-        Settings.c = None
-        Settings.cu = None
         for module_code, module in Settings.modules['logger'].items():
             module.close()
 

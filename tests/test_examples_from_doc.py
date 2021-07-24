@@ -4,7 +4,7 @@ import re
 
 from manspy.analyse_text import nature2internal
 from manspy.message import Message
-from manspy.utils.settings import Settings
+from manspy.utils.settings import Settings, InitSettings
 
 REGEXP_MARKDOWN_LINK = r'\[([^\]]+)\]\(https://syeysk.ru/api/manspy/run_get\?s=([\w/%\d]+)\)[^>]+((?:<span>`[\w\s\d]+`</span>[\s\w]*)+)'
 
@@ -22,7 +22,7 @@ class ExamplesFromDocTestCase(unittest.TestCase):
     def test_examples(self):
         gen_examples = collect_examples(os.path.join(os.path.dirname(__file__), '../DOC/Theory.md'))
         settings = Settings(answer_type='fake', history=False)
-        with Settings():
+        with InitSettings():
             for sentence, expecting_answer in gen_examples:
                 with self.subTest():
                     settings.language = 'esperanto'

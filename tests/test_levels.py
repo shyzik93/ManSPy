@@ -10,7 +10,7 @@ from unittest.mock import patch
 
 from manspy.analyse_text import nature2internal
 from manspy.message import Message
-from manspy.utils.settings import Settings
+from manspy.utils.settings import Settings, InitSettings
 from tests.datasets_of_analyzes import datasets
 
 
@@ -32,7 +32,7 @@ class LevelsTestCase(unittest.TestCase):
             history=False,
             levels='graphmath:convert'
         )
-        with Settings():
+        with InitSettings():
             for dataset in datasets:
                 for example in dataset['examples']:
                     with self.subTest(dataset['description']):
@@ -42,7 +42,7 @@ class LevelsTestCase(unittest.TestCase):
 
     def test_level_execution(self):
         settings = Settings(answer_type='construct', history=False)
-        with Settings():
+        with InitSettings():
             for dataset in datasets:
                 for example in dataset['examples']:
                     with self.subTest(dataset['description']):
