@@ -1,19 +1,21 @@
 # TODO: Добавить модуль xmp в requirements.txt
 import xmp
 
+from manspy.analyse_text import nature2internal
+from manspy.message import Message
 
 class Interface():
-    def __init__(self, api, settings, config):
-        self.API = api
-        self.settings = settings(send_to_out=self.send_to_out)
+    def __init__(self, settings, config):
+        self.settings = settings
+        settings.send_to_out = self.send_to_out
         self.config = config
 
     def FromUser(self, conn, messR):
         w_text = messR.getBody()
         From = str(messR.getFrom()).split('/')[0]
 
-        if w_text == None: return
-        if w_text: self.API.send_to_in(w_text, self.settings, any_data=From)
+        if w_text:
+            nature2internal(Message(self.settings, w_text, any_data=From))
 
     def send_to_out(self, r_text, From):
         if From:

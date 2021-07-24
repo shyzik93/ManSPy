@@ -9,11 +9,13 @@ sys.path.append(tg_path)
 # TODO: Добавить модуль telegram в requirements.txt
 import telegram
 
+from manspy.analyse_text import nature2internal
+from manspy.message import Message
 
 class Interface:
-    def __init__(self, API, settings, config):
-        self.API = API
-        self.settings = settings(send_to_out=self.send_to_out)
+    def __init__(self, settings, config):
+        self.settings = settings
+        settings.send_to_out = self.send_to_out
         self.config = config
 
     def FromUser(self, m, comm_name, args, text):
@@ -23,7 +25,7 @@ class Interface:
         if w_text == None:
             return
         if w_text:
-            self.API.send_to_in(w_text, self.settings, any_data=From_user)
+            nature2internal(Message(self.settings, w_text, any_data=from_user))
 
     def send_to_out(self, r_text, from_user):
         print(r_text, from_user)

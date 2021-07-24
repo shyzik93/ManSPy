@@ -36,12 +36,11 @@ class InterfaceRunner:
             with open(password_path, 'r') as f:
                 self.conf = json.load(f)
 
-    def turn_on_interface(self, Settings, IFNames):
-
-        for IFName in IFNames:
+    def turn_on_interface(self, IFNames):
+        for settings, IFName in IFNames:
             self.interfaces[IFName] = [None, None]
-            IFModule = Settings.modules['interface'][IFName]
-            IFClass = IFModule.Interface(Settings, self.conf.get(IFName))
+            IFModule = settings.modules['interface'][IFName]
+            IFClass = IFModule.Interface(settings, self.conf.get(IFName))
 
             IFClass.IFName = IFName
             self.interfaces[IFName][1] = IFClass

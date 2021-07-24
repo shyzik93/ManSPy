@@ -1,15 +1,18 @@
 import json
 import os
 
+from manspy.analyse_text import nature2internal
+from manspy.message import Message
+
 file_name_origin = 'autofeed_origin.txt'
 file_name_guess = 'autofeed_results.txt'
 file_name_sentences = 'autofeed_sentences.txt'
 
 
 class Interface:
-    def __init__(self, api, settings, config):
-        self.API = api
-        self.settings = settings(send_to_out=self.send_to_out)
+    def __init__(self, settings, config):
+        self.settings = settings
+        self.settings.send_to_out = self.send_to_out
 
     def send_to_out(self, r_text, any_data):
         if self.settings2['compare_with_origin']:
@@ -55,7 +58,7 @@ class Interface:
                 self.settings2 = settings
                 self.origin = origin
 
-                msg, res = self.API.send_to_in(sentence, self.settings)
+                msg, res = nature2internal(Message(self.settings, sentence))
                 t += msg.time_total
 
 

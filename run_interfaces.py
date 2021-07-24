@@ -1,19 +1,18 @@
 import os
 
-from manspy import API, DEFAULT_PATH_MODULES, InterfaceRunner, Settings
+from manspy.utils.settings import DEFAULT_PATH_MODULES, Settings, InitSettings
+from manspy import InterfaceRunner
 
-interfaces = {  # 1 - on, 0 - off
-  'autofeed':    0,  # Автоподатчик предложений - для теста, но можно писать "скрипты"
-  'tkinter':     0,
-  'jabber':      0,
-  'vkcom':       0,  # с ошибками
-  'commandline': 1,
-  'telegram':    0,
-  }
-interfaces = [i for i in interfaces if interfaces[i]]
-
-paths_import = [('interface', os.path.join(DEFAULT_PATH_MODULES, 'interface'))]
-
-with API(paths_import) as api:
+Settings(paths_import=[('interface', os.path.join(DEFAULT_PATH_MODULES, 'interface'))])
+interfaces = (
+    (1, Settings(), 'autofeed'),  # Автоподатчик предложений - для теста, но можно писать "скрипты"
+    (0, Settings(), 'tkinter'),
+    (0, Settings(), 'jabber'),
+    (0, Settings(), 'vkcom'),
+    (0, Settings(), 'commandline'),
+    (0, Settings(), 'telegram'),
+)
+interfaces = [(i[1], i[2]) for i in interfaces if i[0]]
+with InitSettings():
     interface_runner = InterfaceRunner()
-    interface_runner.turn_on_interface(api, Settings, interfaces)
+    interface_runner.turn_on_interface(interfaces)

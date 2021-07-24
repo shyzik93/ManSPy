@@ -1,10 +1,13 @@
-# -*- coding: utf-8 -*-
-import tkinter, time, os
+import tkinter
+
+from manspy.analyse_text import nature2internal
+from manspy.message import Message
+
 
 class Interface():
-    def __init__(self, api, settings, config):
-        self.API = api
-        self.settings = settings(send_to_out=self.send_to_out)
+    def __init__(self, settings, config):
+        self.settings = settings
+        settings.send_to_out = self.send_to_out
 
     def FromUser(self, event=None):
         w_text = self.Text_In.get('1.0', tkinter.END)
@@ -12,7 +15,7 @@ class Interface():
         #if event == None: return
         self.Text_In.delete('1.0', tkinter.END)
         self.Text_Out.insert(tkinter.END, u'I said: ' + w_text + u'\n')
-        self.API.send_to_in(w_text, self.settings)
+        nature2internal(Message(self.settings, w_text))
 
     def send_to_out(self, r_text, any_data):
         self.Text_Out.insert(tkinter.END, u'ManSPy: ' + r_text + u'\n')

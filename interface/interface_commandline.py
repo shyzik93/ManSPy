@@ -1,13 +1,14 @@
 """ В скобках после ответа показано количество ответов, которое ИСУ вам покажет
     после нажатия на Enter, то есть при отправке пустого сообщения :)
 """
-import time
+from manspy.analyse_text import nature2internal
+from manspy.message import Message
 
 
 class Interface:
-    def __init__(self, api, settings, config):
-        self.api = api
-        self.settings = settings(send_to_out=self.send_to_out)
+    def __init__(self, settings, config):
+        self.settings = settings
+        settings.send_to_out = self.send_to_out
 
     def send_to_out(self, r_text, any_data):
         print(r_text)
@@ -17,5 +18,5 @@ class Interface:
             w_text = input()
             if w_text == '\\exit':
                 exit(0)
-            self.api.send_to_in(w_text, self.settings)
+            nature2internal(Message(self.settings, w_text))
             #time.sleep(0.01)
