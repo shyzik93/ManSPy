@@ -1,7 +1,7 @@
 import os
 
 from manspy.utils.settings import DEFAULT_PATH_MODULES, Settings, InitSettings
-from manspy import InterfaceRunner
+from interface.runner import InterfaceRunner
 
 Settings(paths_import=[('interface', os.path.join(DEFAULT_PATH_MODULES, 'interface'))])
 interfaces = (
