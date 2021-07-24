@@ -6,5 +6,3 @@
 """
 
 from manspy.utils.settings import Settings
-from manspy.cli import do_cmd
-

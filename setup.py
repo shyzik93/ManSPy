@@ -31,6 +31,8 @@ setup(
         'action',
         'interface',
         'logger',
+        'tests',
+        'web',
     ],
     #long_description=open(os.path.join(os.path.dirname(__file__), 'README.md')).read(),
     long_description=get_long_description(),
