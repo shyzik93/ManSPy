@@ -43,24 +43,7 @@ class Relation:
             common_id_groups &= set(list_group)
         return list(common_id_groups)
 
-    # Работа с таблицей descr_relation
 
-    def add_descr_relation(self, **descr):
-        self.cu.execute("INSERT INTO descr_relation (count_members, type_relation, name1, name2) VALUES (?,?,?,?)" , (descr['count_members'],descr['type_relation'], descr['name1'], descr['name2']))
-        self.c.commit()
-
-    def get_descr_relation(self, relation=None):
-        if relation is not None:
-            #name = 'name1' if isinstance(relation, (str, unicode)) else 'id_relation'
-            #descr = self.cu.execute("SELECT * FROM descr_relation WHERE "+name+"=?", (relation,)).fetchall()
-            if isinstance(relation, str): descr = self.cu.execute("SELECT * FROM descr_relation WHERE name1=? OR name2=?", (relation,relation)).fetchall()
-            else: descr = self.cu.execute("SELECT * FROM descr_relation WHERE id_relation=?", (relation,)).fetchall()
-            descr = [dict(row) for row in descr]
-            return descr[0] if descr else {}
-        else:
-            descr = self.cu.execute("SELECT * FROM descr_relation").fetchall()
-            descr = [dict(row) for row in descr]
-            return descr if descr else []
 
 
 class ObjRelation:
@@ -72,9 +55,9 @@ class ObjRelation:
         self.db = settings.database
 
         # Добавление описания семантических отношений
-        self.R.add_descr_relation(type_relation='line', count_members='N', type_peak='index', type_child='word',  name1='synonym',   name2=None)
-        self.R.add_descr_relation(type_relation='line', count_members=2,   type_peak='index', type_child='group', name1='antonym',   name2=None)
-        self.R.add_descr_relation(type_relation='tree', count_members='N', type_peak='word',  type_child='both',  name1='hyperonym', name2='hyponym')
+        self.db.add_descr_relation(type_relation='line', count_members='N', type_peak='index', type_child='word',  name1='synonym',   name2=None)
+        self.db.add_descr_relation(type_relation='line', count_members=2,   type_peak='index', type_child='group', name1='antonym',   name2=None)
+        self.db.add_descr_relation(type_relation='tree', count_members='N', type_peak='word',  type_child='both',  name1='hyperonym', name2='hyponym')
 
     def get_groups_by_word(self, id_type, isword, id_word, id_speech=None):
         return self.db.get_groups_by_word(id_type, isword, id_word, id_speech)
@@ -84,7 +67,7 @@ class ObjRelation:
           Являются ли слова word1 и word2 relation'ами (синониами, антонимаими, гиперонимом и гипонимом соответственно, холонимом и меронимом соответственно) ?
       '''
       if isinstance(relation, dict): descr, relation = (relation, relation['id_relation'])
-      else: descr = self.R.get_descr_relation(relation)
+      else: descr = self.db.get_descr_relation(relation)
 
       if descr['type_relation'] == 'line':
           _words = [[word, 0] for word in words]
@@ -101,7 +84,7 @@ class ObjRelation:
             Есть ли какие-либо отношения между словами word1 и word2 ?
         '''
         relations = []
-        descrs = self.R.get_descr_relation()
+        descrs = self.db.get_descr_relation()
         for descr in descrs:
             relation = descr['id_relation']
             if self.isRelBetween(relation, word1, word2): relations.append(relation)
@@ -119,7 +102,7 @@ class ObjRelation:
 
     def _getRelation(self, relation, word1, word2=None):
         ''' Первое слово для иерархиских отношений должно быть выше уровня  '''
-        if relation is not None: descr = self.R.get_descr_relation(relation)
+        if relation is not None: descr = self.db.get_descr_relation(relation)
 
         if word1 is not None and word2 is not None:
 
@@ -136,7 +119,7 @@ class ObjRelation:
                 pass
 
     def _setRelation(self, relation, word1, word2):
-        descr = self.R.get_descr_relation(relation)
+        descr = self.db.get_descr_relation(relation)
         if descr['type_relation'] == 'line':
             if descr['count_members'] == 'N':
                 if descr['type_peak'] == 'index':
