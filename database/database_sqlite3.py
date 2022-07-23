@@ -1,21 +1,8 @@
 import json
+import sqlite3
 
 
 class FasifDB:
-    fasifs = {}
-
-    def __init__(self, c, cu):
-        pass
-
-    def safe(self, type_fasif, fasif):
-        fasifs = self.fasifs.setdefault(type_fasif, [])
-        fasifs.append(fasif)
-
-    def get(self, type_fasif):
-        return self.fasifs.get(type_fasif, [])
-
-
-class FasifDB_old:
     def __init__(self, c, cu):
         self.c, self.cu = c, cu
         self.cu.execute('''
@@ -36,3 +23,18 @@ class FasifDB_old:
         rows = self.cu.execute('SELECT fasif FROM fasifs WHERE type_fasif=?', (type_fasif,))
         for row in rows:
             yield json.loads(row['fasif'])
+
+
+class Database:
+    def __init__(self, database_settings):
+        sqlite3.enable_callback_tracebacks(True)
+        self.c = sqlite3.connect(database_settings['path'])
+        self.c.row_factory = sqlite3.Row
+        self.cu = self.c.cursor()
+        self.fasif = FasifDB(self.c, self.cu)
+
+    def get_fasif(self, type_fasif):
+        return self.fasif.get(type_fasif)
+
+    def save_fasif(self, type_fasif, fasif):
+        self.fasif.safe(type_fasif, fasif)

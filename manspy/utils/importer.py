@@ -36,10 +36,11 @@ def action(abs_path_to_function):
 
 
 def import_database(settings):
-    module = importlib.import_module('manspy.database_drivers')
-    database_function = getattr(module, 'get_{}'.format(settings.db_type))
+    module = importlib.import_module(f'database.database_{settings.db_type}')
     config = settings.db_settings[settings.db_type]
-    settings.c, settings.cu = database_function(config)
+    database = module.Database(config)
+    settings.database = database
+    settings.c, settings.cu = database.c, database.cu
 
 
 def set_cur_directory(current_work_dir=None):

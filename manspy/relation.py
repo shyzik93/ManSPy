@@ -176,7 +176,7 @@ class Relation:
         if relation is not None:
             #name = 'name1' if isinstance(relation, (str, unicode)) else 'id_relation'
             #descr = self.cu.execute("SELECT * FROM descr_relation WHERE "+name+"=?", (relation,)).fetchall()
-            if isinstance(relation, (str, unicode)): descr = self.cu.execute("SELECT * FROM descr_relation WHERE name1=? OR name2=?", (relation,relation)).fetchall()
+            if isinstance(relation, str): descr = self.cu.execute("SELECT * FROM descr_relation WHERE name1=? OR name2=?", (relation,relation)).fetchall()
             else: descr = self.cu.execute("SELECT * FROM descr_relation WHERE id_relation=?", (relation,)).fetchall()
             descr = [dict(row) for row in descr]
             return descr[0] if descr else {}
@@ -190,8 +190,8 @@ class ObjRelation:
     """ Надкласс, реализующий высокий уровень работы с разными группами слов, абстрагируясь от БД.
         Другими словами, он задествует вышеуказанные классы для реализации своих
         функций."""
-    def __init__(self, c, cu):
-        self.R = Relation(c, cu)
+    def __init__(self, settings):
+        self.R = Relation(settings.c, settings.cu)
 
         # Добавление описания семантических отношений
         self.R.add_descr_relation(type_relation='line', count_members='N', type_peak='index', type_child='word',  name1='synonym',   name2=None)

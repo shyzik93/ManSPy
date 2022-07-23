@@ -19,6 +19,7 @@ class Settings:
         'language': {},
         'logger': {},
         'interface': {},
+        'database': None,
     }
     db_type = 'sqlite3'
     db_settings = {
@@ -30,6 +31,8 @@ class Settings:
             'user': '',
             'password': '',
             'port': '',
+        },
+        'dict': {
         }
     }
     c = None

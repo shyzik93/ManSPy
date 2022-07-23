@@ -21,7 +21,6 @@
 
 На четвёртом шаге перед выполнением функций необходио сформировать внутренний язык. Функции выполнятся в модуле логики.
 """
-from manspy.fasif.db import FasifDB
 from manspy.unit import Sentence
 
 
@@ -135,10 +134,8 @@ def compare_fasif_word_combination(fasif, argument, finded_args, language):
 
 
 def find(settings, type_fasif, argument, language='esperanto'):
-    fdb = FasifDB(settings.c, settings.cu)
-
     compared_fasifs = []
-    for fasif in fdb.get(type_fasif):
+    for fasif in settings.database.get_fasif(type_fasif):
         finded_args = {}
         isright = False
         if type_fasif == 'word_combination':
