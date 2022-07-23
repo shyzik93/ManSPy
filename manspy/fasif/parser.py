@@ -93,7 +93,7 @@ def process_word_combination(fasif, obj_relation, settings, path_import):
                 case=argwords['name'].get('case')
             )
             argword = list(wcomb.getByValues(setstring='subiv:noignore', argname=arg_name))[0]
-            bases.append(argword[1]['base'] if argword[1] else argword[2][0]['base'])
+            bases.append(argword[1] if argword[1] else argword[2][0])
             for index_hyperonym, hyperonym in enumerate(argwords['hyperonyms']):
                 word_hyperonym = get_dword(hyperonym, settings)
                 argwords['hyperonyms'][index_hyperonym] = word_hyperonym.getUnit('dict')

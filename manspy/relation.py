@@ -167,15 +167,10 @@ class Relation:
 
     def setRelation(self, relation: str, *words: List[Word]):
         """ По умолчанию передаются два слова (корень или идентификатор), но для некоторых отношений можно передовать много слов """
-        words = list(words)
-        for index_word, word in enumerate(words):
-            if isinstance(word, Word):
-                words[index_word] = word['base']
-
+        words = [word['base'] for word in list(words)]
         if relation == 'hyperonym': # первое слово - гипероним, остальные- гипонимы. Минимм - два слова.
             word_group = words.pop(0)
             self.db.add_words2group('hyperonym', None, word_group, 0, *words)
-
 
         elif relation == 'synonym': # все слова - синонимы. Минимум - одно слово. Возвращает идентификатор синонимичной группы
             ''' Если слово одно, то добавляем его группу и возвращаем её идентификатр. Если слово уже в группе, то возвращаем её идентификатор.
