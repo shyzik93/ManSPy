@@ -1,3 +1,8 @@
+from typing import List
+
+from manspy.unit import Word
+
+
 class Relation:
     """ Надкласс, реализующий высокий уровень работы с разными группами слов, абстрагируясь от БД.
         Другими словами, он задествует вышеуказанные классы для реализации своих
@@ -160,9 +165,13 @@ class Relation:
             if not syn_groups: return []
             return self.db.convert(self.db.get_words_by_group('synonym', syn_group, 0, None))
 
-    def setRelation(self, relation, *words):
+    def setRelation(self, relation: str, *words: List[Word]):
         """ По умолчанию передаются два слова (корень или идентификатор), но для некоторых отношений можно передовать много слов """
         words = list(words)
+        for index_word, word in enumerate(words):
+            if isinstance(word, Word):
+                words[index_word] = word['base']
+
         if relation == 'hyperonym': # первое слово - гипероним, остальные- гипонимы. Минимм - два слова.
             word_group = words.pop(0)
             self.db.add_words2group('hyperonym', None, word_group, 0, *words)

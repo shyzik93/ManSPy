@@ -278,7 +278,7 @@ class Unit:
             listDict = []
             for index in range(l): listDict.append(self.subunit_info[index])
             return listDict
-        elif Type == 'str' and isinstance(self, Sentence): # Только для предложений!!!
+        elif Type == 'str' and isinstance(self, Sentence):
             str_s = {'words': '', 'bases': '', 'fwords': '', 'fbases': ''}
             for index, sunit in self.subunit_info.items():
                 str_s['words'] += ' ' + sunit['word']
@@ -290,7 +290,7 @@ class Unit:
                 str_s['fwords'] += ' ' + sunit['word']
                 if 'base' in sunit: str_s['fbases'] += ' ' + sunit['base']
             return str_s
-        elif Type == 'str' and isinstance(self, word):
+        elif Type == 'str' and isinstance(self, Word):
             str_s = ''
             for index, sunit in self.subunit_info.items():
                 str_s += sunit['symbol']
