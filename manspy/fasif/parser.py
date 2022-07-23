@@ -2,7 +2,7 @@ import os
 import json
 import inspect
 
-from manspy.relation import ObjRelation
+from manspy.relation import Relation
 from manspy.message import Message
 from manspy.analyse_text import nature2internal
 from manspy.utils import importer
@@ -125,7 +125,7 @@ def process_word_combination(fasif, obj_relation, settings, path_import):
 
 
 def fasif_parser(path_import, settings):
-    obj_relation = ObjRelation(settings)  # TODO: вместо этого получать отношения, вызывая методы слова
+    obj_relation = Relation(settings)  # TODO: вместо этого получать отношения, вызывая методы слова
     for fasif_file_name in os.listdir(path_import):
         if fasif_file_name.endswith('.json'):
             with open(os.path.join(path_import, fasif_file_name), encoding='utf-8') as fasif_file:

@@ -1,9 +1,14 @@
 class Relation:
-    dct_speeches = {'noun': 1, 'verb': 2, 'adjective': 3, 'adverb': 4}
-    
+    """ Надкласс, реализующий высокий уровень работы с разными группами слов, абстрагируясь от БД.
+        Другими словами, он задествует вышеуказанные классы для реализации своих
+        функций."""
     def __init__(self, settings):
-        self.c, self.cu = settings.c, settings.c
         self.db = settings.database
+
+        # Добавление описания семантических отношений
+        self.db.add_descr_relation(type_relation='line', count_members='N', type_peak='index', type_child='word',  name1='synonym',   name2=None)
+        self.db.add_descr_relation(type_relation='line', count_members=2,   type_peak='index', type_child='group', name1='antonym',   name2=None)
+        self.db.add_descr_relation(type_relation='tree', count_members='N', type_peak='word',  type_child='both',  name1='hyperonym', name2='hyponym')
 
     ### Составные функции для таблицы relations (работают с идентификаторами)
 
@@ -43,22 +48,6 @@ class Relation:
             common_id_groups &= set(list_group)
         return list(common_id_groups)
 
-
-
-
-class ObjRelation:
-    """ Надкласс, реализующий высокий уровень работы с разными группами слов, абстрагируясь от БД.
-        Другими словами, он задествует вышеуказанные классы для реализации своих
-        функций."""
-    def __init__(self, settings):
-        self.R = Relation(settings)
-        self.db = settings.database
-
-        # Добавление описания семантических отношений
-        self.db.add_descr_relation(type_relation='line', count_members='N', type_peak='index', type_child='word',  name1='synonym',   name2=None)
-        self.db.add_descr_relation(type_relation='line', count_members=2,   type_peak='index', type_child='group', name1='antonym',   name2=None)
-        self.db.add_descr_relation(type_relation='tree', count_members='N', type_peak='word',  type_child='both',  name1='hyperonym', name2='hyponym')
-
     def get_groups_by_word(self, id_type, isword, id_word, id_speech=None):
         return self.db.get_groups_by_word(id_type, isword, id_word, id_speech)
 
@@ -71,12 +60,12 @@ class ObjRelation:
 
       if descr['type_relation'] == 'line':
           _words = [[word, 0] for word in words]
-          return self.R.get_commongroups(relation, None, *words)
+          return self.get_commongroups(relation, None, *words)
       elif descr['type_relation'] == 'tree':
           #res = {words.pop(0):{'parent': None}}
           for index, word in enumerate(words):
               if index == 0: continue
-              if not self.R.is_word_in_group(relation, words[index-1], word, 0, None): return False
+              if not self.is_word_in_group(relation, words[index-1], word, 0, None): return False
           return True
 
     def _isAnyRelBetween(self, word1, words2):
@@ -123,9 +112,9 @@ class ObjRelation:
         if descr['type_relation'] == 'line':
             if descr['count_members'] == 'N':
                 if descr['type_peak'] == 'index':
-                    #self.R.is_word_in_group(self, id_type, id_group, id_word, isword, id_speech=None)
+                    #self.is_word_in_group(self, id_type, id_group, id_word, isword, id_speech=None)
                     id_group = self.db.add_words2group(relation, None, None, 0, word1)
-                    self.R.add_words2samegroup(relation, None, 0, word1, word2)
+                    self.add_words2samegroup(relation, None, 0, word1, word2)
                     #self.db.add_words2group('synonym', None, id_group, 0, word2)
         elif descr['type_relation'] == 'tree':
             if descr['count_members'] == 'N':
@@ -138,7 +127,7 @@ class ObjRelation:
             @return bool
         '''
         if relation == 'hyperonym':
-            return self.R.is_word_in_group('hyperonym', word1, word2, 0, None)
+            return self.is_word_in_group('hyperonym', word1, word2, 0, None)
         elif relation == 'synonym':
             pass
         elif relation == 'antonym':
@@ -163,14 +152,13 @@ class ObjRelation:
             @return list of words
         '''
         if relation == 'synonym':
-            return self.db.convert(self.R.get_words_from_samegroup('synonym', None, 0, word1))
+            return self.db.convert(self.get_words_from_samegroup('synonym', None, 0, word1))
         elif relation == 'antonym':
             syn_groups = self.db.get_groups_by_word('synonym', 0, word1, None)
             if not syn_groups: return []
-            syn_groups = self.R.get_words_from_samegroup('antonym', None, self.R.dct_types['synonym'], syn_groups[0])
+            syn_groups = self.get_words_from_samegroup('antonym', None, self.dct_types['synonym'], syn_groups[0])
             if not syn_groups: return []
             return self.db.convert(self.db.get_words_by_group('synonym', syn_group, 0, None))
-
 
     def setRelation(self, relation, *words):
         """ По умолчанию передаются два слова (корень или идентификатор), но для некоторых отношений можно передовать много слов """
@@ -188,7 +176,7 @@ class ObjRelation:
                   3. Если кроме None в списке есть неравные идентификаторы групп, то слова с отсутсвующии группами добавляем в ту группцу, имеющую большее кол-во повторений в списке.
             '''
             #groups = [self.db.get_groups_by_word('synonym', 0, word, 'verb') for word in words if len(word) != 0]
-            #if not groups: group = self.R.add_words2group('synonym', 'verb', None, 0, words.pop(0)) # 1. ...
+            #if not groups: group = self.add_words2group('synonym', 'verb', None, 0, words.pop(0)) # 1. ...
 
             # получаем идентификатор группы
             word = words.pop(0)
