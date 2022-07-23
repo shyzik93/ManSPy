@@ -76,14 +76,6 @@ def process_word_combination(fasif, obj_relation, settings, path_import):
         settings.levels = levels
 
         for arg_name, args in fasif['args'].items():
-            bases = []
-            argtables = args['argtable'].setdefault(language, {})
-            for arg_word, argtable in argtables.copy().items():
-                del argtables[arg_word]
-                arg_word = get_dword(arg_word, settings)
-                bases.append(arg_word)
-                argtables[arg_word['base']] = argtable
-
             argwords = args['argwords'][language]
             argwords['name'] = get_dword(argwords['name'], settings)
             wcomb.chmanyByValues(
@@ -93,7 +85,14 @@ def process_word_combination(fasif, obj_relation, settings, path_import):
                 case=argwords['name'].get('case')
             )
             argword = list(wcomb.getByValues(setstring='subiv:noignore', argname=arg_name))[0]
-            bases.append(argword[1] if argword[1] else argword[2][0])
+            bases = [argword[1] if argword[1] else argword[2][0]]
+            argtables = args['argtable'].setdefault(language, {})
+            for arg_word, argtable in argtables.copy().items():
+                del argtables[arg_word]
+                arg_word = get_dword(arg_word, settings)
+                bases.append(arg_word)
+                argtables[arg_word['base']] = argtable
+
             for index_hyperonym, hyperonym in enumerate(argwords['hyperonyms']):
                 word_hyperonym = get_dword(hyperonym, settings)
                 argwords['hyperonyms'][index_hyperonym] = word_hyperonym.getUnit('dict')
