@@ -47,7 +47,7 @@ class Logger:
             self.connect_to_db(msg.settings)
         self.cu.execute(
           'INSERT INTO `log_history` (`uuid`, `direction`, `thread_name`, `language`, `message_nl`) VALUES (?, ?, ?, ?, ?);',
-          (msg.get_message_id(), direction, 'msg.settings.thread_name', msg.settings.language, text)
+          (msg.id, direction, 'msg.settings.thread_name', msg.settings.language, text)
         )
         self.c.commit()
 

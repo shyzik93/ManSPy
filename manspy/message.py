@@ -8,17 +8,19 @@ class Message:
     def get_interface_id(self):
         return self.settings.ifname
 
-    def get_message_id(self):
-        if not self.message_id:
-            self.message_id = uuid.uuid1().hex
+    @property
+    def id(self):
+        if not self._message_id:
+            self._message_id = uuid.uuid1().hex
 
-        return self.message_id
+        return self._message_id
 
     def __init__(self, settings, text=None, any_data=None, direction='W'):
         self.settings = settings
         self.any_data = any_data
         self.text = text
-        self.message_id = None
+        self._message_id = None
+        self.analysis = {}
 
         # if not os.path.exists('history.html'):
         #    with open('history.html', 'w') as f:

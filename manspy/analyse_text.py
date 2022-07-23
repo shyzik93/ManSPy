@@ -52,6 +52,7 @@ def nature2internal(msg):
         elif level == "exec":
             sentences = execute_internal_sentences(sentences, msg.send_to_out)
 
+        msg.analysis[level] = sentences
         msg.after_analysis(level, sentences)
         if msg.settings.print_time:
             print('   '+level.rjust(9)+': ', time.time()-t)
