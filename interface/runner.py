@@ -8,18 +8,22 @@ import sys
 import threading
 import json
 
+from manspy.utils.settings import Settings
+
 _path = os.path.dirname(__file__)
 sys.path.append(_path)
 
 
 class Interface(threading.Thread):
-    def __init__(self, IF):
+    def __init__(self, IF, args_settings):
         threading.Thread.__init__(self)
         self.IF = IF
         self.name = IF.IFName
+        self.args_settings = args_settings
 
     def run(self):
-        self.IF.init()
+        settings = Settings(**self.args_settings)
+        self.IF.init(settings)
 
 
 class InterfaceRunner:
@@ -35,14 +39,14 @@ class InterfaceRunner:
                 self.conf = json.load(f)
 
     def turn_on_interface(self, IFNames):
-        for settings, IFName in IFNames:
+        for args_settings, IFName in IFNames:
             self.interfaces[IFName] = [None, None]
-            IFModule = settings.modules['interface'][IFName]
-            IFClass = IFModule.Interface(settings, self.conf.get(IFName))
+            IFModule = Settings.modules['interface'][IFName]
+            IFClass = IFModule.Interface(self.conf.get(IFName))
 
             IFClass.IFName = IFName
             self.interfaces[IFName][1] = IFClass
-            t = Interface(IFClass)  # threading.Thread(target=IFClass.init)
+            t = Interface(IFClass, args_settings)  # threading.Thread(target=IFClass.init)
 
             # t.daemon = True
             t.start()

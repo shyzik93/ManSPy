@@ -19,7 +19,6 @@ class Settings:
     modules = {
         'language': {},
         'logger': {},
-        'interface': {},
         'database': {},
     }
     db_type = 'sqlite3'
@@ -60,7 +59,7 @@ class Settings:
 
     @classmethod
     def set_module(cls, module_type, module, module_code):
-        cls.modules[module_type][module_code] = module
+        cls.modules.setdefault(module_type, {})[module_code] = module
 
     @property
     def database(self):

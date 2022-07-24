@@ -10,12 +10,11 @@ file_name_sentences = 'autofeed_sentences.txt'
 
 
 class Interface:
-    def __init__(self, settings, config):
-        self.settings = settings
-        self.settings.send_to_out = self.send_to_out
+    def __init__(self, config):
+        pass
 
     def send_to_out(self, r_text, any_data):
-        if self.settings2['compare_with_origin']:
+        if self.settings['compare_with_origin']:
             if self.sentence in self.origin:
                 if r_text in self.origin[self.sentence]: self.res.write('    True >>> '+r_text+'\n')
                 else:
@@ -23,9 +22,12 @@ class Interface:
                     self.res.write('    False >>> '+r_text+'\n')
                     self.res.write('        ORIGINS: '+str(self.origin[self.sentence])+'\n')
             else: self.res.write('    sentence is absent >>> '+r_text+'\n')
-        elif self.settings2['write_origin']: self.origin[self.sentence].append(r_text)
+        elif self.settings['write_origin']: self.origin[self.sentence].append(r_text)
 
     def init(self, settings=None):
+        self.settings = settings
+        settings.send_to_out = self.send_to_out
+
         if not settings:
             settings = {'write_origin': False, 'compare_with_origin': True}
         if not os.path.exists(file_name_origin):
@@ -55,7 +57,6 @@ class Interface:
                     origin[sentence] = []
 
                 self.sentence = sentence
-                self.settings2 = settings
                 self.origin = origin
 
                 msg, res = nature2internal(Message(self.settings, sentence))

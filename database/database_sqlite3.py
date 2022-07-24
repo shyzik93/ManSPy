@@ -117,15 +117,6 @@ class Database:
         self.fasif = FasifDB(self.c, self.cu)
         self.relation = Relation(self.c, self.cu)
 
-    def __enter__(self, database_settings):
-        sqlite3.enable_callback_tracebacks(True)
-        self.c = sqlite3.connect(database_settings['path'])
-        self.c.row_factory = sqlite3.Row
-        self.cu = self.c.cursor()
-
-    def __exit__(self, Type, Value, Trace):
-        self.c.close()
-
     def close(self):
         self.c.close()
 

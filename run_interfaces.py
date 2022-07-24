@@ -4,13 +4,13 @@ from manspy.utils.settings import DEFAULT_PATH_MODULES, Settings, InitSettings
 from interface.runner import InterfaceRunner
 
 Settings(paths_import=[('interface', os.path.join(DEFAULT_PATH_MODULES, 'interface'))])
-interfaces = (
-    (1, Settings(), 'autofeed'),  # Автоподатчик предложений - для теста, но можно писать "скрипты"
-    (0, Settings(), 'tkinter'),
-    (0, Settings(), 'jabber'),
-    (0, Settings(), 'vkcom'),
-    (0, Settings(), 'commandline'),
-    (0, Settings(), 'telegram'),
+interfaces = (  # кортежи вида: (вкл/выкл, аргументы настроек, имя модуля интерфейса)
+    (1, {}, 'autofeed'),  # Автоподатчик предложений - для теста, но можно писать "скрипты"
+    (0, {}, 'tkinter'),
+    (0, {}, 'jabber'),
+    (0, {}, 'vkcom'),
+    (0, {}, 'commandline'),
+    (0, {}, 'telegram'),
 )
 interfaces = [(i[1], i[2]) for i in interfaces if i[0]]
 with InitSettings():
