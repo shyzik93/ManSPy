@@ -16,6 +16,9 @@ class Database:
     def __init__(self, database_settings):
         self.fasif = FasifDB()
 
+    def close(self):
+        pass
+
     def get_fasif(self, type_fasif):
         return self.fasif.get(type_fasif)
 

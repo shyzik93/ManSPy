@@ -25,7 +25,7 @@ def mock_action(path):
 class LevelsTestCase(unittest.TestCase):
     @patch('manspy.converter.importer')
     def test_level_convert(self, importer):
-        importer.action = mock_action
+        importer.import_action = mock_action
 
         settings = Settings(
             answer_type='construct',

@@ -123,8 +123,8 @@ def il_build_word_combination(data_get_value, data_set_value, finded_args, fasif
     finded_args = check_args(finded_args, fasif, R, language)
 
     word_combination = {
-        'func_get_value': importer.action(data_get_value['function']) if data_get_value else None,
-        'func_set_value': importer.action(data_set_value['function']) if data_set_value else None,
+        'func_get_value': importer.import_action(data_get_value['function']) if data_get_value else None,
+        'func_set_value': importer.import_action(data_set_value['function']) if data_set_value else None,
         'arguments': finded_args,
     }
     return word_combination
@@ -153,7 +153,7 @@ def Extraction2IL(R, settings, subjects, predicate, arguments):
     if id_group is not None:
         compared_fasifs = find(settings, 'verb', id_group, settings.language)
         if compared_fasifs:
-            verb['func_common'] = importer.action(compared_fasifs[0][0][0])
+            verb['func_common'] = importer.import_action(compared_fasifs[0][0][0])
         else:
             # TODO: проверить антоним (), как для функции изменения состояния
             pass

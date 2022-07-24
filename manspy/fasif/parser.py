@@ -51,14 +51,14 @@ def process_word_combination(fasif, obj_relation, settings, path_import):
     get_condition_is_required = None
     if get_condition:
         get_condition['function'] = os.path.join(path_import, get_condition['function'])
-        function = importer.action(get_condition['function'])
+        function = importer.import_action(get_condition['function'])
         get_condition_is_required = get_is_required(function)
 
     change_condition = fasif['functions'].get('changeCondition')
     change_condition_is_required = None
     if change_condition:
         change_condition['function'] = os.path.join(path_import, change_condition['function'])
-        function = importer.action(change_condition['function'])
+        function = importer.import_action(change_condition['function'])
         change_condition_is_required = get_is_required(function)
 
     if None not in (get_condition_is_required, change_condition_is_required):
