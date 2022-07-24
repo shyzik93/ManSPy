@@ -1,5 +1,4 @@
 import time
-from manspy.relation import Relation
 from manspy.extractor import extract
 from manspy.converter import convert
 from manspy.FCModule import execute_internal_sentences
@@ -22,7 +21,6 @@ def nature2internal(msg):
 
     msg.before_analyzes()
 
-    OR = Relation(msg.settings) # не выносить в __init__! Объект работы с БД должен создаваться в том потоке, в котором и будет использован  # TODO: вместо этого получать отношения, вызывая методы слова
     lang_module = msg.settings.modules['language'].get(msg.settings.language)
     if lang_module is None:
         print('Языковой модуль "{}" не был импортирован. Анализ невозможен.'.format(msg.settings.language))
@@ -48,7 +46,7 @@ def nature2internal(msg):
         elif level == "extract":
             sentences = extract(sentences)
         elif level == "convert":
-            sentences = convert(sentences, OR, msg.settings)
+            sentences = convert(sentences, msg.settings)
         elif level == "exec":
             sentences = execute_internal_sentences(sentences, msg.send_to_out)
 

@@ -1,10 +1,11 @@
 import itertools
 
-from manspy.unit import Sentence
 from manspy.fasif.finder import find
+from manspy.relation import Relation
+from manspy.unit import Sentence
 from manspy.utils import importer
 
-not_to_db = ['nombr', 'cifer']
+not_to_db = ['nombr', 'cifer']  # TODO:  существует ещё одна переменная с таким же именем. Нужно сделать общий источник
 
 
 def dproduct(dparentl):
@@ -47,10 +48,12 @@ def dproduct2(dparent1):
     return l
 
 
-def is_in_hyperonym(hyperonyms, argvalue, R):
+def is_in_hyperonym(hyperonyms, argvalue, relation):
     for hyperonym in hyperonyms:
         if (hyperonym in not_to_db and isinstance(argvalue, (int, float, complex))) or \
-            R.isRelBetween('hyperonym', hyperonym, argvalue): return True
+                relation.isRelBetween('hyperonym', hyperonym, argvalue):
+            return True
+
     return False
 
 
@@ -61,7 +64,7 @@ def convert_by_argtable(argdescr, argname, argvalue):
     return argdescr[argname]['argtable'][argvalue]
 
 
-def check_args(finded_args, fasif, R, language):
+def check_args(finded_args, fasif, relation, language):
     # Проверка на наличие в абстрактной группе
     hyperonyms = {}
     for argname, data in fasif['argdescr'][language].items():
@@ -69,7 +72,8 @@ def check_args(finded_args, fasif, R, language):
         hyperonyms[argname] = [word['base'] for word in data['hyperonyms']]
     for finded_arg in finded_args:
         for argname, argvalue in list(finded_arg.items()):
-            if not is_in_hyperonym(hyperonyms[argname], argvalue, R): del finded_arg[argname]
+            if not is_in_hyperonym(hyperonyms[argname], argvalue, relation):
+                del finded_arg[argname]
 
     # Проверка на отсутствие обязательных аргументных слов
     checked_args = []
@@ -79,13 +83,16 @@ def check_args(finded_args, fasif, R, language):
             if argname not in finded_arg and argdescr['isreq']:  # если отсутствует обязательный аргумент
                 isright = False
                 break
-        if isright: checked_args.append(finded_arg)
+
+        if isright:
+            checked_args.append(finded_arg)
 
     # Конвертирование аргументных слов по таблице из фасифа
     for checked_arg in checked_args:
         for argname, argvalue in checked_arg.items():
             # TODO: раскрыть функцию convert_by_argtable
             checked_arg[argname] = convert_by_argtable(fasif['argdescr'][language], argname, argvalue)
+
     return checked_args
 
 
@@ -115,12 +122,12 @@ def il_build_func_value(fasif, type_func, language, verb_id_group=None, check_ve
     return data_func, False
 
 
-def il_build_word_combination(data_get_value, data_set_value, finded_args, fasif, R, language):
+def il_build_word_combination(data_get_value, data_set_value, finded_args, fasif, relation, language):
     for argname, args in finded_args.items():
         finded_args[argname] = list(args)  # TODO: #UNIQ_ARGS Нужны ли нам дубли аргументов?
 
     finded_args = dproduct(finded_args)
-    finded_args = check_args(finded_args, fasif, R, language)
+    finded_args = check_args(finded_args, fasif, relation, language)
 
     word_combination = {
         'func_get_value': importer.import_action(data_get_value['function']) if data_get_value else None,
@@ -130,7 +137,7 @@ def il_build_word_combination(data_get_value, data_set_value, finded_args, fasif
     return word_combination
 
 
-def Extraction2IL(R, settings, subjects, predicate, arguments):
+def Extraction2IL(relation, settings, subjects, predicate, arguments):
     verb = {'func_common': None, 'used_antonym': False, 'answer_type': settings.answer_type}
     internal_sentence = {
         'type_sentence': 'fact',
@@ -148,7 +155,7 @@ def Extraction2IL(R, settings, subjects, predicate, arguments):
 
     #  Вынимаем ФАСИФ глагола - сказуемого
 
-    id_group = R.get_groups_by_word('synonym', 0, predicate['base'])
+    id_group = relation.get_groups_by_word('synonym', 0, predicate['base'])
     id_group = id_group[0] if id_group else None
     if id_group is not None:
         compared_fasifs = find(settings, 'verb', id_group, settings.language)
@@ -179,7 +186,7 @@ def Extraction2IL(R, settings, subjects, predicate, arguments):
             if finded_by_antonym:
                 verb['used_antonym'] = not verb['used_antonym']
 
-            word_combination = il_build_word_combination(data_get_value, data_set_value, finded_args, fasif, R, settings.language)
+            word_combination = il_build_word_combination(data_get_value, data_set_value, finded_args, fasif, relation, settings.language)
             internal_sentence['word_combinations'].append(word_combination)
 
     # Вынимаем Фасиф словосочетаний - субъектов
@@ -193,13 +200,14 @@ def Extraction2IL(R, settings, subjects, predicate, arguments):
 
             verb['used_antonym'] = predicate['antonym']
             data_get_value, finded_by_antonym = il_build_func_value(fasif, 'getCondition', settings.language)
-            word_combination = il_build_word_combination(data_get_value, None, finded_args, fasif, R, settings.language)
+            word_combination = il_build_word_combination(data_get_value, None, finded_args, fasif, relation, settings.language)
             internal_sentence['subjects_word_combinations'].append(word_combination)
 
     return internal_sentence
 
 
-def convert(sentences, OR, settings):
+def convert(sentences, settings):
+    relation = Relation(settings)
     internal_sentences = {}
     # перебираем предложения
     il_index = 0
@@ -207,6 +215,6 @@ def convert(sentences, OR, settings):
         subjects_by_predicate, predicates, arguments_by_predicate = sentence
         # перебираем однородные, придаточные и главные подпредложения
         for subjects, predicate, arguments in zip(subjects_by_predicate, predicates, arguments_by_predicate):
-            internal_sentences[il_index] = Extraction2IL(OR, settings, subjects, predicate, arguments)
+            internal_sentences[il_index] = Extraction2IL(relation, settings, subjects, predicate, arguments)
             il_index += 1
     return internal_sentences
