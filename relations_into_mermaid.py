@@ -21,5 +21,5 @@ with InitSettings(), open('res.md', 'w', encoding='utf-8') as f:
         type_link = descr_rel['name1']
 
         is_node1_word = 'N'# if row['isword'] else 'G'
-        is_node2_word = 'N' if descr_rel['type_parent'] == 'word' else 'G'
+        is_node2_word = 'N' if descr_rel['type_parent'] == 'id_word' else 'G'
         f.write(f'    {is_node1_word}{node1} -->|{type_link}| {is_node2_word}{node2}\n')

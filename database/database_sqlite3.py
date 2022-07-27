@@ -1,5 +1,6 @@
 import json
 import sqlite3
+from typing import Union, Tuple
 
 
 class FasifDB:
@@ -42,7 +43,7 @@ class Relation:
                       isword INTEGER );
                     CREATE TABLE IF NOT EXISTS descr_relation (
                       id_relation INTEGER PRIMARY KEY,
-                      type_relation TEXT,
+                      type_relation TEXT, -- tree или line
                       count_members INTEGER,
                       type_parent TEXT, -- тип вершины (группы)
                       type_child TEXT, -- тип членов
@@ -50,33 +51,31 @@ class Relation:
                       name2 TEXT COLLATE NOCASE);''')
         # name2 - для иерархических отношений.
         # В иерархических отношениях name1 обозначает вышестоящий объект, name2 - нижестоящий.
-        # В линейных отношениях оба объекта равны, => для обеих обеих объектов используется одно название - name1
+        # В линейных отношениях оба объекта равны, => для обеих объектов используется одно название - name1
         self.dct_speechesR = {}
         for k, v in self.dct_speeches.items():
             self.dct_speechesR[v] = k
 
-    def _type2id(self, relation):
-        if not isinstance(relation, str): return relation
-        res = self.cu.execute('SELECT id_relation FROM descr_relation WHERE name1=?;', (relation,)).fetchall()
-        if res: return res[0][0]
-        #return self.dct_types[_type] if isinstance(_type, (str, unicode)) else _type
+    def _speech2id(self, speech: Union[str, int]) -> int:
+        return self.dct_speeches[speech] if isinstance(speech, str) else speech
 
-    def _speech2id(self, speech): return self.dct_speeches[speech] if isinstance(speech, str) else speech
+    ### Работа с таблицей words
 
-    def add_word(self, *words):
+    def add_word(self, *words: Tuple[str]):
         self.cu.execute(
-            'INSERT INTO words (word) VALUES '+','.join(['(?)' for word in words])+';',
+            'INSERT INTO words (word) VALUES {};'.format(','.join('(?)' for word in words)),
             [word.lower() for word in words]
         )
         self.c.commit()
 
-    ### Работа с таблицей words
+    def _word2id(self, word: str) -> int:
+        if isinstance(word, int):
+            return word
 
-    def _word2id(self, word):
-        if not isinstance(word, str): return word
         res = self.cu.execute('SELECT id_word FROM words WHERE word=?;', (word,)).fetchall()
-        if res: return res[0][0]
-        else: # если слово отсутствует, то добавим его
+        if res:
+            return res[0][0]
+        else:  # если слово отсутствует, то добавим его
             self.add_word(word)
             return self._word2id(word)
 
@@ -105,6 +104,16 @@ class Relation:
                 groups = self.cu.execute('SELECT id_group FROM relations WHERE id_type=? AND id_speech=? AND id_word=? AND isword=?',
                           (self._type2id(id_type), id_speech, self._word2id(id_word), self._type2id(isword))).fetchall()
         return [_id[0] for _id in groups] if groups else False
+
+    # Работа с таблицей descr_relation
+
+    def _type2id(self, name1: Union[str, int]) -> int:
+        if not isinstance(name1, str):
+            return name1
+
+        res = self.cu.execute('SELECT id_relation FROM descr_relation WHERE name1=?;', (name1,)).fetchall()
+        if res:
+            return res[0][0]
 
 
 class Database:
@@ -143,7 +152,7 @@ class Database:
                 outlist.append(res[0][0])
             else: # если слово отсутствует, то добавим его
                 self.relation.add_word(el)
-                outlist.append(*convert(el))
+                outlist.append(*self.convert(el))
         return outlist
 
     def word2id(self, word):

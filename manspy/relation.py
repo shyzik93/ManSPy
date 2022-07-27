@@ -13,7 +13,7 @@ class Relation:
         # Добавление описания семантических отношений
         self.db.add_descr_relation(type_relation='line', count_members='N', type_peak='index', type_child='word',  name1='synonym',   name2=None)
         self.db.add_descr_relation(type_relation='line', count_members=2,   type_peak='index', type_child='group', name1='antonym',   name2=None)
-        self.db.add_descr_relation(type_relation='tree', count_members='N', type_peak='word',  type_child='both',  name1='hyperonym', name2='hyponym')
+        self.db.add_descr_relation(type_relation='tree', count_members='N', type_peak='id_word',  type_child='both',  name1='hyperonym', name2='hyponym')
 
     ### Составные функции для таблицы relations (работают с идентификаторами)
 
