@@ -108,6 +108,10 @@ class Relation:
 
 
 class Database:
+    SQL_INSERT_DESCR_RELATION = (
+        'INSERT INTO descr_relation (count_members, type_relation, type_parent, name1, name2) VALUES (?,?,?,?,?)'
+    )
+
     def __init__(self, database_settings):
         sqlite3.enable_callback_tracebacks(True)
         self.c = sqlite3.connect(database_settings['path'])
@@ -187,16 +191,18 @@ class Database:
 
     # Работа с таблицей descr_relation
 
-    def add_descr_relation(self, **descr):
-        self.cu.execute("INSERT INTO descr_relation (count_members, type_relation, name1, name2) VALUES (?,?,?,?)" , (descr['count_members'],descr['type_relation'], descr['name1'], descr['name2']))
+    def add_descr_relation(self, type_relation, count_members, type_peak, type_child, name1, name2):
+        self.cu.execute(self.SQL_INSERT_DESCR_RELATION, (count_members, type_relation, type_peak, name1, name2))
         self.c.commit()
 
     def get_descr_relation(self, relation=None):
         if relation is not None:
             #name = 'name1' if isinstance(relation, (str, unicode)) else 'id_relation'
             #descr = self.cu.execute("SELECT * FROM descr_relation WHERE "+name+"=?", (relation,)).fetchall()
-            if isinstance(relation, str): descr = self.cu.execute("SELECT * FROM descr_relation WHERE name1=? OR name2=?", (relation,relation)).fetchall()
-            else: descr = self.cu.execute("SELECT * FROM descr_relation WHERE id_relation=?", (relation,)).fetchall()
+            if isinstance(relation, str):
+                descr = self.cu.execute("SELECT * FROM descr_relation WHERE name1=? OR name2=?", (relation,relation)).fetchall()
+            else:
+                descr = self.cu.execute("SELECT * FROM descr_relation WHERE id_relation=?", (relation,)).fetchall()
             descr = [dict(row) for row in descr]
             return descr[0] if descr else {}
         else:
