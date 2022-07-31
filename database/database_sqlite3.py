@@ -36,11 +36,11 @@ class Relation:
                       word TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,
                       id_word INTEGER PRIMARY KEY);
                     CREATE TABLE IF NOT EXISTS relations (
-                      id_type INTEGER,
+                      id_descr_relation INTEGER,
                       id_speech INTEGER,
                       id_group INTEGER,
-                      id_word INTEGER,
-                      isword INTEGER );
+                      id_member INTEGER,
+                      member_is_word INTEGER );
                     CREATE TABLE IF NOT EXISTS descr_relation (
                       id_relation INTEGER PRIMARY KEY,
                       type_relation TEXT, -- tree или line
@@ -83,7 +83,7 @@ class Relation:
 
     def get_max_id(self, name, id_type=None):
         if id_type == None: res = self.cu.execute('SELECT MAX(%s) FROM relations;'%name).fetchall()[0][0]
-        else: res = self.cu.execute('SELECT MAX(%s) FROM relations WHERE id_type=?;'%name, (id_type, )).fetchall()[0][0]
+        else: res = self.cu.execute('SELECT MAX(%s) FROM relations WHERE id_descr_relation=?;'%name, (id_type, )).fetchall()[0][0]
         return res if res != None else 0
 
     def check_copy_row(self, id_type, id_speech, id_group, id_word, isword, _exists):
@@ -94,14 +94,14 @@ class Relation:
         if self._type2id(id_type) in [3]:
             #groups = self.cu.execute('SELECT id_group FROM relations WHERE id_type=? AND id_speech=? AND id_group=? AND id_word=? AND isword=?',
             #                (self._type2id(id_type), id_speech, self._word2id(id_group), self._word2id(id_word), self._type2id(isword))).fetchall()
-            groups = self.cu.execute('SELECT id_group FROM relations WHERE id_type=? AND id_group=? AND id_word=? AND isword=?',
+            groups = self.cu.execute('SELECT id_group FROM relations WHERE id_descr_relation=? AND id_group=? AND id_member=? AND member_is_word=?',
                             (self._type2id(id_type), self._word2id(id_group), self._word2id(id_word), self._type2id(isword))).fetchall()
         elif self._type2id(id_type) in [1,2]:
             if _exists != None:
-                groups = self.cu.execute('SELECT id_group FROM relations WHERE id_type=? AND id_speech=? AND id_group=? AND id_word=? AND isword=?',
+                groups = self.cu.execute('SELECT id_group FROM relations WHERE id_descr_relation=? AND id_speech=? AND id_group=? AND id_member=? AND member_is_word=?',
                             (self._type2id(id_type), id_speech, self._word2id(id_group), self._word2id(id_word), self._type2id(isword))).fetchall()
             else:
-                groups = self.cu.execute('SELECT id_group FROM relations WHERE id_type=? AND id_speech=? AND id_word=? AND isword=?',
+                groups = self.cu.execute('SELECT id_group FROM relations WHERE id_descr_relation=? AND id_speech=? AND id_member=? AND member_is_word=?',
                           (self._type2id(id_type), id_speech, self._word2id(id_word), self._type2id(isword))).fetchall()
         return [_id[0] for _id in groups] if groups else False
 
@@ -170,7 +170,7 @@ class Database:
         for id_word in id_words:
             _id_group = self.relation.check_copy_row(id_type, id_speech, id_group, id_word, isword, _exists)
             if _id_group is False:
-                self.cu.execute('INSERT INTO relations (id_type, id_speech, id_group, id_word, isword) VALUES (?,?,?,?,?);',
+                self.cu.execute('INSERT INTO relations (id_descr_relation, id_speech, id_group, id_member, member_is_word) VALUES (?,?,?,?,?);',
                             (self.relation._type2id(id_type), self.relation._speech2id(id_speech), self.relation._word2id(id_group), self.relation._word2id(id_word), self.relation._type2id(isword)))
                 id_groups.append(id_group)
             else:
@@ -181,20 +181,20 @@ class Database:
     def get_groups_by_word(self, id_type, isword, id_word, id_speech=None):
         ''' Возвращает группы, в которые входит слово '''
         if id_speech != None:
-            res = self.cu.execute('SELECT id_group FROM relations WHERE id_type=? AND id_speech=? AND id_word=? AND isword=?',
+            res = self.cu.execute('SELECT id_group FROM relations WHERE id_descr_relation=? AND id_speech=? AND id_member=? AND member_is_word=?',
                           (self.relation._type2id(id_type), self.relation._speech2id(id_speech), self.relation._word2id(id_word), self.relation._type2id(isword))).fetchall()
         else:
-            res = self.cu.execute('SELECT id_group FROM relations WHERE id_type=? AND id_word=? AND isword=?',
+            res = self.cu.execute('SELECT id_group FROM relations WHERE id_descr_relation=? AND id_member=? AND member_is_word=?',
                           (self.relation._type2id(id_type), self.relation._word2id(id_word), self.relation._type2id(isword))).fetchall()
         return [_id[0] for _id in res]
 
     def get_words_by_group(self, id_type, id_group, isword, id_speech=None):
         ''' Возвращает слова, входящие в группу '''
         if id_speech != None:
-            res = self.cu.execute('SELECT id_word FROM relations WHERE id_type=? AND id_speech=? AND id_group=? AND isword=?;',
+            res = self.cu.execute('SELECT id_member FROM relations WHERE id_descr_relation=? AND id_speech=? AND id_group=? AND member_is_word=?;',
                           (self.relation._type2id(id_type), self.relation._speech2id(id_speech), self.relation._word2id(id_group), self.relation._type2id(isword))).fetchall()
         else:
-            res = self.cu.execute('SELECT id_word FROM relations WHERE id_type=? AND id_group=? AND isword=?',
+            res = self.cu.execute('SELECT id_member FROM relations WHERE id_descr_relation=? AND id_group=? AND member_is_word=?',
                           (self.relation._type2id(id_type), self.relation._word2id(id_group), self.relation._type2id(isword))).fetchall()
         return [_id[0] for _id in res]
 
