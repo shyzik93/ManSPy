@@ -201,6 +201,7 @@ class Database:
     # Работа с таблицей descr_relation
 
     def add_descr_relation(self, type_relation: str, count_members: int, type_member: str, name_for_member: str, name_for_group: str):
+        # type_member - пока определяется на основании `relations.member_is_word`
         if type_relation == 'line':
             type_group = 'index'
         elif type_relation == 'tree':
