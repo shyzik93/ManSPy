@@ -11,7 +11,7 @@ class Relation:
         self.db = settings.database
         self.db.add_descr_relation(type_relation='line', count_members='N', type_member='word',  name_for_member='synonym',   name_for_group=None)
         self.db.add_descr_relation(type_relation='line', count_members=2, type_member='group', name_for_member='antonym',   name_for_group=None)
-        self.db.add_descr_relation(type_relation='tree', count_members='N', type_member='both',  name_for_member='hyperonym', name_for_group='hyponym')
+        self.db.add_descr_relation(type_relation='tree', count_members='N', type_member='word',  name_for_member='hyperonym', name_for_group='hyponym')
 
     ### Составные функции для таблицы relations (работают с идентификаторами)
 
@@ -76,7 +76,7 @@ class Relation:
             Есть ли какие-либо отношения между словами word1 и word2 ?
         '''
         relations = []
-        descrs = self.db.get_descr_relation()
+        descrs = self.db.get_all_descr_relations()
         for descr in descrs:
             relation = descr['id_relation']
             if self.isRelBetween(relation, word1, word2): relations.append(relation)

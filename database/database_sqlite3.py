@@ -200,28 +200,28 @@ class Database:
 
     # Работа с таблицей descr_relation
 
-    def add_descr_relation(self, type_relation, count_members, type_member, name_for_member, name_for_group):
+    def add_descr_relation(self, type_relation: str, count_members: int, type_member: str, name_for_member: str, name_for_group: str):
         if type_relation == 'line':
             type_group = 'index'
         elif type_relation == 'tree':
-            type_group = 'id_word'
+            type_group = 'word'
         else:
             raise Exception('unknown `type_relation`')
 
         self.cu.execute(self.SQL_INSERT_DESCR_RELATION, (count_members, type_relation, type_group, name_for_member, name_for_group))
         self.c.commit()
 
-    def get_descr_relation(self, relation=None):
-        if relation is not None:
-            #name = 'name1' if isinstance(relation, (str, unicode)) else 'id_relation'
-            #descr = self.cu.execute("SELECT * FROM descr_relation WHERE "+name+"=?", (relation,)).fetchall()
-            if isinstance(relation, str):
-                descr = self.cu.execute("SELECT * FROM descr_relation WHERE name_for_member=? OR name_for_group=?", (relation,relation)).fetchall()
-            else:
-                descr = self.cu.execute("SELECT * FROM descr_relation WHERE id_descr_relation=?", (relation,)).fetchall()
-            descr = [dict(row) for row in descr]
-            return descr[0] if descr else {}
+    def get_descr_relation(self, relation: Union[int, str]):
+        #name = 'name1' if isinstance(relation, (str, unicode)) else 'id_relation'
+        #descr = self.cu.execute("SELECT * FROM descr_relation WHERE "+name+"=?", (relation,)).fetchall()
+        if isinstance(relation, str):
+            descr = self.cu.execute("SELECT * FROM descr_relation WHERE name_for_member=? OR name_for_group=?", (relation,relation)).fetchall()
         else:
-            descr = self.cu.execute("SELECT * FROM descr_relation").fetchall()
-            descr = [dict(row) for row in descr]
-            return descr if descr else []
+            descr = self.cu.execute("SELECT * FROM descr_relation WHERE id_descr_relation=?", (relation,)).fetchall()
+        descr = [dict(row) for row in descr]
+        return descr[0] if descr else {}
+
+    def get_all_descr_relations(self):
+        descr = self.cu.execute("SELECT * FROM descr_relation").fetchall()
+        descr = [dict(row) for row in descr]
+        return descr if descr else []
