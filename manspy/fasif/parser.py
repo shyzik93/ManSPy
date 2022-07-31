@@ -38,7 +38,7 @@ def process_verb(fasif, obj_relation, settings, path_import):
     for language, verbs in fasif['verbs'].items():
         if language in settings.modules['language']:
             words = [get_dword(word_verb, settings) for word_verb in verbs]
-            id_group = obj_relation.setRelation('synonym', None, *words)
+            id_group = obj_relation.set_relation('synonym', None, *words)
             fasif['verbs'][language] = id_group
 
     return fasif
@@ -97,12 +97,12 @@ def process_word_combination(fasif, obj_relation, settings, path_import):
                 word_hyperonym = get_dword(hyperonym, settings)
                 argwords['hyperonyms'][index_hyperonym] = word_hyperonym.getUnit('dict')
                 if word_hyperonym['base'] not in not_to_db:
-                    obj_relation.setRelation('hyperonym', word_hyperonym, *bases)
+                    obj_relation.set_relation('hyperonym', word_hyperonym, *bases)
 
         for destination, value in fasif['functions'].items():
             verbs = value['verbs'].setdefault(language, {})
             for index, word_verb in enumerate(verbs):
-                verbs[index] = obj_relation.setRelation('synonym', None, get_dword(word_verb, settings))
+                verbs[index] = obj_relation.set_relation('synonym', None, get_dword(word_verb, settings))
 
         fasif['argdescr'][language] = {}
         for argname, data in fasif['args'].items():

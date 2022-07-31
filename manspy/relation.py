@@ -152,7 +152,7 @@ class Relation:
             if not syn_groups: return []
             return self.db.convert(self.db.get_words_by_group('synonym', syn_group, 0, None))
 
-    def setRelation(self, type_relation: str, group: Optional[Union[int, Word]], *members: List[Union[int, Word]]) -> int:
+    def set_relation(self, type_relation: str, group: Optional[Union[int, Word]], *members: List[Union[int, Word]]) -> int:
         """
         Устанавливает новое отношение между членами либо добавляет членов к существующему отношению
         :param type_relation: тип отношения
