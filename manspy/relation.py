@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional, Union
 
 from manspy.unit import Word
 
@@ -7,11 +7,13 @@ class Relation:
     """ Надкласс, реализующий высокий уровень работы с разными группами слов, абстрагируясь от БД.
         Другими словами, он задествует вышеуказанные классы для реализации своих
         функций."""
+    INFINITY = 0
+
     def __init__(self, settings):
         self.db = settings.database
-        self.db.add_descr_relation(type_relation='line', count_members='N', type_member='word',  name_for_member='synonym',   name_for_group=None)
+        self.db.add_descr_relation(type_relation='line', count_members=self.INFINITY, type_member='word',  name_for_member='synonym',   name_for_group=None)
         self.db.add_descr_relation(type_relation='line', count_members=2, type_member='group', name_for_member='antonym',   name_for_group=None)
-        self.db.add_descr_relation(type_relation='tree', count_members='N', type_member='word',  name_for_member='hyperonym', name_for_group='hyponym')
+        self.db.add_descr_relation(type_relation='tree', count_members=self.INFINITY, type_member='word',  name_for_member='hyperonym', name_for_group='hyponym')
 
     ### Составные функции для таблицы relations (работают с идентификаторами)
 
@@ -163,14 +165,31 @@ class Relation:
             if not syn_groups: return []
             return self.db.convert(self.db.get_words_by_group('synonym', syn_group, 0, None))
 
-    def setRelation(self, relation: str, *words: List[Word]):
-        """ По умолчанию передаются два слова (корень или идентификатор), но для некоторых отношений можно передовать много слов """
-        words = [word['base'] for word in list(words)]
-        if relation == 'hyperonym': # первое слово - гипероним, остальные- гипонимы. Минимм - два слова.
-            word_group = words.pop(0)
-            self.db.add_words2group('hyperonym', None, word_group, 0, *words)
+    def setRelation(self, type_relation: str, group: Optional[Union[int, Word]], *members: List[Union[int, Word]]) -> int:
+        """
+        Устанавливает новое отношение между членами либо добавляет членов к существующему отношению
+        :param type_relation: тип отношения
+        :param group: существующая группа, в которую будут добавлены члены. Равно `None`, если для членов нужно создать новую группу.
+        :param members: члены
+        :return: идентификатор существующей либо новой группы
+        """
+        group = group['base'] if isinstance(group, Word) else group
+        members = [word['base'] for word in list(members)]
 
-        elif relation == 'synonym': # все слова - синонимы. Минимум - одно слово. Возвращает идентификатор синонимичной группы
+        descr = self.db.get_descr_relation(type_relation)
+        if descr['count_members'] != self.INFINITY:
+            if len(members) != descr['count_members']:
+                raise Exception('This relation have to have {} members max'.format(descr['count_members']))
+
+        if descr['type_group'] == 'index' and group is None:
+            group = self.db.relation.get_max_id('id_group', self.db.relation._type2id(type_relation)) + 1
+        if descr['type_group'] == 'word' and group is None:
+            raise Exception('You have to point the group, if the type of group is "word"')
+
+        if type_relation == 'hyperonym':  # первое слово - гипероним, остальные- гипонимы. Минимм - два слова.
+            return self.db.add_words2group('hyperonym', None, group, 0, *members)
+
+        elif type_relation == 'synonym': # все слова - синонимы. Минимум - одно слово. Возвращает идентификатор синонимичной группы
             ''' Если слово одно, то добавляем его группу и возвращаем её идентификатр. Если слово уже в группе, то возвращаем её идентификатор.
                 Если слов несколько, то идентификатор группы, в кторую входит слово, добавляем в список. Если группы нет, то добавляем None.
                   1. Если в списке все группы - None, то первое слово добавляем в новую группу, куда добавляем и остальные слова.
@@ -181,20 +200,19 @@ class Relation:
             #if not groups: group = self.add_words2group('synonym', 'verb', None, 0, words.pop(0)) # 1. ...
 
             # получаем идентификатор группы
-            word = words.pop(0)
-            _groups = self.db.get_groups_by_word('synonym', 0, word, 'verb')
-            if _groups: group = _groups[0]
-            else: group = self.db.add_words2group('synonym', 'verb', None, 0, word)
+            # if not group:
+            #     # _groups = self.db.get_groups_by_word('synonym', 0, group, 'verb')
+            #     # group = _groups[0]
+            #     group = self.db.add_words2group('synonym', 'verb', None, 0, group)
 
             # добавляем синонимы
-            for word in words: 
+            for word in members:
                 self.db.add_words2group('synonym', 'verb', group, 0, word)
+
             return group
 
-        elif relation == 'antonym': # только два первых слова противопоставляются. Остальные - игнорируются. Всего - ровно два слова.
-            word1 = words.pop(0)
-            word2 = words.pop(0)
-            self.db.add_words2group('antonym', None, word1, 0, word2)
+        elif type_relation == 'antonym':
+            return self.db.add_words2group('antonym', None, members[0], 0, members[1])
           
 
 if __name__ == '__main__':

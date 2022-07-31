@@ -216,9 +216,9 @@ class Database:
         #name = 'name1' if isinstance(relation, (str, unicode)) else 'id_relation'
         #descr = self.cu.execute("SELECT * FROM descr_relation WHERE "+name+"=?", (relation,)).fetchall()
         if isinstance(relation, str):
-            descr = self.cu.execute("SELECT * FROM descr_relation WHERE name_for_member=? OR name_for_group=?", (relation,relation)).fetchall()
+            descr = self.cu.execute("SELECT * FROM descr_relation WHERE name_for_member=? OR name_for_group=? limit 1", (relation,relation)).fetchall()
         else:
-            descr = self.cu.execute("SELECT * FROM descr_relation WHERE id_descr_relation=?", (relation,)).fetchall()
+            descr = self.cu.execute("SELECT * FROM descr_relation WHERE id_descr_relation=? limit 1", (relation,)).fetchall()
         descr = [dict(row) for row in descr]
         return descr[0] if descr else {}
 
