@@ -112,19 +112,6 @@ class Relation:
             elif relation is None: # With who does word1 have any relation ?
                 pass
 
-    def _setRelation(self, relation, word1, word2):
-        descr = self.db.get_descr_relation(relation)
-        if descr['type_relation'] == 'line':
-            if descr['count_members'] == 'N':
-                if descr['type_peak'] == 'index':
-                    #self.is_word_in_group(self, id_type, id_group, id_word, isword, id_speech=None)
-                    id_group = self.db.add_words2group(relation, None, None, 0, word1)
-                    self.add_words2samegroup(relation, None, 0, word1, word2)
-                    #self.db.add_words2group('synonym', None, id_group, 0, word2)
-        elif descr['type_relation'] == 'tree':
-            if descr['count_members'] == 'N':
-                pass
-
     # Временные функции-обёртки, для понимания задачи.
     def isRelBetween(self, relation, word1, word2):
         ''' Is the relation 'relation' between word1 and word2 ?
@@ -182,38 +169,12 @@ class Relation:
                 raise Exception('This relation have to have {} members max'.format(descr['count_members']))
 
         if descr['type_group'] == 'index' and group is None:
-            group = self.db.relation.get_max_id('id_group', self.db.relation._type2id(type_relation)) + 1
-        if descr['type_group'] == 'word' and group is None:
+            group = self.db.get_new_index()
+        elif descr['type_group'] == 'word' and group is None:
             raise Exception('You have to point the group, if the type of group is "word"')
 
-        if type_relation == 'hyperonym':  # первое слово - гипероним, остальные- гипонимы. Минимм - два слова.
-            return self.db.add_words2group('hyperonym', None, group, 0, *members)
+        return self.db.add_words2group(type_relation, None, group, 0, *members)
 
-        elif type_relation == 'synonym': # все слова - синонимы. Минимум - одно слово. Возвращает идентификатор синонимичной группы
-            ''' Если слово одно, то добавляем его группу и возвращаем её идентификатр. Если слово уже в группе, то возвращаем её идентификатор.
-                Если слов несколько, то идентификатор группы, в кторую входит слово, добавляем в список. Если группы нет, то добавляем None.
-                  1. Если в списке все группы - None, то первое слово добавляем в новую группу, куда добавляем и остальные слова.
-                  2. Если кроме None в списке есть равные идентификаторы групп, то к этой группе добавляем все слова, у которых ещё нет групп.
-                  3. Если кроме None в списке есть неравные идентификаторы групп, то слова с отсутсвующии группами добавляем в ту группцу, имеющую большее кол-во повторений в списке.
-            '''
-            #groups = [self.db.get_groups_by_word('synonym', 0, word, 'verb') for word in words if len(word) != 0]
-            #if not groups: group = self.add_words2group('synonym', 'verb', None, 0, words.pop(0)) # 1. ...
-
-            # получаем идентификатор группы
-            # if not group:
-            #     # _groups = self.db.get_groups_by_word('synonym', 0, group, 'verb')
-            #     # group = _groups[0]
-            #     group = self.db.add_words2group('synonym', 'verb', None, 0, group)
-
-            # добавляем синонимы
-            for word in members:
-                self.db.add_words2group('synonym', 'verb', group, 0, word)
-
-            return group
-
-        elif type_relation == 'antonym':
-            return self.db.add_words2group('antonym', None, members[0], 0, members[1])
-          
 
 if __name__ == '__main__':
     # TODO: Написать тесты для модуля семантических отношений

@@ -35,6 +35,8 @@ class Relation:
                     CREATE TABLE IF NOT EXISTS words (
                       word TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,
                       id_word INTEGER PRIMARY KEY);
+                    CREATE TABLE IF NOT EXISTS max_index (
+                      group_index INTEGER);
                     CREATE TABLE IF NOT EXISTS relations (
                       id_descr_relation INTEGER,
                       id_speech INTEGER,
@@ -80,11 +82,6 @@ class Relation:
             return self._word2id(word)
 
     ### Работа с таблицей relations
-
-    def get_max_id(self, name, id_type=None):
-        if id_type == None: res = self.cu.execute('SELECT MAX(%s) FROM relations;'%name).fetchall()[0][0]
-        else: res = self.cu.execute('SELECT MAX(%s) FROM relations WHERE id_descr_relation=?;'%name, (id_type, )).fetchall()[0][0]
-        return res if res != None else 0
 
     def check_copy_row(self, id_type, id_speech, id_group, id_word, isword, _exists):
         if id_speech != None: id_speech = self._speech2id(id_speech)
@@ -158,6 +155,20 @@ class Database:
     def word2id(self, word):
         return self.relation._word2id(word)
 
+    def get_new_index(self):
+        index = self.cu.execute('SELECT group_index FROM max_index').fetchone()
+        if index:
+            index = index['group_index'] + 1
+            self.cu.execute('UPDATE max_index SET group_index=?', (index,))
+        else:
+            index = 1
+            self.cu.execute('INSERT INTO max_index VALUES (?)', (index,))
+
+        self.c.commit()
+        return index
+
+
+
     # Работа с таблицей relations
 
     def add_words2group(self, id_type, id_speech, id_group, isword, *id_words):
@@ -165,8 +176,6 @@ class Database:
             Если id_group = None, то создастся новая группа'''
         id_groups = []
         _exists = id_group
-        if id_group is None:
-            id_group = self.relation.get_max_id('id_group', self.relation._type2id(id_type)) + 1
         for id_word in id_words:
             _id_group = self.relation.check_copy_row(id_type, id_speech, id_group, id_word, isword, _exists)
             if _id_group is False:
