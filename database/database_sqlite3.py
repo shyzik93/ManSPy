@@ -42,13 +42,13 @@ class Relation:
                       id_member INTEGER,
                       member_is_word INTEGER );
                     CREATE TABLE IF NOT EXISTS descr_relation (
-                      id_relation INTEGER PRIMARY KEY,
+                      id_descr_relation INTEGER PRIMARY KEY,
                       type_relation TEXT, -- tree или line
                       count_members INTEGER,
-                      type_parent TEXT, -- тип вершины (группы)
-                      type_child TEXT, -- тип членов
-                      name1 TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,
-                      name2 TEXT COLLATE NOCASE);''')
+                      type_group TEXT, -- тип вершины (группы)
+                      type_member TEXT, -- тип членов
+                      name_for_member TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,
+                      name_for_group TEXT COLLATE NOCASE);''')
         # name2 - для иерархических отношений.
         # В иерархических отношениях name1 обозначает вышестоящий объект, name2 - нижестоящий.
         # В линейных отношениях оба объекта равны, => для обеих объектов используется одно название - name1
@@ -111,14 +111,14 @@ class Relation:
         if not isinstance(name1, str):
             return name1
 
-        res = self.cu.execute('SELECT id_relation FROM descr_relation WHERE name1=?;', (name1,)).fetchall()
+        res = self.cu.execute('SELECT id_descr_relation FROM descr_relation WHERE name_for_member=?;', (name1,)).fetchall()
         if res:
             return res[0][0]
 
 
 class Database:
     SQL_INSERT_DESCR_RELATION = (
-        'INSERT INTO descr_relation (count_members, type_relation, type_parent, name1, name2) VALUES (?,?,?,?,?)'
+        'INSERT INTO descr_relation (count_members, type_relation, type_group, name_for_member, name_for_group) VALUES (?,?,?,?,?)'
     )
 
     def __init__(self, database_settings):
@@ -216,9 +216,9 @@ class Database:
             #name = 'name1' if isinstance(relation, (str, unicode)) else 'id_relation'
             #descr = self.cu.execute("SELECT * FROM descr_relation WHERE "+name+"=?", (relation,)).fetchall()
             if isinstance(relation, str):
-                descr = self.cu.execute("SELECT * FROM descr_relation WHERE name1=? OR name2=?", (relation,relation)).fetchall()
+                descr = self.cu.execute("SELECT * FROM descr_relation WHERE name_for_member=? OR name_for_group=?", (relation,relation)).fetchall()
             else:
-                descr = self.cu.execute("SELECT * FROM descr_relation WHERE id_relation=?", (relation,)).fetchall()
+                descr = self.cu.execute("SELECT * FROM descr_relation WHERE id_descr_relation=?", (relation,)).fetchall()
             descr = [dict(row) for row in descr]
             return descr[0] if descr else {}
         else:
