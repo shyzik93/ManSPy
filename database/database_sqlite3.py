@@ -200,15 +200,15 @@ class Database:
 
     # Работа с таблицей descr_relation
 
-    def add_descr_relation(self, type_relation, count_left_objects, type_left, name_left_object, name_right_object):
+    def add_descr_relation(self, type_relation, count_members, type_member, name_for_member, name_for_group):
         if type_relation == 'line':
-            type_peak = 'index'
+            type_group = 'index'
         elif type_relation == 'tree':
-            type_peak = 'id_word'
+            type_group = 'id_word'
         else:
             raise Exception('unknown `type_relation`')
 
-        self.cu.execute(self.SQL_INSERT_DESCR_RELATION, (count_left_objects, type_relation, type_peak, name_left_object, name_right_object))
+        self.cu.execute(self.SQL_INSERT_DESCR_RELATION, (count_members, type_relation, type_group, name_for_member, name_for_group))
         self.c.commit()
 
     def get_descr_relation(self, relation=None):

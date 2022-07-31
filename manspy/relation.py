@@ -9,9 +9,9 @@ class Relation:
         функций."""
     def __init__(self, settings):
         self.db = settings.database
-        self.db.add_descr_relation(type_relation='line', count_left_objects='N', type_left='word',  name_left_object='synonym',   name_right_object=None)
-        self.db.add_descr_relation(type_relation='line', count_left_objects=2, type_left='group', name_left_object='antonym',   name_right_object=None)
-        self.db.add_descr_relation(type_relation='tree', count_left_objects='N', type_left='both',  name_left_object='hyperonym', name_right_object='hyponym')
+        self.db.add_descr_relation(type_relation='line', count_members='N', type_member='word',  name_for_member='synonym',   name_for_group=None)
+        self.db.add_descr_relation(type_relation='line', count_members=2, type_member='group', name_for_member='antonym',   name_for_group=None)
+        self.db.add_descr_relation(type_relation='tree', count_members='N', type_member='both',  name_for_member='hyperonym', name_for_group='hyponym')
 
     ### Составные функции для таблицы relations (работают с идентификаторами)
 
