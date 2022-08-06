@@ -31,6 +31,7 @@
 - заменяемые интерфейсные модули ([/interface/*](https://github.com/shyzik93/manspy/blob/master/interface))
 - заменяемые исполнительные модули ([/action/*](https://github.com/shyzik93/manspy/blob/master/action))
 - заменяемые логирующие модули ([/logger/*](https://github.com/shyzik93/manspy/blob/master/logger))
+- заменяемые модули базы данных ([/database/*](https://github.com/shyzik93/manspy/blob/master/database))
 - модуль хранения семантических отношений ([/manspy/relation.py](https://github.com/shyzik93/manspy/blob/master/manspy/relation.py))
 - модуль анализа имеет объекты единиц речи: слова, предложения, текста, имеющие удобные функции для построения алгоритмов анализа ([/manspy/unit.py](https://github.com/shyzik93/manspy/blob/master/manspy/unit.py))
 
