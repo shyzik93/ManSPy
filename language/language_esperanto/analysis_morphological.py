@@ -42,17 +42,6 @@ def getNumberAndCase(word_l):
     return temp_word
 
 
-def defaultNoun(word_l, word):
-    ''' Устанавливает параметры по умолчанию
-        На вход подаётся слово без окончания'''
-    word['case'] = 'nominative' # именительный
-    # определение по первой букве:
-    if not word['word'][0].islower():
-        word['name'] = 'proper'  # имя собственное
-    else:
-        word['name'] = 'common'  # имя нарицательное
-
-
 def is_numeral(word_l, word):
     """ word_l - корень числительного, word - одно слово """
     if word_l in Dict.words['numeral']:
@@ -103,11 +92,18 @@ def _getMorphA(word):
         elif sign['type'] == 'prefix' and word['word'].startswith(sign['value']):
             word.update(sign['endow'])
             word['base'] = word['base'][len(sign['value']):]
+        elif sign['type'] == 'case_of_first_letter':
+            first_letter = word['word'][:1]
+            if first_letter.islower() and sign['value'] == 'lower':
+                word.update(sign['endow'])
+
+            if first_letter.isupper() and sign['value'] == 'upper':
+                word.update(sign['endow'])
 
     # наречие, глагол и существительное
     if word.get('POSpeech') in ('adverb', 'verb', 'noun'):
         if word.get('POSpeech') == 'noun':
-            defaultNoun(word['base'], word)
+            word['case'] = 'nominative'
 
         if is_numeral(word['base'], word):
             word['derivative'] = 'numeral'  # производное от числительного
@@ -158,11 +154,6 @@ def _getMorphA(word):
         word['word'] = word_l
         word['base'] = word_l
         word['number_value'] = float(word_l.replace(',', '.'))
-
-    if not word.get('POSpeech'):
-        # нераспознанное слово с большой буквы - существительное
-        if not word['word'][0].islower():
-            defaultNoun(word_l, word)
 
 
 def get_analysis(text):

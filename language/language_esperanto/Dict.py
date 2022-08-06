@@ -15,6 +15,9 @@ signs = [
     {'type': 'end', 'value': 'a', 'endow': {'POSpeech': 'adjective'}},
 
     {'type': 'prefix', 'value': 'mal', 'endow': {'antonym': True}},
+
+    {'type': 'case_of_first_letter', 'value': 'upper', 'endow': {'name': 'proper'}},
+    {'type': 'case_of_first_letter', 'value': 'lower', 'endow': {'name': 'common'}},
 ]
 
 ###############################################################################
