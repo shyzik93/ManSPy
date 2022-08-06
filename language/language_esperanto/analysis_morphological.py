@@ -85,13 +85,16 @@ def _getMorphA(word):
     #print combain_numerals, mili_numerals
 
     word['base'] = word['word'].lower()
+    word['word_lower'] = word['word'].lower()
     for sign in Dict.signs:
         if sign['type'] == 'end' and word['word'].endswith(sign['value']):
             word.update(sign['endow'])
             word['base'] = word['base'][:-len(sign['value'])]
+
         elif sign['type'] == 'prefix' and word['word'].startswith(sign['value']):
             word.update(sign['endow'])
             word['base'] = word['base'][len(sign['value']):]
+
         elif sign['type'] == 'case_of_first_letter':
             first_letter = word['word'][:1]
             if first_letter.islower() and sign['value'] == 'lower':
@@ -99,6 +102,8 @@ def _getMorphA(word):
 
             if first_letter.isupper() and sign['value'] == 'upper':
                 word.update(sign['endow'])
+        elif sign['type'] == 'word' and sign['value'] == word['word_lower']:
+            word.update(sign['endow'])
 
     # наречие, глагол и существительное
     if word.get('POSpeech') in ('adverb', 'verb', 'noun'):
@@ -123,27 +128,25 @@ def _getMorphA(word):
             word['POSpeech'] = 'numeral'
             word['class'] = 'ordinal'
         else:
-            word['POSpeech'] = 'adjective'
             word['case'] = 'nominative'
             word['number'] = 'singular'
 
     # мн. ч. существительно, прилагательного, притяжательно местоимения. И вин. падеж прилагательного, существительного, местоимения или притяхательного местоимения.
     #ERROR слово prezenten и enden определяется наречием. Другие слова на -n могут ошибочно определиться.
-    elif word_l.endswith('j') or word_l.endswith('n') or word_l.endswith('jn'):
-        temp_word1 = getNumberAndCase(word_l)
+    elif word['word_lower'].endswith('j') or word['word_lower'].endswith('n') or word['word_lower'].endswith('jn'):
+        temp_word1 = getNumberAndCase(word['word_lower'])
         temp_word2 = {'word': temp_word1['base']}
         _getMorphA(temp_word2)
         word.update(temp_word2)
         word.update(temp_word1)
-        word['word'] = word_l
+        word['word'] = word['word_lower']
         word['base'] = temp_word2['base']
 
     # сложное числительное (не составные!)
-    elif is_numeral(word_l, word):#combain_numerals:#len_word >= 5:
+    elif is_numeral(word['word_lower'], word):#combain_numerals:#len_word >= 5:
         #factor1, factor2 = combain_numerals
         word['POSpeech'] = 'numeral'
-        word['word'] = word_l
-        word['base'] = word_l
+        word['word'] = word['word_lower']
         word['class'] = 'cardinal' # количественное
         #word['number_value'] = int(Dict.dct['numeral_d'][factor1]) * int(Dict.dct['numeral_d'][factor2])
 
@@ -151,8 +154,7 @@ def _getMorphA(word):
     elif word['notword'] == 'figure':#re.match(r'[0-9]+(\.|\,)?[0-9]*', word_l):
         word['POSpeech'] = 'numeral'
         word['class'] = 'cardinal'
-        word['word'] = word_l
-        word['base'] = word_l
+        word['word'] = word['word_lower']
         word['number_value'] = float(word_l.replace(',', '.'))
 
 

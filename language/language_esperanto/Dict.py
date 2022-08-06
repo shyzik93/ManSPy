@@ -1,21 +1,21 @@
 signs = [
+    # 'type' - Категория признака, 'value' - Значение признака, 'endow' - Наделяет свойством
     {'type': 'end', 'value': 'i', 'endow': {'POSpeech': 'verb', 'mood': 'infinitive'}},
     {'type': 'end', 'value': 'u', 'endow': {'POSpeech': 'verb', 'mood': 'imperative'}},
     {'type': 'end', 'value': 'as', 'endow': {'POSpeech': 'verb', 'mood': 'indicative', 'tense': 'present'}},
     {'type': 'end', 'value': 'is', 'endow': {'POSpeech': 'verb', 'mood': 'indicative', 'tense': 'past'}},
     {'type': 'end', 'value': 'os', 'endow': {'POSpeech': 'verb', 'mood': 'infinitive', 'tense': 'future'}},
     {'type': 'end', 'value': 'us', 'endow': {'POSpeech': 'verb', 'mood': 'subjunctive'}},
-
-    {'type': 'end', 'value': 'o', 'endow': {'POSpeech': 'noun', 'number': 'singular'}},
-
+    {'type': 'end', 'value': 'o', 'endow': {'POSpeech': 'noun', 'num ber': 'singular'}},
     {'type': 'end', 'value': 'e', 'endow': {'POSpeech': 'adverb'}},
-
     {'type': 'end', 'value': 'a', 'endow': {'POSpeech': 'adjective'}},
 
     {'type': 'prefix', 'value': 'mal', 'endow': {'antonym': True}},
 
     {'type': 'case_of_first_letter', 'value': 'upper', 'endow': {'name': 'proper'}},
     {'type': 'case_of_first_letter', 'value': 'lower', 'endow': {'name': 'common'}},
+
+    {'type': 'word', 'value': 'la', 'endow': {'POSpeech': 'article', 'value': 'defined'}},
 ]
 
 ###############################################################################
@@ -66,7 +66,6 @@ words = {
         u'nek':{},  # ни (употребляется в паре с некоторыми другими отрицательными словами)
         u'ĉi':{},  # обозначает близость
       },
-    'article': {u'la': {'value': 'defined'}},
     'pronoun': {
         # личные
         u'li':  {'case': 'nominative', 'category': 'personal'}, # он
