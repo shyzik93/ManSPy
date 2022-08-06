@@ -72,7 +72,7 @@ def _getMorphA(word):
     word['base'] = word['word'].lower()
     word['word_lower'] = word['word'].lower()
     for sign in Dict.signs:
-        if sign['type'] == 'end' and word['word'].endswith(sign['value']):
+        if sign['type'] == 'end' and word['base'].endswith(sign['value']):
             word.update(sign['endow'])
             word['base'] = word['base'][:-len(sign['value'])]
 
@@ -94,8 +94,10 @@ def _getMorphA(word):
     # наречие, глагол и существительное
     if word.get('POSpeech') in ('adverb', 'verb', 'noun'):
         if word.get('POSpeech') == 'noun':
-            word['case'] = 'nominative'
-            word['number'] = 'singular'
+            if 'case' not in word:
+                word['case'] = 'nominative'
+            # if 'number' not in word:
+            #     word['number'] = 'singular'
 
         if is_numeral(word['base'], word):
             word['derivative'] = 'numeral'  # производное от числительного
@@ -117,25 +119,14 @@ def _getMorphA(word):
         else:
             if 'case' not in word:
                 word['case'] = 'nominative'
+            if 'number' not in word:
+                word['number'] = 'singular'
 
-            word['number'] = 'singular'
             word['name'] = 'common'
 
 
     # мн. ч. существительно, прилагательного, притяжательно местоимения. И вин. падеж прилагательного, существительного, местоимения или притяхательного местоимения.
     #ERROR слово prezenten и enden определяется наречием. Другие слова на -n могут ошибочно определиться.
-    elif word.get('case') == 'accusative' or word.get('number') == 'plural':
-        temp_word2 = {'word': word['base']}
-        _getMorphA(temp_word2)
-        if 'case' in temp_word2:
-            del temp_word2['case']
-        if 'number' in temp_word2:
-            del temp_word2['number']
-        if 'name' in temp_word2:
-            del temp_word2['name']
-        if 'word' in temp_word2:
-            del temp_word2['word']
-        word.update(temp_word2)
 
     # сложное числительное (не составные!)
     elif is_numeral(word['word_lower'], word):#combain_numerals:#len_word >= 5:

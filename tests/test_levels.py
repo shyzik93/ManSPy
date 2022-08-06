@@ -38,7 +38,6 @@ class LevelsTestCase(unittest.TestCase):
                     with self.subTest(dataset['description']):
                         settings.language = example.get('language', 'esperanto')
                         answers = nature2internal(Message(settings, example['w_text']))
-                        print(answers.export_unit(dict))
                         self.assertDictEqual(answers.export_unit(dict), example['morphological'], example['w_text'])
 
     @patch('manspy.converter.importer')
