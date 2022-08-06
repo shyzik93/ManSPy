@@ -851,6 +851,133 @@ dataset_homogeneous_sentences = {
     ]
 }
 
+
+dataset_proper = {
+    'description': 'Имя собственное',
+    'examples': [
+        {
+            'w_text': 'Mia nomo estas Konstantin',
+            'morphological': {
+                'unit_info': {'max_index': 0, 'index': None},
+                'unit': {
+                    0: {
+                        'unit_info': {'max_index': 3, 'index': 0, 'end': ''},
+                        'unit': {
+                            0: {
+                                'unit_info': {
+                                    'max_index': 2,
+                                    'index': 0,
+                                    'word': 'Mia',
+                                    'symbol_map': {},
+                                    'feature': [],
+                                    'link': [],
+                                    'homogeneous_link': [],
+                                    'type': 'real',
+                                    'start_pmark': [],
+                                    'end_pmark': [],
+                                    'around_pmark': [],
+                                    'combine_words': [],
+                                    'end': '',
+                                    'end_orig': '',
+                                    'base': 'mi',
+                                    'word_lower': 'mia',
+                                    'POSpeech': 'pronoun',
+                                    'name': 'proper',
+                                    'case': 'nominative',
+                                    'category': 'possessive'
+                                },
+                                'unit': {},
+                                'unit_type': 'Word'
+                            },
+                            1: {
+                                'unit_info': {
+                                    'max_index': 3,
+                                    'index': 1,
+                                    'word': 'nomo',
+                                    'symbol_map': {},
+                                    'feature': [],
+                                    'link': [],
+                                    'homogeneous_link': [],
+                                    'type': 'real',
+                                    'start_pmark': [],
+                                    'end_pmark': [],
+                                    'around_pmark': [],
+                                    'combine_words': [],
+                                    'end': '',
+                                    'end_orig': '',
+                                    'base': 'nom',
+                                    'word_lower': 'nomo',
+                                    'POSpeech': 'noun',
+                                    'number': 'singular',
+                                    'name': 'common',
+                                    'case': 'nominative'
+                                },
+                                'unit': {},
+                                'unit_type': 'Word'
+                            },
+                            2: {
+                                'unit_info': {
+                                    'max_index': 4,
+                                    'index': 2,
+                                    'word': 'estas',
+                                    'symbol_map': {},
+                                    'feature': [],
+                                    'link': [],
+                                    'homogeneous_link': [],
+                                    'type': 'real',
+                                    'start_pmark': [],
+                                    'end_pmark': [],
+                                    'around_pmark': [],
+                                    'combine_words': [],
+                                    'end': '',
+                                    'end_orig': '',
+                                    'base': 'est',
+                                    'word_lower': 'estas',
+                                    'POSpeech': 'verb',
+                                    'mood': 'indicative',
+                                    'tense': 'present',
+                                    'name': 'common'
+                                },
+                                'unit': {},
+                                'unit_type': 'Word'
+                            },
+                            3: {
+                                'unit_info': {
+                                    'max_index': 9,
+                                    'index': 3,
+                                    'word': 'konstanti',
+                                    'symbol_map': {},
+                                    'feature': [],
+                                    'link': [],
+                                    'homogeneous_link': [],
+                                    'type': 'real',
+                                    'start_pmark': [],
+                                    'end_pmark': [],
+                                    'around_pmark': [],
+                                    'combine_words': [],
+                                    'end': '',
+                                    'end_orig': '',
+                                    'base': 'konstant',
+                                    'word_lower': 'konstanti',
+                                    'name': 'common',
+                                    'POSpeech': 'verb',
+                                    'mood': 'infinitive',
+                                    'case': 'accusative',
+                                    'number': 'singular'
+                                },
+                                'unit': {},
+                                'unit_type': 'Word'
+                            }
+                        },
+                        'unit_type': 'Sentence'
+                    }
+                },
+                'unit_type': 'Text'
+            },
+        }
+    ]
+}
+
 dataset_construct_condition = {
     'description': 'Условные конструкции',
     'examples': [
@@ -871,6 +998,8 @@ datasets = (
     dataset_synonyms_of_verb,
     dataset_undirect_order_of_words,
     dataset_mistakes,
+    dataset_homogeneous_sentences,
+    dataset_proper,
 )
 
 

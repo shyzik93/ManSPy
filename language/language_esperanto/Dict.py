@@ -1,12 +1,15 @@
 signs = [
     # 'type' - Категория признака, 'value' - Значение признака, 'endow' - Наделяет свойством
+    {'type': 'end', 'value': 'n', 'endow': {'case': 'accusative'}},
+    {'type': 'end', 'value': 'j', 'endow': {'number': 'plural'}},
+
     {'type': 'end', 'value': 'i', 'endow': {'POSpeech': 'verb', 'mood': 'infinitive'}},
     {'type': 'end', 'value': 'u', 'endow': {'POSpeech': 'verb', 'mood': 'imperative'}},
     {'type': 'end', 'value': 'as', 'endow': {'POSpeech': 'verb', 'mood': 'indicative', 'tense': 'present'}},
     {'type': 'end', 'value': 'is', 'endow': {'POSpeech': 'verb', 'mood': 'indicative', 'tense': 'past'}},
     {'type': 'end', 'value': 'os', 'endow': {'POSpeech': 'verb', 'mood': 'infinitive', 'tense': 'future'}},
     {'type': 'end', 'value': 'us', 'endow': {'POSpeech': 'verb', 'mood': 'subjunctive'}},
-    {'type': 'end', 'value': 'o', 'endow': {'POSpeech': 'noun', 'num ber': 'singular'}},
+    {'type': 'end', 'value': 'o', 'endow': {'POSpeech': 'noun', 'number': 'singular'}},
     {'type': 'end', 'value': 'e', 'endow': {'POSpeech': 'adverb'}},
     {'type': 'end', 'value': 'a', 'endow': {'POSpeech': 'adjective'}},
 

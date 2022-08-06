@@ -27,21 +27,6 @@ def checkByDict(word_l, word):
         return True
 
 
-def getNumberAndCase(word_l):
-    '''возвращает число, падеж и начальную форму
-       (функция для прилагательного, существительного или местоимения)'''
-    temp_word = {'case': 'nominative',
-           'number': 'singular' }
-    if word_l[-1] == 'n':
-        word_l = word_l[:-1]
-        temp_word['case'] = 'accusative'
-    if word_l[-1] == 'j':
-        word_l = word_l[:-1]
-        temp_word['number'] = 'plural'
-    temp_word['base'] = word_l
-    return temp_word
-
-
 def is_numeral(word_l, word):
     """ word_l - корень числительного, word - одно слово """
     if word_l in Dict.words['numeral']:
@@ -102,6 +87,7 @@ def _getMorphA(word):
 
             if first_letter.isupper() and sign['value'] == 'upper':
                 word.update(sign['endow'])
+
         elif sign['type'] == 'word' and sign['value'] == word['word_lower']:
             word.update(sign['endow'])
 
@@ -134,19 +120,23 @@ def _getMorphA(word):
     # мн. ч. существительно, прилагательного, притяжательно местоимения. И вин. падеж прилагательного, существительного, местоимения или притяхательного местоимения.
     #ERROR слово prezenten и enden определяется наречием. Другие слова на -n могут ошибочно определиться.
     elif word['word_lower'].endswith('j') or word['word_lower'].endswith('n') or word['word_lower'].endswith('jn'):
-        temp_word1 = getNumberAndCase(word['word_lower'])
-        temp_word2 = {'word': temp_word1['base']}
+        temp_word2 = {'word': word['base']}
         _getMorphA(temp_word2)
+        if 'case' in temp_word2:
+            del temp_word2['case']
+        # del temp_word2['base']
         word.update(temp_word2)
-        word.update(temp_word1)
-        word['word'] = word['word_lower']
-        word['base'] = temp_word2['base']
+
+        if not word.get('case'):
+            word['case'] = 'nominative'
+
+        if not word.get('number'):
+            word['number'] = 'singular'
 
     # сложное числительное (не составные!)
     elif is_numeral(word['word_lower'], word):#combain_numerals:#len_word >= 5:
         #factor1, factor2 = combain_numerals
         word['POSpeech'] = 'numeral'
-        word['word'] = word['word_lower']
         word['class'] = 'cardinal' # количественное
         #word['number_value'] = int(Dict.dct['numeral_d'][factor1]) * int(Dict.dct['numeral_d'][factor2])
 
@@ -154,7 +144,6 @@ def _getMorphA(word):
     elif word['notword'] == 'figure':#re.match(r'[0-9]+(\.|\,)?[0-9]*', word_l):
         word['POSpeech'] = 'numeral'
         word['class'] = 'cardinal'
-        word['word'] = word['word_lower']
         word['number_value'] = float(word_l.replace(',', '.'))
 
 

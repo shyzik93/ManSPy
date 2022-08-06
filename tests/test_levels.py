@@ -23,6 +23,24 @@ def mock_action(path):
 
 
 class LevelsTestCase(unittest.TestCase):
+    def test_level_morphological(self):
+        settings = Settings(
+            answer_type='construct',
+            history=False,
+            levels='graphmath:morph'
+        )
+        with InitSettings():
+            for dataset in datasets:
+                for example in dataset['examples']:
+                    if not example.get('morphological'):
+                        continue
+
+                    with self.subTest(dataset['description']):
+                        settings.language = example.get('language', 'esperanto')
+                        answers = nature2internal(Message(settings, example['w_text']))
+                        print(answers.export_unit(dict))
+                        self.assertDictEqual(answers.export_unit(dict), example['morphological'], example['w_text'])
+
     @patch('manspy.converter.importer')
     def test_level_convert(self, importer):
         importer.import_action = mock_action
@@ -35,6 +53,9 @@ class LevelsTestCase(unittest.TestCase):
         with InitSettings():
             for dataset in datasets:
                 for example in dataset['examples']:
+                    if not example.get('convert'):
+                        continue
+
                     with self.subTest(dataset['description']):
                         settings.language = example.get('language', 'esperanto')
                         answers = nature2internal(Message(settings, example['w_text']))
@@ -45,6 +66,9 @@ class LevelsTestCase(unittest.TestCase):
         with InitSettings():
             for dataset in datasets:
                 for example in dataset['examples']:
+                    if not example.get('r_text_construct'):
+                        continue
+
                     with self.subTest(dataset['description']):
                         settings.language = example.get('language', 'esperanto')
                         answers = nature2internal(Message(settings, example['w_text']))
