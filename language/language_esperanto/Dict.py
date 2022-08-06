@@ -1,26 +1,26 @@
 # -*- coding: utf-8 -*-
+
+signs = [
+    {'type': 'end', 'value': 'i', 'endow': {'POSpeech': 'verb', 'mood': 'infinitive'}},
+    {'type': 'end', 'value': 'u', 'endow': {'POSpeech': 'verb', 'mood': 'imperative'}},
+    {'type': 'end', 'value': 'as', 'endow': {'POSpeech': 'verb', 'mood': 'indicative', 'tense': 'present'}},
+    {'type': 'end', 'value': 'is', 'endow': {'POSpeech': 'verb', 'mood': 'indicative', 'tense': 'past'}},
+    {'type': 'end', 'value': 'os', 'endow': {'POSpeech': 'verb', 'mood': 'infinitive', 'tense': 'future'}},
+    {'type': 'end', 'value': 'us', 'endow': {'POSpeech': 'verb', 'mood': 'subjunctive'}},
+
+    {'type': 'end', 'value': 'o', 'endow': {'POSpeech': 'noun', 'number': 'singular'}},
+
+    {'type': 'end', 'value': 'e', 'endow': {'POSpeech': 'adverb'}},
+
+    {'type': 'end', 'value': 'a', 'endow': {'POSpeech': 'adjective'}},
+
+    {'type': 'prefix', 'value': 'mal', 'endow': {'antonym': True}},
+]
+
 ###############################################################################
+
+
 dct = {
-
-    'verb': {
-        'end': {
-            u'i': {'mood': 'infinitive'}, # инфинитив как вид наклонения - для удобства. 
-            u'u': {'mood': 'imperative'},
-            u'as': {'mood': 'indicative', 'tense': 'present'},
-            u'is': {'mood': 'indicative', 'tense': 'past'},
-            u'os': {'mood': 'indicative', 'tense': 'future'},
-            u'us': {'mood': 'subjunctive'}
-          },
-      },
-
-    'noun': { 'end': u'o', },
-
-    'adverb': { 'end': u'e', },
-
-    'adjective': { 'end': u'a', },
-
-    'prefix': {'mal': {'antonym': True}},
-
     # порядок числительных НЕ МЕНЯТЬ!
     'numeral': [u'nul', u'unu', u'du', u'tri', u'kvar', u'kvin',
         u'ses', u'sep', u'ok', u'naŭ', u'dek', u'cent', u'mil', u'milion', u'miliard'],
@@ -31,9 +31,6 @@ dct = {
     }
 
 ''' ĉ ĝ ĥ ĵ ŝ ŭ '''
-
-morphemes = {
-    }
 
 words = {
     'adverb':  { # непроизводные

@@ -13,15 +13,19 @@ combain_numerals_template = re.compile(('^(%s)(' + Dict.dct['numeral'][-5] + '|'
 ))
 mili_numerals_template = re.compile(('^(%s)(iliard|ilion)$') % '|'.join(Dict.dct['numeral'][:-5]))
 
+
 def checkByDict(word_l, word):
     ''' Определяет часть речи по словарю
         для неизменяемых или почти неизменяемых частей речи'''
     for POSpeech, data in Dict.words.items():
-        if word_l not in data: continue
+        if word_l not in data:
+            continue
+
         word.update(data[word_l])
         word['POSpeech'] = POSpeech
         word['base'] = word_l
         return True
+
 
 def getNumberAndCase(word_l):
     '''возвращает число, падеж и начальную форму
@@ -37,18 +41,17 @@ def getNumberAndCase(word_l):
     temp_word['base'] = word_l
     return temp_word
 
+
 def defaultNoun(word_l, word):
     ''' Устанавливает параметры по умолчанию
         На вход подаётся слово без окончания'''
-    word['POSpeech'] = 'noun'
-    word['base'] = word_l
     word['case'] = 'nominative' # именительный
-    word['number'] = 'singular'
     # определение по первой букве:
     if not word['word'][0].islower():
         word['name'] = 'proper'  # имя собственное
     else:
         word['name'] = 'common'  # имя нарицательное
+
 
 def is_numeral(word_l, word):
     """ word_l - корень числительного, word - одно слово """
@@ -83,18 +86,8 @@ def _getMorphA(word):
     word_l = word['word'].lower()
     # Определение части речи по словарю
     # (для неизменяемых или почти неизменяемых частей речи)
-    if checkByDict(word_l, word): return
-
-    # Определение части речи по окончанию
-    len_word = len(word_l)
-    ends = ['', ''] # окончания двух возможных длин
-    words = ['', ''] # корни, в зависимости от окончания
-    if len_word >= 2:
-        ends[0] = word_l[-1]
-        words[0] = word_l[:-1]
-    if len_word >= 3:
-        ends[1] = word_l[-2:]
-        words[1] = word_l[:-2]
+    if checkByDict(word_l, word):
+        return
 
     #combain_numerals = combain_numerals_template.findall(word_l)
     #if combain_numerals: combain_numerals = combain_numerals[0]
@@ -102,22 +95,26 @@ def _getMorphA(word):
     #if mili_numerals: mili_numerals = mili_numerals[0]
     #print combain_numerals, mili_numerals
 
-    # существительное
-    if ends[0] == 'o':
-        defaultNoun(words[0], word)
-        if is_numeral(words[0], word):
-            word['derivative'] = 'numeral'  # производное от числительного
+    word['base'] = word['word'].lower()
+    for sign in Dict.signs:
+        if sign['type'] == 'end' and word['word'].endswith(sign['value']):
+            word.update(sign['endow'])
+            word['base'] = word['base'][:-len(sign['value'])]
+        elif sign['type'] == 'prefix' and word['word'].startswith(sign['value']):
+            word.update(sign['endow'])
+            word['base'] = word['base'][len(sign['value']):]
 
-    # наречие
-    elif ends[0] == 'e':
-        word['POSpeech'] = 'adverb'
-        word['base'] = words[0]
-        if is_numeral(words[0], word):
+    # наречие, глагол и существительное
+    if word.get('POSpeech') in ('adverb', 'verb', 'noun'):
+        if word.get('POSpeech') == 'noun':
+            defaultNoun(word['base'], word)
+
+        if is_numeral(word['base'], word):
             word['derivative'] = 'numeral'  # производное от числительного
 
     # прилагательное, притяжательное местоимение или порядковое числительное
-    elif ends[0] == 'a':
-        if checkByDict(words[0], word):  # прилагательное
+    elif word.get('POSpeech') == 'adjective':
+        if checkByDict(word['base'], word):  # прилагательное
             if word['POSpeech'] == 'pronoun':  # притяжательное иестоимение
                 word['category'] = 'possessive'
             elif word['POSpeech'] == 'numeral':  # порядковое числительное
@@ -126,34 +123,17 @@ def _getMorphA(word):
                 word['POSpeech'] = 'adjective'
                 word['case'] = 'nominative'
                 word['number'] = 'singular'
-                word['base'] = words[0]
-        elif is_numeral(words[0], word): # порядковое числительное
+        elif is_numeral(word['base'], word):  # порядковое числительное
             word['POSpeech'] = 'numeral'
             word['class'] = 'ordinal'
-            word['base'] = words[0]
         else:
             word['POSpeech'] = 'adjective'
             word['case'] = 'nominative'
             word['number'] = 'singular'
-            word['base'] = words[0]
-
-    # глагол
-    elif ends[0] in Dict.dct['verb']['end'].keys() or ends[1] in Dict.dct['verb']['end'].keys():
-        word['POSpeech'] = 'verb'
-        for i in range(2):
-            if ends[i] not in Dict.dct['verb']['end']:
-                continue
-
-            word.update(Dict.dct['verb']['end'][ends[i]])
-            if is_numeral(words[i], word):
-                word['derivative'] = 'numeral'  # производное от числительного
-
-            word['base'] = words[i]
-            break
 
     # мн. ч. существительно, прилагательного, притяжательно местоимения. И вин. падеж прилагательного, существительного, местоимения или притяхательного местоимения.
     #ERROR слово prezenten и enden определяется наречием. Другие слова на -n могут ошибочно определиться.
-    elif ends[0] in ['j', 'n'] or ends[1] == 'jn':
+    elif word_l.endswith('j') or word_l.endswith('n') or word_l.endswith('jn'):
         temp_word1 = getNumberAndCase(word_l)
         temp_word2 = {'word': temp_word1['base']}
         _getMorphA(temp_word2)
@@ -179,19 +159,11 @@ def _getMorphA(word):
         word['base'] = word_l
         word['number_value'] = float(word_l.replace(',', '.'))
 
-    # анализ приставок
-    if 'base' in word:
-        base = word['base']
-        if len(base) > 3 and base[:3] in Dict.dct['prefix']:
-            word['antonym'] = Dict.dct['prefix'][base[:3]]['antonym']
-            word['base'] = base[3:]
-
-    if 'POSpeech' not in word or word['POSpeech'] == '':
+    if not word.get('POSpeech'):
         # нераспознанное слово с большой буквы - существительное
         if not word['word'][0].islower():
             defaultNoun(word_l, word)
-        else:
-            word['POSpeech'] = ''
+
 
 def get_analysis(text):
     ''' Обёртка '''
