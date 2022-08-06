@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 signs = [
     {'type': 'end', 'value': 'i', 'endow': {'POSpeech': 'verb', 'mood': 'infinitive'}},
     {'type': 'end', 'value': 'u', 'endow': {'POSpeech': 'verb', 'mood': 'imperative'}},
