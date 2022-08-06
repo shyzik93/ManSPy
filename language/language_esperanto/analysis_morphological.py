@@ -95,6 +95,7 @@ def _getMorphA(word):
     if word.get('POSpeech') in ('adverb', 'verb', 'noun'):
         if word.get('POSpeech') == 'noun':
             word['case'] = 'nominative'
+            word['number'] = 'singular'
 
         if is_numeral(word['base'], word):
             word['derivative'] = 'numeral'  # производное от числительного
@@ -119,19 +120,18 @@ def _getMorphA(word):
 
     # мн. ч. существительно, прилагательного, притяжательно местоимения. И вин. падеж прилагательного, существительного, местоимения или притяхательного местоимения.
     #ERROR слово prezenten и enden определяется наречием. Другие слова на -n могут ошибочно определиться.
-    elif word['word_lower'].endswith('j') or word['word_lower'].endswith('n') or word['word_lower'].endswith('jn'):
+    elif word.get('case') == 'accusative' or word.get('number') == 'plural':
         temp_word2 = {'word': word['base']}
         _getMorphA(temp_word2)
         if 'case' in temp_word2:
             del temp_word2['case']
-        # del temp_word2['base']
+        if 'number' in temp_word2:
+            del temp_word2['number']
+        if 'name' in temp_word2:
+            del temp_word2['name']
+        if 'word' in temp_word2:
+            del temp_word2['word']
         word.update(temp_word2)
-
-        if not word.get('case'):
-            word['case'] = 'nominative'
-
-        if not word.get('number'):
-            word['number'] = 'singular'
 
     # сложное числительное (не составные!)
     elif is_numeral(word['word_lower'], word):#combain_numerals:#len_word >= 5:

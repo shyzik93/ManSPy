@@ -908,9 +908,9 @@ dataset_proper = {
                                     'base': 'nom',
                                     'word_lower': 'nomo',
                                     'POSpeech': 'noun',
-                                    'number': 'singular',
                                     'name': 'common',
-                                    'case': 'nominative'
+                                    'case': 'nominative',
+                                    'number': 'singular',
                                 },
                                 'unit': {},
                                 'unit_type': 'Word'
@@ -945,7 +945,7 @@ dataset_proper = {
                                 'unit_info': {
                                     'max_index': 9,
                                     'index': 3,
-                                    'word': 'konstanti',
+                                    'word': 'Konstantin',
                                     'symbol_map': {},
                                     'feature': [],
                                     'link': [],
@@ -959,11 +959,10 @@ dataset_proper = {
                                     'end_orig': '',
                                     'base': 'konstant',
                                     'word_lower': 'konstanti',
-                                    'name': 'common',
+                                    'case': 'accusative',
+                                    'name': 'proper',
                                     'POSpeech': 'verb',
                                     'mood': 'infinitive',
-                                    'case': 'accusative',
-                                    'number': 'singular'
                                 },
                                 'unit': {},
                                 'unit_type': 'Word'

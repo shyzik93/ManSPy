@@ -9,7 +9,7 @@ signs = [
     {'type': 'end', 'value': 'is', 'endow': {'POSpeech': 'verb', 'mood': 'indicative', 'tense': 'past'}},
     {'type': 'end', 'value': 'os', 'endow': {'POSpeech': 'verb', 'mood': 'infinitive', 'tense': 'future'}},
     {'type': 'end', 'value': 'us', 'endow': {'POSpeech': 'verb', 'mood': 'subjunctive'}},
-    {'type': 'end', 'value': 'o', 'endow': {'POSpeech': 'noun', 'number': 'singular'}},
+    {'type': 'end', 'value': 'o', 'endow': {'POSpeech': 'noun'}},
     {'type': 'end', 'value': 'e', 'endow': {'POSpeech': 'adverb'}},
     {'type': 'end', 'value': 'a', 'endow': {'POSpeech': 'adjective'}},
 
