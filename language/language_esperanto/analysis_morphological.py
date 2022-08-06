@@ -115,8 +115,12 @@ def _getMorphA(word):
             word['POSpeech'] = 'numeral'
             word['class'] = 'ordinal'
         else:
-            word['case'] = 'nominative'
+            if 'case' not in word:
+                word['case'] = 'nominative'
+
             word['number'] = 'singular'
+            word['name'] = 'common'
+
 
     # мн. ч. существительно, прилагательного, притяжательно местоимения. И вин. падеж прилагательного, существительного, местоимения или притяхательного местоимения.
     #ERROR слово prezenten и enden определяется наречием. Другие слова на -n могут ошибочно определиться.
