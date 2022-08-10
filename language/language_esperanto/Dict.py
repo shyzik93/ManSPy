@@ -1,6 +1,3 @@
-
-
-
 signs = [
     # 'type' - Категория признака, 'value' - Значение признака, 'endow' - Наделяет свойством
     [
@@ -48,18 +45,47 @@ signs = [
         {'type': 'word', 'value': 'mem', 'endow': {'case': 'nominative', 'category': 'reflexive'}},  # сам
         # местоимения неопределённо-личные
         {'type': 'word', 'value': 'oni', 'endow': {'case': 'nominative', 'category': ''}},  # люди, многие, некто
-
-        {'type': 'word', 'value': 'li', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  #
-        {'type': 'word', 'value': 'li', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  #
-        {'type': 'word', 'value': 'li', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  #
-        {'type': 'word', 'value': 'li', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  #
-        {'type': 'word', 'value': 'li', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  #
+        # предлоги
+        {'type': 'word', 'value': 'je', 'endow': {'POSpeech': 'preposition', 'give_case': 'undefined'}},  # с неопределённым значением. Употребляется, когда не ясно, какой предлог использовать (Je via sano! - За ваше здоровье!)
+        {'type': 'word', 'value': 'al', 'endow': {'POSpeech': 'preposition', 'give_case': 'dative'}},  # к. Или не переводится (дательный падеж) (направление движения к цели)
+        {'type': 'word', 'value': 'da', 'endow': {'POSpeech': 'preposition', 'give_case': 'genetive'}},  # не переводится (русский родительный падеж). для чего(кого)-либо не имеющих чётких границ для разделения (жидкости, материалы)
+        {'type': 'word', 'value': 'de', 'endow': {'POSpeech': 'preposition', 'give_case': 'genetive'}},  # не переводится (русский родительный падеж)
+        {'type': 'word', 'value': 'en', 'endow': {'POSpeech': 'preposition', 'give_case': 'locative'}},  # в
+        {'type': 'word', 'value': 'el', 'endow': {'POSpeech': 'preposition', 'give_case': 'ablative'}},  # из
+        {'type': 'word', 'value': 'ĉe', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # у, при
+        {'type': 'word', 'value': 'por', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # для, за, с целью, для того чтобы
+        {'type': 'word', 'value': 'dum', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # во время, в течение, пока, в то время как (производное наречие dume - тем временем, пока)
+        {'type': 'word', 'value': 'kun', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # с
+        {'type': 'word', 'value': 'sen', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # без
+        {'type': 'word', 'value': 'sur', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # на
+        {'type': 'word', 'value': 'per', 'endow': {'POSpeech': 'preposition', 'give_case': 'instrumental'}},  # не перводится, но иногда: посредством, с помощью (творительный падеж)
+        {'type': 'word', 'value': 'pri', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # о
+        {'type': 'word', 'value': 'tra', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # через, сквозь (направление движения к цели)
+        {'type': 'word', 'value': 'ĝis', 'endow': {'POSpeech': 'preposition', 'give_case': 'dative'}},  # до (направление движения к цели)
+        {'type': 'word', 'value': 'post', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # после, через, за
+        {'type': 'word', 'value': 'inter', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # между, среди
+        {'type': 'word', 'value': 'antaŭ', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # перед
+        {'type': 'word', 'value': 'ĉirkaŭ', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # вокруг
+        {'type': 'word', 'value': 'sub', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # под
+        {'type': 'word', 'value': 'ekster', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # вне, за
+        {'type': 'word', 'value': 'apud', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # около, возле
+        {'type': 'word', 'value': 'trans', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # за, через, по ту сторону
+        {'type': 'word', 'value': 'super', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # над
+        {'type': 'word', 'value': 'kontraŭ', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # против, о
+        # союзы
+        {'type': 'word', 'value': 'kaj', 'endow': {'POSpeech': 'conjunction', 'value': 'coordinating'}},  # и, а # сочинительные союзы
+        {'type': 'word', 'value': 'sed', 'endow': {'POSpeech': 'conjunction', 'value': 'coordinating'}},  # но, а
+        {'type': 'word', 'value': 'aŭ', 'endow': {'POSpeech': 'conjunction', 'value': 'coordinating'}},  # или, либо
+        {'type': 'word', 'value': 'ke', 'endow': {'POSpeech': 'conjunction', 'value': 'subordinating'}},  # что, чтобы (с помощью него дополнительное придаточное предложение присоединяется к главному - Li diris, ke li lernis la lecionon)# подчинительные союзы
+        {'type': 'word', 'value': 'ĉar', 'endow': {'POSpeech': 'conjunction', 'value': 'subordinating'}},  # потому что, так как, поскольку, ибо # подчинительные союзы
+        {'type': 'word', 'value': 'se', 'endow': {'POSpeech': 'conjunction', 'value': ''}},  # если
+        {'type': 'word', 'value': 'kvankam', 'endow': {'POSpeech': 'conjunction', 'value': ''}},  # хотя
     ],
     [
-        {'type': 'end', 'value': 'n', 'endow': {'case': 'accusative'}},
+        {'type': 'end', 'value': 'n', 'endow': {'case': 'accusative'}, 'if-not': {'POSpeech': 'preposition'}},
     ],
     [
-        {'type': 'end', 'value': 'j', 'endow': {'number': 'plural'}},
+        {'type': 'end', 'value': 'j', 'endow': {'number': 'plural'}, 'if-not': {'POSpeech': 'conjunction'}},
     ],
     [
         {'type': 'end', 'value': 'i', 'endow': {'POSpeech': 'verb', 'mood': 'infinitive'}},
@@ -69,7 +95,7 @@ signs = [
         {'type': 'end', 'value': 'os', 'endow': {'POSpeech': 'verb', 'mood': 'infinitive', 'tense': 'future'}},
         {'type': 'end', 'value': 'us', 'endow': {'POSpeech': 'verb', 'mood': 'subjunctive'}},
         {'type': 'end', 'value': 'o', 'endow': {'POSpeech': 'noun'}},
-        {'type': 'end', 'value': 'e', 'endow': {'POSpeech': 'adverb'}},
+        {'type': 'end', 'value': 'e', 'endow': {'POSpeech': 'adverb'}, 'if-not': {'POSpeech': 'preposition'}},
         {'type': 'end', 'value': 'a', 'endow': {'POSpeech': 'adjective'}},
 
         {'type': 'prefix', 'value': 'mal', 'endow': {'antonym': True}},
@@ -86,62 +112,24 @@ signs = [
 
 ###############################################################################
 
-
-dct = {
-    # порядок числительных НЕ МЕНЯТЬ!
-    'numeral': [u'nul', u'unu', u'du', u'tri', u'kvar', u'kvin',
-        u'ses', u'sep', u'ok', u'naŭ', u'dek', u'cent', u'mil', u'milion', u'miliard'],
-    # а здесь можно, но не нужно :)
-    'numeral_d': {u'nul': 0, u'unu': 1, u'du': 2, u'tri': 3, u'kvar': 4, u'kvin': 5,
-        u'ses': 6, u'sep': 7, u'ok': 8, u'naŭ': 9, u'dek': 10, u'cent': 100, u'mil': 1000, u'milion':1000000, u'miliard':1000000000
-        }
-    }
+numeral_list = [  # порядок числительных НЕ МЕНЯТЬ!
+    'nul', 'unu', 'du', 'tri', 'kvar', 'kvin', 'ses', 'sep', 'ok', 'naŭ', 'dek', 'cent', 'mil', 'milion', 'miliard',
+]
+numeral_dict = {
+    'nul': 0, 'unu': 1, 'du': 2, 'tri': 3, 'kvar': 4, 'kvin': 5, 'ses': 6, 'sep': 7, 'ok': 8, 'naŭ': 9, 'dek': 10,
+    'cent': 100, 'mil': 1000, 'milion': 1000000, 'miliard': 1000000000,
+}
 
 ''' ĉ ĝ ĥ ĵ ŝ ŭ '''
 
 words = {
-    'preposition': {
-        u'je':    {'give_case': 'undefined'},# с неопределённым значкением. Употребляется, когда не ясно, какой предлог использовать (Je via sano! - За ваше здоровье!)
-        u'al':    {'give_case': 'dative'},   # к. Или не переводится (дательный падеж) (направление движения к цели)
-        u'da':    {'give_case': 'genetive'}, # не переводится (русский родительный падеж). для чего(кого)-либо не имеющих чётких границ для разделения (жидкости, материалы)
-        u'de':    {'give_case': 'genetive'}, # не переводится (русский родительный падеж)
-        u'en':    {'give_case': 'locative'}, # в
-        u'el':    {'give_case': 'ablative'}, # из
-        u'ĉe':    {'give_case': ''}, # у, при
-        u'por':   {'give_case': ''}, # для, за, с целью, для того чтобы
-        u'dum':   {'give_case': ''}, # во время, в течение, пока, в то время как (производное наречие dume - тем временем, пока)
-        u'kun':   {'give_case': ''}, # с
-        u'sen':   {'give_case': ''}, # без
-        u'sur':   {'give_case': ''}, # на
-        u'per':   {'give_case': 'instrumental'}, # не перводится, но иногда: посредством, с помощью (творительный падеж)
-        u'pri':   {'give_case': ''}, # о
-        u'tra':   {'give_case': ''}, # через, сквозь (направление движения к цели)
-        u'ĝis':   {'give_case': 'dative'}, # до (направление движения к цели)
-        u'post':  {'give_case': ''}, # после, через, за
-        u'inter': {'give_case': ''}, # между, среди
-        u'antaŭ': {'give_case': ''}, # перед
-        u'ĉirkaŭ': {'give_case': ''}, # вокруг
-        u'sub':   {'give_case': ''}, # под
-        u'ekster':   {'give_case': ''}, # вне, за
-        u'apud':   {'give_case': ''}, # около, возле
-        u'trans':   {'give_case': ''}, # за, через, по ту сторону
-        u'super':   {'give_case': ''}, # над
-        u'kontraŭ':   {'give_case': ''}, # против, о
+        # предлоги
         # составной предлог (вероятно, выделять через отдельную функцию. Хранить в отдельном словаре)
-        u'okaze de':   {'give_case': ''}, # по случаю
+        # u'okaze de':   {'give_case': ''}, # по случаю
         # выражают локативные, временные, субъектно-объектные отношения составными предлогами (ekdi, pere de, dank' al, de sur и т. д.)
-      },
-    'conjunction': {
-        u'kaj': {'value': 'coordinating'}, # и, а # сочинительные союзы
-        u'sed': {'value': 'coordinating'}, # но, а
-        u'aŭ': {'value': 'coordinating'},  # или, либо
-        u'ke': {'value': 'subordinating'}, # что, чтобы (с помощью него дополнительное придаточное предложение присоединяется к главному - Li diris, ke li lernis la lecionon)# подчинительные союзы
-        u'ĉar': {'value': 'subordinating'}, # потому что, так как, поскольку, ибо # подчинительные союзы
-        # es ... (do). Если ... (то)
-        u'se': {'value': ''}, # если
+
+        # союз es ... (do). Если ... (то)
         #u'do': {'value': ''}, # то (это частица)
-        u'kvankam': {'value': ''}, # хотя
-      },
     'numeral': {
         u'nul': {'class': 'cardinal', 'number_value': 0},
         u'unu':  {'class': 'cardinal', 'number_value': 1},

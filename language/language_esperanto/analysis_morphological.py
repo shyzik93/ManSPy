@@ -8,19 +8,29 @@ import re
 
 combain_numerals_template = re.compile(
         '^({})({}|{})$'.format(
-            '|'.join(Dict.dct['numeral'][:-5]),
-            Dict.dct['numeral'][-5],
-            Dict.dct['numeral'][-4],
+            '|'.join(Dict.numeral_list[:-5]),
+            Dict.numeral_list[-5],
+            Dict.numeral_list[-4],
         )
 )
-mili_numerals_template = re.compile(('^(%s)(iliard|ilion)$') % '|'.join(Dict.dct['numeral'][:-5]))
+mili_numerals_template = re.compile('^({})(iliard|ilion)$'.format('|'.join(Dict.numeral_list[:-5])))
 
 
 def set_properties_by_signs(word, signs):
+    def has_all_properties(dict1, dict2):
+        for k, v in dict2.items():
+            if dict1.get(k) != v:
+                return False
+
+        return True
+
     word['base'] = word['word'].lower()
     word['word_lower'] = word['word'].lower()
     for layer in signs:
         for sign in layer:
+            if 'if-not' in sign and has_all_properties(word, sign['if-not']):
+                continue
+
             if sign['type'] == 'end' and word['base'].endswith(sign['value']):
                 word.update(sign['endow'])
                 word['base'] = word['base'][:-len(sign['value'])]
@@ -41,25 +51,25 @@ def set_properties_by_signs(word, signs):
                 word.update(sign['endow'])
 
             elif sign['type'] == 'prop-default':
-                has_all_properties = True
-                for k, v in sign['value'].items():
-                    if word.get(k) != v:
-                        has_all_properties = False
-                        break
+                # has_all_properties = True
+                # for k, v in sign['value'].items():
+                #     if word.get(k) != v:
+                #         has_all_properties = False
+                #         break
 
-                if has_all_properties:
+                if has_all_properties(word, sign['value']):  # has_all_properties:
                     for k, v in sign['endow'].items():
                         if k not in word:
                             word[k] = v
 
             elif sign['type'] == 'prop':
-                has_all_properties = True
-                for k, v in sign['value'].items():
-                    if word.get(k) != v:
-                        has_all_properties = False
-                        break
+                # has_all_properties = True
+                # for k, v in sign['value'].items():
+                #     if word.get(k) != v:
+                #         has_all_properties = False
+                #         break
 
-                if has_all_properties:
+                if has_all_properties(word, sign['value']):  #has_all_properties:
                     word.update(sign['endow'])
 
 
@@ -93,10 +103,10 @@ def is_numeral(word):
 
     if combain_numerals:
         factor1, factor2 = combain_numerals
-        number_value = int(Dict.dct['numeral_d'][factor2]) * int(Dict.dct['numeral_d'][factor1])
+        number_value = int(Dict.numeral_dict[factor2]) * int(Dict.numeral_dict[factor1])
     elif mili_numerals:
         factor1, factor2 = mili_numerals
-        number_value = int(Dict.dct['numeral_d']['milion']) ** int(Dict.dct['numeral_d'][factor1])
+        number_value = int(Dict.numeral_dict['milion']) ** int(Dict.numeral_dict[factor1])
         if factor2 == 'iliard':
             number_value *= 1000
     else:
