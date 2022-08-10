@@ -6,11 +6,13 @@
 from . import Dict
 import re
 
-#template = re.compile(r'[0-9]+(\.|\,)?[0-9]*')
-
-combain_numerals_template = re.compile(('^(%s)(' + Dict.dct['numeral'][-5] + '|' + Dict.dct['numeral'][-4] + ')$') % '|'.join(
-    Dict.dct['numeral'][:-5]
-))
+combain_numerals_template = re.compile(
+        '^({})({}|{})$'.format(
+            '|'.join(Dict.dct['numeral'][:-5]),
+            Dict.dct['numeral'][-5],
+            Dict.dct['numeral'][-4],
+        )
+)
 mili_numerals_template = re.compile(('^(%s)(iliard|ilion)$') % '|'.join(Dict.dct['numeral'][:-5]))
 
 
@@ -39,10 +41,27 @@ def set_properties_by_signs(word, signs):
                 word.update(sign['endow'])
 
             elif sign['type'] == 'prop-default':
-                if [True for k, v in sign['value'].items() if word.get(k) == v]:
+                has_all_properties = True
+                for k, v in sign['value'].items():
+                    if word.get(k) != v:
+                        has_all_properties = False
+                        break
+
+                if has_all_properties:
                     for k, v in sign['endow'].items():
                         if k not in word:
                             word[k] = v
+
+            elif sign['type'] == 'prop':
+                has_all_properties = True
+                for k, v in sign['value'].items():
+                    if word.get(k) != v:
+                        has_all_properties = False
+                        break
+
+                if has_all_properties:
+                    word.update(sign['endow'])
+
 
 def checkByDict(word_l, word):
     ''' Определяет часть речи по словарю
@@ -57,8 +76,9 @@ def checkByDict(word_l, word):
         return True
 
 
-def is_numeral(word_l, word):
+def is_numeral(word):
     """ word_l - корень числительного, word - одно слово """
+    word_l = word['base']
     if word_l in Dict.words['numeral']:
         word.update(Dict.words['numeral'][word_l])
         return True
@@ -87,10 +107,9 @@ def is_numeral(word_l, word):
 
 
 def _getMorphA(word):
-    word_l = word['word'].lower()
     # Определение части речи по словарю
     # (для неизменяемых или почти неизменяемых частей речи)
-    if checkByDict(word_l, word):
+    if checkByDict(word['word'].lower(), word):
         return
 
     #combain_numerals = combain_numerals_template.findall(word_l)
@@ -103,21 +122,19 @@ def _getMorphA(word):
 
     # наречие, глагол и существительное
     if word.get('POSpeech') in ('adverb', 'verb', 'noun'):
-        if is_numeral(word['base'], word):
+        if is_numeral(word):
             word['derivative'] = 'numeral'  # производное от числительного
 
     # прилагательное, притяжательное местоимение или порядковое числительное
     elif word.get('POSpeech') == 'adjective':
         if checkByDict(word['base'], word):  # прилагательное
-            if word['POSpeech'] == 'pronoun':  # притяжательное иестоимение
-                word['category'] = 'possessive'
-            elif word['POSpeech'] == 'numeral':  # порядковое числительное
+            if word['POSpeech'] == 'numeral':  # порядковое числительное
                 word['class'] = 'ordinal'
             else:  # прилагательное (есть ли такие: dea, laa, kaja и подобные?)
                 word['POSpeech'] = 'adjective'
                 word['case'] = 'nominative'
                 word['number'] = 'singular'
-        elif is_numeral(word['base'], word):  # порядковое числительное
+        elif is_numeral(word):  # порядковое числительное
             word['POSpeech'] = 'numeral'
             word['class'] = 'ordinal'
 
@@ -125,7 +142,7 @@ def _getMorphA(word):
     #ERROR слово prezenten и enden определяется наречием. Другие слова на -n могут ошибочно определиться.
 
     # сложное числительное (не составные!)
-    elif is_numeral(word['word_lower'], word):#combain_numerals:#len_word >= 5:
+    elif is_numeral(word):#combain_numerals:#len_word >= 5:
         #factor1, factor2 = combain_numerals
         word['POSpeech'] = 'numeral'
         word['class'] = 'cardinal' # количественное
@@ -135,7 +152,7 @@ def _getMorphA(word):
     elif word['notword'] == 'figure':#re.match(r'[0-9]+(\.|\,)?[0-9]*', word_l):
         word['POSpeech'] = 'numeral'
         word['class'] = 'cardinal'
-        word['number_value'] = float(word_l.replace(',', '.'))
+        word['number_value'] = float(word['word_lower'].replace(',', '.'))
 
 
 def get_analysis(text):

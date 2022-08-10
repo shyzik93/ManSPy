@@ -886,7 +886,7 @@ dataset_proper = {
                                     'name': 'proper',
                                     'number': 'singular',
                                     'case': 'nominative',
-                                    'category': 'possessive'
+                                    'category': 'possessive',
                                 },
                                 'unit': {},
                                 'unit_type': 'Word'

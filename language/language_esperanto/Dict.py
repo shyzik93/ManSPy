@@ -1,5 +1,60 @@
+
+
+
 signs = [
     # 'type' - Категория признака, 'value' - Значение признака, 'endow' - Наделяет свойством
+    [
+        # непроизводные наречия
+        {'type': 'word', 'value': 'la', 'endow': {'POSpeech': 'article', 'value': 'defined'}},
+        {'type': 'word', 'value': 'ankaŭ', 'endow': {'POSpeech': 'adverb'}},  # также, тоже, и (стоит непосредственно перед словыом, к которому относится)
+        {'type': 'word', 'value': 'hodiaŭ', 'endow': {'POSpeech': 'adverb'}},  # сегодня
+        {'type': 'word', 'value': 'tre', 'endow': {'POSpeech': 'adverb'}},  # очень
+        {'type': 'word', 'value': 'morgaŭ', 'endow': {'POSpeech': 'adverb'}},  # завтра
+        {'type': 'word', 'value': 'nun', 'endow': {'POSpeech': 'adverb'}},  # теперь, сейчас
+        {'type': 'word', 'value': 'multe', 'endow': {'POSpeech': 'adverb'}},  # много
+        {'type': 'word', 'value': 'ankoraŭ', 'endow': {'POSpeech': 'adverb'}},  # ещё
+        {'type': 'word', 'value': 'jam', 'endow': {'POSpeech': 'adverb'}},  # уже
+        {'type': 'word', 'value': 'certe', 'endow': {'POSpeech': 'adverb'}},  # уверенно, точно; конечно, несомненно, верно (прилагательное certa - уверенный, несомненный, определённый, точный)
+        {'type': 'word', 'value': 'baldaŭ', 'endow': {'POSpeech': 'adverb'}},  # вскоре, скоро
+        {'type': 'word', 'value': 'hieraŭ', 'endow': {'POSpeech': 'adverb'}},  # вчера
+        {'type': 'word', 'value': 'neniam', 'endow': {'POSpeech': 'adverb'}},  # никогда
+        {'type': 'word', 'value': 'apenaŭ', 'endow': {'POSpeech': 'adverb'}},  # едва, еле
+        {'type': 'word', 'value': 'tuj', 'endow': {'POSpeech': 'adverb'}},  # сейчас, тотчас, сразу, немедленно
+        {'type': 'word', 'value': 'nepre', 'endow': {'POSpeech': 'adverb'}},  # непременно, обязательно
+        {'type': 'word', 'value': 'ĉiam', 'endow': {'POSpeech': 'adverb'}},  # всегда
+        {'type': 'word', 'value': 'for', 'endow': {'POSpeech': 'adverb'}},  # прочь (прилагательное fora - далёкий)
+        {'type': 'word', 'value': 'preskaŭ', 'endow': {'POSpeech': 'adverb'}},  # почти
+        {'type': 'word', 'value': 'tro', 'endow': {'POSpeech': 'adverb'}},  # слишком
+        # частицы
+        {'type': 'word', 'value': 'jes', 'endow': {'POSpeech': 'particle'}},  # да
+        {'type': 'word', 'value': 'ne', 'endow': {'POSpeech': 'particle'}},  # не, нет
+        {'type': 'word', 'value': 'nur', 'endow': {'POSpeech': 'particle'}},  # только, (всего) лишь
+        {'type': 'word', 'value': 'ĉu', 'endow': {'POSpeech': 'particle'}},  # ли (вопросительная)
+        {'type': 'word', 'value': 'jen', 'endow': {'POSpeech': 'particle'}},  # вот (прилагательное jena - вот этот, следующий)
+        {'type': 'word', 'value': 'eĉ', 'endow': {'POSpeech': 'particle'}},  # даже
+        {'type': 'word', 'value': 'do', 'endow': {'POSpeech': 'particle'}},  # итак, следовательно, же
+        {'type': 'word', 'value': 'nek', 'endow': {'POSpeech': 'particle'}},  # ни (употребляется в паре с некоторыми другими отрицательными словами)
+        {'type': 'word', 'value': 'ĉi', 'endow': {'POSpeech': 'particle'}},  # обозначает близость
+        # местоимения личные
+        {'type': 'word', 'value': 'li', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  # он
+        {'type': 'word', 'value': 'mi', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  # я
+        {'type': 'word', 'value': 'vi', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  # ты, вы
+        {'type': 'word', 'value': 'ni', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  # мы
+        {'type': 'word', 'value': 'ŝi', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  # она
+        {'type': 'word', 'value': 'ĝi', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  # неодушёвлённый, животное, или лица, пол которого неизвестен (он, оно, она)
+        {'type': 'word', 'value': 'ili', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  # они
+        # местоимения возвратные
+        {'type': 'word', 'value': 'si', 'endow': {'case': 'nominative', 'category': 'reflexive'}},  # себя
+        {'type': 'word', 'value': 'mem', 'endow': {'case': 'nominative', 'category': 'reflexive'}},  # сам
+        # местоимения неопределённо-личные
+        {'type': 'word', 'value': 'oni', 'endow': {'case': 'nominative', 'category': ''}},  # люди, многие, некто
+
+        {'type': 'word', 'value': 'li', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  #
+        {'type': 'word', 'value': 'li', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  #
+        {'type': 'word', 'value': 'li', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  #
+        {'type': 'word', 'value': 'li', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  #
+        {'type': 'word', 'value': 'li', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  #
+    ],
     [
         {'type': 'end', 'value': 'n', 'endow': {'case': 'accusative'}},
     ],
@@ -21,12 +76,11 @@ signs = [
 
         {'type': 'case_of_first_letter', 'value': 'upper', 'endow': {'name': 'proper'}},
         {'type': 'case_of_first_letter', 'value': 'lower', 'endow': {'name': 'common'}},
-
-        {'type': 'word', 'value': 'la', 'endow': {'POSpeech': 'article', 'value': 'defined'}},
     ],
     [
         {'type': 'prop-default', 'value': {'POSpeech': 'adjective'}, 'endow': {'number': 'singular', 'case': 'nominative', 'name': 'common2'}},
         {'type': 'prop-default', 'value': {'POSpeech': 'noun'}, 'endow': {'number': 'singular', 'case': 'nominative'}},
+        {'type': 'prop', 'value': {'base': 'mi', 'POSpeech': 'adjective'}, 'endow': {'POSpeech': 'pronoun', 'category': 'possessive'}},  # притяжательное иестоимение
     ],
 ]
 
@@ -46,53 +100,6 @@ dct = {
 ''' ĉ ĝ ĥ ĵ ŝ ŭ '''
 
 words = {
-    'adverb':  { # непроизводные
-        u'ankaŭ':  {}, # также, тоже, и (стоит непосредственно перед словыом, к которому относится)
-        u'hodiaŭ': {}, # сегодня
-        u'tre':    {}, # очень
-        u'morgaŭ': {}, # завтра
-        u'nun':    {}, # теперь, сейчас
-        u'multe':  {}, # много
-        u'ankoraŭ':{}, # ещё
-        u'jam':    {}, # уже
-        u'certe':  {}, # уверенно, точно; конечно, несомненно, верно (прилагательное certa - уверенный, несомненный, определённый, точный)
-        u'baldaŭ': {}, # вскоре, скоро
-        u'hieraŭ': {}, # вчера
-        u'neniam': {},  # никогда
-        u'apenaŭ': {}, # едва, еле
-        u'tuj': {}, # сейчас, тотчас, сразу, немедленно
-        u'nepre': {}, # непременно, обязательно
-        u'ĉiam': {}, # всегда
-        u'for': {}, # прочь (прилагательное fora - далёкий)
-        u'preskaŭ': {}, # почти
-        u'tro': {}, # слишком
-      },
-    'particle': {
-        u'jes':{},# да
-        u'ne':{}, # не, нет
-        u'nur':{},# только, (всего) лишь
-        u'ĉu':{}, # ли (вопросительная)
-        u'jen':{},# вот (прилагательное jena - вот этот, следующий)
-        u'eĉ':{},  # даже
-        u'do':{},  # итак, следовательно, же
-        u'nek':{},  # ни (употребляется в паре с некоторыми другими отрицательными словами)
-        u'ĉi':{},  # обозначает близость
-      },
-    'pronoun': {
-        # личные
-        u'li':  {'case': 'nominative', 'category': 'personal'}, # он
-        u'mi':  {'case': 'nominative', 'category': 'personal'}, # я
-        u'vi':  {'case': 'nominative', 'category': 'personal'}, # ты, вы
-        u'ni':  {'case': 'nominative', 'category': 'personal'}, # мы
-        u'ŝi':  {'case': 'nominative', 'category': 'personal'}, # она
-        u'ĝi':  {'case': 'nominative', 'category': 'personal'}, # неодушёвлённый, животное, или лица, пол которого неизвестен (он, оно, она)
-        u'ili': {'case': 'nominative', 'category': 'personal'}, # они
-        # возвратное
-        u'si': {'case': 'nominative', 'category': 'reflexive'}, # себя
-        u'mem': {'case': 'nominative', 'category': 'reflexive'}, # сам
-        # неопределённо-личные
-        u'oni': {'case': 'nominative', 'category': ''}, # люди, многие, некто
-      },
     'preposition': {
         u'je':    {'give_case': 'undefined'},# с неопределённым значкением. Употребляется, когда не ясно, какой предлог использовать (Je via sano! - За ваше здоровье!)
         u'al':    {'give_case': 'dative'},   # к. Или не переводится (дательный падеж) (направление движения к цели)
