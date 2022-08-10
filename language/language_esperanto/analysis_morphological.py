@@ -14,6 +14,36 @@ combain_numerals_template = re.compile(('^(%s)(' + Dict.dct['numeral'][-5] + '|'
 mili_numerals_template = re.compile(('^(%s)(iliard|ilion)$') % '|'.join(Dict.dct['numeral'][:-5]))
 
 
+def set_properties_by_signs(word, signs):
+    word['base'] = word['word'].lower()
+    word['word_lower'] = word['word'].lower()
+    for layer in signs:
+        for sign in layer:
+            if sign['type'] == 'end' and word['base'].endswith(sign['value']):
+                word.update(sign['endow'])
+                word['base'] = word['base'][:-len(sign['value'])]
+
+            elif sign['type'] == 'prefix' and word['word'].startswith(sign['value']):
+                word.update(sign['endow'])
+                word['base'] = word['base'][len(sign['value']):]
+
+            elif sign['type'] == 'case_of_first_letter':
+                first_letter = word['word'][:1]
+                if first_letter.islower() and sign['value'] == 'lower':
+                    word.update(sign['endow'])
+
+                if first_letter.isupper() and sign['value'] == 'upper':
+                    word.update(sign['endow'])
+
+            elif sign['type'] == 'word' and sign['value'] == word['word_lower']:
+                word.update(sign['endow'])
+
+            elif sign['type'] == 'prop-default':
+                if [True for k, v in sign['value'].items() if word.get(k) == v]:
+                    for k, v in sign['endow'].items():
+                        if k not in word:
+                            word[k] = v
+
 def checkByDict(word_l, word):
     ''' Определяет часть речи по словарю
         для неизменяемых или почти неизменяемых частей речи'''
@@ -69,36 +99,10 @@ def _getMorphA(word):
     #if mili_numerals: mili_numerals = mili_numerals[0]
     #print combain_numerals, mili_numerals
 
-    word['base'] = word['word'].lower()
-    word['word_lower'] = word['word'].lower()
-    for sign in Dict.signs:
-        if sign['type'] == 'end' and word['base'].endswith(sign['value']):
-            word.update(sign['endow'])
-            word['base'] = word['base'][:-len(sign['value'])]
-
-        elif sign['type'] == 'prefix' and word['word'].startswith(sign['value']):
-            word.update(sign['endow'])
-            word['base'] = word['base'][len(sign['value']):]
-
-        elif sign['type'] == 'case_of_first_letter':
-            first_letter = word['word'][:1]
-            if first_letter.islower() and sign['value'] == 'lower':
-                word.update(sign['endow'])
-
-            if first_letter.isupper() and sign['value'] == 'upper':
-                word.update(sign['endow'])
-
-        elif sign['type'] == 'word' and sign['value'] == word['word_lower']:
-            word.update(sign['endow'])
+    set_properties_by_signs(word, Dict.signs)
 
     # наречие, глагол и существительное
     if word.get('POSpeech') in ('adverb', 'verb', 'noun'):
-        if word.get('POSpeech') == 'noun':
-            if 'case' not in word:
-                word['case'] = 'nominative'
-            # if 'number' not in word:
-            #     word['number'] = 'singular'
-
         if is_numeral(word['base'], word):
             word['derivative'] = 'numeral'  # производное от числительного
 
@@ -116,14 +120,6 @@ def _getMorphA(word):
         elif is_numeral(word['base'], word):  # порядковое числительное
             word['POSpeech'] = 'numeral'
             word['class'] = 'ordinal'
-        else:
-            if 'case' not in word:
-                word['case'] = 'nominative'
-            if 'number' not in word:
-                word['number'] = 'singular'
-
-            word['name'] = 'common'
-
 
     # мн. ч. существительно, прилагательного, притяжательно местоимения. И вин. падеж прилагательного, существительного, местоимения или притяхательного местоимения.
     #ERROR слово prezenten и enden определяется наречием. Другие слова на -n могут ошибочно определиться.
