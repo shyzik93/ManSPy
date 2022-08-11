@@ -28,7 +28,13 @@ def set_properties_by_signs(word, signs):
     word['word_lower'] = word['word'].lower()
     for layer in signs:
         for sign in layer:
-            if 'if-not' in sign and has_all_properties(word, sign['if-not']):
+            need_continue = False
+            for ifnot in sign.get('if-not', []):
+                if has_all_properties(word, ifnot):
+                    need_continue = True
+                    break
+
+            if need_continue:
                 continue
 
             if sign['type'] == 'end' and word['base'].endswith(sign['value']):
@@ -51,39 +57,14 @@ def set_properties_by_signs(word, signs):
                 word.update(sign['endow'])
 
             elif sign['type'] == 'prop-default':
-                # has_all_properties = True
-                # for k, v in sign['value'].items():
-                #     if word.get(k) != v:
-                #         has_all_properties = False
-                #         break
-
-                if has_all_properties(word, sign['value']):  # has_all_properties:
+                if has_all_properties(word, sign['value']):
                     for k, v in sign['endow'].items():
                         if k not in word:
                             word[k] = v
 
             elif sign['type'] == 'prop':
-                # has_all_properties = True
-                # for k, v in sign['value'].items():
-                #     if word.get(k) != v:
-                #         has_all_properties = False
-                #         break
-
-                if has_all_properties(word, sign['value']):  #has_all_properties:
+                if has_all_properties(word, sign['value']):
                     word.update(sign['endow'])
-
-
-def checkByDict(word_l, word):
-    ''' Определяет часть речи по словарю
-        для неизменяемых или почти неизменяемых частей речи'''
-    for POSpeech, data in Dict.words.items():
-        if word_l not in data:
-            continue
-
-        word.update(data[word_l])
-        word['POSpeech'] = POSpeech
-        word['base'] = word_l
-        return True
 
 
 def is_numeral(word):
@@ -117,17 +98,6 @@ def is_numeral(word):
 
 
 def _getMorphA(word):
-    # Определение части речи по словарю
-    # (для неизменяемых или почти неизменяемых частей речи)
-    if checkByDict(word['word'].lower(), word):
-        return
-
-    #combain_numerals = combain_numerals_template.findall(word_l)
-    #if combain_numerals: combain_numerals = combain_numerals[0]
-    #mili_numerals = mili_numerals_template.findall(word_l)
-    #if mili_numerals: mili_numerals = mili_numerals[0]
-    #print combain_numerals, mili_numerals
-
     set_properties_by_signs(word, Dict.signs)
 
     # наречие, глагол и существительное
@@ -137,19 +107,11 @@ def _getMorphA(word):
 
     # прилагательное, притяжательное местоимение или порядковое числительное
     elif word.get('POSpeech') == 'adjective':
-        if checkByDict(word['base'], word):  # прилагательное
-            if word['POSpeech'] == 'numeral':  # порядковое числительное
-                word['class'] = 'ordinal'
-            else:  # прилагательное (есть ли такие: dea, laa, kaja и подобные?)
-                word['POSpeech'] = 'adjective'
-                word['case'] = 'nominative'
-                word['number'] = 'singular'
+        if word['base'] in Dict.words['numeral']:  # прилагательное
+            word['class'] = 'ordinal'
         elif is_numeral(word):  # порядковое числительное
             word['POSpeech'] = 'numeral'
             word['class'] = 'ordinal'
-
-    # мн. ч. существительно, прилагательного, притяжательно местоимения. И вин. падеж прилагательного, существительного, местоимения или притяхательного местоимения.
-    #ERROR слово prezenten и enden определяется наречием. Другие слова на -n могут ошибочно определиться.
 
     # сложное числительное (не составные!)
     elif is_numeral(word):#combain_numerals:#len_word >= 5:

@@ -80,22 +80,38 @@ signs = [
         {'type': 'word', 'value': 'ĉar', 'endow': {'POSpeech': 'conjunction', 'value': 'subordinating'}},  # потому что, так как, поскольку, ибо # подчинительные союзы
         {'type': 'word', 'value': 'se', 'endow': {'POSpeech': 'conjunction', 'value': ''}},  # если
         {'type': 'word', 'value': 'kvankam', 'endow': {'POSpeech': 'conjunction', 'value': ''}},  # хотя
+        # числительные
+        {'type': 'word', 'value': 'nul', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 0}},
+        {'type': 'word', 'value': 'unu', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 1}},
+        {'type': 'word', 'value': 'du', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 2}},
+        {'type': 'word', 'value': 'tri', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 3}},
+        {'type': 'word', 'value': 'kvar', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 4}},
+        {'type': 'word', 'value': 'kvin', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 5}},
+        {'type': 'word', 'value': 'ses', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 6}},
+        {'type': 'word', 'value': 'sep', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 7}},
+        {'type': 'word', 'value': 'ok', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 8}},
+        {'type': 'word', 'value': 'naŭ', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 9}},
+        {'type': 'word', 'value': 'dek', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 10}},
+        {'type': 'word', 'value': 'cent', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 100}},
+        {'type': 'word', 'value': 'mil', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 1000}},
+        {'type': 'word', 'value': 'milion', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 1000000}},
+        {'type': 'word', 'value': 'miliard', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 1000000000}},
     ],
     [
-        {'type': 'end', 'value': 'n', 'endow': {'case': 'accusative'}, 'if-not': {'POSpeech': 'preposition'}},
+        {'type': 'end', 'value': 'n', 'endow': {'case': 'accusative'}, 'if-not': [{'POSpeech': 'preposition'}]},
     ],
     [
-        {'type': 'end', 'value': 'j', 'endow': {'number': 'plural'}, 'if-not': {'POSpeech': 'conjunction'}},
+        {'type': 'end', 'value': 'j', 'endow': {'number': 'plural'}, 'if-not': [{'POSpeech': 'conjunction'}]},
     ],
     [
-        {'type': 'end', 'value': 'i', 'endow': {'POSpeech': 'verb', 'mood': 'infinitive'}},
+        {'type': 'end', 'value': 'i', 'endow': {'POSpeech': 'verb', 'mood': 'infinitive'}, 'if-not': [{'POSpeech': 'numeral'}]},
         {'type': 'end', 'value': 'u', 'endow': {'POSpeech': 'verb', 'mood': 'imperative'}},
         {'type': 'end', 'value': 'as', 'endow': {'POSpeech': 'verb', 'mood': 'indicative', 'tense': 'present'}},
         {'type': 'end', 'value': 'is', 'endow': {'POSpeech': 'verb', 'mood': 'indicative', 'tense': 'past'}},
         {'type': 'end', 'value': 'os', 'endow': {'POSpeech': 'verb', 'mood': 'infinitive', 'tense': 'future'}},
         {'type': 'end', 'value': 'us', 'endow': {'POSpeech': 'verb', 'mood': 'subjunctive'}},
         {'type': 'end', 'value': 'o', 'endow': {'POSpeech': 'noun'}},
-        {'type': 'end', 'value': 'e', 'endow': {'POSpeech': 'adverb'}, 'if-not': {'POSpeech': 'preposition'}},
+        {'type': 'end', 'value': 'e', 'endow': {'POSpeech': 'adverb'}, 'if-not': [{'POSpeech': 'preposition'}]},
         {'type': 'end', 'value': 'a', 'endow': {'POSpeech': 'adjective'}},
 
         {'type': 'prefix', 'value': 'mal', 'endow': {'antonym': True}},
@@ -130,6 +146,8 @@ words = {
 
         # союз es ... (do). Если ... (то)
         #u'do': {'value': ''}, # то (это частица)
+
+        # ERROR слово prezenten и enden определяется наречием. Другие слова на -n могут ошибочно определиться.
     'numeral': {
         u'nul': {'class': 'cardinal', 'number_value': 0},
         u'unu':  {'class': 'cardinal', 'number_value': 1},
