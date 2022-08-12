@@ -655,6 +655,155 @@ dataset_numbers_and_simple_math = {
             },
             'r_text_construct': ['3 * 4'],
         },
+        {
+            'w_text': 'adiciu tria tridek kaj kvaron',
+            'morphological': {
+                'unit_info': {'max_index': 0, 'index': None},
+                'unit': {
+                    0: {
+                        'unit_info': {'max_index': 4, 'index': 0, 'end': ''},
+                        'unit': {
+                            0: {
+                                'unit_info': {
+                                    'max_index': 5,
+                                    'index': 0,
+                                    'word': 'adiciu',
+                                    'symbol_map': {},
+                                    'feature': [],
+                                    'link': [],
+                                    'homogeneous_link': [],
+                                    'type': 'real',
+                                    'start_pmark': [],
+                                    'end_pmark': [],
+                                    'around_pmark': [],
+                                    'combine_words': [],
+                                    'end': '',
+                                    'end_orig': '',
+                                    'base': 'adici',
+                                    'word_lower': 'adiciu',
+                                    'POSpeech': 'verb',
+                                    'mood': 'imperative',
+                                    'name': 'common'
+                                },
+                                'unit': {},
+                                'unit_type': 'Word'
+                            },
+                            1: {
+                                'unit_info': {
+                                    'max_index': 3,
+                                    'index': 1,
+                                    'word': 'tria',
+                                    'symbol_map': {},
+                                    'feature': [],
+                                    'link': [],
+                                    'homogeneous_link': [],
+                                    'type': 'real',
+                                    'start_pmark': [],
+                                    'end_pmark': [],
+                                    'around_pmark': [],
+                                    'combine_words': [],
+                                    'end': '',
+                                    'end_orig': '',
+                                    'base': 'tri',
+                                    'word_lower': 'tria',
+                                    'POSpeech': 'numeral',
+                                    'name': 'common',
+                                    'number': 'singular',
+                                    'case': 'nominative',
+                                    'number_value': 3,
+                                    'class': 'ordinal'
+                                },
+                                'unit': {},
+                                'unit_type': 'Word'
+                            },
+                            2: {
+                                'unit_info': {
+                                    'max_index': 5,
+                                    'index': 2,
+                                    'word': 'tridek',
+                                    'symbol_map': {},
+                                    'feature': [],
+                                    'link': [],
+                                    'homogeneous_link': [],
+                                    'type': 'real',
+                                    'start_pmark': [],
+                                    'end_pmark': [],
+                                    'around_pmark': [],
+                                    'combine_words': [],
+                                    'end': '',
+                                    'end_orig': '',
+                                    'base': 'tridek',
+                                    'word_lower': 'tridek',
+                                    'name': 'common',
+                                    'number_value': 30,
+                                    'POSpeech': 'numeral',
+                                    'class': 'cardinal'
+                                },
+                                'unit': {},
+                                'unit_type': 'Word'
+                            },
+                            3: {
+                                'unit_info': {
+                                    'max_index': 2,
+                                    'index': 3,
+                                    'word': 'kaj',
+                                    'symbol_map': {},
+                                    'feature': [],
+                                    'link': [],
+                                    'homogeneous_link': [],
+                                    'type': 'real',
+                                    'start_pmark': [],
+                                    'end_pmark': [],
+                                    'around_pmark': [],
+                                    'combine_words': [],
+                                    'end': '',
+                                    'end_orig': '',
+                                    'base': 'kaj',
+                                    'word_lower': 'kaj',
+                                    'POSpeech': 'conjunction',
+                                    'value': 'coordinating',
+                                    'name': 'common'
+                                },
+                                'unit': {},
+                                'unit_type': 'Word'
+                            },
+                            4: {
+                                'unit_info': {
+                                    'max_index': 5,
+                                    'index': 4,
+                                    'word': 'kvaron',
+                                    'symbol_map': {},
+                                    'feature': [],
+                                    'link': [],
+                                    'homogeneous_link': [],
+                                    'type': 'real',
+                                    'start_pmark': [],
+                                    'end_pmark': [],
+                                    'around_pmark': [],
+                                    'combine_words': [],
+                                    'end': '',
+                                    'end_orig': '',
+                                    'base': 'kvar',
+                                    'word_lower': 'kvaron',
+                                    'case': 'accusative',
+                                    'POSpeech': 'noun',
+                                    'name': 'common',
+                                    'number': 'singular',
+                                    'class': 'cardinal',
+                                    'number_value': 4,
+                                    'derivative': 'numeral',
+                                },
+                                'unit': {},
+                                'unit_type': 'Word',
+                            },
+                        },
+                        'unit_type': 'Sentence'
+                    },
+                },
+                'unit_type': 'Text'
+            },
+            'r_text_construct': ['33 + 4'],
+        },
     ]
 }
 
@@ -979,6 +1128,7 @@ dataset_proper = {
     ]
 }
 
+
 dataset_construct_condition = {
     'description': 'Условные конструкции',
     'examples': [
@@ -1001,6 +1151,7 @@ datasets = (
     dataset_mistakes,
     dataset_homogeneous_sentences,
     dataset_proper,
+
 )
 
 
