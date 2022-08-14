@@ -58,24 +58,19 @@ def set_properties_by_signs(word, signs):
 
             elif sign['type'] == 'function':
                 sign['value'](word)
-
-
-def _getMorphA(word):
-    set_properties_by_signs(word, Dict.signs)
-    # число (считается как числительное)
-    if word['notword'] == 'figure':
-        word['POSpeech'] = 'numeral'
-        word['class'] = 'cardinal'
-        word['number_value'] = float(word['word_lower'].replace(',', '.'))
+                if sign['endow']:
+                    word.update(sign['endow'])
 
 
 def get_analysis(text):
     ''' Обёртка '''
     for sentence in text:
         for word in sentence:
-            _getMorphA(word)
+            set_properties_by_signs(word, Dict.signs)
+            if word['notword'] == 'figure':
+                word['POSpeech'] = 'numeral'
+                word['class'] = 'cardinal'
+                word['number_value'] = float(word['word_lower'].replace(',', '.'))
     return text
 
-#sentence = 'vi montru kursojn de mia dolaro'
-#sentence = '1444 123.78654 345,976 0.7 9,8'
-#sentence = 'triA unu Tridek kvarcent du mil'
+

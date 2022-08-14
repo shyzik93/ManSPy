@@ -9,7 +9,13 @@
     #u'do': {'value': ''}, # то (это частица)
 
     # ERROR слово prezenten и enden определяется наречием. Другие слова на -n могут ошибочно определиться.
+
 Esperanto some letters: ĉ ĝ ĥ ĵ ŝ ŭ
+
+Какой-то текст:
+    #sentence = 'vi montru kursojn de mia dolaro'
+    #sentence = '1444 123.78654 345,976 0.7 9,8'
+    #sentence = 'triA unu Tridek kvarcent du mil'
 """
 import re
 
