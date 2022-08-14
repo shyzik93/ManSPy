@@ -683,7 +683,7 @@ dataset_numbers_and_simple_math = {
                                     'word_lower': 'adiciu',
                                     'POSpeech': 'verb',
                                     'mood': 'imperative',
-                                    'name': 'common'
+                                    'name': 'common',
                                 },
                                 'unit': {},
                                 'unit_type': 'Word'

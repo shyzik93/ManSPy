@@ -52,7 +52,7 @@ def set_properties_by_signs(word, signs):
                         if k not in word:
                             word[k] = v
 
-            elif sign['type'] == 'prop':
+            elif sign['type'] == 'prop-update':
                 if has_all_properties(word, sign['value']):
                     word.update(sign['endow'])
 
@@ -60,6 +60,11 @@ def set_properties_by_signs(word, signs):
                 endow = sign.get('endow')
                 if sign['value'](word) and endow:
                     word.update(endow)
+
+            elif sign['type'] == 'prop-delete':
+                if has_all_properties(word, sign['value']):
+                    for key in sign['endow']:
+                        del word[key]
 
 
 def get_analysis(text):

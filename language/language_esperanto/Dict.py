@@ -36,28 +36,15 @@ mili_numerals_template = re.compile('^({})(iliard|ilion)$'.format('|'.join(numer
 
 
 def is_numeral(word):
-    def set_properties():
-        if word.get('POSpeech') == 'adjective':
-            word['class'] = 'ordinal'
-            word['POSpeech'] = 'numeral'
-        elif word.get('POSpeech') in ('adverb', 'verb', 'noun'):
-            word['class'] = 'cardinal'
-            word['derivative'] = 'numeral'  # производное от числительного
-        else:
-            word['class'] = 'cardinal'
-            word['POSpeech'] = 'numeral'
-
     word_l = word['base']
     if word_l in numeral_dict:
         word['number_value'] = numeral_dict[word_l]
-        set_properties()
         return True
 
     combain_numerals = combain_numerals_template.findall(word_l)
     if combain_numerals:
         factor1, factor2 = combain_numerals[0]
         word['number_value'] = numeral_dict[factor2] * numeral_dict[factor1]
-        set_properties()
         return True
 
     mili_numerals = mili_numerals_template.findall(word_l)
@@ -67,7 +54,6 @@ def is_numeral(word):
         if factor2 == 'iliard':
             word['number_value'] *= 1000
 
-        set_properties()
         return True
 
     return False
@@ -171,7 +157,8 @@ signs = [
         # {'type': 'word', 'value': 'mil', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 1000}},
         # {'type': 'word', 'value': 'milion', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 1000000}},
         # {'type': 'word', 'value': 'miliard', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 1000000000}},
-        {'type': 'function', 'value': is_numeral},
+        {'type': 'function', 'value': is_numeral, 'endow': {'_isnumeral': 'yes'}},
+        {'type': 'prop-update', 'value': {'_isnumeral': 'yes'}, 'endow': {'POSpeech': 'numeral', 'class': 'cardinal'}},
     ],
     [
         {'type': 'end', 'value': 'n', 'endow': {'case': 'accusative'}, 'if-not': [{'POSpeech': 'preposition'}]},
@@ -198,9 +185,14 @@ signs = [
     [
         {'type': 'prop-default', 'value': {'POSpeech': 'adjective'}, 'endow': {'number': 'singular', 'case': 'nominative', 'name': 'common2'}},
         {'type': 'prop-default', 'value': {'POSpeech': 'noun'}, 'endow': {'number': 'singular', 'case': 'nominative'}},
-        {'type': 'prop', 'value': {'base': 'mi', 'POSpeech': 'adjective'}, 'endow': {'POSpeech': 'pronoun', 'category': 'possessive'}},  # притяжательное иестоимение
+        {'type': 'prop-update', 'value': {'base': 'mi', 'POSpeech': 'adjective'}, 'endow': {'POSpeech': 'pronoun', 'category': 'possessive'}},  # притяжательное иестоимение
     ],
     [
-        {'type': 'function', 'value': is_numeral}
+        {'type': 'function', 'value': is_numeral, 'endow': {'_isnumeral': 'yes'}},
+        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', 'POSpeech': 'adjective'}, 'endow': {'POSpeech': 'numeral', 'class': 'ordinal'}},
+        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', 'POSpeech': 'adverb'}, 'endow': {'derivative': 'numeral', 'class': 'cardinal'}},
+        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', 'POSpeech': 'verb'}, 'endow': {'derivative': 'numeral', 'class': 'cardinal'}},
+        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', 'POSpeech': 'noun'}, 'endow': {'derivative': 'numeral', 'class': 'cardinal'}},
+        {'type': 'prop-delete', 'value': {'_isnumeral': 'yes'}, 'endow': ['_isnumeral']},
     ],
 ]

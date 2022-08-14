@@ -22,6 +22,16 @@ def mock_action(path):
     return path[LEN_DEFAULT_MODULE_DIR:]
 
 
+def sort_text_dict(text):
+    for sentence_index, sentence in text['unit'].items():
+        for word_index, word in sentence['unit'].items():
+            unit_info = {}
+            for k in sorted(word['unit_info'].keys()):
+                unit_info[k] = word['unit_info'][k]
+
+            word['unit_info'] = unit_info
+
+
 class LevelsTestCase(unittest.TestCase):
     def test_level_morphological(self):
         settings = Settings(
@@ -38,7 +48,10 @@ class LevelsTestCase(unittest.TestCase):
                     with self.subTest(dataset['description']):
                         settings.language = example.get('language', 'esperanto')
                         answers = nature2internal(Message(settings, example['w_text']))
-                        self.assertDictEqual(answers.export_unit(dict), example['morphological'], example['w_text'])
+                        #sort_text_dict(example['morphological'])
+                        answer = answers.export_unit(dict)
+                        #sort_text_dict(answer)
+                        self.assertDictEqual(answer, example['morphological'], example['w_text'])
 
     @patch('manspy.converter.importer')
     def test_level_convert(self, importer):
