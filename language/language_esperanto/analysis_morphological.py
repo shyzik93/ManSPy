@@ -4,16 +4,6 @@
 '''
 
 from . import Dict
-import re
-
-combain_numerals_template = re.compile(
-        '^({})({}|{})$'.format(
-            '|'.join(Dict.numeral_list[:-5]),
-            Dict.numeral_list[-5],
-            Dict.numeral_list[-4],
-        )
-)
-mili_numerals_template = re.compile('^({})(iliard|ilion)$'.format('|'.join(Dict.numeral_list[:-5])))
 
 
 def set_properties_by_signs(word, signs):
@@ -66,48 +56,14 @@ def set_properties_by_signs(word, signs):
                 if has_all_properties(word, sign['value']):
                     word.update(sign['endow'])
 
-
-def is_numeral(word):
-    word_l = word['base']
-    if word_l in Dict.words['numeral']:
-        word.update(Dict.words['numeral'][word_l])
-        return True
-
-    combain_numerals = combain_numerals_template.findall(word_l)
-    if combain_numerals:
-        factor1, factor2 = combain_numerals[0]
-        word['number_value'] = int(Dict.numeral_dict[factor2]) * int(Dict.numeral_dict[factor1])
-
-    mili_numerals = mili_numerals_template.findall(word_l)
-    if mili_numerals:
-        factor1, factor2 = mili_numerals[0]
-        word['number_value'] = int(Dict.numeral_dict['milion']) ** int(Dict.numeral_dict[factor1])
-        if factor2 == 'iliard':
-            word['number_value'] *= 1000
-
-    return bool(combain_numerals) or bool(mili_numerals)
+            elif sign['type'] == 'function':
+                sign['value'](word)
 
 
 def _getMorphA(word):
     set_properties_by_signs(word, Dict.signs)
-
-    # наречие, глагол и существительное
-    if word.get('POSpeech') in ('adverb', 'verb', 'noun') and is_numeral(word):
-        word['derivative'] = 'numeral'  # производное от числительного
-
-    # прилагательное, притяжательное местоимение или порядковое числительное
-    elif word.get('POSpeech') == 'adjective' and is_numeral(word):
-        word['number_value'] = Dict.words['numeral'][word['base']]['number_value']
-        word['POSpeech'] = 'numeral'
-        word['class'] = 'ordinal'
-
-    # сложное числительное (не составные!)
-    elif is_numeral(word):
-        word['POSpeech'] = 'numeral'
-        word['class'] = 'cardinal'  # количественное
-
     # число (считается как числительное)
-    elif word['notword'] == 'figure':#re.match(r'[0-9]+(\.|\,)?[0-9]*', word_l):
+    if word['notword'] == 'figure':
         word['POSpeech'] = 'numeral'
         word['class'] = 'cardinal'
         word['number_value'] = float(word['word_lower'].replace(',', '.'))

@@ -1,3 +1,72 @@
+"""
+Нерешённые вопросы:
+    # предлоги
+    # составной предлог (вероятно, выделять через отдельную функцию. Хранить в отдельном словаре)
+    # u'okaze de':   {'give_case': ''}, # по случаю
+    # выражают локативные, временные, субъектно-объектные отношения составными предлогами (ekdi, pere de, dank' al, de sur и т. д.)
+
+    # союз es ... (do). Если ... (то)
+    #u'do': {'value': ''}, # то (это частица)
+
+    # ERROR слово prezenten и enden определяется наречием. Другие слова на -n могут ошибочно определиться.
+Esperanto some letters: ĉ ĝ ĥ ĵ ŝ ŭ
+"""
+import re
+
+
+numeral_dict = {  # порядок числительных НЕ МЕНЯТЬ!
+    'nul': 0, 'unu':  1, 'du':   2, 'tri':  3, 'kvar': 4, 'kvin': 5, 'ses':  6, 'sep':  7, 'ok':   8, 'naŭ':  9,
+    'dek':  10, 'cent': 100, 'mil':  1000, 'milion':  1000000, 'miliard': 1000000000,
+}
+numeral_list = list(numeral_dict.keys())
+combain_numerals_template = re.compile(
+    '^({})({}|{})$'.format(
+        '|'.join(numeral_list[:10]),
+        numeral_list[10],
+        numeral_list[11],
+    )
+)
+mili_numerals_template = re.compile('^({})(iliard|ilion)$'.format('|'.join(numeral_list[:10])))
+
+
+def is_numeral(word):
+    def set_properties():
+        if word.get('POSpeech') == 'adjective':
+            word['class'] = 'ordinal'
+            word['POSpeech'] = 'numeral'
+        elif word.get('POSpeech') in ('adverb', 'verb', 'noun'):
+            word['class'] = 'cardinal'
+            word['derivative'] = 'numeral'  # производное от числительного
+        else:
+            word['class'] = 'cardinal'
+            word['POSpeech'] = 'numeral'
+
+    word_l = word['base']
+    if word_l in numeral_dict:
+        word['number_value'] = numeral_dict[word_l]
+        set_properties()
+        return True
+
+    combain_numerals = combain_numerals_template.findall(word_l)
+    if combain_numerals:
+        factor1, factor2 = combain_numerals[0]
+        word['number_value'] = numeral_dict[factor2] * numeral_dict[factor1]
+        set_properties()
+        return True
+
+    mili_numerals = mili_numerals_template.findall(word_l)
+    if mili_numerals:
+        factor1, factor2 = mili_numerals[0]
+        word['number_value'] = numeral_dict['milion'] ** numeral_dict[factor1]
+        if factor2 == 'iliard':
+            word['number_value'] *= 1000
+
+        set_properties()
+        return True
+
+    return False
+
+
 signs = [
     # 'type' - Категория признака, 'value' - Значение признака, 'endow' - Наделяет свойством
     [
@@ -81,21 +150,22 @@ signs = [
         {'type': 'word', 'value': 'se', 'endow': {'POSpeech': 'conjunction', 'value': ''}},  # если
         {'type': 'word', 'value': 'kvankam', 'endow': {'POSpeech': 'conjunction', 'value': ''}},  # хотя
         # числительные
-        {'type': 'word', 'value': 'nul', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 0}},
-        {'type': 'word', 'value': 'unu', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 1}},
-        {'type': 'word', 'value': 'du', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 2}},
-        {'type': 'word', 'value': 'tri', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 3}},
-        {'type': 'word', 'value': 'kvar', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 4}},
-        {'type': 'word', 'value': 'kvin', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 5}},
-        {'type': 'word', 'value': 'ses', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 6}},
-        {'type': 'word', 'value': 'sep', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 7}},
-        {'type': 'word', 'value': 'ok', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 8}},
-        {'type': 'word', 'value': 'naŭ', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 9}},
-        {'type': 'word', 'value': 'dek', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 10}},
-        {'type': 'word', 'value': 'cent', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 100}},
-        {'type': 'word', 'value': 'mil', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 1000}},
-        {'type': 'word', 'value': 'milion', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 1000000}},
-        {'type': 'word', 'value': 'miliard', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 1000000000}},
+        # {'type': 'word', 'value': 'nul', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 0}},
+        # {'type': 'word', 'value': 'unu', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 1}},
+        # {'type': 'word', 'value': 'du', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 2}},
+        # {'type': 'word', 'value': 'tri', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 3}},
+        # {'type': 'word', 'value': 'kvar', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 4}},
+        # {'type': 'word', 'value': 'kvin', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 5}},
+        # {'type': 'word', 'value': 'ses', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 6}},
+        # {'type': 'word', 'value': 'sep', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 7}},
+        # {'type': 'word', 'value': 'ok', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 8}},
+        # {'type': 'word', 'value': 'naŭ', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 9}},
+        # {'type': 'word', 'value': 'dek', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 10}},
+        # {'type': 'word', 'value': 'cent', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 100}},
+        # {'type': 'word', 'value': 'mil', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 1000}},
+        # {'type': 'word', 'value': 'milion', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 1000000}},
+        # {'type': 'word', 'value': 'miliard', 'endow': {'POSpeech': 'numeral', 'class': 'cardinal', 'number_value': 1000000000}},
+        {'type': 'function', 'value': is_numeral},
     ],
     [
         {'type': 'end', 'value': 'n', 'endow': {'case': 'accusative'}, 'if-not': [{'POSpeech': 'preposition'}]},
@@ -124,45 +194,7 @@ signs = [
         {'type': 'prop-default', 'value': {'POSpeech': 'noun'}, 'endow': {'number': 'singular', 'case': 'nominative'}},
         {'type': 'prop', 'value': {'base': 'mi', 'POSpeech': 'adjective'}, 'endow': {'POSpeech': 'pronoun', 'category': 'possessive'}},  # притяжательное иестоимение
     ],
+    [
+        {'type': 'function', 'value': is_numeral}
+    ],
 ]
-
-###############################################################################
-
-numeral_list = [  # порядок числительных НЕ МЕНЯТЬ!
-    'nul', 'unu', 'du', 'tri', 'kvar', 'kvin', 'ses', 'sep', 'ok', 'naŭ', 'dek', 'cent', 'mil', 'milion', 'miliard',
-]
-numeral_dict = {
-    'nul': 0, 'unu': 1, 'du': 2, 'tri': 3, 'kvar': 4, 'kvin': 5, 'ses': 6, 'sep': 7, 'ok': 8, 'naŭ': 9, 'dek': 10,
-    'cent': 100, 'mil': 1000, 'milion': 1000000, 'miliard': 1000000000,
-}
-
-''' ĉ ĝ ĥ ĵ ŝ ŭ '''
-
-words = {
-        # предлоги
-        # составной предлог (вероятно, выделять через отдельную функцию. Хранить в отдельном словаре)
-        # u'okaze de':   {'give_case': ''}, # по случаю
-        # выражают локативные, временные, субъектно-объектные отношения составными предлогами (ekdi, pere de, dank' al, de sur и т. д.)
-
-        # союз es ... (do). Если ... (то)
-        #u'do': {'value': ''}, # то (это частица)
-
-        # ERROR слово prezenten и enden определяется наречием. Другие слова на -n могут ошибочно определиться.
-    'numeral': {
-        u'nul': {'class': 'cardinal', 'number_value': 0},
-        u'unu':  {'class': 'cardinal', 'number_value': 1},
-        u'du':   {'class': 'cardinal', 'number_value': 2},
-        u'tri':  {'class': 'cardinal', 'number_value': 3},
-        u'kvar': {'class': 'cardinal', 'number_value': 4},
-        u'kvin': {'class': 'cardinal', 'number_value': 5},
-        u'ses':  {'class': 'cardinal', 'number_value': 6},
-        u'sep':  {'class': 'cardinal', 'number_value': 7},
-        u'ok':   {'class': 'cardinal', 'number_value': 8},
-        u'naŭ':  {'class': 'cardinal', 'number_value': 9},
-        u'dek':  {'class': 'cardinal', 'number_value': 10},
-        u'cent': {'class': 'cardinal', 'number_value': 100},
-        u'mil':  {'class': 'cardinal', 'number_value': 1000},
-        u'milion':  {'class': 'cardinal', 'number_value': 1000000},
-        u'miliard': {'class': 'cardinal', 'number_value': 1000000000}
-       }  
-    }

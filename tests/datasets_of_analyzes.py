@@ -711,7 +711,7 @@ dataset_numbers_and_simple_math = {
                                     'number': 'singular',
                                     'case': 'nominative',
                                     'number_value': 3,
-                                    'class': 'ordinal'
+                                    'class': 'ordinal',
                                 },
                                 'unit': {},
                                 'unit_type': 'Word'
@@ -734,10 +734,10 @@ dataset_numbers_and_simple_math = {
                                     'end_orig': '',
                                     'base': 'tridek',
                                     'word_lower': 'tridek',
-                                    'name': 'common',
                                     'number_value': 30,
+                                    'class': 'cardinal',
                                     'POSpeech': 'numeral',
-                                    'class': 'cardinal'
+                                    'name': 'common',
                                 },
                                 'unit': {},
                                 'unit_type': 'Word'
