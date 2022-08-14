@@ -14,6 +14,34 @@ def set_properties_by_signs(word, signs):
 
         return True
 
+    def check_word(word, type_sign: str, value):
+        if type_sign == 'prop':
+            return has_all_properties(word, value)
+        elif type_sign == 'end' and word['base'].endswith(value):
+            word['base'] = word['base'][:-len(value)]
+            return True
+        elif type_sign == 'prefix' and word['word'].startswith(value):
+            word['base'] = word['base'][len(value):]
+            return True
+        elif type_sign == 'case_of_first_letter':
+            first_letter = word['word'][:1]
+            return (first_letter.islower() and value == 'lower') or (first_letter.isupper() and value == 'upper')
+        elif type_sign == 'word' and value == word['word_lower']:
+            return True
+        elif type_sign == 'function':
+            return value(word)
+
+    def do_endow(word, type_endow, endow):
+        if type_endow == 'update':
+            word.update(endow)
+        elif type_endow == 'default':
+            for k, v in endow.items():
+                if k not in word:  # word.setdefault(k, v)
+                    word[k] = v
+        elif type_endow == 'delete':
+            for key in endow:
+                del word[key]
+
     word['base'] = word['word'].lower()
     word['word_lower'] = word['word'].lower()
     for layer in signs:
@@ -27,44 +55,12 @@ def set_properties_by_signs(word, signs):
             if need_continue:
                 continue
 
-            if sign['type'] == 'end' and word['base'].endswith(sign['value']):
-                word.update(sign['endow'])
-                word['base'] = word['base'][:-len(sign['value'])]
+            if '-' not in sign['type']:
+                sign['type'] = '{}-update'.format(sign['type'])
 
-            elif sign['type'] == 'prefix' and word['word'].startswith(sign['value']):
-                word.update(sign['endow'])
-                word['base'] = word['base'][len(sign['value']):]
-
-            elif sign['type'] == 'case_of_first_letter':
-                first_letter = word['word'][:1]
-                if first_letter.islower() and sign['value'] == 'lower':
-                    word.update(sign['endow'])
-
-                if first_letter.isupper() and sign['value'] == 'upper':
-                    word.update(sign['endow'])
-
-            elif sign['type'] == 'word' and sign['value'] == word['word_lower']:
-                word.update(sign['endow'])
-
-            elif sign['type'] == 'prop-default':
-                if has_all_properties(word, sign['value']):
-                    for k, v in sign['endow'].items():
-                        if k not in word:
-                            word[k] = v
-
-            elif sign['type'] == 'prop-update':
-                if has_all_properties(word, sign['value']):
-                    word.update(sign['endow'])
-
-            elif sign['type'] == 'function':
-                endow = sign.get('endow')
-                if sign['value'](word) and endow:
-                    word.update(endow)
-
-            elif sign['type'] == 'prop-delete':
-                if has_all_properties(word, sign['value']):
-                    for key in sign['endow']:
-                        del word[key]
+            type_sign, type_endow = sign['type'].split('-')
+            if check_word(word, type_sign, sign['value']) and sign.get('endow'):
+                do_endow(word, type_endow, sign['endow'])
 
 
 def get_analysis(text):
