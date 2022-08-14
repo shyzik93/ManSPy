@@ -57,8 +57,9 @@ def set_properties_by_signs(word, signs):
                     word.update(sign['endow'])
 
             elif sign['type'] == 'function':
-                if sign['value'](word) and sign['endow']:
-                    word.update(sign['endow'])
+                endow = sign.get('endow')
+                if sign['value'](word) and endow:
+                    word.update(endow)
 
 
 def get_analysis(text):
