@@ -57,8 +57,7 @@ def set_properties_by_signs(word, signs):
                     word.update(sign['endow'])
 
             elif sign['type'] == 'function':
-                sign['value'](word)
-                if sign['endow']:
+                if sign['value'](word) and sign['endow']:
                     word.update(sign['endow'])
 
 
