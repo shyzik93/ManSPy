@@ -34,13 +34,13 @@ def nature2internal(msg):
         t = time.time()
 
         if level == "graphmath":
-            sentences = lang_module.analysis_graphemathic.get_analysis(sentences)
+            sentences = lang_module.analysis_graphemathic.analyze(sentences)
         elif level == "morph":
-            sentences = lang_module.analysis_morphological.get_analysis(sentences)
+            sentences = lang_module.analysis_morphological.analyze(sentences)
         elif level == "postmorph":
-            sentences = lang_module.analysis_postmorphological.get_analysis(sentences)
+            sentences = lang_module.analysis_postmorphological.analyze(sentences)
         elif level == "synt":
-            sentences = lang_module.analysis_syntax.get_analysis(sentences)
+            sentences = lang_module.analysis_syntax.analyze(sentences)
         elif level == "extract":
             sentences = extractor.analyze(sentences)
         elif level == "convert":

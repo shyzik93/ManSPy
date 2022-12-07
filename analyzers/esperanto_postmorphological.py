@@ -192,7 +192,7 @@ def process_numeral(word, sentence, indexes=None):
     sentence.jumpByStep(-len(indexes))
 
 
-def get_analysis(text):
+def analyze(text):
     ''' Обёртка '''
     for sentence in text:
         #TASK обстоятельства, выраженные существительным, обозначить как наречие

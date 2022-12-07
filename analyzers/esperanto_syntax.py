@@ -157,7 +157,7 @@ def split_sentence(sentence):
         _sentences.append(goThrowLinks(first_index, sentence))    
 
 
-def get_analysis(text):
+def analyze(text):
     for sentence in text:
         # определяет члены предложения
         for word in sentence:

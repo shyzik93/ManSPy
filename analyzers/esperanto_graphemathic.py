@@ -103,7 +103,7 @@ def separate_to_sentences(words):
     return text
 
 
-def get_analysis(source_string):
+def analyze(source_string):
     
     words = process_words(source_string)
     text = separate_to_sentences(words)
