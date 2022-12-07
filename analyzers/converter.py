@@ -206,7 +206,7 @@ def Extraction2IL(relation, settings, subjects, predicate, arguments):
     return internal_sentence
 
 
-def convert(sentences, settings):
+def analyze(sentences, settings):
     relation = Relation(settings)
     internal_sentences = {}
     # перебираем предложения

@@ -53,7 +53,7 @@ class LevelsTestCase(unittest.TestCase):
                         #sort_text_dict(answer)
                         self.assertDictEqual(answer, example['morphological'], example['w_text'])
 
-    @patch('manspy.converter.importer')
+    @patch('analyzers.converter.importer')
     def test_level_convert(self, importer):
         importer.import_action = mock_action
 

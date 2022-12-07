@@ -1,6 +1,5 @@
 import time
-from analyzers import extractor
-from manspy.converter import convert
+from analyzers import extractor, converter
 from manspy.FCModule import execute_internal_sentences
 
 all_levels = ["graphmath", "morph", "postmorph", "synt", "extract", "convert", "exec"]
@@ -46,7 +45,7 @@ def nature2internal(msg):
         elif level == "extract":
             sentences = extractor.analyze(sentences)
         elif level == "convert":
-            sentences = convert(sentences, msg.settings)
+            sentences = converter.analyze(sentences, msg.settings)
         elif level == "exec":
             sentences = execute_internal_sentences(sentences, msg.send_to_out)
 
