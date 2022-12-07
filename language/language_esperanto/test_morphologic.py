@@ -1,6 +1,6 @@
 import unittest
 
-from language.language_esperanto import analysis_morphological
+from analyzers import esperanto_morphological
 from manspy import unit
 
 
@@ -19,7 +19,7 @@ class TestMorphologicalAnalysis(unittest.TestCase):
         for numeric, alphabetics in numbers.items():
             for alphabetic in alphabetics:
                 word = unit.Word(alphabetic)
-                is_numeric = analysis_morphological.is_numeral(word['word'], word)
+                is_numeric = esperanto_morphological.is_numeral(word['word'], word)
                 print(is_numeric, alphabetic, numeric, word['number_value'])
 
 if __name__ == '__main__':
