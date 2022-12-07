@@ -60,10 +60,3 @@ def nature2internal(msg):
         print('       Total: ', msg.time_total)
 
     return sentences
-
-# TODO: должна возвращать `msg` со строкой ответа
-def internal2nature(IL):
-    #IL = Synthesizer.IL2resultA(IL)
-    #result = LangModule.ResultA2NL(IL)
-    #return NL
-    return IL
