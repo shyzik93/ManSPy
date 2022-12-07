@@ -1,5 +1,5 @@
 import time
-from manspy.extractor import extract
+from analyzers.extractor import analyze
 from manspy.converter import convert
 from manspy.FCModule import execute_internal_sentences
 
@@ -44,7 +44,7 @@ def nature2internal(msg):
         elif level == "synt":
             sentences = lang_module.analysis_syntax.get_analysis(sentences)
         elif level == "extract":
-            sentences = extract(sentences)
+            sentences = analyze(sentences)
         elif level == "convert":
             sentences = convert(sentences, msg.settings)
         elif level == "exec":

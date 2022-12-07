@@ -84,7 +84,7 @@ def _extract(sentence):
     return subjects_by_predicate, predicates, arguments_by_predicate
 
 
-def extract(sentences):
+def analyze(sentences):
     extracts = []
     for sentence in sentences:
         extracts.append(_extract(sentence))
