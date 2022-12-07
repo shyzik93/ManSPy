@@ -1,5 +1,9 @@
 import time
 from analyzers import extractor, converter, executor_internal_sentences
+from analyzers import esperanto_graphemathic
+from analyzers import esperanto_morphological
+from analyzers import esperanto_postmorphological
+from analyzers import esperanto_syntax
 
 all_levels = ["graphmath", "morph", "postmorph", "synt", "extract", "convert", "exec"]
 
@@ -19,11 +23,6 @@ def nature2internal(msg):
 
     msg.before_analyzes()
 
-    lang_module = msg.settings.modules['language'].get(msg.settings.language)
-    if lang_module is None:
-        print('Языковой модуль "{}" не был импортирован. Анализ невозможен.'.format(msg.settings.language))
-        return []
-
     levels = msg.settings.levels.replace(' ', ':')
     start_level, end_level = levels.split(':')
     start_level = start_level if start_level else all_levels[0]
@@ -34,13 +33,13 @@ def nature2internal(msg):
         t = time.time()
 
         if level == "graphmath":
-            sentences = lang_module.analysis_graphemathic.analyze(sentences)
+            sentences = esperanto_graphemathic.analyze(sentences)
         elif level == "morph":
-            sentences = lang_module.analysis_morphological.analyze(sentences)
+            sentences = esperanto_morphological.analyze(sentences)
         elif level == "postmorph":
-            sentences = lang_module.analysis_postmorphological.analyze(sentences)
+            sentences = esperanto_postmorphological.analyze(sentences)
         elif level == "synt":
-            sentences = lang_module.analysis_syntax.analyze(sentences)
+            sentences = esperanto_syntax.analyze(sentences)
         elif level == "extract":
             sentences = extractor.analyze(sentences)
         elif level == "convert":
