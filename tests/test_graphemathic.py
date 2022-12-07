@@ -4,6 +4,7 @@ from analyzers import esperanto_graphemathic
 from manspy import unit
 
 
+@unittest.skip
 class TestGraphemathicalAnalysis(unittest.TestCase):
     def test_define_type_symbol(self):
         word = unit.Word('montru')

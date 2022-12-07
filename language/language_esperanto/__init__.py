@@ -1,4 +1,0 @@
-from analyzers import esperanto_graphemathic as analysis_graphemathic
-from analyzers import esperanto_morphological as analysis_morphological
-from analyzers import esperanto_postmorphological as analysis_postmorphological
-from analyzers import esperanto_syntax as analysis_syntax

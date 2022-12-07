@@ -4,6 +4,7 @@ from analyzers import esperanto_morphological
 from manspy import unit
 
 
+@unittest.skip
 class TestMorphologicalAnalysis(unittest.TestCase):
     def test_is_numeric(self):
         numbers = {
