@@ -71,7 +71,7 @@ def execute_internal_sentence(internal_sentence):
             break
 
 
-def execute_internal_sentences(ils, send_to_out):
+def analyze(ils, send_to_out):
     """
     Выполняет внутренние предложения в тексте поочерёдно, если есть условия и наречия - обусловленно.
     :param ils:
