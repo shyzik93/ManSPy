@@ -2,10 +2,18 @@ import os
 import json
 import inspect
 
+from analyzers import (
+    esperanto_graphemathic,
+    esperanto_morphological,
+    esperanto_postmorphological,
+    esperanto_syntax,
+)
 from manspy.relation import Relation
 from manspy.message import Message
 from manspy.analyse_text import nature2internal
 from manspy.utils import importer
+
+analyzers = [esperanto_graphemathic, esperanto_morphological, esperanto_postmorphological, esperanto_syntax]
 
 
 def get_is_required(func):
@@ -25,11 +33,8 @@ def get_is_required(func):
 
 
 def get_dword(word, settings):
-    levels = settings.levels
-    settings.levels = ':postmorph'
     message = Message(settings, word)
-    text = nature2internal(message)
-    settings.levels = levels
+    text = nature2internal(message, analyzers=analyzers[:-1])
     return text(0).getByPos(0)
 
 
@@ -69,11 +74,8 @@ def process_word_combination(fasif, obj_relation, settings, path_import):
 
     fasif['argdescr'] = {}
     for language in settings.languages:
-        levels = settings.levels
-        settings.levels = ':synt'
         message = Message(settings, fasif['wcomb'][language])
-        wcomb = nature2internal(message)(0)
-        settings.levels = levels
+        wcomb = nature2internal(message, analyzers=analyzers)(0)
 
         for arg_name, args in fasif['args'].items():
             argwords = args['argwords'][language]
