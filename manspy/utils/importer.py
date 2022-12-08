@@ -5,19 +5,6 @@ import os.path
 
 
 def import_modules(path_import, module_type):
-    if module_type == 'language':
-        from analyzers import esperanto_graphemathic
-        from analyzers import esperanto_morphological
-        from analyzers import esperanto_postmorphological
-        from analyzers import esperanto_syntax
-        class module:
-            analysis_graphemathic = esperanto_graphemathic
-            analysis_morphological = esperanto_morphological
-            analysis_postmorphological = esperanto_postmorphological
-            analysis_syntax = esperanto_syntax
-        yield module(), 'esperanto'
-        return
-
     for module_info in pkgutil.iter_modules(path=[path_import]):
         if module_info.name.startswith('{}_'.format(module_type)):
             try:

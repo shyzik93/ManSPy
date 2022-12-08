@@ -6,7 +6,6 @@ from manspy.utils import importer
 
 DEFAULT_PATH_MODULES = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 DEFAULT_PATHS_IMPORT = [
-    ('language', os.path.join(DEFAULT_PATH_MODULES, 'language')),  # модуль языка должен быть перед модулем действий
     ('logger', os.path.join(DEFAULT_PATH_MODULES, 'logger')),
     ('database', os.path.join(DEFAULT_PATH_MODULES, 'database')),  # модуль базы должен быть перед модулем действий
     ('action', os.path.join(DEFAULT_PATH_MODULES, 'action')),
@@ -15,9 +14,9 @@ DEFAULT_PATHS_IMPORT = [
 
 class Settings:
     """Класс, хранящий настройки"""
+    languages = ['esperanto']
     paths_import = DEFAULT_PATHS_IMPORT
     modules = {
-        'language': {},
         'logger': {},
         'database': {},
     }

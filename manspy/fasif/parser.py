@@ -36,7 +36,7 @@ def get_dword(word, settings):
 def process_verb(fasif, obj_relation, settings, path_import):
     fasif['function'] = os.path.join(path_import, fasif['function'])
     for language, verbs in fasif['verbs'].items():
-        if language in settings.modules['language']:
+        if language in settings.languages:
             words = [get_dword(word_verb, settings) for word_verb in verbs]
             id_group = obj_relation.set_relation('synonym', None, *words)
             fasif['verbs'][language] = id_group
@@ -68,7 +68,7 @@ def process_word_combination(fasif, obj_relation, settings, path_import):
     is_required = get_condition_is_required or change_condition_is_required
 
     fasif['argdescr'] = {}
-    for language in settings.modules['language']:
+    for language in settings.languages:
         levels = settings.levels
         settings.levels = ':synt'
         message = Message(settings, fasif['wcomb'][language])
