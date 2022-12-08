@@ -192,9 +192,9 @@ def process_numeral(word, sentence, indexes=None):
     sentence.jumpByStep(-len(indexes))
 
 
-def analyze(text):
+def analyze(message):
     ''' Обёртка '''
-    for sentence in text:
+    for sentence in message.text:
         #TASK обстоятельства, выраженные существительным, обозначить как наречие
         processors = [
             process_numeral,
@@ -215,4 +215,4 @@ def analyze(text):
         # здесь нужно найти однородные косвенные дополнения, чтобы им установить однородность.
         # При синтаксическом анализе на них будет ссылаться их родитель.
 
-    return text
+    return message.text

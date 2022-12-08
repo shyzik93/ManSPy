@@ -30,7 +30,7 @@ class CLI:
             results = nature2internal(Message(settings, text))
             if isinstance(results, Unit):
                 pprint.pprint(results.export_unit(ignore_units=dict))
-            elif isinstance(results, (dict, list)):
+            elif isinstance(results, dict):
                 pprint.pprint(results)
             else:
                 for result in results:

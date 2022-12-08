@@ -206,15 +206,15 @@ def Extraction2IL(relation, settings, subjects, predicate, arguments):
     return internal_sentence
 
 
-def analyze(sentences, settings):
-    relation = Relation(settings)
+def analyze(message):
+    relation = Relation(message.settings)
     internal_sentences = {}
     # перебираем предложения
     il_index = 0
-    for sentence in sentences:
+    for sentence in message.text:
         subjects_by_predicate, predicates, arguments_by_predicate = sentence
         # перебираем однородные, придаточные и главные подпредложения
         for subjects, predicate, arguments in zip(subjects_by_predicate, predicates, arguments_by_predicate):
-            internal_sentences[il_index] = Extraction2IL(relation, settings, subjects, predicate, arguments)
+            internal_sentences[il_index] = Extraction2IL(relation, message.settings, subjects, predicate, arguments)
             il_index += 1
     return internal_sentences

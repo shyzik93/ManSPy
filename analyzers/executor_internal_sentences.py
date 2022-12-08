@@ -71,14 +71,17 @@ def execute_internal_sentence(internal_sentence):
             break
 
 
-def analyze(ils, send_to_out):
+def analyze(message):
     """
     Выполняет внутренние предложения в тексте поочерёдно, если есть условия и наречия - обусловленно.
     :param ils:
     :param send_to_out: функция, куда будут поступать отложенные сообщения
     :return: генератор с сообщениями
     """
-    for index_sentence, internal_sentence in ils.items():
+    results = []
+    for index_sentence, internal_sentence in message.text.items():
         gen_r_texts = execute_internal_sentence(internal_sentence)
         for r_text in gen_r_texts:
-            yield r_text
+            results.append(r_text)
+
+    return results

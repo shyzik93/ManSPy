@@ -250,9 +250,9 @@ def set_properties_by_signs(word, signs):
                 do_endow(word, type_endow, sign['endow'])
 
 
-def analyze(text):
-    for sentence in text:
+def analyze(message):
+    for sentence in message.text:
         for word in sentence:
             set_properties_by_signs(word, signs)
 
-    return text
+    return message.text

@@ -103,9 +103,9 @@ def separate_to_sentences(words):
     return text
 
 
-def analyze(source_string):
+def analyze(message):
     
-    words = process_words(source_string)
+    words = process_words(message.text)
     text = separate_to_sentences(words)
 
     #print len(words), len(sentences)

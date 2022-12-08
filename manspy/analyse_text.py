@@ -13,11 +13,9 @@ def nature2internal(msg):
         включительно через пробел. Если требуется сделать лишь один уровень,
         то можно указать только одно слово. Если указан только 'convert',
         то в качестве первого аргумента передаётся список извлечений."""
-    sentences = msg.text
-
     if msg.settings.print_time:
         print('\n---------------------------------------')
-        print('----', sentences)
+        print('----', msg.text)
         print('---------------------------------------')
     t1 = time.time()
 
@@ -33,22 +31,22 @@ def nature2internal(msg):
         t = time.time()
 
         if level == "graphmath":
-            sentences = esperanto_graphemathic.analyze(sentences)
+            msg.text = esperanto_graphemathic.analyze(msg)
         elif level == "morph":
-            sentences = esperanto_morphological.analyze(sentences)
+            msg.text = esperanto_morphological.analyze(msg)
         elif level == "postmorph":
-            sentences = esperanto_postmorphological.analyze(sentences)
+            msg.text = esperanto_postmorphological.analyze(msg)
         elif level == "synt":
-            sentences = esperanto_syntax.analyze(sentences)
+            msg.text = esperanto_syntax.analyze(msg)
         elif level == "extract":
-            sentences = extractor.analyze(sentences)
+            msg.text = extractor.analyze(msg)
         elif level == "convert":
-            sentences = converter.analyze(sentences, msg.settings)
+            msg.text = converter.analyze(msg)
         elif level == "exec":
-            sentences = executor_internal_sentences.analyze(sentences, msg.send_to_out)
+            msg.text = executor_internal_sentences.analyze(msg)
 
-        msg.analysis[level] = sentences
-        msg.after_analysis(level, sentences)
+        msg.analysis[level] = msg.text
+        msg.after_analysis(level, msg.text)
         if msg.settings.print_time:
             print('   '+level.rjust(9)+': ', time.time()-t)
 
@@ -56,4 +54,4 @@ def nature2internal(msg):
     if msg.settings.print_time:
         print('       Total: ', msg.time_total)
 
-    return sentences
+    return msg.text
