@@ -1,9 +1,5 @@
 import time
-from analyzers import extractor, converter, executor_internal_sentences
-from analyzers import esperanto_graphemathic
-from analyzers import esperanto_morphological
-from analyzers import esperanto_postmorphological
-from analyzers import esperanto_syntax
+from manspy.analyzers import esperanto_morphological, executor_internal_sentences, converter, esperanto_syntax, esperanto_graphemathic, esperanto_postmorphological, extractor
 
 all_levels = ["graphmath", "morph", "postmorph", "synt", "extract", "convert", "exec"]
 

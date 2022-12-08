@@ -1,6 +1,6 @@
 import unittest
 
-from analyzers import esperanto_morphological
+from manspy.analyzers import esperanto_morphological
 from manspy import unit
 
 

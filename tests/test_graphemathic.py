@@ -1,6 +1,6 @@
 import unittest
 
-from analyzers import esperanto_graphemathic
+from manspy.analyzers import esperanto_graphemathic
 from manspy import unit
 
 

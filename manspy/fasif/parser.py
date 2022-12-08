@@ -2,11 +2,11 @@ import os
 import json
 import inspect
 
-from analyzers import (
-    esperanto_graphemathic,
+from manspy.analyzers import (
     esperanto_morphological,
-    esperanto_postmorphological,
     esperanto_syntax,
+    esperanto_graphemathic,
+    esperanto_postmorphological,
 )
 from manspy.relation import Relation
 from manspy.message import Message
