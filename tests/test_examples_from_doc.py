@@ -2,9 +2,8 @@ import unittest
 import os.path
 import re
 
-from manspy.analyse_text import nature2internal
-from manspy.message import Message
 from manspy.utils.settings import Settings, InitSettings
+from manspy.runners.simple import runner
 
 REGEXP_MARKDOWN_LINK = r'\[([^\]]+)\]\(https://syeysk.ru/api/manspy/run_get\?s=([\w/%\d]+)\)[^>]+((?:<span>`[\w\s\d]+`</span>[\s\w]*)+)'
 
@@ -26,6 +25,6 @@ class ExamplesFromDocTestCase(unittest.TestCase):
             for sentence, expecting_answer in gen_examples:
                 with self.subTest():
                     settings.language = 'esperanto'
-                    r_texts = nature2internal(Message(settings, sentence))
+                    r_texts = runner(sentence, settings)
                     r_texts = [str(r_text) if isinstance(r_text, int) else r_text for r_text in r_texts]
                     self.assertListEqual(r_texts, expecting_answer, sentence)

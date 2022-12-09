@@ -8,10 +8,9 @@ import os
 import unittest
 from unittest.mock import patch
 
-from manspy.analyse_text import nature2internal
-from manspy.message import Message
 from manspy.utils.settings import Settings, InitSettings
 from tests.datasets_of_analyzes import datasets
+from manspy.runners.simple import runner, PIPELINE
 
 
 DEFAULT_MODULE_DIR = os.path.dirname(__file__)
@@ -34,11 +33,7 @@ def sort_text_dict(text):
 
 class LevelsTestCase(unittest.TestCase):
     def test_level_morphological(self):
-        settings = Settings(
-            answer_type='construct',
-            history=False,
-            levels='graphmath:morph'
-        )
+        settings = Settings(answer_type='construct', history=False)
         with InitSettings():
             for dataset in datasets:
                 for example in dataset['examples']:
@@ -47,7 +42,7 @@ class LevelsTestCase(unittest.TestCase):
 
                     with self.subTest(dataset['description']):
                         settings.language = example.get('language', 'esperanto')
-                        answers = nature2internal(Message(settings, example['w_text']))
+                        answers = runner(example['w_text'], settings, pipeline=PIPELINE[:2])
                         #sort_text_dict(example['morphological'])
                         answer = answers.export_unit(dict)
                         #sort_text_dict(answer)
@@ -57,11 +52,7 @@ class LevelsTestCase(unittest.TestCase):
     def test_level_convert(self, importer):
         importer.import_action = mock_action
 
-        settings = Settings(
-            answer_type='construct',
-            history=False,
-            levels='graphmath:convert'
-        )
+        settings = Settings(answer_type='construct', history=False)
         with InitSettings():
             for dataset in datasets:
                 for example in dataset['examples']:
@@ -70,7 +61,7 @@ class LevelsTestCase(unittest.TestCase):
 
                     with self.subTest(dataset['description']):
                         settings.language = example.get('language', 'esperanto')
-                        answers = nature2internal(Message(settings, example['w_text']))
+                        answers = runner(example['w_text'], settings, pipeline=PIPELINE[:6])
                         self.assertDictEqual(answers, example['convert'], example['w_text'])
 
     def test_level_execution(self):
@@ -83,6 +74,6 @@ class LevelsTestCase(unittest.TestCase):
 
                     with self.subTest(dataset['description']):
                         settings.language = example.get('language', 'esperanto')
-                        answers = nature2internal(Message(settings, example['w_text']))
+                        answers = runner(example['w_text'], settings)
                         answers = [answer for answer in answers]
                         self.assertListEqual(answers, example['r_text_construct'], example['w_text'])
