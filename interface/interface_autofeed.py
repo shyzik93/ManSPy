@@ -1,8 +1,8 @@
 import json
 import os
 
-from manspy.analyse_text import nature2internal
-from manspy.message import Message
+from manspy.utils.pipeliner import pipeliner
+from manspy.utils.message import Message
 
 file_name_origin = 'autofeed_origin.txt'
 file_name_guess = 'autofeed_results.txt'
@@ -59,7 +59,7 @@ class Interface:
                 self.sentence = sentence
                 self.origin = origin
 
-                msg, res = nature2internal(Message(self.settings, sentence))
+                msg, res = pipeliner(Message(self.settings, sentence))
                 t += msg.time_total
 
 

@@ -1,7 +1,7 @@
 import tkinter
 
-from manspy.analyse_text import nature2internal
-from manspy.message import Message
+from manspy.utils.pipeliner import pipeliner
+from manspy.utils.message import Message
 
 
 class Interface():
@@ -15,7 +15,7 @@ class Interface():
         #if event == None: return
         self.Text_In.delete('1.0', tkinter.END)
         self.Text_Out.insert(tkinter.END, u'I said: ' + w_text + u'\n')
-        nature2internal(Message(self.settings, w_text))
+        pipeliner(Message(self.settings, w_text))
 
     def send_to_out(self, r_text, any_data):
         self.Text_Out.insert(tkinter.END, u'ManSPy: ' + r_text + u'\n')

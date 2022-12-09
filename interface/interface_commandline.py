@@ -1,8 +1,8 @@
 """ В скобках после ответа показано количество ответов, которое ИСУ вам покажет
     после нажатия на Enter, то есть при отправке пустого сообщения :)
 """
-from manspy.analyse_text import nature2internal
-from manspy.message import Message
+from manspy.utils.pipeliner import pipeliner
+from manspy.utils.message import Message
 
 
 class Interface:
@@ -18,5 +18,5 @@ class Interface:
             w_text = input()
             if w_text == '\\exit':
                 exit(0)
-            nature2internal(Message(self.settings, w_text))
+            pipeliner(Message(self.settings, w_text))
             #time.sleep(0.01)

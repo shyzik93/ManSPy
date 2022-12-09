@@ -1,8 +1,7 @@
 # TODO: Добавить модуль xmp в requirements.txt
-import xmp
 
-from manspy.analyse_text import nature2internal
-from manspy.message import Message
+from manspy.utils.pipeliner import pipeliner
+from manspy.utils.message import Message
 
 class Interface():
     def __init__(self, settings, config):
@@ -15,7 +14,7 @@ class Interface():
         From = str(messR.getFrom()).split('/')[0]
 
         if w_text:
-            nature2internal(Message(self.settings, w_text, any_data=From))
+            pipeliner(Message(self.settings, w_text, any_data=From))
 
     def send_to_out(self, r_text, From):
         if From:

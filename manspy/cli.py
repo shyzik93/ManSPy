@@ -3,8 +3,8 @@ import argparse
 import pprint
 import os.path
 
-from manspy.analyse_text import nature2internal
-from manspy.message import Message
+from manspy.utils.pipeliner import pipeliner
+from manspy.utils.message import Message
 from manspy.utils.settings import Settings, InitSettings
 from manspy.unit import Unit
 
@@ -27,7 +27,7 @@ class CLI:
 
     def cmd_exec(self, args):
         def send_to_in(text, settings):
-            results = nature2internal(Message(settings, text))
+            results = pipeliner(Message(settings, text))
             if isinstance(results, Unit):
                 pprint.pprint(results.export_unit(ignore_units=dict))
             elif isinstance(results, dict):

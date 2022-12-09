@@ -1,5 +1,3 @@
-import time
-import os
 import sys
 import os.path
 
@@ -9,8 +7,8 @@ sys.path.append(tg_path)
 # TODO: Добавить модуль telegram в requirements.txt
 import telegram
 
-from manspy.analyse_text import nature2internal
-from manspy.message import Message
+from manspy.utils.pipeliner import pipeliner
+from manspy.utils.message import Message
 
 class Interface:
     def __init__(self, settings, config):
@@ -25,7 +23,7 @@ class Interface:
         if w_text == None:
             return
         if w_text:
-            nature2internal(Message(self.settings, w_text, any_data=from_user))
+            pipeliner(Message(self.settings, w_text, any_data=from_user))
 
     def send_to_out(self, r_text, from_user):
         print(r_text, from_user)
