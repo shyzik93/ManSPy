@@ -39,10 +39,6 @@ class Settings:
         # TODO: описание настроек вынести в строку документации класса
         self.language = changed_keys.get('language', 'esperanto')
         self.history = changed_keys.get('history', False)
-        self.monitor = changed_keys.get('monitor', True)  # включает вывод на экран статистику работы ИСУ
-        self.logic = changed_keys.get('logic', True)  # включает модуль логики
-        self.convert2IL = changed_keys.get('convert2IL', True)  # включает последний этап конвертации. Если при отключении включёна логика, то будет ошибка
-        self.test = changed_keys.get('test', True)  # тестовый режим, включаемый в процессе отладки и разработки
         self.send_to_out = changed_keys.get('send_to_out')  # функция, в котору manspy пишет ответ. Устанавливается Интерфейсом
         self.ifname = changed_keys.get('ifname', '')  # уникальное имя интерфейса. Необходимо для журналов.
 
