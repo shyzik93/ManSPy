@@ -2,7 +2,7 @@ import os
 import json
 import inspect
 
-from manspy.relation import Relation
+from manspy.storage.relation import Relation
 from manspy.utils import importer
 from manspy.runners.simple import runner
 

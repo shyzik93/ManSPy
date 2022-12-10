@@ -1,6 +1,6 @@
 import os
 
-from manspy.fasif.parser import fasif_parser
+from manspy.storage.fasif.parser import fasif_parser
 from manspy.utils import importer
 
 

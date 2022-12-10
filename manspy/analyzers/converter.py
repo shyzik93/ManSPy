@@ -1,7 +1,7 @@
 import itertools
 
-from manspy.fasif.finder import find
-from manspy.relation import Relation
+from manspy.storage.fasif.finder import find
+from manspy.storage.relation import Relation
 from manspy.utils.unit import Sentence
 from manspy.utils import importer
 
