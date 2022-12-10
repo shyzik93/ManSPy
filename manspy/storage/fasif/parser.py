@@ -14,11 +14,11 @@ def get_is_required(func):
     first_arg_name = func.__code__.co_varnames[0]
     signature = inspect.signature(func)
     is_required = {}
-    for k, v in signature.parameters.items():
-        if k == first_arg_name:
+    for arg_name, arg in signature.parameters.items():
+        if arg_name == first_arg_name:
             continue
 
-        is_required[k] = v.default is inspect.Parameter.empty
+        is_required[arg_name] = arg.default is inspect.Parameter.empty
 
     return is_required
 
