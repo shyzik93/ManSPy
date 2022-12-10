@@ -14,6 +14,8 @@ NORM = '\033[0;0m'
 GREEN = '\033[0;32m'
 ORANGE = '\033[0;33m'
 
+levels = ['graphmath', 'morph', 'postmorph', 'synt', 'extract', 'convert', 'exec']
+
 
 def print_error(msg):
     print('{READ} {0} {NORM}'.format(msg, READ=READ, NORM=NORM))
@@ -25,8 +27,8 @@ class CLI:
         self.settings = Settings(language='esperanto', answer_type='fake')
 
     def cmd_exec(self, args):
-        def send_to_in(text, settings):
-            results = runner(text, settings)
+        def send_to_in(text, settings, level):
+            results = runner(text, settings, pipeline=level)
             if isinstance(results, Unit):
                 pprint.pprint(results.export_unit(ignore_units=dict))
             elif isinstance(results, dict):
@@ -39,10 +41,9 @@ class CLI:
         self.settings.answer_type = args.type
         self.settings.history = args.history
         self.settings.print_time = args.print_time
-        self.settings.levels = args.level
 
         if args.text:
-            send_to_in(args.text, self.settings)
+            send_to_in(args.text, self.settings, args.level)
 
         manspy_cur_dir = os.getcwd()
         for filename in args.filenames:

@@ -10,7 +10,7 @@ from unittest.mock import patch
 
 from manspy.utils.settings import Settings, InitSettings
 from tests.datasets_of_analyzes import datasets
-from manspy.runners.simple import runner, PIPELINE
+from manspy.runners.simple import runner
 
 
 DEFAULT_MODULE_DIR = os.path.dirname(__file__)
@@ -42,7 +42,7 @@ class LevelsTestCase(unittest.TestCase):
 
                     with self.subTest(dataset['description']):
                         settings.language = example.get('language', 'esperanto')
-                        answers = runner(example['w_text'], settings, pipeline=PIPELINE[:2])
+                        answers = runner(example['w_text'], settings, pipeline=':morph')
                         #sort_text_dict(example['morphological'])
                         answer = answers.export_unit(dict)
                         #sort_text_dict(answer)
@@ -61,7 +61,7 @@ class LevelsTestCase(unittest.TestCase):
 
                     with self.subTest(dataset['description']):
                         settings.language = example.get('language', 'esperanto')
-                        answers = runner(example['w_text'], settings, pipeline=PIPELINE[:6])
+                        answers = runner(example['w_text'], settings, pipeline=':convert')
                         self.assertDictEqual(answers, example['convert'], example['w_text'])
 
     def test_level_execution(self):

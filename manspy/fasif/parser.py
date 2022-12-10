@@ -4,7 +4,7 @@ import inspect
 
 from manspy.relation import Relation
 from manspy.utils import importer
-from manspy.runners.simple import runner, PIPELINE
+from manspy.runners.simple import runner
 
 
 def get_is_required(func):
@@ -24,7 +24,7 @@ def get_is_required(func):
 
 
 def get_dword(word, settings):
-    text = runner(word, settings, pipeline=PIPELINE[:3])
+    text = runner(word, settings, pipeline=':postmorph')
     return text(0).getByPos(0)
 
 
@@ -64,7 +64,7 @@ def process_word_combination(fasif, obj_relation, settings, path_import):
 
     fasif['argdescr'] = {}
     for language in settings.languages:
-        wcomb = runner(fasif['wcomb'][language], settings, pipeline=PIPELINE[:4])(0)
+        wcomb = runner(fasif['wcomb'][language], settings, pipeline=':synt')(0)
 
         for arg_name, args in fasif['args'].items():
             argwords = args['argwords'][language]
