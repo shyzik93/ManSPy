@@ -22,10 +22,10 @@ PIPELINE = PipelinerGetter([
 ])
 
 
-def runner(text, settings, pipeline=None):
+def runner(text, settings, pipeline=None, any_data=None):
     pipeline = PIPELINE if pipeline is None else pipeline
     if isinstance(pipeline, str):
         pipeline = PIPELINE[pipeline]
 
-    message = Message(settings, text)
+    message = Message(settings, text, any_data=any_data)
     return pipeliner(message, pipeline)

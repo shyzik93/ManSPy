@@ -1,7 +1,7 @@
 import json
 import os
 
-from manspy.utils.pipeliner import pipeliner
+from manspy.runners.simple import runner
 from manspy.utils.message import Message
 
 file_name_origin = 'autofeed_origin.txt'
@@ -59,7 +59,7 @@ class Interface:
                 self.sentence = sentence
                 self.origin = origin
 
-                msg, res = pipeliner(Message(self.settings, sentence))
+                msg, res = runner(sentence, self.settings)
                 t += msg.time_total
 
 

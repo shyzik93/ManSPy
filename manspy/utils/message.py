@@ -69,7 +69,7 @@ class Message:
 
     def before_analyzes(self):
         """ Вызывается Модулем Анализа (ManSPy) """
-        self.settings.pass_args_to_logs('before_analyzes', self.settings.levels, self)
+        pass# self.settings.pass_args_to_logs('before_analyzes', self.settings.levels, self)
 
     def before_analysis(self, level):
         """ Вызывается Модулем Анализа (ManSPy) """

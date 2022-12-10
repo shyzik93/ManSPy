@@ -14,8 +14,6 @@ NORM = '\033[0;0m'
 GREEN = '\033[0;32m'
 ORANGE = '\033[0;33m'
 
-levels = ['graphmath', 'morph', 'postmorph', 'synt', 'extract', 'convert', 'exec']
-
 
 def print_error(msg):
     print('{READ} {0} {NORM}'.format(msg, READ=READ, NORM=NORM))

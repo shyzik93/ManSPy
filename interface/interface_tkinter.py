@@ -1,7 +1,6 @@
 import tkinter
 
-from manspy.utils.pipeliner import pipeliner
-from manspy.utils.message import Message
+from manspy.runners.simple import runner
 
 
 class Interface():
@@ -15,7 +14,7 @@ class Interface():
         #if event == None: return
         self.Text_In.delete('1.0', tkinter.END)
         self.Text_Out.insert(tkinter.END, u'I said: ' + w_text + u'\n')
-        pipeliner(Message(self.settings, w_text))
+        runner(w_text, self.settings)
 
     def send_to_out(self, r_text, any_data):
         self.Text_Out.insert(tkinter.END, u'ManSPy: ' + r_text + u'\n')

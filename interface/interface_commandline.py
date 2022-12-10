@@ -1,7 +1,7 @@
 """ В скобках после ответа показано количество ответов, которое ИСУ вам покажет
     после нажатия на Enter, то есть при отправке пустого сообщения :)
 """
-from manspy.utils.pipeliner import pipeliner
+from manspy.runners.simple import runner
 from manspy.utils.message import Message
 
 
@@ -18,5 +18,6 @@ class Interface:
             w_text = input()
             if w_text == '\\exit':
                 exit(0)
-            pipeliner(Message(self.settings, w_text))
+
+            runner(w_text, self.settings)
             #time.sleep(0.01)

@@ -7,8 +7,8 @@ sys.path.append(tg_path)
 # TODO: Добавить модуль telegram в requirements.txt
 import telegram
 
-from manspy.utils.pipeliner import pipeliner
-from manspy.utils.message import Message
+from manspy.runners.simple import runner
+
 
 class Interface:
     def __init__(self, settings, config):
@@ -23,7 +23,7 @@ class Interface:
         if w_text == None:
             return
         if w_text:
-            pipeliner(Message(self.settings, w_text, any_data=from_user))
+            runner(w_text, self.settings, any_data=from_user)
 
     def send_to_out(self, r_text, from_user):
         print(r_text, from_user)

@@ -51,7 +51,6 @@ class Settings:
         # 'real' - real answer, 'fake' - fake answer, 'construct' - construct answer
         self.answer_type = changed_keys.get('answer_type', 'fake')
         self.print_time = changed_keys.get('print_time', False)
-        self.levels = changed_keys.get('levels', 'graphmath exec')
 
         paths_import = changed_keys.get('paths_import', [])
         self.paths_import.extend(paths_import)

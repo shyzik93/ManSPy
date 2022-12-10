@@ -1,9 +1,8 @@
 # TODO: Добавить модуль xmp в requirements.txt
+from manspy.runners.simple import runner
 
-from manspy.utils.pipeliner import pipeliner
-from manspy.utils.message import Message
 
-class Interface():
+class Interface:
     def __init__(self, settings, config):
         self.settings = settings
         settings.send_to_out = self.send_to_out
@@ -14,7 +13,7 @@ class Interface():
         From = str(messR.getFrom()).split('/')[0]
 
         if w_text:
-            pipeliner(Message(self.settings, w_text, any_data=From))
+            runner(w_text, self.settings, any_data=From)
 
     def send_to_out(self, r_text, From):
         if From:
