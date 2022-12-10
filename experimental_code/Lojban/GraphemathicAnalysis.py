@@ -2,7 +2,7 @@
     https://mw.lojban.org/index.php?title=%D0%92%D0%BE%D0%BB%D0%BD%D1%8B_%D0%9B%D0%BE%D0%B6%D0%B1%D0%B0%D0%BD%D0%B0#.D0.92.D0.BE.D0.BB.D0.BD.D0.B0_2_.28FA_.D0.B8_zo.27e.29
 """
 import re
-from manspy import unit
+from manspy.utils import unit
 
 vowels_low = "aeiouy"
 vowels_up = "AEIOUY"

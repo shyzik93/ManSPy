@@ -1,7 +1,7 @@
 import unittest
 
 from manspy.analyzers import esperanto_graphemathic
-from manspy import unit
+from manspy.utils import unit
 
 
 @unittest.skip

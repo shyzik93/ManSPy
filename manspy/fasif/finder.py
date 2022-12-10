@@ -21,7 +21,7 @@
 
 На четвёртом шаге перед выполнением функций необходио сформировать внутренний язык. Функции выполнятся в модуле логики.
 """
-from manspy.unit import Sentence
+from manspy.utils.unit import Sentence
 
 
 def compare_fasif_verb(fasif, verb_base, finded_args, language):

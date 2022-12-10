@@ -5,7 +5,7 @@ import os
 
 from manspy.runners.simple import runner
 from manspy.utils.settings import Settings, InitSettings
-from manspy.unit import Unit
+from manspy.utils.unit import Unit
 
 console_cur_dir = os.path.abspath('')
 

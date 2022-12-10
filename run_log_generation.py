@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 
-from manspy import unit
+from manspy.utils import unit
 from manspy.api import API
 from manspy.utils.settings import Settings
 

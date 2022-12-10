@@ -1,6 +1,6 @@
 from typing import List, Optional, Union
 
-from manspy.unit import Word
+from manspy.utils.unit import Word
 
 
 class Relation:

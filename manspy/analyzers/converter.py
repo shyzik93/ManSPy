@@ -2,7 +2,7 @@ import itertools
 
 from manspy.fasif.finder import find
 from manspy.relation import Relation
-from manspy.unit import Sentence
+from manspy.utils.unit import Sentence
 from manspy.utils import importer
 
 not_to_db = ['nombr', 'cifer']  # TODO:  существует ещё одна переменная с таким же именем. Нужно сделать общий источник
