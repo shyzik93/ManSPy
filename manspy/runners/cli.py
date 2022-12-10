@@ -1,10 +1,9 @@
-#! /usr/bin/env python3
 import argparse
 import pprint
 import os.path
+import os
 
-from manspy.utils.pipeliner import pipeliner
-from manspy.utils.message import Message
+from manspy.runners.simple import runner
 from manspy.utils.settings import Settings, InitSettings
 from manspy.unit import Unit
 
@@ -27,7 +26,7 @@ class CLI:
 
     def cmd_exec(self, args):
         def send_to_in(text, settings):
-            results = pipeliner(Message(settings, text))
+            results = runner(text, settings)
             if isinstance(results, Unit):
                 pprint.pprint(results.export_unit(ignore_units=dict))
             elif isinstance(results, dict):
