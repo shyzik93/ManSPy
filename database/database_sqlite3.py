@@ -40,9 +40,6 @@ class Database:
               name_for_member TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,
               name_for_group TEXT COLLATE NOCASE);
         """)
-        self.dct_speechesR = {}
-        for k, v in self.dct_speeches.items():
-            self.dct_speechesR[v] = k
 
     def close(self):
         self.c.close()
@@ -76,13 +73,6 @@ class Database:
 
     # Работа с таблицей words
 
-    def word2id(self, word: str) -> int:
-        if isinstance(word, int):
-            return word
-
-        res = self.cu.execute('SELECT id_word FROM words WHERE word=?;', (word,)).fetchone()
-        return res[0] if res else self.add_word(word)
-
     def add_word(self, *words: str) -> int:
         self.cu.execute(
             'INSERT INTO words (word) VALUES {};'.format(','.join('(?)' for _ in words)),
@@ -90,6 +80,13 @@ class Database:
         )
         self.c.commit()
         return self.cu.lastrowid
+
+    def word2id(self, word: str) -> int:
+        if isinstance(word, int):
+            return word
+
+        res = self.cu.execute('SELECT id_word FROM words WHERE word=?;', (word,)).fetchone()
+        return res[0] if res else self.add_word(word)
 
     def convert(self, *inlist):
         ''' Преобразовывает id в слово или слово в id '''
