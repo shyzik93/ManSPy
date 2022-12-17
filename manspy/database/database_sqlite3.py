@@ -8,38 +8,41 @@ class Database:
         'INSERT INTO descr_relation (count_members, type_relation, type_group, name_for_member, name_for_group) VALUES (?,?,?,?,?)'
     )
     dct_speeches = {'noun': 1, 'verb': 2, 'adjective': 3, 'adverb': 4}
+    c = None
+    cu = None
 
     def __init__(self, database_settings):
         sqlite3.enable_callback_tracebacks(True)
-        self.c = sqlite3.connect(database_settings['path'])
-        self.c.row_factory = sqlite3.Row
-        self.cu = self.c.cursor()
+        if not self.c:
+            self.c = sqlite3.connect(database_settings['path'])
+            self.c.row_factory = sqlite3.Row
+            self.cu = self.c.cursor()
 
-        self.cu.executescript("""
-            CREATE TABLE IF NOT EXISTS fasifs (
-              id_fasif INTEGER PRIMARY KEY AUTOINCREMENT,
-              type_fasif TEXT,
-              fasif TEXT UNIQUE ON CONFLICT IGNORE);
-            CREATE TABLE IF NOT EXISTS words (
-              word TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,
-              id_word INTEGER PRIMARY KEY);
-            CREATE TABLE IF NOT EXISTS max_index (
-              group_index INTEGER);
-            CREATE TABLE IF NOT EXISTS relations (
-              id_descr_relation INTEGER,
-              id_speech INTEGER,
-              id_group INTEGER,
-              id_member INTEGER,
-              member_is_word INTEGER );
-            CREATE TABLE IF NOT EXISTS descr_relation (
-              id_descr_relation INTEGER PRIMARY KEY,
-              type_relation TEXT, -- tree или line
-              count_members INTEGER,
-              type_group TEXT, -- тип вершины (группы)
-              type_member TEXT, -- тип членов
-              name_for_member TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,
-              name_for_group TEXT COLLATE NOCASE);
-        """)
+            self.cu.executescript("""
+                CREATE TABLE IF NOT EXISTS fasifs (
+                  id_fasif INTEGER PRIMARY KEY AUTOINCREMENT,
+                  type_fasif TEXT,
+                  fasif TEXT UNIQUE ON CONFLICT IGNORE);
+                CREATE TABLE IF NOT EXISTS words (
+                  word TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,
+                  id_word INTEGER PRIMARY KEY);
+                CREATE TABLE IF NOT EXISTS max_index (
+                  group_index INTEGER);
+                CREATE TABLE IF NOT EXISTS relations (
+                  id_descr_relation INTEGER,
+                  id_speech INTEGER,
+                  id_group INTEGER,
+                  id_member INTEGER,
+                  member_is_word INTEGER );
+                CREATE TABLE IF NOT EXISTS descr_relation (
+                  id_descr_relation INTEGER PRIMARY KEY,
+                  type_relation TEXT, -- tree или line
+                  count_members INTEGER,
+                  type_group TEXT, -- тип вершины (группы)
+                  type_member TEXT, -- тип членов
+                  name_for_member TEXT COLLATE NOCASE UNIQUE ON CONFLICT IGNORE,
+                  name_for_group TEXT COLLATE NOCASE);
+            """)
 
     def close(self):
         self.c.close()
