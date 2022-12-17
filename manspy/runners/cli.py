@@ -53,9 +53,6 @@ class CLI:
 
 
 def do_cmd(args_list=None):
-
-    # TODO: добавить опцию `manspy --run-interface *` для параллельного запуска перечисленных интерфейсов. Соответственно, файл manspy/run.py следует удалить.
-
     with InitSettings():
         cli = CLI()
 
