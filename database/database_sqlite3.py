@@ -99,6 +99,49 @@ class Database:
             res = self.cu.execute(query, (el,)).fetchall()
             yield res[0][0] if res else self.add_word(el)
 
+    # Работа с таблицей descr_relation
+
+    def _type2id(self, name_for_member: Union[str, int]) -> int:
+        if not isinstance(name_for_member, str):
+            return name_for_member
+
+        res = self.cu.execute(
+            'SELECT id_descr_relation FROM descr_relation WHERE name_for_member=?;',
+            (name_for_member, )
+        ).fetchall()
+        if res:
+            return res[0][0]
+
+    def add_descr_relation(self, type_relation: str, count_members: int, type_member: str, name_for_member: str, name_for_group: str):
+        # type_member - пока определяется на основании `relations.member_is_word`
+        if type_relation == 'line':
+            type_group = 'index'
+        elif type_relation == 'tree':
+            type_group = 'word'
+        else:
+            raise Exception('unknown `type_relation`')
+
+        self.cu.execute(
+            self.SQL_INSERT_DESCR_RELATION,
+            (count_members, type_relation, type_group, name_for_member, name_for_group)
+        )
+        self.c.commit()
+
+    def get_descr_relation(self, relation: Union[int, str]):
+        if isinstance(relation, str):
+            return self.cu.execute(
+                'SELECT * FROM descr_relation WHERE name_for_member=? OR name_for_group=? limit 1',
+                (relation, relation)
+            ).fetchone()
+
+        return self.cu.execute(
+            'SELECT * FROM descr_relation WHERE id_descr_relation=? limit 1',
+            (relation,)
+        ).fetchone()
+
+    def get_all_descr_relations(self):
+        return self.cu.execute("SELECT * FROM descr_relation").fetchall()
+
     # Работа с таблицей relations
 
     def check_copy_row(self, id_type, id_speech, id_group, id_word, isword, _exists):
@@ -174,43 +217,3 @@ class Database:
             ).fetchall()
 
         return [_id[0] for _id in res]
-
-    # Работа с таблицей descr_relation
-
-    def _type2id(self, name1: Union[str, int]) -> int:
-        if not isinstance(name1, str):
-            return name1
-
-        res = self.cu.execute('SELECT id_descr_relation FROM descr_relation WHERE name_for_member=?;', (name1,)).fetchall()
-        if res:
-            return res[0][0]
-
-    def add_descr_relation(self, type_relation: str, count_members: int, type_member: str, name_for_member: str, name_for_group: str):
-        # type_member - пока определяется на основании `relations.member_is_word`
-        if type_relation == 'line':
-            type_group = 'index'
-        elif type_relation == 'tree':
-            type_group = 'word'
-        else:
-            raise Exception('unknown `type_relation`')
-
-        self.cu.execute(
-            self.SQL_INSERT_DESCR_RELATION,
-            (count_members, type_relation, type_group, name_for_member, name_for_group)
-        )
-        self.c.commit()
-
-    def get_descr_relation(self, relation: Union[int, str]):
-        if isinstance(relation, str):
-            return self.cu.execute(
-                'SELECT * FROM descr_relation WHERE name_for_member=? OR name_for_group=? limit 1',
-                (relation, relation)
-            ).fetchone()
-
-        return self.cu.execute(
-            'SELECT * FROM descr_relation WHERE id_descr_relation=? limit 1',
-            (relation,)
-        ).fetchone()
-
-    def get_all_descr_relations(self):
-        return self.cu.execute("SELECT * FROM descr_relation").fetchall()
