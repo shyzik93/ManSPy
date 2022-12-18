@@ -10,10 +10,10 @@ xargs rm -vr < installed.txt
 Из папки rep://dist:
 cd manspy-0.1.0 ; xargs rm -vr < installed.txt ; cd .. ; tar -xzf manspy-0.1.0.tar.gz ; cd manspy-0.1.0 ; python3 setup.py install ; cd ..
 """
-
 import os
-from pip._internal.req import parse_requirements
 
+with open('requirements.txt') as file_requirements:
+    install_requires = file_requirements.read().split('\n')
 
 try:
     from setuptools import setup
@@ -58,7 +58,7 @@ setup(
     url='https://github.com/shyzik93/ManSPy',
     download_url='https://github.com/shyzik93/manspy/archive/master.zip',
 
-    install_requires=[],
+    install_requires=install_requires,
 
     entry_points={
         'console_scripts': [
@@ -67,7 +67,6 @@ setup(
         ]
     },
     include_package_data=True,
-    install_reqs=parse_requirements('requirements.txt'),
     classifiers=[
 		'Environment :: Console',
 		'Natural Language :: English',
