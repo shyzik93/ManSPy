@@ -1,7 +1,7 @@
 [
   {
     "type": "verb",
-    "function": "smart_home/printToIF",
+    "function": "manspy.action.smart_home:printToIF",
     "verbs": {
       "esperanto": ["montri"],
       "english": ["to print"],
@@ -10,7 +10,7 @@
   },
   {
     "type": "verb",
-    "function": "smart_home/add",
+    "function": "manspy.action.smart_home:add",
     "verbs": {
       "esperanto": ["adicii"],
       "english": ["to add"],
@@ -19,7 +19,7 @@
   },
   {
     "type": "verb",
-    "function": "smart_home/multiply",
+    "function": "manspy.action.smart_home:multiply",
     "verbs": {
       "esperanto": ["multigi", "obligi"],
       "english": ["to multiply"],

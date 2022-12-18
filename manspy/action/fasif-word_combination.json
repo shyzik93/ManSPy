@@ -3,7 +3,7 @@
     "type": "word_combination",
     "functions": {
       "getCondition": {
-        "function": "CurrencyLoader/GetCourse",
+        "function": "manspy.action.CurrencyLoader:GetCourse",
         "verbs": {}
       }
     },
@@ -62,7 +62,7 @@
     "type": "word_combination",
     "functions": {
       "changeCondition": {
-        "function": "smart_home/LightOn",
+        "function": "manspy.action.smart_home:LightOn",
         "verbs": {
           "esperanto": ["sxalti"],
           "english": ["to turn on"],
@@ -116,7 +116,7 @@
     "type": "word_combination",
     "functions": {
       "getCondition": {
-        "function": "smart_home/showAddress",
+        "function": "manspy.action.smart_home:showAddress",
         "verbs": {}
       }
     },
@@ -142,7 +142,7 @@
     "type": "word_combination",
     "functions": {
       "getCondition": {
-        "function": "smart_home/get",
+        "function": "manspy.action.smart_home:get",
         "verbs": {}
       }
     },
