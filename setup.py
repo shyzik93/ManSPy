@@ -1,3 +1,16 @@
+"""
+# uninstall globally
+sudo python setup.py install --record installed.txt
+sudo xargs rm -vr < installed.txt
+
+# uinstall in your home directory
+python setup.py install --user --record installed.txt
+xargs rm -vr < installed.txt
+
+Из папки rep://dist:
+cd manspy-0.1.0 ; xargs rm -vr < installed.txt ; cd .. ; tar -xzf manspy-0.1.0.tar.gz ; cd manspy-0.1.0 ; python3 setup.py install ; cd ..
+"""
+
 import os
 
 try:
@@ -18,21 +31,21 @@ def get_long_description():
 
 setup(
     name='manspy',
-    version='0.1.1',
+    version='0.1.2',
     license='LGPL-3.0',
     description='Management system',
     # TODO: Написать тест на существолвание данных директорий. Также проверять файлы из Manifest.in
     packages=[
         'manspy',
-        'manspy/fasif',
-        'manspy/FCModule',
+        'manspy_interface',
+        'manspy/action',
+        'manspy/analyzers',
+        'manspy/database',
+        'manspy/loggers',
+        'manspy/runners',
+        'manspy/storage',
+        'manspy/storage/fasif',
         'manspy/utils',
-        'language/language_esperanto',
-        'action',
-        'interface',
-        'logger',
-        'tests',
-        'web',
     ],
     #long_description=open(os.path.join(os.path.dirname(__file__), 'README.md')).read(),
     long_description=get_long_description(),
@@ -53,24 +66,11 @@ setup(
     },
     include_package_data=True,
     classifiers=[
-		"Environment :: Console",
-		"Natural Language :: English",
-        "Natural Language :: Esperanto",
-		"Programming Language :: Python :: 3.5",
-		"Topic :: Scientific/Engineering",
-        "Topic :: Text Processing :: Linguistic"
+		'Environment :: Console',
+		'Natural Language :: English',
+        'Natural Language :: Esperanto',
+		'Programming Language :: Python :: 3.5',
+		'Topic :: Scientific/Engineering',
+        'Topic :: Text Processing :: Linguistic',
     ]
 )
-
-'''
-# uninstall globally
-sudo python setup.py install --record installed.txt
-sudo xargs rm -vr < installed.txt
-
-# uinstall in your home directory
-python setup.py install --user --record installed.txt
-xargs rm -vr < installed.txt
-
-Из папки rep://dist:
-cd manspy-0.1.0 ; xargs rm -vr < installed.txt ; cd .. ; tar -xzf manspy-0.1.0.tar.gz ; cd manspy-0.1.0 ; python3 setup.py install ; cd ..
-'''
