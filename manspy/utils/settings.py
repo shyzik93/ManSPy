@@ -33,10 +33,8 @@ class Settings:
         self.ifname = changed_keys.get('ifname', '')  # уникальное имя интерфейса. Необходимо для журналов.
 
         # не рекомендуемые к изменению
-        self.log_all = changed_keys.get('log_all', True)
         # 'real' - real answer, 'fake' - fake answer, 'construct' - construct answer
         self.answer_type = changed_keys.get('answer_type', 'fake')
-        self.print_time = changed_keys.get('print_time', False)
 
         paths_import = changed_keys.get('paths_import', [])
         self.paths_import.extend(paths_import)
@@ -44,11 +42,6 @@ class Settings:
     @classmethod
     def set_module(cls, module_type, module, module_code):
         cls.modules.setdefault(module_type, {})[module_code] = module
-
-    def pass_args_to_logs(self, method_name, *args):
-        if self.history:
-            for logger_name, logger_class in self.modules['logger'].items():
-                getattr(logger_class, method_name)(*args)
 
 
 class InitSettings:

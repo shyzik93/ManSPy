@@ -4,7 +4,7 @@ import inspect
 
 from manspy.storage.relation import Relation
 from manspy.utils import importer
-from manspy.runners.simple import runner
+from manspy.runners.only_lingvo import runner
 
 
 def get_is_required(func):

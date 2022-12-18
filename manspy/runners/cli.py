@@ -38,7 +38,7 @@ class CLI:
         self.settings.language = args.language
         self.settings.answer_type = args.type
         self.settings.history = args.history
-        self.settings.print_time = args.print_time
+        # self.settings.print_time = args.print_time
 
         if args.text:
             send_to_in(args.text, self.settings, args.level)
@@ -64,7 +64,7 @@ def do_cmd(args_list=None):
 
         parser.add_argument('--language', default='esperanto', help='nature language')
         # parser.add_argument('--print-levels', action='store_true', help='print analysyses of every level')
-        parser.add_argument('--print-time', action='store_true', help='print time of every level')
+        # parser.add_argument('--print-time', action='store_true', help='print time of every level')
         parser.add_argument('--history', action='store_true', help='save the history of dialog')
         parser.add_argument('--text', default=None, help='input text')
         parser.add_argument('filenames', nargs='*', help='files with input text')

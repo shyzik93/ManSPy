@@ -1,6 +1,3 @@
-import time
-
-
 class PipelinerGetter(list):
     def __init__(self, analyzers_list):
         super().__init__()
@@ -19,33 +16,18 @@ class PipelinerGetter(list):
         return super().__getitem__(index)
 
 
-def pipeliner(msg, analyzers=None):
+def pipeliner(message, analyzers=None):
     """ Второй аргумент - диапазон конвертирования от первого до последнего
         включительно через пробел. Если требуется сделать лишь один уровень,
         то можно указать только одно слово. Если указан только 'convert',
         то в качестве первого аргумента передаётся список извлечений."""
-    if msg.settings.print_time:
-        print('\n---------------------------------------')
-        print('----', msg.text)
-        print('---------------------------------------')
-
-    t1 = time.time()
-    msg.before_analyzes()
-
+    message.before_analyzes(analyzers)
     for analyzer in analyzers:
-        level = analyzer.__name__
-        msg.before_analysis(level)
-        t = time.time()
+        analyzer_name = analyzer.__name__
+        message.before_analysis(analyzer_name)
+        message.text = analyzer.analyze(message)
+        message.analysis[analyzer_name] = message.text
+        message.after_analysis(analyzer_name, message.text)
 
-        msg.text = analyzer.analyze(msg)
-
-        msg.analysis[level] = msg.text
-        msg.after_analysis(level, msg.text)
-        if msg.settings.print_time:
-            print('   '+level.rjust(9)+': ', time.time()-t)
-
-    msg.time_total = time.time() - t1
-    if msg.settings.print_time:
-        print('       Total: ', msg.time_total)
-
-    return msg.text
+    message.after_analyzes(analyzers)
+    return message.text
