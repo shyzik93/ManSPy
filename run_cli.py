@@ -52,7 +52,7 @@ class CLI:
                 send_to_in(filef.read(), self.settings)
 
 
-def do_cmd(args_list=None):
+def run(args_list=None):
     with InitSettings():
         cli = CLI()
 
@@ -75,4 +75,4 @@ def do_cmd(args_list=None):
 
 
 if __name__ == '__main__':
-    do_cmd()
+    run()

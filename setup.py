@@ -12,6 +12,8 @@ cd manspy-0.1.0 ; xargs rm -vr < installed.txt ; cd .. ; tar -xzf manspy-0.1.0.t
 """
 
 import os
+from pip._internal.req import parse_requirements
+
 
 try:
     from setuptools import setup
@@ -60,11 +62,12 @@ setup(
 
     entry_points={
         'console_scripts': [
-            'manspy = run_cli:do_cmd',
-            'manspy-interfaces = run_interfaces',
+            'manspy = run_cli:run',
+            'manspy-interfaces = run_interfaces:run',
         ]
     },
     include_package_data=True,
+    install_reqs=parse_requirements('requirements.txt'),
     classifiers=[
 		'Environment :: Console',
 		'Natural Language :: English',

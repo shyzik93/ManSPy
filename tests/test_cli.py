@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from run_cli import do_cmd
+from run_cli import run
 
 TEST_ARG_LISTS = [
     ([], []),
@@ -20,6 +20,6 @@ class CLITestCase(unittest.TestCase):
     @patch('builtins.print', mock_print)
     def test_cli(self):
         for args_list, answers in TEST_ARG_LISTS:
-            do_cmd(args_list)
+            run(args_list)
             self.assertListEqual(outputs, answers, ' '.join(args_list))
             outputs.clear()
