@@ -1,5 +1,3 @@
-import os
-
 from manspy.utils.settings import InitSettings
 from manspy_interface.runner import InterfaceRunner
 
