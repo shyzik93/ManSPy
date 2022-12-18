@@ -2,7 +2,6 @@
     после нажатия на Enter, то есть при отправке пустого сообщения :)
 """
 from manspy.runners.simple import runner
-from manspy.utils.message import Message
 
 
 class Interface:

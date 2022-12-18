@@ -2,7 +2,6 @@ import json
 import os
 
 from manspy.runners.simple import runner
-from manspy.utils.message import Message
 
 file_name_origin = 'autofeed_origin.txt'
 file_name_guess = 'autofeed_results.txt'

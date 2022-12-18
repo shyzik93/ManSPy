@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from manspy.runners.cli import do_cmd
+from run_cli import do_cmd
 
 TEST_ARG_LISTS = [
     ([], []),

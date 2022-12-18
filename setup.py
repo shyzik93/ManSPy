@@ -46,7 +46,10 @@ setup(
     install_requires=[],
 
     entry_points={
-        'console_scripts': ['manspy = manspy.cli:do_cmd']
+        'console_scripts': [
+            'manspy = run_cli:do_cmd',
+            'manspy-interfaces = run_interfaces',
+        ]
     },
     include_package_data=True,
     classifiers=[

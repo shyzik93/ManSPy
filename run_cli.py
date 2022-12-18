@@ -3,9 +3,9 @@ import pprint
 import os.path
 import os
 
-from manspy.runners.simple import runner
 from manspy.utils.settings import Settings, InitSettings
 from manspy.utils.unit import Unit
+from manspy.runners.simple import runner
 
 console_cur_dir = os.path.abspath('')
 
@@ -72,3 +72,7 @@ def do_cmd(args_list=None):
         args = parser.parse_args(args_list)
 
         cli.cmd_exec(args)
+
+
+if __name__ == '__main__':
+    do_cmd()
