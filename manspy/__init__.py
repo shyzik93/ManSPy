@@ -5,4 +5,3 @@
     мессенджеры, интерфейс мозг-компьютер, приёмник звонков и SMS и так далее.
 """
 
-from manspy.utils.settings import Settings
