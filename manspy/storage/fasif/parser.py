@@ -28,8 +28,7 @@ def get_dword(word, settings):
     return text(0).getByPos(0)
 
 
-def process_verb(fasif, obj_relation, settings, path_import):
-    #fasif['function'] = os.path.join(path_import, fasif['function'])
+def process_verb(fasif, obj_relation, settings):
     for language, verbs in fasif['verbs'].items():
         if language in settings.languages:
             words = [get_dword(word_verb, settings) for word_verb in verbs]
@@ -39,28 +38,8 @@ def process_verb(fasif, obj_relation, settings, path_import):
     return fasif
 
 
-def process_word_combination(fasif, obj_relation, settings, path_import):
+def process_word_combination(fasif, obj_relation, settings):
     not_to_db = ['nombr', 'cifer']
-
-    get_condition = fasif['functions'].get('getCondition')
-    get_condition_is_required = None
-    if get_condition:
-        #get_condition['function'] = os.path.join(path_import, get_condition['function'])
-        function = importer.import_action(get_condition['function'])
-        get_condition_is_required = get_is_required(function)
-
-    change_condition = fasif['functions'].get('changeCondition')
-    change_condition_is_required = None
-    if change_condition:
-        #change_condition['function'] = os.path.join(path_import, change_condition['function'])
-        function = importer.import_action(change_condition['function'])
-        change_condition_is_required = get_is_required(function)
-
-    if None not in (get_condition_is_required, change_condition_is_required):
-        if get_condition_is_required != change_condition_is_required:
-            raise Exception('arguments for `get_condition` and `change_condition` must be equals')
-
-    is_required = get_condition_is_required or change_condition_is_required
 
     fasif['argdescr'] = {}
     for language in settings.languages:
@@ -90,10 +69,24 @@ def process_word_combination(fasif, obj_relation, settings, path_import):
                 if word_hyperonym['base'] not in not_to_db:
                     obj_relation.set_relation('hyperonym', word_hyperonym, *bases)
 
+        get_condition_is_required = None
+        change_condition_is_required = None
         for destination, value in fasif['functions'].items():
             verbs = value['verbs'].setdefault(language, [])
             for index, word_verb in enumerate(verbs):
                 verbs[index] = obj_relation.set_relation('synonym', None, get_dword(word_verb, settings))
+
+            function = importer.import_action(value['function'])
+            if destination == 'getCondition':
+                get_condition_is_required = get_is_required(function)
+            elif destination == 'changeCondition':
+                get_condition_is_required = get_is_required(function)
+
+        if None not in (get_condition_is_required, change_condition_is_required):
+            if get_condition_is_required != change_condition_is_required:
+                raise Exception('arguments for `get_condition` and `change_condition` must be equals')
+
+        is_required = get_condition_is_required or change_condition_is_required
 
         fasif['argdescr'][language] = {}
         for argname, data in fasif['args'].items():
@@ -118,6 +111,6 @@ def fasif_parser(path_import, settings):
                 for fasif in fasifs:
                     fasif_processor = 'process_{}'.format(fasif["type"])
                     fasif_processor = globals()[fasif_processor]
-                    fasif = fasif_processor(fasif, obj_relation, settings, path_import)
+                    fasif = fasif_processor(fasif, obj_relation, settings)
                     if fasif:
                         settings.database.save_fasif(fasif["type"], fasif)
