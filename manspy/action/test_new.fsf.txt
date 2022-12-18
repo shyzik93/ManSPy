@@ -1,0 +1,113 @@
+#FASIF-Version: 3.00
+
+#:Verb
+# ################################################
+
+$ToUser
+    Esperanto: montri # глаголы в начальной форме, через запятую, чтобы программа сама выделила корень
+    Englsh: to print # добавить возможность указания нескольких глаголов через запятую
+    Russian: показывать
+
+#:WordCombination
+# ################################################
+
+getCondition: CurrencyLoader/GetCourse  # Назначение: ИмяМодуляБезРасширения/ИмяФункции
+
+currency y ;  Esperanto ; Russian
+# пробелы в начале строки обязательны
+    USD      ;  dolara   ; доллара
+    RUB      ;  rubla    ;
+    EUR      ;  euxra     ;
+    UAH      ;  grivna   ;
+country n ;  Esperanto
+    Russia  ;  rusia
+    Belarus ;  belarusia
+    Ukraine ;  ukrainia
+#country n #- если не требуется замена значения аргумента
+
+Esperanto
+    dolara: mono # аргументное слова: абстрактные группы через запятую
+    rusia: lando # нужно решить вопрос об изменении падежей у прилагательных, ну а пока мы не можем написать de rusia.
+    dolara cambio de rusia banko
+Russian
+    доллара: валюта
+    русскому: страна, национальность
+    курс доллара согласно русскому банку
+
+#:WordCombination
+# ################################################
+
+changeCondition: smart_home/LightOn # это назначение требует глаголов
+    Esperanto: sxalti
+    English: to turn on
+    Russian: включать
+#getCondition: - # пока нет(
+
+room y; Esperanto
+    bedroom; dormĉambro
+device y; Esperanto
+    0; tabla
+
+Esperanto
+    en dormcxambro:  cxambro
+    tabla: meblaro
+    tabla lampo en dormcxambro
+Russian
+    спальне: комната
+    настольный: мебель, местонахождение
+    настольный свет в спальне
+
+#:WordCombination
+# ################################################
+
+getCondition: smart_home/showAddress
+
+device y; Esperanto
+    computer; komputilo
+
+Esperanto
+    de komputilo: aparato
+    adreso de komputilo
+
+#:WordCombination
+# ################################################
+
+getCondition: $value:figure
+
+kvar y
+
+Esperanto
+    kvar: *
+    kvar
+
+#:Verb
+# ################################################
+
+Math/add from=./
+    Esperanto: adicii # глаголы в начальной форме, через запятую, чтобы программа сама выделила корень
+    Englsh: to add # добавить возможность указания нескольких глаголов через запятую
+    Russian: складывать
+
+# ################################################
+
+getCondition: math.pi type=const;from=std-library
+
+Esperanto
+    pi: *to_dict_as:[POSpeech:noun;name:proper], consto
+    pi
+
+№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№33333
+
+Описание функций
+
+arg0 - первый аргумент
+arg0=none - не передавать
+arg0=none - передавать (по умолчанию) (в будущем можно вычислять по AST-дереву - если есть первый аргумент, то передаём)
+
+from - источник функции
+from=./ - из текущей директории (по умолчанию)
+from=std-library - из стандартной библиотеки
+
+type - тип
+type=func - функция (по умолчанию)
+type=const - переменная или константа. Используется, например, чтобы подключить к естественному языку именнованные константы: число Пи, число е, скорость света (число с) и т. д. В этом случае arg0=none

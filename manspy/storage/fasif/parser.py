@@ -29,7 +29,7 @@ def get_dword(word, settings):
 
 
 def process_verb(fasif, obj_relation, settings, path_import):
-    fasif['function'] = os.path.join(path_import, fasif['function'])
+    #fasif['function'] = os.path.join(path_import, fasif['function'])
     for language, verbs in fasif['verbs'].items():
         if language in settings.languages:
             words = [get_dword(word_verb, settings) for word_verb in verbs]
@@ -45,14 +45,14 @@ def process_word_combination(fasif, obj_relation, settings, path_import):
     get_condition = fasif['functions'].get('getCondition')
     get_condition_is_required = None
     if get_condition:
-        get_condition['function'] = os.path.join(path_import, get_condition['function'])
+        #get_condition['function'] = os.path.join(path_import, get_condition['function'])
         function = importer.import_action(get_condition['function'])
         get_condition_is_required = get_is_required(function)
 
     change_condition = fasif['functions'].get('changeCondition')
     change_condition_is_required = None
     if change_condition:
-        change_condition['function'] = os.path.join(path_import, change_condition['function'])
+        #change_condition['function'] = os.path.join(path_import, change_condition['function'])
         function = importer.import_action(change_condition['function'])
         change_condition_is_required = get_is_required(function)
 
@@ -91,7 +91,7 @@ def process_word_combination(fasif, obj_relation, settings, path_import):
                     obj_relation.set_relation('hyperonym', word_hyperonym, *bases)
 
         for destination, value in fasif['functions'].items():
-            verbs = value['verbs'].setdefault(language, {})
+            verbs = value['verbs'].setdefault(language, [])
             for index, word_verb in enumerate(verbs):
                 verbs[index] = obj_relation.set_relation('synonym', None, get_dword(word_verb, settings))
 

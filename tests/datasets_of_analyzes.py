@@ -12,13 +12,13 @@ montru_euxran_dolaran_kurzon_de_ukrainia_banko = {
     0: {
         'type_sentence': 'run',
         'verb': {
-            'func_common': 'smart_home/printToIF',
+            'func_common': 'manspy.action.smart_home:printToIF',
             'used_antonym': None,
             'answer_type': 'construct'
         },
         'word_combinations': [
             {
-                'func_get_value': 'CurrencyLoader/GetCourse',
+                'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                 'func_set_value': None,
                 'arguments': [
                     {'currency': 'EUR', 'country': 'Ukraine'},
@@ -34,13 +34,13 @@ montru_dolaran_kurzon = {
     0: {
         'type_sentence': 'run',
         'verb': {
-            'func_common': 'smart_home/printToIF',
+            'func_common': 'manspy.action.smart_home:printToIF',
             'used_antonym': None,
             'answer_type': 'construct'
         },
         'word_combinations': [
             {
-                'func_get_value': 'CurrencyLoader/GetCourse',
+                'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                 'func_set_value': None,
                 'arguments': [
                     {'currency': 'USD'}
@@ -65,13 +65,13 @@ dataset_verb_and_actants = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/printToIF',
+                        'func_common': 'manspy.action.smart_home:printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'CurrencyLoader/GetCourse',
+                            'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD', 'country': 'Russia'},
@@ -97,7 +97,7 @@ dataset_verb_and_actants = {
                     'word_combinations': [
                         {
                             'func_get_value': None,
-                            'func_set_value': 'smart_home/LightOn',
+                            'func_set_value': 'manspy.action.smart_home:LightOn',
                             'arguments': [
                                 {'device': '0', 'room': 'bedroom'}
                             ],
@@ -114,12 +114,12 @@ dataset_verb_and_actants = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/printToIF',
+                        'func_common': 'manspy.action.smart_home:printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
-                        {'func_get_value': 'smart_home/showAddress',
+                        {'func_get_value': 'manspy.action.smart_home:showAddress',
                          'func_set_value': None,
                          'arguments': [
                              {'device': 'computer'}
@@ -137,13 +137,13 @@ dataset_verb_and_actants = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/printToIF',
+                        'func_common': 'manspy.action.smart_home:printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'smart_home/showAddress',
+                            'func_get_value': 'manspy.action.smart_home:showAddress',
                             'func_set_value': None,
                             'arguments': [],
                         }
@@ -165,13 +165,13 @@ dataset_verb_and_repeated_actants = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/printToIF',
+                        'func_common': 'manspy.action.smart_home:printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'CurrencyLoader/GetCourse',
+                            'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD', 'country': 'Russia'},
@@ -191,13 +191,13 @@ dataset_verb_and_repeated_actants = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/printToIF',
+                        'func_common': 'manspy.action.smart_home:printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'CurrencyLoader/GetCourse',
+                            'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD', 'country': 'Russia'},
@@ -229,13 +229,13 @@ dataset_verb_and_homogeneous_actants = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/printToIF',
+                        'func_common': 'manspy.action.smart_home:printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'smart_home/showAddress',
+                            'func_get_value': 'manspy.action.smart_home:showAddress',
                             'func_set_value': None,
                             'arguments': [
                                 {'device': 'computer'}
@@ -253,13 +253,13 @@ dataset_verb_and_homogeneous_actants = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/printToIF',
+                        'func_common': 'manspy.action.smart_home:printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'CurrencyLoader/GetCourse',
+                            'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'EUR', 'country': 'Russia'},
@@ -289,13 +289,13 @@ dataset_verb_and_homogeneous_actants = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/printToIF',
+                        'func_common': 'manspy.action.smart_home:printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'CurrencyLoader/GetCourse',
+                            'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'EUR', 'country': 'Russia'},
@@ -341,7 +341,7 @@ dataset_antonym_of_verb = {
                     'word_combinations': [
                         {
                             'func_get_value': None,
-                            'func_set_value': 'smart_home/LightOn',
+                            'func_set_value': 'manspy.action.smart_home:LightOn',
                             'arguments': [
                                  {'device': '0', 'room': 'bedroom'}
                             ],
@@ -358,13 +358,13 @@ dataset_antonym_of_verb = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/printToIF',
+                        'func_common': 'manspy.action.smart_home:printToIF',
                         'used_antonym': True,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'CurrencyLoader/GetCourse',
+                            'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD', 'country': 'Russia'}
@@ -388,19 +388,19 @@ dataset_verb_and_homogeneous_direct_supplement = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/printToIF',
+                        'func_common': 'manspy.action.smart_home:printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'smart_home/showAddress',
+                            'func_get_value': 'manspy.action.smart_home:showAddress',
                             'func_set_value': None,
                             'arguments': [
                                 {'device': 'computer'}
                             ],
                         }, {
-                            'func_get_value': 'CurrencyLoader/GetCourse',
+                            'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD'}
@@ -418,19 +418,19 @@ dataset_verb_and_homogeneous_direct_supplement = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/printToIF',
+                        'func_common': 'manspy.action.smart_home:printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'smart_home/showAddress',
+                            'func_get_value': 'manspy.action.smart_home:showAddress',
                             'func_set_value': None,
                             'arguments': [
                                 {'device': 'computer'}
                             ],
                         }, {
-                            'func_get_value': 'CurrencyLoader/GetCourse',
+                            'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD', 'country': 'Belarus'}
@@ -448,19 +448,19 @@ dataset_verb_and_homogeneous_direct_supplement = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/printToIF',
+                        'func_common': 'manspy.action.smart_home:printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'CurrencyLoader/GetCourse',
+                            'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD'}
                             ],
                         }, {
-                            'func_get_value': 'smart_home/showAddress',
+                            'func_get_value': 'manspy.action.smart_home:showAddress',
                             'func_set_value': None,
                             'arguments': [
                                 {'device': 'computer'}
@@ -510,13 +510,13 @@ dataset_numbers_and_simple_math = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/add',
+                        'func_common': 'manspy.action.smart_home:add',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'smart_home/get',
+                            'func_get_value': 'manspy.action.smart_home:get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 23}
@@ -534,25 +534,25 @@ dataset_numbers_and_simple_math = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/add',
+                        'func_common': 'manspy.action.smart_home:add',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'smart_home/get',
+                            'func_get_value': 'manspy.action.smart_home:get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 40}
                             ],
                         }, {
-                            'func_get_value': 'smart_home/get',
+                            'func_get_value': 'manspy.action.smart_home:get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 3}
                             ],
                         }, {
-                            'func_get_value': 'smart_home/get',
+                            'func_get_value': 'manspy.action.smart_home:get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 1000000}
@@ -570,19 +570,19 @@ dataset_numbers_and_simple_math = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/add',
+                        'func_common': 'manspy.action.smart_home:add',
                         'used_antonym': True,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'CurrencyLoader/GetCourse',
+                            'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD'}
                             ],
                         }, {
-                            'func_get_value': 'smart_home/get',
+                            'func_get_value': 'manspy.action.smart_home:get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 3}
@@ -600,20 +600,20 @@ dataset_numbers_and_simple_math = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/add',
+                        'func_common': 'manspy.action.smart_home:add',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'CurrencyLoader/GetCourse',
+                            'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD'}
                             ],
                         },
                         {
-                            'func_get_value': 'smart_home/get',
+                            'func_get_value': 'manspy.action.smart_home:get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 1000}
@@ -631,19 +631,19 @@ dataset_numbers_and_simple_math = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/multiply',
+                        'func_common': 'manspy.action.smart_home:multiply',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'smart_home/get',
+                            'func_get_value': 'manspy.action.smart_home:get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 3}
                             ],
                         }, {
-                            'func_get_value': 'smart_home/get',
+                            'func_get_value': 'manspy.action.smart_home:get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 4}
@@ -816,19 +816,19 @@ dataset_synonyms_of_verb = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/multiply',
+                        'func_common': 'manspy.action.smart_home:multiply',
                         'used_antonym': True,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'CurrencyLoader/GetCourse',
+                            'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD'}
                             ],
                         }, {
-                            'func_get_value': 'smart_home/get',
+                            'func_get_value': 'manspy.action.smart_home:get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 3}
@@ -845,19 +845,19 @@ dataset_synonyms_of_verb = {
             'convert': {
                 0: {
                     'type_sentence': 'run', 'verb': {
-                        'func_common': 'smart_home/multiply',
+                        'func_common': 'manspy.action.smart_home:multiply',
                         'used_antonym': True,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'CurrencyLoader/GetCourse',
+                            'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'USD'}
                             ],
                         }, {
-                            'func_get_value': 'smart_home/get',
+                            'func_get_value': 'manspy.action.smart_home:get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 3}
@@ -881,13 +881,13 @@ dataset_undirect_order_of_words = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/add',
+                        'func_common': 'manspy.action.smart_home:add',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'smart_home/get',
+                            'func_get_value': 'manspy.action.smart_home:get',
                             'func_set_value': None,
                             'arguments': [
                                 {'a': 3}
@@ -910,13 +910,13 @@ dataset_undirect_order_of_words = {
                 0: {
                     'type_sentence': 'run',
                     'verb': {
-                        'func_common': 'smart_home/printToIF',
+                        'func_common': 'manspy.action.smart_home:printToIF',
                         'used_antonym': None,
                         'answer_type': 'construct'
                     },
                     'word_combinations': [
                         {
-                            'func_get_value': 'CurrencyLoader/GetCourse',
+                            'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                             'func_set_value': None,
                             'arguments': [
                                 {'currency': 'EUR'}
@@ -963,7 +963,7 @@ dataset_homogeneous_sentences = {
                     'type_sentence': 'run',
                     'verb': {
                         'answer_type': 'construct',
-                        'func_common': 'smart_home/printToIF',
+                        'func_common': 'manspy.action.smart_home:printToIF',
                         'used_antonym': None
                     },
                     'word_combinations': [
@@ -971,7 +971,7 @@ dataset_homogeneous_sentences = {
                             'arguments': [
                                 {'country': 'Russia', 'currency': 'EUR'}
                             ],
-                            'func_get_value': 'CurrencyLoader/GetCourse',
+                            'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                             'func_set_value': None,
                         }
                     ],
@@ -990,7 +990,7 @@ dataset_homogeneous_sentences = {
                                 {'device': '0', 'room': 'bedroom'}
                             ],
                             'func_get_value': None,
-                            'func_set_value': 'smart_home/LightOn',
+                            'func_set_value': 'manspy.action.smart_home:LightOn',
                         }
                     ],
                     'subjects_word_combinations': []

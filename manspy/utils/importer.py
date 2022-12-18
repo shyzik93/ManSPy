@@ -1,7 +1,5 @@
 import importlib
 import pkgutil
-import sys
-import os.path
 
 
 def import_modules(path_import, module_type):
@@ -16,13 +14,8 @@ def import_modules(path_import, module_type):
             yield module, module_code[len(module_type)+1:]
 
 
-def import_action(abs_path_to_function):
+def import_action(string_import):
     # TODO: Использование встроенных действий: if function_str[0] == '$': return function_str[1:]
-    func_name = os.path.basename(abs_path_to_function)
-    module_file = os.path.dirname(abs_path_to_function)
-    module_name = os.path.basename(module_file)
-    module_path = os.path.dirname(module_file)
-    sys.path.insert(0, module_path)
+    module_name, callable_name = string_import.split(':')
     module_obj = importlib.import_module(module_name)
-    del sys.path[0]
-    return getattr(module_obj, func_name)
+    return getattr(module_obj, callable_name)

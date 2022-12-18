@@ -13,12 +13,8 @@ from tests.datasets_of_analyzes import datasets
 from manspy.runners.simple import runner
 
 
-DEFAULT_MODULE_DIR = os.path.dirname(__file__)
-LEN_DEFAULT_MODULE_DIR = len(DEFAULT_MODULE_DIR) + 2
-
-
 def mock_action(path):
-    return path[LEN_DEFAULT_MODULE_DIR:]
+    return path
 
 
 def sort_text_dict(text):

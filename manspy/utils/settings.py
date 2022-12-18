@@ -8,7 +8,6 @@ DEFAULT_PATH_MODULES = os.path.dirname(os.path.dirname(os.path.dirname(__file__)
 DEFAULT_PATHS_IMPORT = [
     ('logger', os.path.join(DEFAULT_PATH_MODULES, 'logger')),
     ('database', os.path.join(DEFAULT_PATH_MODULES, 'manspy/database')),  # модуль базы должен быть перед модулем действий
-    ('action', os.path.join(DEFAULT_PATH_MODULES, 'action')),
 ]
 
 
@@ -75,17 +74,16 @@ class InitSettings:
 
         self._IS_ENTERED = True
         for module_type, path_import in Settings.paths_import:
-            if module_type == 'action':
-                fasif_parser(path_import, Settings(history=False))
-            else:
-                for module, module_code in importer.import_modules(path_import, module_type):
-                    if module_type == 'logger':
-                        module = module.Logger()
-                    elif module_type == 'database':
-                        config = Settings.db_settings[Settings.db_type]
-                        module = module.Database(config)
+            for module, module_code in importer.import_modules(path_import, module_type):
+                if module_type == 'logger':
+                    module = module.Logger()
+                elif module_type == 'database':
+                    config = Settings.db_settings[Settings.db_type]
+                    module = module.Database(config)
 
-                    Settings.set_module(module_type, module, module_code)
+                Settings.set_module(module_type, module, module_code)
+
+        fasif_parser(os.path.join(DEFAULT_PATH_MODULES, 'manspy/action/'), Settings(history=False))
 
     def __exit__(self, Type, Value, Trace):
         for module_code, module in Settings.modules['logger'].items():
