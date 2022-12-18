@@ -26,7 +26,7 @@ def setMOS_ToSign(features):
             setMOS_ToSign(feature['feature'])
 
 
-def setMOSentence(word, sentence):
+def setMOSentence(word):
     if word['POSpeech'] == 'verb':
         word['MOSentence'] = 'predicate'
         if word['feature']:
@@ -161,7 +161,7 @@ def analyze(message):
     for sentence in message.text:
         # определяет члены предложения
         for word in sentence:
-            setMOSentence(word, sentence)
+            setMOSentence(word)
         # устанавливает связи членов предложения
         for word in sentence:
             setLinks(word, sentence)
