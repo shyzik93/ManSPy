@@ -7,6 +7,7 @@ import os
 import sys
 import threading
 import json
+import importlib
 
 from manspy.utils.settings import Settings
 
@@ -41,7 +42,7 @@ class InterfaceRunner:
     def turn_on_interface(self, IFNames):
         for args_settings, IFName in IFNames:
             self.interfaces[IFName] = [None, None]
-            IFModule = Settings.modules['interface'][IFName]
+            IFModule = importlib.import_module(IFName)
             IFClass = IFModule.Interface(self.conf.get(IFName))
 
             IFClass.IFName = IFName

@@ -15,7 +15,7 @@ def make_dialog_plain_line(text: str, direction: str, ifname: str):
 
 class Logger:
     def __init__(self):
-        self.f_history = open('history.txt', 'ab')
+        self.f_history = None
     
     def on_create_message(self, direction, w_text, msg):
         pass
@@ -24,6 +24,9 @@ class Logger:
         self.f_history.write(bytearray(make_dialog_plain_line(text, direction, msg.settings.ifname), 'utf-8'))
 
     def before_analyzes(self, levels, msg):
+        if self.f_history is None:
+            self.f_history = open('history.txt', 'ab')
+
         with open('analysis.txt', 'a', encoding='utf-8') as f:
             f.write('\n\n'+'#'*100+'\n')
             f.write(levels+'\n')

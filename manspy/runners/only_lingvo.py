@@ -1,3 +1,5 @@
+"""Данный Runner используется для импорта Фасифов"""
+
 from manspy.analyzers import (
     esperanto_graphemathic,
     esperanto_morphological,

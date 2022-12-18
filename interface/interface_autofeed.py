@@ -15,7 +15,8 @@ class Interface:
     def send_to_out(self, r_text, any_data):
         if self.settings['compare_with_origin']:
             if self.sentence in self.origin:
-                if r_text in self.origin[self.sentence]: self.res.write('    True >>> '+r_text+'\n')
+                if r_text in self.origin[self.sentence]:
+                    self.res.write('    True >>> '+r_text+'\n')
                 else:
                     gen_res = False
                     self.res.write('    False >>> '+r_text+'\n')
