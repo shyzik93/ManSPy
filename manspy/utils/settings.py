@@ -1,13 +1,14 @@
+import importlib
 import os
 
 from manspy.storage.fasif.parser import fasif_parser
-from manspy.utils import importer
 
 
 DEFAULT_PATH_MODULES = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 DEFAULT_PATHS_IMPORT = [
-    ('logger', os.path.join(DEFAULT_PATH_MODULES, 'logger')),
-    ('database', os.path.join(DEFAULT_PATH_MODULES, 'manspy/database')),  # модуль базы должен быть перед модулем действий
+    ('logger', 'manspy.loggers.logger_db'),
+    ('logger', 'manspy.loggers.logger_plain_text'),
+    ('database', 'manspy.database.database_sqlite3'),  # модуль базы должен быть перед модулем действий
 ]
 
 
@@ -17,22 +18,12 @@ class Settings:
     paths_import = DEFAULT_PATHS_IMPORT
     modules = {
         'logger': {},
-        'database': {},
     }
-    db_type = 'sqlite3'
     db_settings = {
-        'sqlite3': {
-            'path': ':memory:',
-        },
-        'mysql': {
-            'host': '',
-            'user': '',
-            'password': '',
-            'port': '',
-        },
-        'dict': {
-        }
+        'path': ':memory:',
     }
+    database = None
+    loggers = []
 
     def __init__(self, **changed_keys):
         # TODO: описание настроек вынести в строку документации класса
@@ -54,10 +45,6 @@ class Settings:
     def set_module(cls, module_type, module, module_code):
         cls.modules.setdefault(module_type, {})[module_code] = module
 
-    @property
-    def database(self):
-        return self.modules['database'][self.db_type]
-
     def pass_args_to_logs(self, method_name, *args):
         if self.history:
             for logger_name, logger_class in self.modules['logger'].items():
@@ -74,14 +61,12 @@ class InitSettings:
 
         self._IS_ENTERED = True
         for module_type, path_import in Settings.paths_import:
-            for module, module_code in importer.import_modules(path_import, module_type):
-                if module_type == 'logger':
-                    module = module.Logger()
-                elif module_type == 'database':
-                    config = Settings.db_settings[Settings.db_type]
-                    module = module.Database(config)
-
-                Settings.set_module(module_type, module, module_code)
+            module_obj = importlib.import_module(path_import)
+            if module_type == 'database':
+                Settings.database = module_obj.Database(Settings.db_settings)
+            if module_type == 'logger':
+                module = module_obj.Logger()
+                Settings.loggers.append(module)
 
         fasif_parser(os.path.join(DEFAULT_PATH_MODULES, 'manspy/action/'), Settings(history=False))
 
@@ -89,8 +74,7 @@ class InitSettings:
         for module_code, module in Settings.modules['logger'].items():
             module.close()
 
-        for module_code, module in Settings.modules['database'].items():
-            module.close()
+        Settings.database.close()
 
         if Type is None:  # Если исключение не возникло
             pass

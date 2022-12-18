@@ -9,7 +9,8 @@ from manspy.analyzers import (
 )
 from manspy.utils.pipeliner import pipeliner, PipelinerGetter
 from manspy.utils.message import Message
-#from manspy.utils.settings import Settings
+# from manspy.utils.settings import Settings
+# from manspy.database.database_sqlite3 import Database
 
 PIPELINE = PipelinerGetter([
     ('graphmath', esperanto_graphemathic),
@@ -20,6 +21,8 @@ PIPELINE = PipelinerGetter([
     ('convert', converter),
     ('exec', executor_internal_sentences),
 ])
+
+# Settings.database = Database(path=':memory')
 
 
 def runner(text, settings, pipeline=None, any_data=None):
