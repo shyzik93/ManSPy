@@ -56,7 +56,7 @@ def process_conjunction(word, sentence):
 
 def mark_freemembers(sentence, indexes):
     for index in indexes:
-        sentence(index, 'praMOSentence', 'freemember')
+        sentence[index]['praMOSentence'] = 'freemember'
     #sentence.addHomogeneous(*indexes) # не совсем корректно
     #sentence.jumpByStep(-len(indexes))
 
@@ -130,21 +130,21 @@ def exchangeDataBetweenHomo(sentence):
 
         for index_homo in word['homogeneous_link']:
             if 'case' in word:
-                sentence(index_homo, 'case', word['case'])
+                sentence[index_homo]['case'] = word['case']
 
             done_indexes.append(index_homo)
 
 
 def numeral2number(sentence, indexes):
     """ Числительное в число """
-    glued_numeral = ' '.join([sentence(index, 'word') for index in indexes])
+    glued_numeral = ' '.join([sentence[index]['word'] for index in indexes])
     numeral_value = 0
     multiplier = 1
     temp_sum = 0
     indexes.reverse()
     first_iter = True
     for index in indexes:
-        nv = sentence(index, 'number_value')
+        nv = sentence[index]['number_value']
         if nv > 999:
             if temp_sum == 0 and not first_iter:
                 temp_sum = 1
@@ -184,10 +184,11 @@ def process_numeral(word, sentence, indexes=None):
 
     #print indexes
     numeral_value, glued_numeral = numeral2number(sentence, indexes)
-    #print numeral_value, glued_numeral, 
-    sentence(indexes[-1], 'word', glued_numeral)
-    sentence(indexes[-1], 'number_value', numeral_value)
-    sentence(indexes[-1], 'base', '')
+    #print numeral_value, glued_numeral,
+    word_index = indexes[-1]
+    sentence[word_index]['word'] = glued_numeral
+    sentence[word_index]['number_value'] = numeral_value
+    sentence[word_index]['base'] = ''
     sentence.delByIndex(*indexes[:-1])
     sentence.jumpByStep(-len(indexes))
 

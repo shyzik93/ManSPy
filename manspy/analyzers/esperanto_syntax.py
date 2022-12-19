@@ -97,9 +97,9 @@ def goThrowLinks(index, sentence, indexes=None):
     if index not in indexes:
         indexes.append(index)
     
-        for index_link in sentence(index, 'link'):
+        for index_link in sentence[index]['link']:
             goThrowLinks(index_link, sentence, indexes)
-        for index_link in sentence(index, 'homogeneous_link'):
+        for index_link in sentence[index]['homogeneous_link']:
             goThrowLinks(index_link, sentence, indexes)    
 
     return indexes
@@ -123,11 +123,11 @@ def split_sentence(sentence):
     _sentences = []
 
     for first_index in first_indexes:
-        if sentence(first_index, 'POSpeech') == 'conjuction':
+        if sentence[first_index]['POSpeech'] == 'conjuction':
             conjunctions.append(first_index) # сочинённых союзов между однородными членами должны исчезнуть в предыдущих шагах.
-        if sentence(first_index, 'POSentence') == 'subject':
+        if sentence[first_index]['POSentence'] == 'subject':
             subjects.append(first_index)
-        if sentence(first_index, 'POSentence') == 'predicate':
+        if sentence[first_index]['POSentence'] == 'predicate':
             predicates.append(first_index)    
 
     for subject in subjects:

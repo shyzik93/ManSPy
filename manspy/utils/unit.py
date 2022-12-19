@@ -37,13 +37,20 @@ class errorManager:
 
 class Unit:
     """
-    unit(index) - извлечение подъюнита
-    unit(index, name) - извлечение характеристики подъюнита
-    unit(index, name, value) - изменение характеристики подъюнита
-    unit[name] - извлечение характеристики юнита
-    unit[name] = value - изменение характеристики юнита
-    name in unit - проверка наличия ключа характеристики юнита
-    len(unit) - извлечение длины юнита (количество подъюнитогв)
+    `unit(index)` - извлечение подъюнита
+    `unit(index, name)` - извлечение характеристики подъюнита
+    `unit(index, name, value)` - изменение характеристики подъюнита
+
+    `unit[index]` - извлечение подъюнита
+    `unit[index][name]` - извлечение характеристики подъюнита
+    `unit[index][name]` = value - изменение характеристики подъюнита
+
+    `unit[name]` - извлечение характеристики юнита
+    `unit[name] = value` - изменение характеристики юнита
+    `del unit[name]` - удалить характеристику юнита
+    `unit[name] = None` - удалить характеристику юнита
+    `name in unit` - проверка наличия ключа характеристики юнита
+    `len(unit)` - извлечение длины юнита (количество подъюнитогв)
 
     Юнит - это предложение или слово. Подъюнит - их составляющие:
     для предложения - это слова, для слов - это символы
@@ -149,16 +156,37 @@ class Unit:
     # Работа с информацией о юните в целом
 
     def __setitem__(self, key, value):
-        if key in self.unit_info and key is None:
+        if key in self.unit_info and value is None:
             del self.unit_info[key]
+            return
 
         self.unit_info[key] = value
 
     def __getitem__(self, key):
-        return self.unit_info.get(key)
+        """
+        Извлекает значение свойства юнита либо подъюнит
+        :param key: имя свойства либо индекс подъюнита
+        :return: значение свойства юнита, если key - строка; подъюнит, если key - целое число.
+        """
+        if isinstance(key, str):
+            return self.unit_info.get(key)
+        elif isinstance(key, int):  # типа getByIndex()
+            return self.subunit_info[key]
+        else:
+            raise Exception('unknown type of item key')
 
     def __delitem__(self, key):
-        del self.unit_info[key]
+        """
+        Извлекает значение свойства юнита либо подъюнит
+        :param key: имя свойства либо индекс подъюнита
+        :return: значение свойства юнита, если key - строка; подъюнит, если key - целое число.
+        """
+        if isinstance(key, str):
+            del self.unit_info[key]
+        elif isinstance(key, int):
+            del self.subunit_info[key]
+        else:
+            raise Exception('unknown type of item key')
 
     def __contains__(self, name):
         return name in self.unit_info
@@ -173,7 +201,7 @@ class Unit:
 
     # Работа с информацией о составляющих юнит (подюнитов)
     def __len__(self): return len(self.subunit_info)
-    def __call__(self, index, name=None, value=None): # типа getByIndex()
+    def __call__(self, index, name=None, value=None):
         if name is None:
             return self.subunit_info[index]
         elif value is None:

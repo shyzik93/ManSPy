@@ -8,7 +8,7 @@ def collect_by_link(sentence, word):
     subsentence = {}
     while word['link']:
         subsentence[word['index']] = word
-        word = sentence(word['link'][0])
+        word = sentence[word['link'][0]]
 
     subsentence[word['index']] = word
     return subsentence
@@ -73,7 +73,7 @@ def _extract(sentence):
 
         separate_argument(sentence, word, arguments, argument_indexes_for_delete)
 
-    sentence.delByIndex(*subject_indexes_for_delete)
+    sentence.delByIndex(*subject_indexes_for_delete)  # TODO переделать в `del sentence[*subject_indexes_for_delete]`, а delByIndex - удалить
     sentence.delByIndex(*predicate_indexes_for_delete)
     sentence.delByIndex(*argument_indexes_for_delete)
 
