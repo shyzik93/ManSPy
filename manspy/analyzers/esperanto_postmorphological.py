@@ -20,7 +20,7 @@ def process_preposition(word, sentence):
         sentence.delByStep()
 
     elif right['POSpeech'] in ['noun', 'pronoun', 'numeral']:
-        sentence.getByStep(1, 'case', word['give_case'])
+        sentence.getByStep(1)['case'] = word['give_case']
         sentence.delByStep()
     else:
         sentence.error.add("postmorph", 'After preposition "'+word['word']+'" must be a noun or a pronoun or a cardinal numeral! Found '+str(sentence.getByStep(1)), 0)
@@ -85,14 +85,14 @@ def checkAdverbBefore(sentence):
         return False  # т. е. является последним
 
     # if adverb['base'] == u'ankaŭ': # стоит перед словом, к которому относится
-    return sentence.getByStep(1, 'POSpeech') in ['verb', 'adjective', 'adverb']
+    return sentence.getByStep(1)['POSpeech'] in ['verb', 'adjective', 'adverb']
 
 
 def checkAdverbAfter(sentence):
     if sentence.isFirst():
         return False
 
-    return sentence.getByStep(-1, 'POSpeech') in ('verb', 'adjective', 'adverb')
+    return sentence.getByStep(-1)['POSpeech'] in ('verb', 'adjective', 'adverb')
 
 
 def process_adverb(word, sentence):

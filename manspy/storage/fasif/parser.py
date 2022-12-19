@@ -25,7 +25,7 @@ def get_is_required(func):
 
 def get_dword(word, settings):
     text = runner(word, settings, pipeline=':postmorph')
-    return text(0).getByPos(0)
+    return text[0].getByPos(0)
 
 
 def process_verb(fasif, obj_relation, settings):
@@ -43,7 +43,7 @@ def process_word_combination(fasif, obj_relation, settings):
 
     fasif['argdescr'] = {}
     for language in settings.languages:
-        wcomb = runner(fasif['wcomb'][language], settings, pipeline=':synt')(0)
+        wcomb = runner(fasif['wcomb'][language], settings, pipeline=':synt')[0]
 
         for arg_name, args in fasif['args'].items():
             argwords = args['argwords'][language]

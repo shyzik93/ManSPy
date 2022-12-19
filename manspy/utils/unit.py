@@ -37,10 +37,6 @@ class errorManager:
 
 class Unit:
     """
-    `unit(index)` - извлечение подъюнита
-    `unit(index, name)` - извлечение характеристики подъюнита
-    `unit(index, name, value)` - изменение характеристики подъюнита
-
     `unit[index]` - извлечение подъюнита
     `unit[index][name]` - извлечение характеристики подъюнита
     `unit[index][name]` = value - изменение характеристики подъюнита
@@ -51,6 +47,8 @@ class Unit:
     `unit[name] = None` - удалить характеристику юнита
     `name in unit` - проверка наличия ключа характеристики юнита
     `len(unit)` - извлечение длины юнита (количество подъюнитогв)
+
+    Если значение характеристика равно None, то такая характеристика считается несуществующей.
 
     Юнит - это предложение или слово. Подъюнит - их составляющие:
     для предложения - это слова, для слов - это символы
@@ -189,7 +187,7 @@ class Unit:
             raise Exception('unknown type of item key')
 
     def __contains__(self, name):
-        return name in self.unit_info
+        return self.unit_info.get(name) is not None
 
     #def __repr__(self): return self.__class__.__name__ + "(" + str(self.full_info) + ")"
     def __repr__(self): return self.__class__.__name__ + "(" + str(self.unit_info) + ")"
@@ -200,14 +198,9 @@ class Unit:
     def update(self, _dict): self.unit_info.update(_dict)
 
     # Работа с информацией о составляющих юнит (подюнитов)
-    def __len__(self): return len(self.subunit_info)
-    def __call__(self, index, name=None, value=None):
-        if name is None:
-            return self.subunit_info[index]
-        elif value is None:
-            return self.subunit_info[index][name]
-
-        self.subunit_info[index][name] = value
+    def __len__(self):
+        """Возвращает длину юнита"""
+        return len(self.subunit_info)
 
     @property
     def index(self):
@@ -252,23 +245,33 @@ class Unit:
             del self.subunit_info[index]
         self.keys = list(self.subunit_info.keys())
 
-    def getByStep(self, step=0, name=None, value=None):
-        return self.__call__(self.keys[self.position+step], name, value)
+    def getByStep(self, step=0):
+        return self.subunit_info[self.keys[self.position+step]]
 
-    def getByPos(self, position, name=None, value=None):
-        return self.__call__(self.keys[position], name, value)
-      #return self.subunit_info[self.keys[position]]
+    def getByPos(self, position):
+        return self.subunit_info[self.keys[position]]
 
-    def currentIndex(self,step=0):
+    def currentIndex(self, step=0):
         return self.keys[self.position+step]  # TODO: delete this method
 
     # Текущая позиция
-    def isOutLeft(self, step=0):  return self.position+step < 0
-    def isFirst(self, step=0):    return self.position+step == 0
-    def isBetween(self, step=0):  return self.position+step <  len(self.subunit_info) - 1 and self.position+step > 0
-    def isLast(self, step=0):     return self.position+step == len(self.subunit_info) - 1
-    def isOutRight(self, step=0): return self.position+step >  len(self.subunit_info) - 1
-    def isEntry(self, step=0):    return self.position+step >= 0 and self.position+step < len(self.subunit_info)
+    def isOutLeft(self, step=0):
+        return self.position+step < 0
+
+    def isFirst(self, step=0):
+        return self.position+step == 0
+
+    def isBetween(self, step=0):
+        return self.position+step <  len(self.subunit_info) - 1 and self.position+step > 0
+
+    def isLast(self, step=0):
+        return self.position+step == len(self.subunit_info) - 1
+
+    def isOutRight(self, step=0):
+        return self.position+step >  len(self.subunit_info) - 1
+
+    def isEntry(self, step=0):
+        return self.position+step >= 0 and self.position+step < len(self.subunit_info)
 
     def getNeighbours(self, step=0):
         left = self.subunit_info[self.keys[self.position+step-1]] if self.position != 0 else None
@@ -468,7 +471,7 @@ class Unit:
 
         return result
 
-    def get(self, key):
+    def get(self, key):  # TODO: удалить
         return self.unit_info.get(key)
 
     def remove(self):

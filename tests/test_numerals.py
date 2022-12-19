@@ -18,6 +18,6 @@ for i in range(100001):
     text = E.get_analysis(sentences)
 
     sentence = text(0)
-    nv = sentence.getByPos(-1, "number_value")
+    nv = sentence.getByPos(-1)['number_value']
     if i != nv:
         print('FALSE', eo.encode('utf-8'), nv, i)'''
