@@ -1,5 +1,6 @@
 import itertools
 
+from manspy.analyzers import utils
 from manspy.storage.fasif.finder import find
 from manspy.storage.relation import Relation
 from manspy.utils.unit import Sentence
@@ -154,16 +155,9 @@ def Extraction2IL(relation, settings, subjects, predicate, arguments):
         internal_sentence['type_sentence'] = 'fact'
 
     #  Вынимаем ФАСИФ глагола - сказуемого
-
-    id_group = relation.get_groups_by_word('synonym', 0, predicate['base'])
-    id_group = id_group[0] if id_group else None
-    if id_group is not None:
-        compared_fasifs = find(settings, 'verb', id_group, settings.language)
-        if compared_fasifs:
-            verb['func_common'] = importer.import_action(compared_fasifs[0][0][0])
-        else:
-            # TODO: проверить антоним (), как для функции изменения состояния
-            pass
+    id_group, str_func_common = utils.get_func_common(relation, predicate['base'], settings)
+    if str_func_common:
+        verb['func_common'] = importer.import_action(str_func_common)
 
     # Вынимаем Фасиф словосочетаний - актантов
     for _argument in arguments:  # у подпредложения может быть несколько актантов

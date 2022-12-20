@@ -4,8 +4,8 @@ from manspy.analyzers import (
     esperanto_postmorphological,
     esperanto_syntax,
     extractor,
-    converter_internal_sentences,
-    executor_internal_sentences,
+    converter_python,
+    executor_python,
 )
 from manspy.utils.pipeliner import pipeliner, PipelinerGetter
 from manspy.utils.message import Message
@@ -18,8 +18,8 @@ PIPELINE = PipelinerGetter([
     ('postmorph', esperanto_postmorphological),
     ('synt', esperanto_syntax),
     ('extract', extractor),
-    ('convert', converter_internal_sentences),
-    ('exec', executor_internal_sentences),
+    ('convert', converter_python),
+    ('exec', executor_python),
 ])
 
 # Settings.database = Database(path=':memory')

@@ -1,4 +1,5 @@
 lxml
 cssselect
+astor
 #future
 #eonums --install-option="--no-compile"
