@@ -27,7 +27,10 @@ def Extraction2IL(relation, settings, subjects, predicate, arguments):
         ast.ImportFrom(module='manspy.action.currency', level=0, names=[ast.alias(name='GetCourse', asname=None)]),
         ast.Assign(
             targets=[ast.Name(id='arg0')],
-            value=ast.Dict(keys=[ast.Name(id='answer_type')], values=[ast.Str(settings.answer_type)]),
+            value=ast.Dict(
+                keys=[ast.Name(id='answer_type'), ast.Name(id='used_antonym')],
+                values=[ast.Str(settings.answer_type), ast.Str(predicate['antonym'])]
+            ),
         ),
         ast.Assign(
             targets=[ast.Name(id='gen_r_texts')],

@@ -139,7 +139,7 @@ def il_build_word_combination(data_get_value, data_set_value, finded_args, fasif
 
 
 def Extraction2IL(relation, settings, subjects, predicate, arguments):
-    verb = {'func_common': None, 'used_antonym': False, 'answer_type': settings.answer_type}
+    verb = {'func_common': None, 'used_antonym': predicate['antonym'], 'answer_type': settings.answer_type}
     internal_sentence = {
         'type_sentence': 'fact',
         'verb': verb,
@@ -168,8 +168,7 @@ def Extraction2IL(relation, settings, subjects, predicate, arguments):
 
             # Вынимаем функцию получения/изменения состояния.
 
-            verb['used_antonym'] = predicate['antonym']
-            data_get_value, finded_by_antonym = il_build_func_value(fasif, 'getCondition', settings.language)
+            data_get_value, _ = il_build_func_value(fasif, 'getCondition', settings.language)
             data_set_value, finded_by_antonym = il_build_func_value(
                 fasif,
                 'changeCondition',
