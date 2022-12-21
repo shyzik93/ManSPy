@@ -97,32 +97,6 @@ def check_args(finded_args, fasif, relation, language):
     return checked_args
 
 
-def il_build_func_value(fasif, type_func, language, verb_id_group=None, check_verb=False, try_antonym=True):
-    """
-
-    :param fasif:
-    :param type_func:
-    :param language:
-    :param verb_id_group:
-    :param check_verb:
-    :param try_antonym:
-    :return: Кортеж вида (Данные функции, найдена ли финкция по антониму)
-    """
-    data_func = fasif['functions'].get(type_func)
-    if data_func and check_verb:
-        if verb_id_group not in data_func['verbs'][language]:
-            if try_antonym:
-                # TODO: добавить антонимы для примера через глагол-связку. Здесь затем искать по id группы антонимов
-                # verb_synonym_group_id = R.R.get_words_from_samegroup('antonym', 'verb', 'synonym', id_group)
-                id_antonym = verb_id_group
-                if id_antonym not in data_func['verbs'][language]:
-                    return data_func, True
-
-            return False
-
-    return data_func, False
-
-
 def il_build_word_combination(data_get_value, data_set_value, finded_args, fasif, relation, language):
     for argname, args in finded_args.items():
         finded_args[argname] = list(args)  # TODO: #UNIQ_ARGS Нужны ли нам дубли аргументов?
@@ -155,44 +129,25 @@ def Extraction2IL(relation, settings, subjects, predicate, arguments):
         internal_sentence['type_sentence'] = 'fact'
 
     #  Вынимаем ФАСИФ глагола - сказуемого
-    id_group, str_func_common = utils.get_func_common(relation, predicate['base'], settings)
+    verb_id_group, str_func_common = utils.get_func_common(relation, predicate['base'], settings)
     if str_func_common:
         verb['func_common'] = importer.import_action(str_func_common)
 
     # Вынимаем Фасиф словосочетаний - актантов
     for _argument in arguments:  # у подпредложения может быть несколько актантов
-        argument = Sentence(_argument)
-        compared_fasifs = find(settings, 'word_combination', argument, settings.language)
-        if compared_fasifs:
-            finded_args, fasif = compared_fasifs[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
-
-            # Вынимаем функцию получения/изменения состояния.
-
-            data_get_value, _ = il_build_func_value(fasif, 'getCondition', settings.language)
-            data_set_value, finded_by_antonym = il_build_func_value(
-                fasif,
-                'changeCondition',
-                settings.language,
-                id_group,
-                check_verb=True
-            )
-            if finded_by_antonym:
+        data_get_value, data_set_value, finded_args, fasif, finded_set_by_antonym = utils.get_func_wcomb_for_arguments(Sentence(_argument), settings, verb_id_group)
+        if fasif:
+            word_combination = il_build_word_combination(data_get_value, data_set_value, finded_args, fasif, relation, settings.language)
+            if finded_set_by_antonym:
                 verb['used_antonym'] = not verb['used_antonym']
 
-            word_combination = il_build_word_combination(data_get_value, data_set_value, finded_args, fasif, relation, settings.language)
             internal_sentence['word_combinations'].append(word_combination)
 
     # Вынимаем Фасиф словосочетаний - субъектов
     for _subject in subjects:
-        subject = Sentence(_subject)
-        compared_fasifs = find(settings, 'word_combination', subject, settings.language)
-        if compared_fasifs:
-            finded_args, fasif = compared_fasifs[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
-
-            # Вынимаем функцию получения состояния.
-
+        data_get_value, finded_args, fasif = utils.get_func_wcomb_for_subjects(Sentence(_subject), settings)
+        if fasif:
             verb['used_antonym'] = predicate['antonym']
-            data_get_value, finded_by_antonym = il_build_func_value(fasif, 'getCondition', settings.language)
             word_combination = il_build_word_combination(data_get_value, None, finded_args, fasif, relation, settings.language)
             internal_sentence['subjects_word_combinations'].append(word_combination)
 

@@ -78,7 +78,7 @@ def _extract(sentence):
     sentence.delByIndex(*argument_indexes_for_delete)
 
     if sentence.getUnit("dict"):
-        print(u"       Необработанные остатки 3 ФАСИФ \n", sentence.getUnit("dict"))
+        print("       Необработанные остатки 3 ФАСИФ \n", sentence.getUnit("dict"))
         print("-"*10)
 
     return subjects_by_predicate, predicates, arguments_by_predicate
