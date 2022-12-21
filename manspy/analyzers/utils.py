@@ -93,8 +93,8 @@ def check_args(finded_args, fasif, relation, language):
     return checked_args
 
 
-def get_func_common(relation, verb_id_group, settings):
-    id_group = relation.get_groups_by_word('synonym', 0, verb_id_group)
+def get_func_common(relation, base, settings):
+    id_group = relation.get_groups_by_word('synonym', 0, base)
     id_group = id_group[0] if id_group else None
     if id_group is not None:
         compared_fasifs = find(settings, 'verb', id_group, settings.language)
@@ -129,7 +129,7 @@ def il_build_func_value(data_func, language, verb_id_group=None, check_verb=Fals
     return False
 
 
-def get_func_wcomb_for_arguments(argument, settings, verb_id_group, relation):
+def get_func_wcomb(argument, settings, relation, verb_id_group):
     compared_fasifs = find(settings, 'word_combination', argument, settings.language)
     if compared_fasifs:
         finded_args, fasif = compared_fasifs[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
@@ -150,22 +150,3 @@ def get_func_wcomb_for_arguments(argument, settings, verb_id_group, relation):
         )
 
     return None, None, None, None
-
-
-def get_func_wcomb_for_subjects(subject, settings, relation):
-    compared_fasifs = find(settings, 'word_combination', subject, settings.language)
-    if compared_fasifs:
-        finded_args, fasif = compared_fasifs[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
-        finded_args = dproduct(finded_args)
-        finded_args = check_args(finded_args, fasif, relation, settings.language)
-
-        # Вынимаем функцию получения состояния.
-
-        data_get_value = fasif['functions'].get('getCondition')
-        finded_get_by_antonym = il_build_func_value(data_get_value, settings.language)
-        return (
-            data_get_value['function'] if data_get_value else None,
-            finded_args,
-        )
-
-    return None, None

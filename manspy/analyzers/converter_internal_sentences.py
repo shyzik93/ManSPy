@@ -1,4 +1,4 @@
-from manspy.analyzers.utils import get_func_common, get_func_wcomb_for_arguments, get_func_wcomb_for_subjects
+from manspy.analyzers.utils import get_func_common, get_func_wcomb
 from manspy.storage.relation import Relation
 from manspy.utils.unit import Sentence
 from manspy.utils import importer
@@ -27,7 +27,7 @@ def Extraction2IL(relation, settings, subjects, predicate, arguments):
 
     # Вынимаем Фасиф словосочетаний - актантов
     for _argument in arguments:  # у подпредложения может быть несколько актантов
-        str_func_get_value, str_func_set_value, finded_args, finded_set_by_antonym = get_func_wcomb_for_arguments(Sentence(_argument), settings, verb_id_group, relation)
+        str_func_get_value, str_func_set_value, finded_args, finded_set_by_antonym = get_func_wcomb(Sentence(_argument), settings, relation, verb_id_group)
         if finded_args is not None:
             word_combination = {
                 'func_get_value': importer.import_action(str_func_get_value) if str_func_get_value else None,
@@ -41,7 +41,7 @@ def Extraction2IL(relation, settings, subjects, predicate, arguments):
 
     # Вынимаем Фасиф словосочетаний - субъектов
     for _subject in subjects:
-        str_func_get_value, finded_args, fasif = get_func_wcomb_for_subjects(Sentence(_subject), settings, relation)
+        str_func_get_value, _, finded_args, __ = get_func_wcomb(Sentence(_subject), settings, relation, None)
         if finded_args is not None:
             verb['used_antonym'] = predicate['antonym']
             word_combination = {
