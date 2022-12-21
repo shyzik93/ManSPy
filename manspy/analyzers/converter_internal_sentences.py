@@ -27,11 +27,11 @@ def Extraction2IL(relation, settings, subjects, predicate, arguments):
 
     # Вынимаем Фасиф словосочетаний - актантов
     for _argument in arguments:  # у подпредложения может быть несколько актантов
-        func_get_value, func_set_value, finded_args, finded_set_by_antonym = get_func_wcomb_for_arguments(Sentence(_argument), settings, verb_id_group, relation)
+        str_func_get_value, str_func_set_value, finded_args, finded_set_by_antonym = get_func_wcomb_for_arguments(Sentence(_argument), settings, verb_id_group, relation)
         if finded_args is not None:
             word_combination = {
-                'func_get_value': importer.import_action(func_get_value) if func_get_value else None,
-                'func_set_value': importer.import_action(func_set_value) if func_set_value else None,
+                'func_get_value': importer.import_action(str_func_get_value) if str_func_get_value else None,
+                'func_set_value': importer.import_action(str_func_set_value) if str_func_set_value else None,
                 'arguments': finded_args,
             }
             if finded_set_by_antonym:
@@ -41,11 +41,11 @@ def Extraction2IL(relation, settings, subjects, predicate, arguments):
 
     # Вынимаем Фасиф словосочетаний - субъектов
     for _subject in subjects:
-        func_get_value, finded_args, fasif = get_func_wcomb_for_subjects(Sentence(_subject), settings, relation)
+        str_func_get_value, finded_args, fasif = get_func_wcomb_for_subjects(Sentence(_subject), settings, relation)
         if finded_args is not None:
             verb['used_antonym'] = predicate['antonym']
             word_combination = {
-                'func_get_value': importer.import_action(func_get_value) if func_get_value else None,
+                'func_get_value': importer.import_action(str_func_get_value) if str_func_get_value else None,
                 'func_set_value': None,
                 'arguments': finded_args,
             }
