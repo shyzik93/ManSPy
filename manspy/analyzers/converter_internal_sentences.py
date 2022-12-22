@@ -12,9 +12,6 @@ def Extraction2IL(relation, settings, subjects, predicate, arguments):
         'word_combinations': [],
         'subjects_word_combinations': []
     }
-
-    # определяем тип предложения
-
     if predicate['mood'] == 'imperative':
         internal_sentence['type_sentence'] = 'run'
     elif predicate['mood'] == 'indicative' and predicate['tense'] == 'present':
@@ -34,16 +31,14 @@ def Extraction2IL(relation, settings, subjects, predicate, arguments):
                 'func_set_value': importer.import_action(str_func_set_value) if str_func_set_value else None,
                 'arguments': finded_args,
             }
+            internal_sentence['word_combinations'].append(word_combination)
             if finded_set_by_antonym:
                 verb['used_antonym'] = not verb['used_antonym']
-
-            internal_sentence['word_combinations'].append(word_combination)
 
     # Вынимаем Фасиф словосочетаний - субъектов
     for _subject in subjects:
         str_func_get_value, _, finded_args, __ = get_func_wcomb(Sentence(_subject), settings, relation, None)
         if finded_args is not None:
-            verb['used_antonym'] = predicate['antonym']
             word_combination = {
                 'func_get_value': importer.import_action(str_func_get_value) if str_func_get_value else None,
                 'func_set_value': None,
@@ -59,10 +54,10 @@ def analyze(message):
     internal_sentences = {}
     # перебираем предложения
     il_index = 0
-    for sentence in message.text:
-        subjects_by_predicate, predicates, arguments_by_predicate = sentence
+    for subjects_by_predicate, predicates, arguments_by_predicate in message.text:
         # перебираем однородные, придаточные и главные подпредложения
         for subjects, predicate, arguments in zip(subjects_by_predicate, predicates, arguments_by_predicate):
             internal_sentences[il_index] = Extraction2IL(relation, message.settings, subjects, predicate, arguments)
             il_index += 1
+
     return internal_sentences
