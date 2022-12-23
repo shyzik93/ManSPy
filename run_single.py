@@ -1,4 +1,4 @@
-from manspy.runners.simple_python import runner
+from manspy.runners.simple import runner
 from manspy.utils.settings import Settings, InitSettings
 
 settings = Settings(send_to_out=lambda x, any_data: print(x, any_data))
