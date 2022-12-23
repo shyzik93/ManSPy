@@ -20,6 +20,7 @@ FAKE_DATA = {
 
 def fake_smarthome(group, room, device, cond):
     FAKE_DATA[group][room][device] = cond
+    return cond
 
 
 def smarthome(group, room, device, cond):
