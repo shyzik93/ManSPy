@@ -45,10 +45,3 @@ class Word(BaseUnit):
 
     def hasSymbol(self, symbol):
         return symbol in self.str_word
-
-    def getUnit(self, _type, info0='members', info1='members', info2='info'):
-        if _type == 'str':
-            symbols = [sunit['symbol'] for sunit in self.subunit_info.values()]
-            return ''.join(symbols)
-
-        return super().getUnit(_type, info0, info1, info2)

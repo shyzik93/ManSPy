@@ -66,7 +66,7 @@ def check_args(finded_args, fasif, relation, language):
     hyperonyms = {}
     for argname, data in fasif['argdescr'][language].items():
         # пока только основные гиперонимы вытягиваем
-        hyperonyms[argname] = [word['base'] for word in data['hyperonyms']]
+        hyperonyms[argname] = [word['unit_info']['base'] for word in data['hyperonyms']]
     for finded_arg in finded_args:
         for argname, argvalue in list(finded_arg.items()):
             if not is_in_hyperonym(hyperonyms[argname], argvalue, relation):

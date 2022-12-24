@@ -65,7 +65,7 @@ def process_word_combination(fasif, obj_relation, settings):
 
             for index_hyperonym, hyperonym in enumerate(argwords['hyperonyms']):
                 word_hyperonym = get_dword(hyperonym, settings)
-                argwords['hyperonyms'][index_hyperonym] = word_hyperonym.getUnit('dict')
+                argwords['hyperonyms'][index_hyperonym] = word_hyperonym.export_unit()
                 if word_hyperonym['base'] not in not_to_db:
                     obj_relation.set_relation('hyperonym', word_hyperonym, *bases)
 
@@ -97,7 +97,7 @@ def process_word_combination(fasif, obj_relation, settings):
             }
 
         del fasif['args']
-        fasif['wcomb'][language] = wcomb.getUnit('dict')
+        fasif['wcomb'][language] = wcomb.export_unit()
 
     return fasif
 

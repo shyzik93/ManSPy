@@ -7,8 +7,8 @@ class Sentence(BaseUnit):
     old_index = None
     new_index = None
 
-    def __init__(self, words):
-        BaseUnit.__init__(self, words, unit_info={'end': ''}, parent={'name': 'sentence', 'value': self})
+    def __init__(self, words, imports=None):
+        BaseUnit.__init__(self, words, unit_info={'end': ''}, parent={'name': 'sentence', 'value': self}, imports=imports)
         self.error = errorManager('graphmath', 'morph', 'postmorph', 'synt')
 
     def getByCharacteristic(self, name, value):
@@ -66,7 +66,7 @@ class Sentence(BaseUnit):
     def getObient(self, index):
         """ Возвращает индексы тех слов, которые подчиняются слову по
             переданому индексу"""
-        return self.subunit_info[index]["link"]
+        return self.subunit_info[index]['link']
 
     def getControl(self, index):
         """ Возвращает индексы тех слов, которым подчинено слово по
@@ -83,8 +83,10 @@ class Sentence(BaseUnit):
         """ Возвращает двух соседей, то есть просто два окружающих слова,
             но не братьев. """
         left = right = None
-        if index != 0: left = self.subunit_info[index-1]
-        if index != len(self.subunit_info)-1: right = self.subunit_info[index+1]
+        if index != 0:
+            left = self.subunit_info[index-1]
+        if index != len(self.subunit_info)-1:
+            right = self.subunit_info[index+1]
         return left, right
 
     def addHomogeneous(self, *steps):
@@ -111,7 +113,9 @@ class Sentence(BaseUnit):
             на которые никто не ссылается. Возврашщает список индексов однородных слов.'''
         indexes = []
         for index, word in self.subunit_info.items():
-            if not self.getControl(index): indexes.append(index)
+            if not self.getControl(index):
+                indexes.append(index)
+
         return indexes
 
     def addCombineWord(self, type_combine_word, *indexes):
@@ -120,31 +124,3 @@ class Sentence(BaseUnit):
 
     def getCombineWord(self, type_combine_word, index):
         return self.subunit_info[index]['combine_words']
-
-    def getUnit(self, _type, info0='members', info1='members', info2='info'):
-        if _type == 'str':
-            fwords = []
-            fbases = []
-            words = []
-            bases = []
-            for index, sunit in self.subunit_info.items():
-                words.append(sunit['word'])
-                fwords.append(sunit['word'])
-                if 'base' in sunit:
-                    bases.append(sunit['base'])
-                    fbases.append(sunit['base'])
-
-                if 'feature' in sunit:
-                    for feature in sunit['feature']:
-                        fwords.append(feature['word'])
-                        if 'base' in sunit:
-                            fbases.append(feature['base'])
-
-            return {
-                'fwords': ' '.join(fwords),
-                'fbases': ' '.join(fbases),
-                'words': ' '.join(words),
-                'bases': ' '.join(bases),
-            }
-
-        return super().getUnit(_type, info0, info1, info2)

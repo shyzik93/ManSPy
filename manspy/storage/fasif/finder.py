@@ -81,12 +81,12 @@ def jump_to_obient(sentence, index_word, index_obient):
 
 
 def compare_fasif_word_combination(fasif, argument, finded_args, language):
-    _argument = Sentence(fasif['wcomb'][language])
+    _argument = Sentence(None, imports=fasif['wcomb'][language])
     first_index = _argument.getIndexesOfFirstWords()
     if first_index:
         first_index = first_index[0]  # однородные слова должны обработаться в следующем цикле
 
-    _argument_iter = Sentence(fasif['wcomb'][language]).iterFromByIndex(first_index)
+    _argument_iter = Sentence(None, imports=fasif['wcomb'][language]).iterFromByIndex(first_index)
 
     first_index = argument.getIndexesOfFirstWords()
     if first_index:

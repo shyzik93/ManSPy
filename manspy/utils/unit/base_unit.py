@@ -55,7 +55,7 @@ class BaseUnit:
     для предложения - это слова, для слов - это символы
     """
 
-    def __init__(self, subunits=None, unit_info=None, parent=None):
+    def __init__(self, subunits=None, unit_info=None, parent=None, imports=None):
         self.unit_info = {'max_index': -1, 'index': None}
         self.subunit_info = {}
         self.full_info = {'unit_info': self.unit_info, 'unit': self.subunit_info}
@@ -67,36 +67,37 @@ class BaseUnit:
 
         if unit_info:
             self.unit_info.update(unit_info)
+
         if subunits:
             self.load_subunits(subunits, parent)
+
+        if imports:
+            self.import_unit(imports)
 
         self.parent = parent
 
     def import_unit(self, data):
+        from manspy.utils.unit import Word, Sentence, Text
 
         if 'feature' in data['unit_info']:
             for index, subunit in enumerate(data['unit_info']['feature']):
-                _subunit = globals()[subunit['unit_type']]({})
+                _subunit = locals()[subunit['unit_type']]({})
                 _subunit.import_unit(subunit)
                 data['unit_info']['feature'][index] = _subunit
 
         for index, subunit in data['unit'].items():
-            # if isinstance(subunit, dict):
-            #     break
             if 'unit_type' not in subunit or subunit['unit_type'] == 'dict':
                 _subunit = subunit
             else:
-                # if subunit['unit_type'] == 'Text': _subunit = Text()
-                # elif subunit['unit_type'] == 'Sentence': _subunit = Sentence()
-                # elif subunit['unit_type'] == 'Word': _subunit = Word()
-                _subunit = globals()[subunit['unit_type']]({})
+                _subunit = locals()[subunit['unit_type']]({})
                 _subunit.import_unit(subunit)
 
             data['unit'][index] = _subunit
 
         self.full_info = copy.deepcopy(data)
         self.unit_info = self.full_info['unit_info']
-        self.subunit_info = self.full_info['unit']
+        self.subunit_info = {int(index): unit for index, unit in self.full_info['unit'].items()}
+        self.keys = list(self.subunit_info.keys())
 
     def export_unit(self, ignore_units=None):
         data = copy.deepcopy(self.full_info)
@@ -113,6 +114,7 @@ class BaseUnit:
         for index, subunit in data['unit'].items():
             if isinstance(subunit, dict):
                 break
+
             data['unit'][index] = subunit.export_unit(ignore_units)
 
         return data
@@ -289,44 +291,6 @@ class BaseUnit:
         return left, right
 
     # Прочее
-
-    def _go_depth(self, el, info0, info1, info2):
-        if isinstance(el, BaseUnit):
-            return el.getUnit('dict', info0, info1, info2)
-        elif isinstance(el, dict):
-            _el = {}
-            for k, v in el.items():
-                _el[k] = self._go_depth(v, info0, info1, info2)
-            return _el
-        elif isinstance(el, list):
-            _el = []
-            for v in el:
-                _el.append(self._go_depth(v, info0, info1, info2))
-            return _el
-        else:
-            return el
-
-    def getUnit(self, _type, info0='members', info1='members', info2='info'):
-        info = {'Text': info0, 'Sentence': info1, 'Word': info2}[self.__class__.__name__]
-        if _type == 'dict':
-            if info == 'info':
-                dct = self.unit_info
-            elif info == 'members':
-                dct = self.subunit_info
-            elif info == 'full':
-                dct = self.full_info
-            else:
-                print("the argument '%s' of Unit.getUint is wrong!" % info)
-                return
-
-            dct = copy.deepcopy(dct)
-            return self._go_depth(dct, info0, info1, info2)
-        elif _type == 'listSubUnits':  # возвращает список подюнитв
-            listDict = []
-            for index in range(len(self.subunit_info)):
-                listDict.append(self.subunit_info[index])
-
-            return listDict
 
     def _parseSettingsString(self, setstring):
         ''' Функция обработки строки настройки функции массовой обработки подъюнитов

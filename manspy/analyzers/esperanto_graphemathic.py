@@ -108,10 +108,6 @@ def analyze(message):
     words = process_words(message.text)
     text = separate_to_sentences(words)
 
-    #print len(words), len(sentences)
-    #for sentence in sentences:
-    #  print len(sentence)#sentence.getUnit('dict')
-
     # обработка кавычек
 
     # обработка слов, с небуквенными символами (email, url, file, etc)

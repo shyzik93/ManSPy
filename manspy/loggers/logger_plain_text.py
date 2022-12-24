@@ -46,7 +46,7 @@ class Logger:
                     for index, word in sentence.subunits_copy.items():
                         f.write(word['word']+' ')
                 f.write('\n')
-            sentences = sentences.getUnit('dict')
+            sentences = sentences.export_unit()
         elif level == 'morph':
             # with open('comparing_fasif.txt', 'a', encoding='utf-8') as flog:
             #     flog.write('\n')
@@ -54,11 +54,11 @@ class Logger:
             #         flog.write('sentence: %s\n' % sentence.getUnit('str')['fwords'])
             #     flog.write('\n')
 
-            sentences = sentences.getUnit('dict')            
+            sentences = sentences.export_unit()
         elif level == 'postmorph':
-            sentences = sentences.getUnit('dict')
+            sentences = sentences.export_unit()
         elif level == 'synt':
-            sentences = sentences.getUnit('dict')
+            sentences = sentences.export_unit()
         elif level == 'extract':
             sentences = list(sentences)
             return
