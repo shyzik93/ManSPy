@@ -48,6 +48,7 @@ setup(
         'manspy.storage',
         'manspy.storage.fasif',
         'manspy.utils',
+        'manspy.utils.unit',
     ],
     #long_description=open(os.path.join(os.path.dirname(__file__), 'README.md')).read(),
     long_description=get_long_description(),

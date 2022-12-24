@@ -4,7 +4,7 @@ import os.path
 import os
 
 from manspy.utils.settings import Settings, InitSettings
-from manspy.utils.unit import Unit
+from manspy.utils.unit import BaseUnit
 from manspy.runners.simple import runner
 
 console_cur_dir = os.path.abspath('')
@@ -27,7 +27,7 @@ class CLI:
     def cmd_exec(self, args):
         def send_to_in(text, settings, level):
             results = runner(text, settings, pipeline=level)
-            if isinstance(results, Unit):
+            if isinstance(results, BaseUnit):
                 pprint.pprint(results.export_unit(ignore_units=dict))
             elif isinstance(results, dict):
                 pprint.pprint(results)
