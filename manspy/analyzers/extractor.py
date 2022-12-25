@@ -77,7 +77,7 @@ def _extract(sentence):
     sentence.delByIndex(*predicate_indexes_for_delete)
     sentence.delByIndex(*argument_indexes_for_delete)
 
-    if sentence:
+    if sentence:  # TODO: сделать массив в Message для добавления уведомлений
         print("       Необработанные остатки 3 ФАСИФ \n", sentence.export_unit())
         print("-"*10)
 
