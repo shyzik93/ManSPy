@@ -61,30 +61,30 @@ def process_conjunction(word, sentence):
     # Однородности нужны лишь для дополнения связей. В коверторе должны фигурировать лишь связи, но не однородности!
 
 
-def mark_freemembers(sentence, indexes):
-    for index in indexes:
-        sentence[index]['praMOSentence'] = 'freemember'
-    #sentence.addHomogeneous(*indexes) # не совсем корректно
-    #sentence.jumpByStep(-len(indexes))
+def mark_freemembers(sentence, words):
+    for word in words:
+        word['praMOSentence'] = 'freemember'
+    #sentence.addHomogeneous(*words) # не совсем корректно
+    #sentence.jumpByStep(-len(words))
 
 
-def process_definition(word, sentence, indexes=None):
-    if indexes is None:
-        indexes = []
+def process_definition(word, sentence, words=None):
+    if words is None:
+        words = []
 
     if word[POSPEECH] == ADJECTIVE or (word[POSPEECH] == PRONOUN and word['category'] == 'possessive') or word[POSPEECH]==NUMERAL:
-        indexes.append(sentence.getByStep().index)
+        words.append(sentence.getByStep())
         if sentence.isLast():
-            mark_freemembers(sentence, indexes)
+            mark_freemembers(sentence, words)
             return # завершаем цикл, ибо прилагательные без существительного. Их мы не удаляем, так как они могут следовать после глагола esti
 
         sentence.jumpByStep()
-        process_definition(sentence.getByStep(), sentence, indexes)
-    elif word[POSPEECH] in [NOUN] and indexes: # если перед существительным стояли прилагательные
-        sentence.addFeature(sentence.getByStep().index, *indexes)
-        sentence.jumpByStep(-len(indexes))
+        process_definition(sentence.getByStep(), sentence, words)
+    elif word[POSPEECH] in [NOUN] and words: # если перед существительным стояли прилагательные
+        sentence.add_feature(sentence.getByStep(), *words)
+        sentence.jumpByStep(-len(words))
     else:
-        mark_freemembers(sentence, indexes)
+        mark_freemembers(sentence, words)
 
 
 def checkAdverbBefore(sentence):
@@ -106,7 +106,6 @@ def process_adverb(word, sentence):
     if sentence.getByStep()[POSPEECH] != ADVERB:
         return
 
-    index = sentence.getByStep().index
     if checkAdverbBefore(sentence):  # порядок менять не рекомендуется: покажи ОЧЕНЬ СИНИЙ цвет.
         # ПОКАЖИ БЫСТРО синий цвет - а вот здесь необходимо расставлять приоритеты для прилагательных и глаголов.
         # БЫСТРО - относится только к глаголам,
@@ -114,15 +113,15 @@ def process_adverb(word, sentence):
         # ХОЧУ ОЧЕНЬ СИЛЬНО ; ХОЧУ ОЧЕНЬ - одно и тоже, но в первом случае
         # ОЧЕНЬ относится к СИЛЬНО, а СИЛЬНО - к глаголу. В овтором случае - ОЧЕНЬ относится к глаголу.
         # то есть, одни наречия для прилагательных, другие - для глаголов.
-        sentence.addFeature(index+1, index)
+        sentence.add_feature(word.next_sibling, word)
     elif checkAdverbAfter(sentence):
-        sentence.addFeature(index-1, index)
+        sentence.add_feature(word.previous_sibling, word)
         sentence.jumpByStep(-1)
     else:
         old_position = sentence.position
-        for word in sentence:  # "свободноплавающее" нарчие. Добавим его к глаголу.
-            if word[POSPEECH] == VERB:
-                sentence.addFeature(word.index, index) #EX_ERROR если последний  index2, то возникает интересная рекурсивная ошибка.
+        for _word in sentence:  # "свободноплавающее" нарчие. Добавим его к глаголу.
+            if _word[POSPEECH] == VERB:
+                sentence.add_feature(_word, word) #EX_ERROR если последний  index2, то возникает интересная рекурсивная ошибка.
                 break
 
         sentence.position = old_position

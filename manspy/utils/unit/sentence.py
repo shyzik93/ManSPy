@@ -47,20 +47,14 @@ class Sentence(BaseUnit):
                 del results[index]
         return results
 
-    def addFeature(self, index, *indexes):
+    def add_feature(self, word, *words):
         """ Добавляет к слову определения и обстоятельства как его характеристику
-            Первый аргумент - индекс главного слова, следующие аргументы -
-            индексы обстоятельств и определений.
-            Порядок значений второго аргумента может быть произвольным. """
-        indexes = set(indexes)
-        word = self.subunit_info[index]
-        # добавляем определения или обстоятельства
-        for _index in indexes:
-            feature = self.subunit_info[_index]
-            feature['is_feature_for'] = index # все слова в списке должны иметь свойство "is_свойство_for" равному индексу главного слова.
-            word['feature'].append(feature)
-        # удаляем из предложения
-        self.delByIndex(*indexes)
+            Первый аргумент - главное слово, последующие аргументы - слова-обстоятельства и слова-определения.
+        """
+        for feature_word in words:
+            feature_word['is_feature_for'] = word.index # все слова в списке должны иметь свойство "is_свойство_for" равному индексу главного слова.
+            word['feature'].append(feature_word)
+            feature_word.remove()
 
     def getFeature(self, index):
         return self.subunit_info[index]['feature']

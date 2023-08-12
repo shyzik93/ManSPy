@@ -51,8 +51,7 @@ class BaseUnit:
 
     - `unit[name]` - извлечение характеристики юнита
     - `unit[name] = value` - изменение характеристики юнита
-    - `del unit[name]` - удалить характеристику юнита
-    - `unit[name] = None` - удалить характеристику юнита
+    - `del unit[name]` или `unit[name] = None` - удалить характеристику юнита
     - `name in unit` - проверка наличия ключа характеристики юнита
     - `len(unit)` - извлечение длины юнита (количество подъюнитов)
 
@@ -214,6 +213,14 @@ class BaseUnit:
     @property
     def index(self):
         return self.unit_info['index']
+
+    @property
+    def next_sibling(self):
+        return self.subunit_info[self.index + 1]
+
+    @property
+    def previous_sibling(self):
+        return self.subunit_info[self.index - 1]
 
     # Итератор
     def __iter__(self,

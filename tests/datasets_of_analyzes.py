@@ -271,12 +271,12 @@ dataset_verb_and_homogeneous_actants = {
                             'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                             'func_set_value': None,
                             'arguments': [
+                                {'currency': 'EUR', 'country': 'Ukraine'},
                                 {'currency': 'EUR', 'country': 'Russia'},
                                 {'currency': 'EUR', 'country': 'Belarus'},
-                                {'currency': 'EUR', 'country': 'Ukraine'},
+                                {'currency': 'USD', 'country': 'Ukraine'},
                                 {'currency': 'USD', 'country': 'Russia'},
                                 {'currency': 'USD', 'country': 'Belarus'},
-                                {'currency': 'USD', 'country': 'Ukraine'}
                             ],
                         }
                     ],
@@ -284,12 +284,12 @@ dataset_verb_and_homogeneous_actants = {
                 }
             },
             'r_text_construct': [
+                'EUR-Ukraine',
                 'EUR-Russia',
                 'EUR-Belarus',
-                'EUR-Ukraine',
+                'USD-Ukraine',
                 'USD-Russia',
                 'USD-Belarus',
-                'USD-Ukraine',
             ],
         },
         {
@@ -307,10 +307,10 @@ dataset_verb_and_homogeneous_actants = {
                             'func_get_value': 'manspy.action.CurrencyLoader:GetCourse',
                             'func_set_value': None,
                             'arguments': [
-                                {'currency': 'EUR', 'country': 'Russia'},
                                 {'currency': 'EUR', 'country': 'Ukraine'},
+                                {'currency': 'EUR', 'country': 'Russia'},
+                                {'currency': 'USD', 'country': 'Ukraine'},
                                 {'currency': 'USD', 'country': 'Russia'},
-                                {'currency': 'USD', 'country': 'Ukraine'}
                             ],
                         }
                     ],
@@ -318,10 +318,10 @@ dataset_verb_and_homogeneous_actants = {
                 }
             },
             'r_text_construct': [
-                'EUR-Russia',
                 'EUR-Ukraine',
+                'EUR-Russia',
+                'USD-Ukraine',
                 'USD-Russia',
-                'USD-Ukraine'
             ],
         },
         # TODO: сложатся соответственно (не реализовано пока)
