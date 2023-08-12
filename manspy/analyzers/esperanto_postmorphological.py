@@ -141,16 +141,16 @@ def exchangeDataBetweenHomo(sentence):
             done_indexes.append(index_homo)
 
 
-def numeral2number(sentence, indexes):
+def numeral2number(words):
     """ Числительное в число """
-    glued_numeral = ' '.join([sentence[index]['word'] for index in indexes])
+    glued_numeral = ' '.join([word['word'] for word in words])
     numeral_value = 0
     multiplier = 1
     temp_sum = 0
-    indexes.reverse()
+    words.reverse()
     first_iter = True
-    for index in indexes:
-        nv = sentence[index]['number_value']
+    for word in words:
+        nv = word['number_value']
         if nv > 999:
             if temp_sum == 0 and not first_iter:
                 temp_sum = 1
@@ -167,36 +167,29 @@ def numeral2number(sentence, indexes):
         temp_sum = 1
 
     numeral_value += temp_sum * multiplier
-    indexes.reverse()
+    words.reverse()
     return numeral_value, glued_numeral
 
 
-def process_numeral(word, sentence, indexes=None):
-    if indexes is None:
-        indexes = []
+def process_numeral(word, sentence, words=None):
+    if words is None:
+        words = []
 
     if word[POSPEECH] == NUMERAL or (word[POSPEECH] == NOUN and 'derivative' in word and word['derivative'] == NUMERAL):
-        indexes.append(sentence.getByStep().index)
+        words.append(sentence.getByStep())
         if not sentence.isLast():
             sentence.jumpByStep()
-            process_numeral(sentence.getByStep(), sentence, indexes)
+            process_numeral(sentence.getByStep(), sentence, words)
             return
 
-    if len(indexes) <= 1:
-        return
-
-    # "Склейка" числительных
-    ########## необязательное TASK: индексы в списке заменить на слова! #################333
-
-    #print indexes
-    numeral_value, glued_numeral = numeral2number(sentence, indexes)
-    #print numeral_value, glued_numeral,
-    word_index = indexes[-1]
-    sentence[word_index]['word'] = glued_numeral
-    sentence[word_index]['number_value'] = numeral_value
-    sentence[word_index]['base'] = ''
-    sentence.delByIndex(*indexes[:-1])
-    sentence.jumpByStep(-len(indexes))
+    if len(words) > 1:
+        numeral_value, glued_numeral = numeral2number(words)
+        last_numeric = words[-1]
+        last_numeric['word'] = glued_numeral
+        last_numeric['number_value'] = numeral_value
+        last_numeric['base'] = ''
+        for word in words[:-1]:
+            word.remove(-1)
 
 
 def analyze(message):

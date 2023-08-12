@@ -257,11 +257,6 @@ class BaseUnit:
         del self.subunit_info[self.keys[position]]
         self.keys = list(self.subunit_info.keys())
 
-    def delByIndex(self, *indexes):
-        for index in indexes:
-            del self.subunit_info[index]
-        self.keys = list(self.subunit_info.keys())
-
     def getByStep(self, step=0):
         return self.subunit_info[self.keys[self.position + step]]
 
