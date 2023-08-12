@@ -1,5 +1,6 @@
 from manspy.analyzers.utils import get_func_common, get_func_wcomb
 from manspy.storage.relation import Relation
+from manspy.utils.constants import INDICATIVE, IMPERATIVE, MOOD, PRESENT, TENSE
 from manspy.utils.unit import Sentence
 from manspy.utils import importer
 
@@ -12,9 +13,9 @@ def Extraction2IL(relation, settings, subjects, predicate, arguments):
         'word_combinations': [],
         'subjects_word_combinations': []
     }
-    if predicate['mood'] == 'imperative':
+    if predicate[MOOD] == IMPERATIVE:
         internal_sentence['type_sentence'] = 'run'
-    elif predicate['mood'] == 'indicative' and predicate['tense'] == 'present':
+    elif predicate[MOOD] == INDICATIVE and predicate[TENSE] == PRESENT:
         internal_sentence['type_sentence'] = 'fact'
 
     #  Вынимаем ФАСИФ глагола - сказуемого

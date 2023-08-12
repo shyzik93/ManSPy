@@ -5,8 +5,8 @@
 '''
 
 from manspy.utils.constants import (
-    ADJECTIVE, ADVERB,
-    CASE, CATEGORY, CIRCUMSTANCE, CONJUNCTION,
+    ADJECTIVE, ADVERB, ACCUSATIVE,
+    CASE, CARDINAL, CATEGORY, CIRCUMSTANCE, CLASS, CONJUNCTION,
     DEFINITION, DIRECT_SUPPLEMENT,
     MOSENTENCE,
     NOMINATIVE, NOUN, NUMERAL,
@@ -19,7 +19,7 @@ from manspy.utils.constants import (
 def forPronounAndNoun(word):
     ''' Определяет член предложения для имени существительного
         и притяжательного местоимепния по падежу '''
-    if word[CASE] == 'accusative':
+    if word[CASE] == ACCUSATIVE:
         return DIRECT_SUPPLEMENT
     elif word[CASE] == NOMINATIVE:
         return SUBJECT
@@ -46,7 +46,7 @@ def setMOSentence(word):
 
     #ATTENTION обстоятельства, выраженные существительным, определяются в модуле
     # промежуточного анализа как наречие.
-    elif word[POSPEECH] == NOUN or (word[POSPEECH] == NUMERAL and word['class'] == 'cardinal'):
+    elif word[POSPEECH] == NOUN or (word[POSPEECH] == NUMERAL and word[CLASS] == CARDINAL):
         word[MOSENTENCE] = forPronounAndNoun(word)
         if word['feature']:
             setMOS_ToSign(word['feature'])
@@ -137,9 +137,9 @@ def split_sentence(sentence):
     for first_index in first_indexes:
         if sentence[first_index][POSPEECH] == CONJUNCTION:
             conjunctions.append(first_index) # сочинённых союзов между однородными членами должны исчезнуть в предыдущих шагах.
-        if sentence[first_index]['POSentence'] == SUBJECT:
+        if sentence[first_index][MOSENTENCE] == SUBJECT:
             subjects.append(first_index)
-        if sentence[first_index]['POSentence'] == PREDICATE:
+        if sentence[first_index][MOSENTENCE] == PREDICATE:
             predicates.append(first_index)    
 
     for subject in subjects:

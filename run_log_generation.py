@@ -3,7 +3,7 @@ import json
 
 from manspy.utils import unit
 from manspy.api import API
-from manspy.utils.constants import CASE, CATEGORY, COORDINATING, DERIVATIVE, MOSENTENCE, NUMBER, POSPEECH
+from manspy.utils.constants import CASE, CATEGORY, CLASS, COORDINATING, DERIVATIVE, MOSENTENCE, NUMBER, POSPEECH
 from manspy.utils.settings import Settings
 
 TEMPLATE_HTML_WORD = '<span class="{MOSentence}" title="{title}">{word}</span>'
@@ -66,7 +66,7 @@ def word_to_html(word):
         DERIVATIVE,
         'antonym',
         'number_value',
-        'class',
+        CLASS,
     ]
     title = []
     for prop in properties:

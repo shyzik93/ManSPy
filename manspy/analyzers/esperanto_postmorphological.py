@@ -5,7 +5,7 @@
     Можно приступать к синтаксичекому анализу предложения.
     '''
 from manspy.utils.constants import (
-    ADJECTIVE, ADVERB, ARTICLE,
+    ADJECTIVE, ADVERB, ACCUSATIVE, ARTICLE,
     CASE, CATEGORY, CONJUNCTION, COORDINATING,
     DERIVATIVE,
     NOUN, NUMERAL,
@@ -51,7 +51,7 @@ def process_conjunction(word, sentence):
          (left[POSPEECH] == NOUN and 'praMOSentence' in right and right['praMOSentence'] == 'freemember' and right[POSPEECH] == NUMERAL):
          #((left[POSPEECH] in [PRONOUN, ADJECTIVE] and (CATEGORY in left and left[CATEGORY] == POSSESSIVE)) and right[POSPEECH] in [PRONOUN, ADJECTIVE]):
     #if (CASE in left and CASE in right) and left[CASE] == right[CASE]:
-        if (CASE in right and right[CASE] == 'accusative') and (CASE in left and left[CASE] != 'accusative'):
+        if (CASE in right and right[CASE] == ACCUSATIVE) and (CASE in left and left[CASE] != ACCUSATIVE):
             sentence.delByStep(jump_step=0)
             return
 

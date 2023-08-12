@@ -23,15 +23,22 @@ Esperanto some letters: ĉ ĝ ĥ ĵ ŝ ŭ
 import re
 
 from manspy.utils.constants import (
-    ADJECTIVE, ADVERB, ARTICLE, ARTICLE_VALUE,
-    CASE, CATEGORY, COMMON, CONJUNCTION, COORDINATING,
-    DEFINED, DERIVATIVE,
+    ABLATIVE, ADJECTIVE, ADVERB, ACCUSATIVE, ARTICLE, ARTICLE_VALUE,
+    CASE, CARDINAL, CATEGORY, CLASS, COMMON, CONJUNCTION, CONJUNCTION_VALUE, COORDINATING,
+    DATIVE, DEFINED, DERIVATIVE,
+    FUTURE,
     GENETIVE,
+    INDICATIVE, INFINITIVE, INSTRUMENTAL, IMPERATIVE,
+    LOCATIVE,
+    MOOD,
     NAME, NOMINATIVE, NOUN, NUMBER, NUMERAL,
-    PARTICLE, PERSONAL, PLURAL, POSPEECH, POSSESSIVE, PREPOSITION, PRONOUN, PROPER,
+    ORDINAL,
+    PARTICLE, PAST, PERSONAL, PLURAL, POSPEECH, POSSESSIVE, PREPOSITION, PRESENT, PRONOUN, PROPER,
     REFLEXIVE,
-    SINGULAR, SUBORDINATING,
-    CONJUNCTION_VALUE, VERB,
+    SINGULAR, SUBJUNCTIVE, SUBORDINATING,
+    TENSE,
+    VERB,
+    UNDEFINED,
 )
 
 
@@ -125,22 +132,22 @@ signs = [
         # местоимения неопределённо-личные
         {'type': 'word', 'value': 'oni', 'endow': {CASE: NOMINATIVE, CATEGORY: ''}},  # люди, многие, некто
         # предлоги
-        {'type': 'word', 'value': 'je', 'endow': {POSPEECH: PREPOSITION, 'give_case': 'undefined'}},  # с неопределённым значением. Употребляется, когда не ясно, какой предлог использовать (Je via sano! - За ваше здоровье!)
-        {'type': 'word', 'value': 'al', 'endow': {POSPEECH: PREPOSITION, 'give_case': 'dative'}},  # к. Или не переводится (дательный падеж) (направление движения к цели)
+        {'type': 'word', 'value': 'je', 'endow': {POSPEECH: PREPOSITION, 'give_case': UNDEFINED}},  # с неопределённым значением. Употребляется, когда не ясно, какой предлог использовать (Je via sano! - За ваше здоровье!)
+        {'type': 'word', 'value': 'al', 'endow': {POSPEECH: PREPOSITION, 'give_case': DATIVE}},  # к. Или не переводится (дательный падеж) (направление движения к цели)
         {'type': 'word', 'value': 'da', 'endow': {POSPEECH: PREPOSITION, 'give_case': GENETIVE}},  # не переводится (русский родительный падеж). для чего(кого)-либо не имеющих чётких границ для разделения (жидкости, материалы)
         {'type': 'word', 'value': 'de', 'endow': {POSPEECH: PREPOSITION, 'give_case': GENETIVE}},  # не переводится (русский родительный падеж)
-        {'type': 'word', 'value': 'en', 'endow': {POSPEECH: PREPOSITION, 'give_case': 'locative'}},  # в
-        {'type': 'word', 'value': 'el', 'endow': {POSPEECH: PREPOSITION, 'give_case': 'ablative'}},  # из
+        {'type': 'word', 'value': 'en', 'endow': {POSPEECH: PREPOSITION, 'give_case': LOCATIVE}},  # в
+        {'type': 'word', 'value': 'el', 'endow': {POSPEECH: PREPOSITION, 'give_case': ABLATIVE}},  # из
         {'type': 'word', 'value': 'ĉe', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # у, при
         {'type': 'word', 'value': 'por', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # для, за, с целью, для того чтобы
         {'type': 'word', 'value': 'dum', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # во время, в течение, пока, в то время как (производное наречие dume - тем временем, пока)
         {'type': 'word', 'value': 'kun', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # с
         {'type': 'word', 'value': 'sen', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # без
         {'type': 'word', 'value': 'sur', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # на
-        {'type': 'word', 'value': 'per', 'endow': {POSPEECH: PREPOSITION, 'give_case': 'instrumental'}},  # не перводится, но иногда: посредством, с помощью (творительный падеж)
+        {'type': 'word', 'value': 'per', 'endow': {POSPEECH: PREPOSITION, 'give_case': INSTRUMENTAL}},  # не перводится, но иногда: посредством, с помощью (творительный падеж)
         {'type': 'word', 'value': 'pri', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # о
         {'type': 'word', 'value': 'tra', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # через, сквозь (направление движения к цели)
-        {'type': 'word', 'value': 'ĝis', 'endow': {POSPEECH: PREPOSITION, 'give_case': 'dative'}},  # до (направление движения к цели)
+        {'type': 'word', 'value': 'ĝis', 'endow': {POSPEECH: PREPOSITION, 'give_case': DATIVE}},  # до (направление движения к цели)
         {'type': 'word', 'value': 'post', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # после, через, за
         {'type': 'word', 'value': 'inter', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # между, среди
         {'type': 'word', 'value': 'antaŭ', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # перед
@@ -161,21 +168,21 @@ signs = [
         {'type': 'word', 'value': 'kvankam', 'endow': {POSPEECH: CONJUNCTION, CONJUNCTION_VALUE: ''}},  # хотя
         # числительные
         {'type': 'function', 'value': is_numeral, 'endow': {'_isnumeral': 'yes'}},
-        {'type': 'prop-update', 'value': {'_isnumeral': 'yes'}, 'endow': {POSPEECH: NUMERAL, 'class': 'cardinal'}},
+        {'type': 'prop-update', 'value': {'_isnumeral': 'yes'}, 'endow': {POSPEECH: NUMERAL, CLASS: CARDINAL}},
     ],
     [
-        {'type': 'end', 'value': 'n', 'endow': {CASE: 'accusative'}, 'if-not': [{POSPEECH: PREPOSITION}]},
+        {'type': 'end', 'value': 'n', 'endow': {CASE: ACCUSATIVE}, 'if-not': [{POSPEECH: PREPOSITION}]},
     ],
     [
         {'type': 'end', 'value': 'j', 'endow': {NUMBER: PLURAL}, 'if-not': [{POSPEECH: CONJUNCTION}]},
     ],
     [
-        {'type': 'end', 'value': 'i', 'endow': {POSPEECH: VERB, 'mood': 'infinitive'}, 'if-not': [{POSPEECH: NUMERAL}]},
-        {'type': 'end', 'value': 'u', 'endow': {POSPEECH: VERB, 'mood': 'imperative'}},
-        {'type': 'end', 'value': 'as', 'endow': {POSPEECH: VERB, 'mood': 'indicative', 'tense': 'present'}},
-        {'type': 'end', 'value': 'is', 'endow': {POSPEECH: VERB, 'mood': 'indicative', 'tense': 'past'}},
-        {'type': 'end', 'value': 'os', 'endow': {POSPEECH: VERB, 'mood': 'infinitive', 'tense': 'future'}},
-        {'type': 'end', 'value': 'us', 'endow': {POSPEECH: VERB, 'mood': 'subjunctive'}},
+        {'type': 'end', 'value': 'i', 'endow': {POSPEECH: VERB, MOOD: INFINITIVE}, 'if-not': [{POSPEECH: NUMERAL}]},
+        {'type': 'end', 'value': 'u', 'endow': {POSPEECH: VERB, MOOD: IMPERATIVE}},
+        {'type': 'end', 'value': 'as', 'endow': {POSPEECH: VERB, MOOD: INDICATIVE, TENSE: PRESENT}},
+        {'type': 'end', 'value': 'is', 'endow': {POSPEECH: VERB, MOOD: INDICATIVE, TENSE: PAST}},
+        {'type': 'end', 'value': 'os', 'endow': {POSPEECH: VERB, MOOD: INFINITIVE, TENSE: FUTURE}},
+        {'type': 'end', 'value': 'us', 'endow': {POSPEECH: VERB, MOOD: SUBJUNCTIVE}},
         {'type': 'end', 'value': 'o', 'endow': {POSPEECH: NOUN}},
         {'type': 'end', 'value': 'e', 'endow': {POSPEECH: ADVERB}, 'if-not': [{POSPEECH: PREPOSITION}]},
         {'type': 'end', 'value': 'a', 'endow': {POSPEECH: ADJECTIVE}},
@@ -192,12 +199,12 @@ signs = [
     ],
     [
         {'type': 'function-update', 'value': is_numeral, 'endow': {'_isnumeral': 'yes'}},
-        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: ADJECTIVE}, 'endow': {POSPEECH: NUMERAL, 'class': 'ordinal'}},
-        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: ADVERB}, 'endow': {DERIVATIVE: NUMERAL, 'class': 'cardinal'}},
-        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: VERB}, 'endow': {DERIVATIVE: NUMERAL, 'class': 'cardinal'}},
-        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: NOUN}, 'endow': {DERIVATIVE: NUMERAL, 'class': 'cardinal'}},
+        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: ADJECTIVE}, 'endow': {POSPEECH: NUMERAL, CLASS: ORDINAL}},
+        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: ADVERB}, 'endow': {DERIVATIVE: NUMERAL, CLASS: CARDINAL}},
+        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: VERB}, 'endow': {DERIVATIVE: NUMERAL, CLASS: CARDINAL}},
+        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: NOUN}, 'endow': {DERIVATIVE: NUMERAL, CLASS: CARDINAL}},
         {'type': 'prop-delete', 'value': {'_isnumeral': 'yes'}, 'endow': ['_isnumeral']},
-        {'type': 'prop-update', 'value': {'notword': 'figure'}, 'endow': {POSPEECH: NUMERAL, 'class': 'cardinal'}},
+        {'type': 'prop-update', 'value': {'notword': 'figure'}, 'endow': {POSPEECH: NUMERAL, CLASS: CARDINAL}},
         {'type': 'prop-function', 'value': {'notword': 'figure'}, 'endow': convert_figure},
     ],
 ]

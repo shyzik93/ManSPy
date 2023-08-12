@@ -16,6 +16,9 @@ DERIVATIVE = '4'  # значения идентичны значениям POSPE
 CATEGORY = '5'
 NUMBER = '6'
 ARTICLE_VALUE = '7'
+CLASS = '8'
+TENSE = '9'
+MOOD = '10'
 CASE = 'case'
 
 # Значения свойств слова: MOSENTENCE
@@ -54,11 +57,12 @@ SUBORDINATING = 2
 
 NOMINATIVE = 1
 GENETIVE = 2
-dative = 3
-instrumental = 4
-ablative = 5
-locative = 6
-undefined = 7
+DATIVE = 3
+INSTRUMENTAL = 4
+ABLATIVE = 5
+LOCATIVE = 6
+UNDEFINED = 7
+ACCUSATIVE = 8
 
 # Значения свойств слова: CATEGORY
 
@@ -75,21 +79,21 @@ PLURAL = 2
 
 DEFINED = 1
 
-# Значения свойств слова: class
+# Значения свойств слова: CLASS
 
-ordinal = 1
-cardinal = 2
+ORDINAL = 1
+CARDINAL = 2
 
-# Значения свойств слова: tense
+# Значения свойств слова: TENSE
 
-present = 1
-past = 2
-future = 3
+PRESENT = 1
+PAST = 2
+FUTURE = 3
 
-# Значения свойств слова: mood
+# Значения свойств слова: MOOD
 
-infinitive = 1
-imperative = 2
-indicative = 3
-subjunctive = 4
+INFINITIVE = 1
+IMPERATIVE = 2
+INDICATIVE = 3
+SUBJUNCTIVE = 4
 
