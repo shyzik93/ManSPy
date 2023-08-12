@@ -263,9 +263,6 @@ class BaseUnit:
     def getByPos(self, position):
         return self.subunit_info[self.keys[position]]
 
-    def currentIndex(self, step=0):
-        return self.keys[self.position + step]  # TODO: delete this method
-
     # Текущая позиция
     def isOutLeft(self, step=0):
         return self.position + step < 0

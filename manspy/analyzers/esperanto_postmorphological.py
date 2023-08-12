@@ -73,7 +73,7 @@ def process_definition(word, sentence, indexes=None):
         indexes = []
     #print 'findDefinition:', word['word'], index, len(sentence.subunit_info)
     if word[POSPEECH] == ADJECTIVE or (word[POSPEECH] == PRONOUN and word['category'] == 'possessive') or word[POSPEECH]==NUMERAL:
-        indexes.append(sentence.currentIndex())
+        indexes.append(sentence.getByStep().index)
         if sentence.isLast():
             mark_freemembers(sentence, indexes)
             return # завершаем цикл, ибо прилагательные без существительного. Их мы не удаляем, так как они могут следовать после глагола esti
@@ -81,7 +81,7 @@ def process_definition(word, sentence, indexes=None):
         sentence.jumpByStep()
         process_definition(sentence.getByStep(), sentence, indexes)
     elif word[POSPEECH] in [NOUN] and indexes: # если перед существительным стояли прилагательные
-        sentence.addFeature(sentence.currentIndex(), *indexes)
+        sentence.addFeature(sentence.getByStep().index, *indexes)
         sentence.jumpByStep(-len(indexes))
     else:
         mark_freemembers(sentence, indexes)
@@ -106,7 +106,7 @@ def process_adverb(word, sentence):
     if sentence.getByStep()[POSPEECH] != ADVERB:
         return
 
-    index = sentence.currentIndex()
+    index = sentence.getByStep().index
     if checkAdverbBefore(sentence):  # порядок менять не рекомендуется: покажи ОЧЕНЬ СИНИЙ цвет.
         # ПОКАЖИ БЫСТРО синий цвет - а вот здесь необходимо расставлять приоритеты для прилагательных и глаголов.
         # БЫСТРО - относится только к глаголам,
@@ -177,7 +177,7 @@ def process_numeral(word, sentence, indexes=None):
         indexes = []
 
     if word[POSPEECH] == NUMERAL or (word[POSPEECH] == NOUN and 'derivative' in word and word['derivative'] == NUMERAL):
-        indexes.append(sentence.currentIndex())
+        indexes.append(sentence.getByStep().index)
         if not sentence.isLast():
             sentence.jumpByStep()
             process_numeral(sentence.getByStep(), sentence, indexes)
