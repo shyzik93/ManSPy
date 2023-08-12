@@ -11,11 +11,11 @@ def collect_by_link(sentence, word):
     subsentence = {}
     word.remove(-1)
     while word['link']:
-        subsentence[word['index']] = word
+        subsentence[word.index] = word
         word = sentence[word['link'][0]]
         word.remove()
 
-    subsentence[word['index']] = word
+    subsentence[word.index] = word
     return subsentence
 
 
