@@ -47,11 +47,11 @@ def _extract(sentence):
             subject = collect_by_link(sentence, word)
             subjects.append(subject)
         elif word[MOSENTENCE] == PREDICATE:
-            current_predicate_index = word.index
             arguments = []
             arguments_by_predicate.append(arguments)
-            word.remove(-1)
             predicates.append(word)
+            word.remove(-1)
+            current_predicate_index = word.index
 
             if len(predicates) != len(subjects_by_predicate):
                 subjects_by_predicate.append([])
@@ -60,15 +60,15 @@ def _extract(sentence):
                 separate_argument(sentence, orphan_word, arguments_by_predicate[-1], argument_indexes_for_delete)
 
             words_before_predicate.clear()
+        else:
+            if word.index in argument_indexes_for_delete:
+                continue
 
-        if word.index in argument_indexes_for_delete or word[MOSENTENCE] == PREDICATE or word[MOSENTENCE] == SUBJECT:
-            continue
+            if current_predicate_index is None:
+                words_before_predicate.append(word)
+                continue
 
-        if current_predicate_index is None:
-            words_before_predicate.append(word)
-            continue
-
-        separate_argument(sentence, word, arguments, argument_indexes_for_delete)
+            separate_argument(sentence, word, arguments, argument_indexes_for_delete)
 
     if sentence:  # TODO: сделать массив в Message для добавления уведомлений
         print("       Необработанные остатки 3 ФАСИФ \n", sentence.export_unit())
