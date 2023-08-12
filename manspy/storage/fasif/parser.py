@@ -52,8 +52,8 @@ def process_word_combination(fasif, obj_relation, settings):
             wcomb.chmanyByValues(
                 {'argname': arg_name},
                 setstring='subiv:noignore',
-                base=argwords['name'].get('base'),
-                case=argwords['name'].get(CASE)
+                base=argwords['name']['base'],
+                case=argwords['name'][CASE]
             )
             argword = list(wcomb.getByValues(setstring='subiv:noignore', argname=arg_name))[0]
             bases = [argword[1] if argword[1] else argword[2][0]]

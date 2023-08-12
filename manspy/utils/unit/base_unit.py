@@ -141,7 +141,7 @@ class BaseUnit:
             for index, subunit in enumerate(subunits):
                 subunit['index'] = index
                 self.subunit_info[index] = subunit
-                if parent and subunit.get('unit_type') in ('Word', 'Sentence', 'Text'):
+                if parent and subunit['unit_type'] in ('Word', 'Sentence', 'Text'):
                     setattr(subunit, parent['name'], parent['value'])
 
         elif isinstance(subunits, dict):
@@ -315,7 +315,7 @@ class BaseUnit:
             names = re.split(r' *, *', names)
             names = [] if not names[0] else names
             setdict[setname] = {'setvalue': setvalue, 'negative': negative, 'names': names}
-        # print 'setdict:', setdict
+
         return setdict
 
     # Коллекция функций для массовой работы с подъюнитами, имеющих одинаковые значения свойств.
@@ -348,10 +348,9 @@ class BaseUnit:
         for name, value in subunit.itemsInfo():
             if not isinstance(value, list): continue
             for _subunit in value:
-                # print '  ;;;;', subunit['word'], _subunit['word'], isinstance(_subunit, type(subunit))
                 if not isinstance(_subunit, type(subunit)): continue
                 if self._compare_subunit(_subunit, properties, setdict): _subunits.append(_subunit)
-        # print '     ---subunits: ', _subunits
+
         return _subunits
 
     def getByValues(self, setstring='', **properties):
@@ -378,8 +377,6 @@ class BaseUnit:
     def chmanyByValues(self, new_properties, setstring='', **properties):
         ''' Устанавлвает значения свойств new_prperties слов, имеющих одниаковые значения свойств **properties '''
         for index, subunit, _subunits in self.getByValues(setstring, **properties):
-            # print '     subunit:', subunit
-            # print '     _subunits:', _subunits
             for _subunit in _subunits: _subunit.update(new_properties)
             if subunit: subunit.update(new_properties)
 
@@ -424,7 +421,6 @@ class BaseUnit:
         eq = {}
         not_eq = {}
 
-        list_names = []
         everywhere = False  # ищем только в указанных свойствах
         result = []
 
@@ -443,13 +439,9 @@ class BaseUnit:
             find_in = find_in[1:]
         list_names = find_in.split(',') if find_in else []
 
-        # print(eq, not_eq, everywhere, list_names)
         self._getByProperty(result, eq, not_eq, everywhere, list_names, self.subunit_info.values())
 
         return result
-
-    def get(self, key):  # TODO: удалить
-        return self.unit_info.get(key)
 
     def remove(self):
         if self.parent:

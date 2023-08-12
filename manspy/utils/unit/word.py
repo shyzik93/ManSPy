@@ -28,7 +28,7 @@ class Word(BaseUnit):
         self.sentence = None
         symbols = []
         for symbol in str_word:
-            symbols.append({TYPE: '', 'symbol': symbol})
+            symbols.append({TYPE: '', 'symbol': symbol, 'unit_type': 'dict'})
 
         unit_info = {
             'word': self.str_word,

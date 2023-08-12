@@ -204,7 +204,7 @@ signs = [
 def set_properties_by_signs(word, signs):
     def has_all_properties(dict1, dict2):
         for k, v in dict2.items():
-            if dict1.get(k) != v:
+            if dict1[k] != v:
                 return False
 
         return True
