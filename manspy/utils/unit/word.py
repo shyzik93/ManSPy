@@ -23,7 +23,7 @@ class Word(BaseUnit):
     - around_pmark
     - combine_words - список слов, являющихся составными для данного
     """
-    def __init__(self, str_word):
+    def __init__(self, str_word, parent=None):
         self.str_word = str_word
         self.sentence = None
         symbols = []
@@ -39,10 +39,10 @@ class Word(BaseUnit):
             'type': 'real',
             # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
             'start_pmark': [], 'end_pmark': [], 'around_pmark': [],
-            'combine_words': []
+            'combine_words': [],
         }
-        parent = {'name': 'word', 'value': self}
-        BaseUnit.__init__(self, symbols, unit_info, parent)
+        parent_object = {'name': 'word', 'value': self}
+        BaseUnit.__init__(self, symbols, unit_info, parent_object, parent=parent)
 
     def hasSymbol(self, symbol):
         return symbol in self.str_word

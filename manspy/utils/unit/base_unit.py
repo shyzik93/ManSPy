@@ -38,6 +38,13 @@ class errorManager:
 
 class BaseUnit:
     """
+    Юнит - это предложение или слово. Подъюнит - их составляющие:
+    для предложения - это слова, для слов - это символы
+
+    `unit.index` - индекс юнита, т. е. его порядковый номер юнита в родительском юнита в момент создания. Неизменно.
+    `unit.position` - текущая позиция юнита в момент перебора родителя
+    `step` - шаг, то есть смещение относительно текущей позиции. Может быть отрицательным.
+
     `unit[index]` - извлечение подъюнита
     `unit[index][name]` - извлечение характеристики подъюнита
     `unit[index][name]` = value - изменение характеристики подъюнита
@@ -47,15 +54,12 @@ class BaseUnit:
     `del unit[name]` - удалить характеристику юнита
     `unit[name] = None` - удалить характеристику юнита
     `name in unit` - проверка наличия ключа характеристики юнита
-    `len(unit)` - извлечение длины юнита (количество подъюнитогв)
+    `len(unit)` - извлечение длины юнита (количество подъюнитов)
 
-    Если значение характеристика равно None, то такая характеристика считается несуществующей.
-
-    Юнит - это предложение или слово. Подъюнит - их составляющие:
-    для предложения - это слова, для слов - это символы
+    Если значение характеристики равно None, то такая характеристика считается несуществующей.
     """
 
-    def __init__(self, subunits=None, unit_info=None, parent=None, imports=None):
+    def __init__(self, subunits=None, unit_info=None, parent_object=None, imports=None, parent=None):
         self.unit_info = {'max_index': -1, 'index': None}
         self.subunit_info = {}
         self.full_info = {'unit_info': self.unit_info, 'unit': self.subunit_info}
@@ -69,12 +73,13 @@ class BaseUnit:
             self.unit_info.update(unit_info)
 
         if subunits:
-            self.load_subunits(subunits, parent)
+            self.load_subunits(subunits, parent_object)
 
         if imports:
             self.import_unit(imports)
 
-        self.parent = parent
+        # self.parent_object = parent_object
+        self.parent = None
 
     def import_unit(self, data):
         from manspy.utils.unit import Word, Sentence, Text
@@ -119,7 +124,7 @@ class BaseUnit:
 
         return data
 
-    def load_subunits(self, subunits, parent=None):
+    def load_subunits(self, subunits, parent_object=None):
         """
         Загружает подъюниты из списка либо словаря.
         Словарь обычно используется при добавлении подъюнитов экспортированного юнита
@@ -141,8 +146,10 @@ class BaseUnit:
             for index, subunit in enumerate(subunits):
                 subunit['index'] = index
                 self.subunit_info[index] = subunit
-                if parent and subunit['unit_type'] in ('Word', 'Sentence', 'Text'):
-                    setattr(subunit, parent['name'], parent['value'])
+                if parent_object and subunit['unit_type'] in ('Word', 'Sentence', 'Text'):
+                    # if parent_object and isinstance(subunit, BaseUnit):
+                    setattr(subunit, parent_object['name'], parent_object['value'])
+                    setattr(subunit, 'parent', parent_object['value'])
 
         elif isinstance(subunits, dict):
 
@@ -192,18 +199,11 @@ class BaseUnit:
     def __contains__(self, name):
         return self.unit_info.get(name) is not None
 
-    # def __repr__(self): return self.__class__.__name__ + "(" + str(self.full_info) + ")"
     def __repr__(self):
         return self.__class__.__name__ + "(" + str(self.unit_info) + ")"
 
-    def items(self):
-        return self.subunit_info.items()  # аналогично itemsUnit() без индекса. Не рекомендуется. Только для внутреннего использования.
-
     def itemsInfo(self):
         return self.unit_info.items()
-
-    def itemsUnit(self, index=None):
-        return self.subunit_info.items() if index is None else self.subunit_info[index].items()
 
     def update(self, _dict):
         self.unit_info.update(_dict)
@@ -443,4 +443,5 @@ class BaseUnit:
     def remove(self):
         if self.parent:
             index = self.unit_info['index']
-            del self.parent['value'].subunit_info[index]
+            del self.parent.subunit_info[index]
+            self.parent.keys = list(self.parent.subunit_info.keys())

@@ -7,8 +7,18 @@ class Sentence(BaseUnit):
     old_index = None
     new_index = None
 
-    def __init__(self, words, imports=None):
-        BaseUnit.__init__(self, words, unit_info={'end': ''}, parent={'name': 'sentence', 'value': self}, imports=imports)
+    def __init__(self, words, imports=None, parent=None):
+        parent_object = {'name': 'sentence', 'value': self}
+        BaseUnit.__init__(
+            self,
+            words,
+            unit_info={
+                'end': '',
+            },
+            parent_object=parent_object,
+            imports=imports,
+            parent=parent,
+        )
         self.error = errorManager('graphmath', 'morph', 'postmorph', 'synt')
 
     def getByCharacteristic(self, name, value):

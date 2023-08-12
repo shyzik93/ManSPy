@@ -71,7 +71,7 @@ def mark_freemembers(sentence, indexes):
 def process_definition(word, sentence, indexes=None):
     if indexes is None:
         indexes = []
-    #print 'findDefinition:', word['word'], index, len(sentence.subunit_info)
+
     if word[POSPEECH] == ADJECTIVE or (word[POSPEECH] == PRONOUN and word['category'] == 'possessive') or word[POSPEECH]==NUMERAL:
         indexes.append(sentence.getByStep().index)
         if sentence.isLast():
@@ -88,7 +88,7 @@ def process_definition(word, sentence, indexes=None):
 
 
 def checkAdverbBefore(sentence):
-    if sentence.position+1 >= len(sentence.subunit_info):
+    if sentence.position + 1 >= len(sentence):
         return False  # т. е. является последним
 
     # if adverb['base'] == u'ankaŭ': # стоит перед словом, к которому относится

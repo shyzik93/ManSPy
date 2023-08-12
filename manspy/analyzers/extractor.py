@@ -18,16 +18,10 @@ def collect_by_link(sentence, word):
 
 
 def separate_argument(sentence, word, arguments, argument_indexes_for_delete):
-    if word[MOSENTENCE] == DIRECT_SUPPLEMENT:
+    if word[MOSENTENCE] in (SUPPLEMENT, DIRECT_SUPPLEMENT):
         argument = collect_by_link(sentence, word)
         arguments.append(argument)
         argument_indexes_for_delete.extend(list(argument.keys()))
-    elif word[MOSENTENCE] == SUPPLEMENT:
-        argument = collect_by_link(sentence, word)
-        arguments.append(argument)
-        argument_indexes_for_delete.extend(list(argument.keys()))
-    else:
-        pass  # print(word)
 
 
 def _extract(sentence):
@@ -45,33 +39,34 @@ def _extract(sentence):
     current_predicate_index = None
     arguments = None
     subjects = None
-    orphan_words = []
-    for index, word in sentence.itemsUnit():
+    words_before_predicate = []
+    for word in sentence:
         if word[MOSENTENCE] == SUBJECT:
             subjects = []
             subjects_by_predicate.append(subjects)
             subject = collect_by_link(sentence, word)
             subjects.append(subject)
-            subject_indexes_for_delete.extend(list(subject.keys()))
+            subject_indexes_for_delete.extend(subject)
         elif word[MOSENTENCE] == PREDICATE:
-            current_predicate_index = index
+            current_predicate_index = word.index
             arguments = []
             arguments_by_predicate.append(arguments)
-            predicate_indexes_for_delete.append(current_predicate_index)
+            predicate_indexes_for_delete.append(word.index)
+            word.remove()
             predicates.append(word)
 
             if len(predicates) != len(subjects_by_predicate):
                 subjects_by_predicate.append([])
 
-            for orphan_word in orphan_words:
+            for orphan_word in words_before_predicate:
                 separate_argument(sentence, orphan_word, arguments_by_predicate[-1], argument_indexes_for_delete)
-                orphan_words.clear()
+            words_before_predicate.clear()
 
-        if index in argument_indexes_for_delete or index in predicate_indexes_for_delete or index in subject_indexes_for_delete:
+        if word.index in argument_indexes_for_delete or word[MOSENTENCE] == PREDICATE or word[MOSENTENCE] == SUBJECT:
             continue
 
         if current_predicate_index is None:
-            orphan_words.append(word)
+            words_before_predicate.append(word)
             continue
 
         separate_argument(sentence, word, arguments, argument_indexes_for_delete)
