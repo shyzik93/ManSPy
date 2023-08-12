@@ -146,8 +146,7 @@ class BaseUnit:
             for index, subunit in enumerate(subunits):
                 subunit['index'] = index
                 self.subunit_info[index] = subunit
-                if parent_object and subunit['unit_type'] in ('Word', 'Sentence', 'Text'):
-                    # if parent_object and isinstance(subunit, BaseUnit):
+                if parent_object and isinstance(subunit, BaseUnit):
                     setattr(subunit, parent_object['name'], parent_object['value'])
                     setattr(subunit, 'parent', parent_object['value'])
 
