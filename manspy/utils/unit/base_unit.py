@@ -289,7 +289,7 @@ class BaseUnit:
 
     # Прочее
 
-    def _parseSettingsString(self, setstring):
+    def _parse_settings_string(self, setstring):
         ''' Функция обработки строки настройки функции массовой обработки подъюнитов
            Пример строки:
            "subiv:ignore" - обрабатывать юниты как обычно.
@@ -350,9 +350,9 @@ class BaseUnit:
 
         return _subunits
 
-    def getByValues(self, setstring='', **properties):
+    def get_by_values(self, properties, setstring=''):
         ''' Возвращает слова, имеющие одниаковые значения свойств properties '''
-        setdict = self._parseSettingsString(setstring)
+        setdict = self._parse_settings_string(setstring)
         for index, subunit in self.subunit_info.items():
             _subunits = []
             if setdict['subiv']['setvalue'] in ('noignore', 'only'):
@@ -365,19 +365,19 @@ class BaseUnit:
             else:
                 if _subunits: yield index, None, _subunits
 
-    def changeByValues(self, name, value, setstring='', **properties):
+    def change_by_values(self, name, value, setstring='', **properties):
         ''' Устанавлвает значение value свойства name слов, имеющих одниаковые значения свойств properties '''
-        for index, subunit, _subunits in self.getByValues(setstring, **properties):
+        for index, subunit, _subunits in self.get_by_values(properties, setstring):
             for _subunit in _subunits: _subunit[name] = value
             if subunit: subunit[name] = value
 
-    def chmanyByValues(self, new_properties, setstring='', **properties):
+    def chmany_by_values(self, new_properties, properties, setstring=''):
         ''' Устанавлвает значения свойств new_prperties слов, имеющих одниаковые значения свойств **properties '''
-        for index, subunit, _subunits in self.getByValues(setstring, **properties):
+        for index, subunit, _subunits in self.get_by_values(properties, setstring):
             for _subunit in _subunits: _subunit.update(new_properties)
             if subunit: subunit.update(new_properties)
 
-    def _getByProperty(self, result, eq, not_eq, everywhere, list_names, units):
+    def _get_by_property(self, result, eq, not_eq, everywhere, list_names, units):
         ''' units - список из словарей символов или объектов Слово, Предложение, Текст '''
         for unit in units:
             is_true = True
@@ -409,11 +409,11 @@ class BaseUnit:
                     continue  # пропускаем лишние рекурсивные вызовы
 
                 if everywhere and name not in list_names:
-                    self._getByProperty(result, eq, not_eq, everywhere, list_names, value)
+                    self._get_by_property(result, eq, not_eq, everywhere, list_names, value)
                 elif not everywhere and name in list_names:
-                    self._getByProperty(result, eq, not_eq, everywhere, list_names, value)
+                    self._get_by_property(result, eq, not_eq, everywhere, list_names, value)
 
-    def getByProperty(self, find_in, **properties):
+    def get_by_property(self, find_in, properties):
         ''' Возвращает список подъюнитов'''
         eq = {}
         not_eq = {}
@@ -436,7 +436,7 @@ class BaseUnit:
             find_in = find_in[1:]
         list_names = find_in.split(',') if find_in else []
 
-        self._getByProperty(result, eq, not_eq, everywhere, list_names, self.subunit_info.values())
+        self._get_by_property(result, eq, not_eq, everywhere, list_names, self.subunit_info.values())
 
         return result
 

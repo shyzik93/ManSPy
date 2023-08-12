@@ -19,7 +19,7 @@ ARTICLE_VALUE = '7'
 CLASS = '8'
 TENSE = '9'
 MOOD = '10'
-CASE = 'case'
+CASE = '11'
 
 # Значения свойств слова: MOSENTENCE
 

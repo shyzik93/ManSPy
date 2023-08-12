@@ -49,13 +49,12 @@ def process_word_combination(fasif, obj_relation, settings):
         for arg_name, args in fasif['args'].items():
             argwords = args['argwords'][language]
             argwords['name'] = get_dword(argwords['name'], settings)
-            wcomb.chmanyByValues(
-                {'argname': arg_name},
+            wcomb.chmany_by_values(
+                new_properties={'argname': arg_name},
+                properties={'base': argwords['name']['base'], CASE: argwords['name'][CASE]},
                 setstring='subiv:noignore',
-                base=argwords['name']['base'],
-                case=argwords['name'][CASE]
             )
-            argword = list(wcomb.getByValues(setstring='subiv:noignore', argname=arg_name))[0]
+            argword = list(wcomb.get_by_values(properties={'argname': arg_name}, setstring='subiv:noignore'))[0]
             bases = [argword[1] if argword[1] else argword[2][0]]
             argtables = args['argtable'].setdefault(language, {})
             for arg_word, argtable in argtables.copy().items():
