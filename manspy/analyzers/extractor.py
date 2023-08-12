@@ -9,9 +9,11 @@ def collect_by_link(sentence, word):
     :return:
     """
     subsentence = {}
+    word.remove(-1)
     while word['link']:
         subsentence[word['index']] = word
         word = sentence[word['link'][0]]
+        word.remove()
 
     subsentence[word['index']] = word
     return subsentence
@@ -31,10 +33,8 @@ def _extract(sentence):
           arg - это аргумент функции, имеет такойже первод на английский, как и актант"""
     arguments_by_predicate = []  # словосочетания (актанты)
     predicates = []
-    predicate_indexes_for_delete = []
     argument_indexes_for_delete = []
     subjects_by_predicate = []
-    subject_indexes_for_delete = []
 
     current_predicate_index = None
     arguments = None
@@ -46,13 +46,11 @@ def _extract(sentence):
             subjects_by_predicate.append(subjects)
             subject = collect_by_link(sentence, word)
             subjects.append(subject)
-            subject_indexes_for_delete.extend(subject)
         elif word[MOSENTENCE] == PREDICATE:
             current_predicate_index = word.index
             arguments = []
             arguments_by_predicate.append(arguments)
-            predicate_indexes_for_delete.append(word.index)
-            word.remove()
+            word.remove(-1)
             predicates.append(word)
 
             if len(predicates) != len(subjects_by_predicate):
@@ -60,6 +58,7 @@ def _extract(sentence):
 
             for orphan_word in words_before_predicate:
                 separate_argument(sentence, orphan_word, arguments_by_predicate[-1], argument_indexes_for_delete)
+
             words_before_predicate.clear()
 
         if word.index in argument_indexes_for_delete or word[MOSENTENCE] == PREDICATE or word[MOSENTENCE] == SUBJECT:
@@ -70,10 +69,6 @@ def _extract(sentence):
             continue
 
         separate_argument(sentence, word, arguments, argument_indexes_for_delete)
-
-    sentence.delByIndex(*subject_indexes_for_delete)  # TODO переделать в `del sentence[*subject_indexes_for_delete]`, а delByIndex - удалить
-    sentence.delByIndex(*predicate_indexes_for_delete)
-    sentence.delByIndex(*argument_indexes_for_delete)
 
     if sentence:  # TODO: сделать массив в Message для добавления уведомлений
         print("       Необработанные остатки 3 ФАСИФ \n", sentence.export_unit())

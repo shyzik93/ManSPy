@@ -439,8 +439,10 @@ class BaseUnit:
 
         return result
 
-    def remove(self):
+    def remove(self, parent_diff_position=0):
+        """При удалении юнита в цикле необходимо передать первый аргумент -1, чтобы не пропустить следующий юнит"""
         if self.parent:
             index = self.unit_info['index']
             del self.parent.subunit_info[index]
             self.parent.keys = list(self.parent.subunit_info.keys())
+            self.parent.position += parent_diff_position

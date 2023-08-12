@@ -117,7 +117,7 @@ def goThrowLinks(index, sentence, indexes=None):
     return indexes
 
 
-# TODO: Две одноимённых функции!???
+# TODO: функция недописана
 def split_sentence(sentence):
 
     # manspy2 exec --synt "se dolara kurzo de laboro estas kvaron"
@@ -146,27 +146,12 @@ def split_sentence(sentence):
         _sentences.append(goThrowLinks(subject, sentence))
 
     # определяем, в каком 
-    for conjunction in conjunctions:
-        sentence.jumpByIndex(conjunction['index'])
+    for conjunction_index in conjunctions:
+        sentence.jumpByIndex(conjunction_index)
         left, right = sentence.getNeighbours()
 
     #for index, word in sentence:
     #    left, right = sentence.getNeighbours()
-
-
-def split_sentence(sentence):
-    first_indexes = sentence.getIndexesOfFirstWords()
-    #first_words = [sentence(i, 'word') for i in first_indexes]
-    #print('            Root words of the sentence:', [sentence(i, 'word') for i in first_indexes])
-
-    conjunctions = []
-    _sentences = []
-
-    # import json
-    # print('FirstIndees:', first_indexes)
-    # print('sentence:', json.dumps(sentence.export_unit(), sort_keys=True, indent=4).replace('"', ''))
-    for first_index in first_indexes:
-        _sentences.append(goThrowLinks(first_index, sentence))    
 
 
 def analyze(message):
