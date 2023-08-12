@@ -41,45 +41,44 @@ class BaseUnit:
     Юнит - это предложение или слово. Подъюнит - их составляющие:
     для предложения - это слова, для слов - это символы
 
-    `unit.index` - индекс юнита, т. е. его порядковый номер юнита в родительском юнита в момент создания. Неизменно.
-    `unit.position` - текущая позиция юнита в момент перебора родителя
-    `step` - шаг, то есть смещение относительно текущей позиции. Может быть отрицательным.
+    - `unit.index` - индекс юнита, т. е. его порядковый номер юнита в родительском юнита в момент создания. Неизменно.
+    - `unit.position` - текущая позиция юнита в момент перебора родителя
+    - `step` - шаг, то есть смещение относительно текущей позиции. Может быть отрицательным.
 
-    `unit[index]` - извлечение подъюнита
-    `unit[index][name]` - извлечение характеристики подъюнита
-    `unit[index][name]` = value - изменение характеристики подъюнита
+    - `unit[index]` - извлечение подъюнита
+    - `unit[index][name]` - извлечение характеристики подъюнита
+    - `unit[index][name]` = value - изменение характеристики подъюнита
 
-    `unit[name]` - извлечение характеристики юнита
-    `unit[name] = value` - изменение характеристики юнита
-    `del unit[name]` - удалить характеристику юнита
-    `unit[name] = None` - удалить характеристику юнита
-    `name in unit` - проверка наличия ключа характеристики юнита
-    `len(unit)` - извлечение длины юнита (количество подъюнитов)
+    - `unit[name]` - извлечение характеристики юнита
+    - `unit[name] = value` - изменение характеристики юнита
+    - `del unit[name]` - удалить характеристику юнита
+    - `unit[name] = None` - удалить характеристику юнита
+    - `name in unit` - проверка наличия ключа характеристики юнита
+    - `len(unit)` - извлечение длины юнита (количество подъюнитов)
+
+    - `unit.parent` - родительский юнит, универсальный атрибут. Вместо него можно использовать конкретные:
+      - `unit.sentence` - для Word
+      - `unit.text` - для Sentence
 
     Если значение характеристики равно None, то такая характеристика считается несуществующей.
     """
 
-    def __init__(self, subunits=None, unit_info=None, parent_object=None, imports=None, parent=None):
+    def __init__(self, subunits=None, unit_info=None, imports=None):
         self.unit_info = {'max_index': -1, 'index': None}
         self.subunit_info = {}
         self.full_info = {'unit_info': self.unit_info, 'unit': self.subunit_info}
-
         self.position = 0
         self.keys = []
-
         self.subunits_copy = {}
-
+        self.parent = None
         if unit_info:
             self.unit_info.update(unit_info)
 
         if subunits:
-            self.load_subunits(subunits, parent_object)
+            self.load_subunits(subunits)
 
         if imports:
             self.import_unit(imports)
-
-        # self.parent_object = parent_object
-        self.parent = None
 
     def import_unit(self, data):
         from manspy.utils.unit import Word, Sentence, Text
@@ -124,7 +123,7 @@ class BaseUnit:
 
         return data
 
-    def load_subunits(self, subunits, parent_object=None):
+    def load_subunits(self, subunits):
         """
         Загружает подъюниты из списка либо словаря.
         Словарь обычно используется при добавлении подъюнитов экспортированного юнита
@@ -146,9 +145,9 @@ class BaseUnit:
             for index, subunit in enumerate(subunits):
                 subunit['index'] = index
                 self.subunit_info[index] = subunit
-                if parent_object and isinstance(subunit, BaseUnit):
-                    setattr(subunit, parent_object['name'], parent_object['value'])
-                    setattr(subunit, 'parent', parent_object['value'])
+                if isinstance(subunit, BaseUnit):
+                    setattr(subunit, self.__class__.__name__.lower(), self)
+                    setattr(subunit, 'parent', self)
 
         elif isinstance(subunits, dict):
 

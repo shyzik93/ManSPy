@@ -7,17 +7,14 @@ class Sentence(BaseUnit):
     old_index = None
     new_index = None
 
-    def __init__(self, words, imports=None, parent=None):
-        parent_object = {'name': 'sentence', 'value': self}
+    def __init__(self, words, imports=None):
         BaseUnit.__init__(
             self,
             words,
             unit_info={
                 'end': '',
             },
-            parent_object=parent_object,
             imports=imports,
-            parent=parent,
         )
         self.error = errorManager('graphmath', 'morph', 'postmorph', 'synt')
 
