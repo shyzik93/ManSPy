@@ -6,10 +6,11 @@
     '''
 from manspy.utils.constants import (
     ADJECTIVE, ADVERB, ARTICLE,
-    CASE, CONJUNCTION, COORDINATING,
+    CASE, CATEGORY, CONJUNCTION, COORDINATING,
+    DERIVATIVE,
     NOUN, NUMERAL,
-    POSPEECH, PREPOSITION, PRONOUN,
-    VALUE, VERB,
+    POSPEECH, POSSESSIVE, PREPOSITION, PRONOUN,
+    CONJUNCTION_VALUE, VERB,
 )
 
 
@@ -34,7 +35,7 @@ def process_preposition(word, sentence):
 
 
 def process_conjunction(word, sentence):
-    if word[POSPEECH] != CONJUNCTION or word[VALUE] != COORDINATING:
+    if word[POSPEECH] != CONJUNCTION or word[CONJUNCTION_VALUE] != COORDINATING:
         return
 
     left, right = sentence.getNeighbours()
@@ -45,10 +46,10 @@ def process_conjunction(word, sentence):
     #if word['word'] == 'kaj': # заменить логическими символами (kaj = &)
     #print word['base']
     if left[POSPEECH] == right[POSPEECH] or \
-         (left[POSPEECH] == NOUN and right[POSPEECH] == PRONOUN and right['category'] != 'possessive') or (right[POSPEECH] == NOUN and left[POSPEECH] == PRONOUN and left['category'] != 'possessive') or \
-         ((left[POSPEECH] == PRONOUN and left['category'] == 'possessive') and right[POSPEECH] == ADJECTIVE) or ((right[POSPEECH] == PRONOUN and right['category'] == 'possessive') and left[POSPEECH] == ADJECTIVE) or \
+         (left[POSPEECH] == NOUN and right[POSPEECH] == PRONOUN and right[CATEGORY] != POSSESSIVE) or (right[POSPEECH] == NOUN and left[POSPEECH] == PRONOUN and left[CATEGORY] != POSSESSIVE) or \
+         ((left[POSPEECH] == PRONOUN and left[CATEGORY] == POSSESSIVE) and right[POSPEECH] == ADJECTIVE) or ((right[POSPEECH] == PRONOUN and right[CATEGORY] == POSSESSIVE) and left[POSPEECH] == ADJECTIVE) or \
          (left[POSPEECH] == NOUN and 'praMOSentence' in right and right['praMOSentence'] == 'freemember' and right[POSPEECH] == NUMERAL):
-         #((left[POSPEECH] in [PRONOUN, ADJECTIVE] and ('category' in left and left['category'] == 'possessive')) and right[POSPEECH] in [PRONOUN, ADJECTIVE]):
+         #((left[POSPEECH] in [PRONOUN, ADJECTIVE] and (CATEGORY in left and left[CATEGORY] == POSSESSIVE)) and right[POSPEECH] in [PRONOUN, ADJECTIVE]):
     #if (CASE in left and CASE in right) and left[CASE] == right[CASE]:
         if (CASE in right and right[CASE] == 'accusative') and (CASE in left and left[CASE] != 'accusative'):
             sentence.delByStep(jump_step=0)
@@ -72,7 +73,7 @@ def process_definition(word, sentence, words=None):
     if words is None:
         words = []
 
-    if word[POSPEECH] == ADJECTIVE or (word[POSPEECH] == PRONOUN and word['category'] == 'possessive') or word[POSPEECH]==NUMERAL:
+    if word[POSPEECH] == ADJECTIVE or (word[POSPEECH] == PRONOUN and word[CATEGORY] == POSSESSIVE) or word[POSPEECH]==NUMERAL:
         words.append(sentence.getByStep())
         if sentence.isLast():
             mark_freemembers(sentence, words)
@@ -175,7 +176,7 @@ def process_numeral(word, sentence, words=None):
     if words is None:
         words = []
 
-    if word[POSPEECH] == NUMERAL or (word[POSPEECH] == NOUN and 'derivative' in word and word['derivative'] == NUMERAL):
+    if word[POSPEECH] == NUMERAL or (word[POSPEECH] == NOUN and DERIVATIVE in word and word[DERIVATIVE] == NUMERAL):
         words.append(sentence.getByStep())
         if not sentence.isLast():
             sentence.jumpByStep()

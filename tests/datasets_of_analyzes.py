@@ -9,11 +9,13 @@
 """
 from manspy.utils.constants import (
     ADJECTIVE,
-    CASE, COMMON, CONJUNCTION, COORDINATING,
+    CASE, CATEGORY, COMMON, CONJUNCTION, COORDINATING,
+    DERIVATIVE,
     GENETIVE,
-    NAME, NOMINATIVE, NOUN, NUMERAL,
-    POSPEECH, PREPOSITION, PRONOUN, PROPER,
-    VALUE, VERB,
+    NAME, NOMINATIVE, NOUN, NUMERAL, NUMBER,
+    POSPEECH, POSSESSIVE, PREPOSITION, PRONOUN, PROPER,
+    SINGULAR,
+    CONJUNCTION_VALUE, VERB,
 )
 
 
@@ -191,7 +193,7 @@ dataset_verb_and_repeated_actants = {
                     'subjects_word_combinations': []
                 }
             },
-            'morphological': {'unit_info': {'max_index': 0, 'index': None}, 'unit': {0: {'unit_info': {'max_index': 7, 'index': 0, 'end': ''}, 'unit': {0: {'unit_info': {'max_index': 5, 'index': 0, 'word': 'montru', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'montr', 'word_lower': 'montru', POSPEECH: VERB, 'mood': 'imperative', NAME: COMMON}, 'unit': {}, 'unit_type': 'Word'}, 1: {'unit_info': {'max_index': 6, 'index': 1, 'word': 'dolaran', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'dolar', 'word_lower': 'dolaran', CASE: 'accusative', POSPEECH: ADJECTIVE, NAME: COMMON, 'number': 'singular'}, 'unit': {}, 'unit_type': 'Word'}, 2: {'unit_info': {'max_index': 2, 'index': 2, 'word': 'kaj', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'kaj', 'word_lower': 'kaj', POSPEECH: CONJUNCTION, VALUE: COORDINATING, NAME: COMMON}, 'unit': {}, 'unit_type': 'Word'}, 3: {'unit_info': {'max_index': 6, 'index': 3, 'word': 'dolaran', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'dolar', 'word_lower': 'dolaran', CASE: 'accusative', POSPEECH: ADJECTIVE, NAME: COMMON, 'number': 'singular'}, 'unit': {}, 'unit_type': 'Word'}, 4: {'unit_info': {'max_index': 5, 'index': 4, 'word': 'kurzon', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'kurz', 'word_lower': 'kurzon', CASE: 'accusative', POSPEECH: NOUN, NAME: COMMON, 'number': 'singular'}, 'unit': {}, 'unit_type': 'Word'}, 5: {'unit_info': {'max_index': 1, 'index': 5, 'word': 'de', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'de', 'word_lower': 'de', POSPEECH: PREPOSITION, 'give_case': GENETIVE, NAME: COMMON}, 'unit': {}, 'unit_type': 'Word'}, 6: {'unit_info': {'max_index': 4, 'index': 6, 'word': 'rusia', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'rusi', 'word_lower': 'rusia', POSPEECH: ADJECTIVE, NAME: COMMON, 'number': 'singular', CASE: NOMINATIVE}, 'unit': {}, 'unit_type': 'Word'}, 7: {'unit_info': {'max_index': 4, 'index': 7, 'word': 'banko', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'bank', 'word_lower': 'banko', POSPEECH: NOUN, NAME: COMMON, 'number': 'singular', CASE: NOMINATIVE}, 'unit': {}, 'unit_type': 'Word'}}, 'unit_type': 'Sentence'}}, 'unit_type': 'Text'},
+            'morphological': {'unit_info': {'max_index': 0, 'index': None}, 'unit': {0: {'unit_info': {'max_index': 7, 'index': 0, 'end': ''}, 'unit': {0: {'unit_info': {'max_index': 5, 'index': 0, 'word': 'montru', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'montr', 'word_lower': 'montru', POSPEECH: VERB, 'mood': 'imperative', NAME: COMMON}, 'unit': {}, 'unit_type': 'Word'}, 1: {'unit_info': {'max_index': 6, 'index': 1, 'word': 'dolaran', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'dolar', 'word_lower': 'dolaran', CASE: 'accusative', POSPEECH: ADJECTIVE, NAME: COMMON, NUMBER: SINGULAR}, 'unit': {}, 'unit_type': 'Word'}, 2: {'unit_info': {'max_index': 2, 'index': 2, 'word': 'kaj', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'kaj', 'word_lower': 'kaj', POSPEECH: CONJUNCTION, CONJUNCTION_VALUE: COORDINATING, NAME: COMMON}, 'unit': {}, 'unit_type': 'Word'}, 3: {'unit_info': {'max_index': 6, 'index': 3, 'word': 'dolaran', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'dolar', 'word_lower': 'dolaran', CASE: 'accusative', POSPEECH: ADJECTIVE, NAME: COMMON, NUMBER: SINGULAR}, 'unit': {}, 'unit_type': 'Word'}, 4: {'unit_info': {'max_index': 5, 'index': 4, 'word': 'kurzon', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'kurz', 'word_lower': 'kurzon', CASE: 'accusative', POSPEECH: NOUN, NAME: COMMON, NUMBER: SINGULAR}, 'unit': {}, 'unit_type': 'Word'}, 5: {'unit_info': {'max_index': 1, 'index': 5, 'word': 'de', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'de', 'word_lower': 'de', POSPEECH: PREPOSITION, 'give_case': GENETIVE, NAME: COMMON}, 'unit': {}, 'unit_type': 'Word'}, 6: {'unit_info': {'max_index': 4, 'index': 6, 'word': 'rusia', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'rusi', 'word_lower': 'rusia', POSPEECH: ADJECTIVE, NAME: COMMON, NUMBER: SINGULAR, CASE: NOMINATIVE}, 'unit': {}, 'unit_type': 'Word'}, 7: {'unit_info': {'max_index': 4, 'index': 7, 'word': 'banko', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'bank', 'word_lower': 'banko', POSPEECH: NOUN, NAME: COMMON, NUMBER: SINGULAR, CASE: NOMINATIVE}, 'unit': {}, 'unit_type': 'Word'}}, 'unit_type': 'Sentence'}}, 'unit_type': 'Text'},
             'r_text_construct': ['USD-Russia', 'USD-Russia'],
         },
         {
@@ -717,7 +719,7 @@ dataset_numbers_and_simple_math = {
                                     'word_lower': 'tria',
                                     POSPEECH: NUMERAL,
                                     NAME: COMMON,
-                                    'number': 'singular',
+                                    NUMBER: SINGULAR,
                                     CASE: NOMINATIVE,
                                     'number_value': 3,
                                     'class': 'ordinal',
@@ -770,7 +772,7 @@ dataset_numbers_and_simple_math = {
                                     'base': 'kaj',
                                     'word_lower': 'kaj',
                                     POSPEECH: CONJUNCTION,
-                                    VALUE: COORDINATING,
+                                    CONJUNCTION_VALUE: COORDINATING,
                                     NAME: COMMON
                                 },
                                 'unit': {},
@@ -797,10 +799,10 @@ dataset_numbers_and_simple_math = {
                                     CASE: 'accusative',
                                     POSPEECH: NOUN,
                                     NAME: COMMON,
-                                    'number': 'singular',
+                                    NUMBER: SINGULAR,
                                     'class': 'cardinal',
                                     'number_value': 4,
-                                    'derivative': NUMERAL,
+                                    DERIVATIVE: NUMERAL,
                                 },
                                 'unit': {},
                                 'unit_type': 'Word',
@@ -1042,9 +1044,9 @@ dataset_proper = {
                                     'word_lower': 'mia',
                                     POSPEECH: PRONOUN,
                                     NAME: PROPER,
-                                    'number': 'singular',
+                                    NUMBER: SINGULAR,
                                     CASE: NOMINATIVE,
-                                    'category': 'possessive',
+                                    CATEGORY: POSSESSIVE,
                                 },
                                 'unit': {},
                                 'unit_type': 'Word'
@@ -1070,7 +1072,7 @@ dataset_proper = {
                                     POSPEECH: NOUN,
                                     NAME: COMMON,
                                     CASE: NOMINATIVE,
-                                    'number': 'singular',
+                                    NUMBER: SINGULAR,
                                 },
                                 'unit': {},
                                 'unit_type': 'Word'

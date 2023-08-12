@@ -1,4 +1,4 @@
-from manspy.utils.constants import CASE, COMMON, MOSENTENCE, NOMINATIVE, NOUN, POSPEECH
+from manspy.utils.constants import CASE, COMMON, MOSENTENCE, NOMINATIVE, NAME, NOUN, NUMBER, POSPEECH, SINGULAR
 
 
 words = {
@@ -38,7 +38,7 @@ words = {
             'max_index': 4,
             NAME: COMMON,
             'notword': '',
-            'number': 'singular',
+            NUMBER: SINGULAR,
             'start_pmark': [],
             'symbol_map': {},
             'type': 'real',
@@ -60,7 +60,7 @@ words = {
             'max_index': 4,
             NAME: COMMON,
             'notword': '',
-            'number': 'singular',
+            NUMBER: SINGULAR,
             'start_pmark': [],
             'symbol_map': {},
             'type': 'real',
@@ -83,7 +83,7 @@ words = {
             'max_index': 4,
             NAME: COMMON,
             'notword': '',
-            'number': 'singular',
+            NUMBER: SINGULAR,
             'start_pmark': [],
             'symbol_map': {},
             'type': 'real',

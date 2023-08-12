@@ -3,7 +3,7 @@ import json
 
 from manspy.utils import unit
 from manspy.api import API
-from manspy.utils.constants import CASE, MOSENTENCE, POSPEECH
+from manspy.utils.constants import CASE, CATEGORY, COORDINATING, DERIVATIVE, MOSENTENCE, NUMBER, POSPEECH
 from manspy.utils.settings import Settings
 
 TEMPLATE_HTML_WORD = '<span class="{MOSentence}" title="{title}">{word}</span>'
@@ -52,7 +52,7 @@ def word_to_html(word):
     properties = [
         'base',
         CASE,
-        'number',
+        NUMBER,
         MOSENTENCE,
         POSPEECH,
         'end',
@@ -60,10 +60,10 @@ def word_to_html(word):
         'end_pmark',
         'start_pmark',
         'around_pmark',
-        'category',
+        CATEGORY,
         'give_case',
         COORDINATING,
-        'derivative',
+        DERIVATIVE,
         'antonym',
         'number_value',
         'class',

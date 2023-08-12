@@ -6,11 +6,11 @@
 
 from manspy.utils.constants import (
     ADJECTIVE, ADVERB,
-    CASE, CIRCUMSTANCE, CONJUNCTION,
+    CASE, CATEGORY, CIRCUMSTANCE, CONJUNCTION,
     DEFINITION, DIRECT_SUPPLEMENT,
     MOSENTENCE,
     NOMINATIVE, NOUN, NUMERAL,
-    POSPEECH, PREDICATE, PRONOUN,
+    PERSONAL, POSPEECH, POSSESSIVE, PREDICATE, PRONOUN,
     SUBJECT, SUPPLEMENT,
     VERB,
 )
@@ -30,7 +30,7 @@ def setMOS_ToSign(features):
     """ Определение члена предложения у признаков:
         прилагательного, наречия, """
     for feature in features:
-        if feature[POSPEECH] == ADJECTIVE or (feature[POSPEECH] == PRONOUN and feature['category'] == 'possessive') or feature[POSPEECH] == NUMERAL:
+        if feature[POSPEECH] == ADJECTIVE or (feature[POSPEECH] == PRONOUN and feature[CATEGORY] == POSSESSIVE) or feature[POSPEECH] == NUMERAL:
             feature[MOSENTENCE] = DEFINITION
         elif feature[POSPEECH] == ADVERB:
             feature[MOSENTENCE] = CIRCUMSTANCE
@@ -52,9 +52,9 @@ def setMOSentence(word):
             setMOS_ToSign(word['feature'])
 
     elif word[POSPEECH] == PRONOUN:
-        if word['category'] == 'possessive':
+        if word[CATEGORY] == POSSESSIVE:
             word[MOSENTENCE] = DEFINITION  # ? Появилось определение
-        elif word['category'] == 'personal':
+        elif word[CATEGORY] == PERSONAL:
             word[MOSENTENCE] = forPronounAndNoun(word)
         else:
             word[MOSENTENCE] = ''  # не притяжательное и не личное местоимение

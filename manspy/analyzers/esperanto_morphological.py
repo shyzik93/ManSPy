@@ -23,13 +23,15 @@ Esperanto some letters: ĉ ĝ ĥ ĵ ŝ ŭ
 import re
 
 from manspy.utils.constants import (
-    ADJECTIVE, ADVERB, ARTICLE,
-    CASE, COMMON, CONJUNCTION, COORDINATING,
+    ADJECTIVE, ADVERB, ARTICLE, ARTICLE_VALUE,
+    CASE, CATEGORY, COMMON, CONJUNCTION, COORDINATING,
+    DEFINED, DERIVATIVE,
     GENETIVE,
-    NAME, NOMINATIVE, NOUN, NUMERAL,
-    PARTICLE, POSPEECH, PREPOSITION, PRONOUN, PROPER,
-    SUBORDINATING,
-    VALUE, VERB,
+    NAME, NOMINATIVE, NOUN, NUMBER, NUMERAL,
+    PARTICLE, PERSONAL, PLURAL, POSPEECH, POSSESSIVE, PREPOSITION, PRONOUN, PROPER,
+    REFLEXIVE,
+    SINGULAR, SUBORDINATING,
+    CONJUNCTION_VALUE, VERB,
 )
 
 
@@ -79,7 +81,7 @@ signs = [
     # 'type' - Категория признака, 'value' - Значение признака, 'endow' - Наделяет свойством
     [
         # непроизводные наречия
-        {'type': 'word', 'value': 'la', 'endow': {POSPEECH: ARTICLE, 'value': 'defined'}},
+        {'type': 'word', 'value': 'la', 'endow': {POSPEECH: ARTICLE, ARTICLE_VALUE: DEFINED}},
         {'type': 'word', 'value': 'ankaŭ', 'endow': {POSPEECH: ADVERB}},  # также, тоже, и (стоит непосредственно перед словыом, к которому относится)
         {'type': 'word', 'value': 'hodiaŭ', 'endow': {POSPEECH: ADVERB}},  # сегодня
         {'type': 'word', 'value': 'tre', 'endow': {POSPEECH: ADVERB}},  # очень
@@ -110,18 +112,18 @@ signs = [
         {'type': 'word', 'value': 'nek', 'endow': {POSPEECH: PARTICLE}},  # ни (употребляется в паре с некоторыми другими отрицательными словами)
         {'type': 'word', 'value': 'ĉi', 'endow': {POSPEECH: PARTICLE}},  # обозначает близость
         # местоимения личные
-        {'type': 'word', 'value': 'li', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, 'category': 'personal'}},  # он
-        {'type': 'word', 'value': 'mi', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, 'category': 'personal'}},  # я
-        {'type': 'word', 'value': 'vi', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, 'category': 'personal'}},  # ты, вы
-        {'type': 'word', 'value': 'ni', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, 'category': 'personal'}},  # мы
-        {'type': 'word', 'value': 'ŝi', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, 'category': 'personal'}},  # она
-        {'type': 'word', 'value': 'ĝi', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, 'category': 'personal'}},  # неодушёвлённый, животное, или лица, пол которого неизвестен (он, оно, она)
-        {'type': 'word', 'value': 'ili', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, 'category': 'personal'}},  # они
+        {'type': 'word', 'value': 'li', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, CATEGORY: PERSONAL}},  # он
+        {'type': 'word', 'value': 'mi', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, CATEGORY: PERSONAL}},  # я
+        {'type': 'word', 'value': 'vi', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, CATEGORY: PERSONAL}},  # ты, вы
+        {'type': 'word', 'value': 'ni', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, CATEGORY: PERSONAL}},  # мы
+        {'type': 'word', 'value': 'ŝi', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, CATEGORY: PERSONAL}},  # она
+        {'type': 'word', 'value': 'ĝi', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, CATEGORY: PERSONAL}},  # неодушёвлённый, животное, или лица, пол которого неизвестен (он, оно, она)
+        {'type': 'word', 'value': 'ili', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, CATEGORY: PERSONAL}},  # они
         # местоимения возвратные
-        {'type': 'word', 'value': 'si', 'endow': {CASE: NOMINATIVE, 'category': 'reflexive'}},  # себя
-        {'type': 'word', 'value': 'mem', 'endow': {CASE: NOMINATIVE, 'category': 'reflexive'}},  # сам
+        {'type': 'word', 'value': 'si', 'endow': {CASE: NOMINATIVE, CATEGORY: REFLEXIVE}},  # себя
+        {'type': 'word', 'value': 'mem', 'endow': {CASE: NOMINATIVE, CATEGORY: REFLEXIVE}},  # сам
         # местоимения неопределённо-личные
-        {'type': 'word', 'value': 'oni', 'endow': {CASE: NOMINATIVE, 'category': ''}},  # люди, многие, некто
+        {'type': 'word', 'value': 'oni', 'endow': {CASE: NOMINATIVE, CATEGORY: ''}},  # люди, многие, некто
         # предлоги
         {'type': 'word', 'value': 'je', 'endow': {POSPEECH: PREPOSITION, 'give_case': 'undefined'}},  # с неопределённым значением. Употребляется, когда не ясно, какой предлог использовать (Je via sano! - За ваше здоровье!)
         {'type': 'word', 'value': 'al', 'endow': {POSPEECH: PREPOSITION, 'give_case': 'dative'}},  # к. Или не переводится (дательный падеж) (направление движения к цели)
@@ -150,13 +152,13 @@ signs = [
         {'type': 'word', 'value': 'super', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # над
         {'type': 'word', 'value': 'kontraŭ', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # против, о
         # союзы
-        {'type': 'word', 'value': 'kaj', 'endow': {POSPEECH: CONJUNCTION, VALUE: COORDINATING}},  # и, а # сочинительные союзы
-        {'type': 'word', 'value': 'sed', 'endow': {POSPEECH: CONJUNCTION, VALUE: COORDINATING}},  # но, а
-        {'type': 'word', 'value': 'aŭ', 'endow': {POSPEECH: CONJUNCTION, VALUE: COORDINATING}},  # или, либо
-        {'type': 'word', 'value': 'ke', 'endow': {POSPEECH: CONJUNCTION, VALUE: SUBORDINATING}},  # что, чтобы (с помощью него дополнительное придаточное предложение присоединяется к главному - Li diris, ke li lernis la lecionon)# подчинительные союзы
-        {'type': 'word', 'value': 'ĉar', 'endow': {POSPEECH: CONJUNCTION, VALUE: SUBORDINATING}},  # потому что, так как, поскольку, ибо # подчинительные союзы
-        {'type': 'word', 'value': 'se', 'endow': {POSPEECH: CONJUNCTION, VALUE: ''}},  # если
-        {'type': 'word', 'value': 'kvankam', 'endow': {POSPEECH: CONJUNCTION, VALUE: ''}},  # хотя
+        {'type': 'word', 'value': 'kaj', 'endow': {POSPEECH: CONJUNCTION, CONJUNCTION_VALUE: COORDINATING}},  # и, а # сочинительные союзы
+        {'type': 'word', 'value': 'sed', 'endow': {POSPEECH: CONJUNCTION, CONJUNCTION_VALUE: COORDINATING}},  # но, а
+        {'type': 'word', 'value': 'aŭ', 'endow': {POSPEECH: CONJUNCTION, CONJUNCTION_VALUE: COORDINATING}},  # или, либо
+        {'type': 'word', 'value': 'ke', 'endow': {POSPEECH: CONJUNCTION, CONJUNCTION_VALUE: SUBORDINATING}},  # что, чтобы (с помощью него дополнительное придаточное предложение присоединяется к главному - Li diris, ke li lernis la lecionon)# подчинительные союзы
+        {'type': 'word', 'value': 'ĉar', 'endow': {POSPEECH: CONJUNCTION, CONJUNCTION_VALUE: SUBORDINATING}},  # потому что, так как, поскольку, ибо # подчинительные союзы
+        {'type': 'word', 'value': 'se', 'endow': {POSPEECH: CONJUNCTION, CONJUNCTION_VALUE: ''}},  # если
+        {'type': 'word', 'value': 'kvankam', 'endow': {POSPEECH: CONJUNCTION, CONJUNCTION_VALUE: ''}},  # хотя
         # числительные
         {'type': 'function', 'value': is_numeral, 'endow': {'_isnumeral': 'yes'}},
         {'type': 'prop-update', 'value': {'_isnumeral': 'yes'}, 'endow': {POSPEECH: NUMERAL, 'class': 'cardinal'}},
@@ -165,7 +167,7 @@ signs = [
         {'type': 'end', 'value': 'n', 'endow': {CASE: 'accusative'}, 'if-not': [{POSPEECH: PREPOSITION}]},
     ],
     [
-        {'type': 'end', 'value': 'j', 'endow': {'number': 'plural'}, 'if-not': [{POSPEECH: CONJUNCTION}]},
+        {'type': 'end', 'value': 'j', 'endow': {NUMBER: PLURAL}, 'if-not': [{POSPEECH: CONJUNCTION}]},
     ],
     [
         {'type': 'end', 'value': 'i', 'endow': {POSPEECH: VERB, 'mood': 'infinitive'}, 'if-not': [{POSPEECH: NUMERAL}]},
@@ -184,16 +186,16 @@ signs = [
         {'type': 'case_of_first_letter', 'value': 'lower', 'endow': {NAME: COMMON}},
     ],
     [
-        {'type': 'prop-default', 'value': {POSPEECH: ADJECTIVE}, 'endow': {'number': 'singular', CASE: NOMINATIVE, NAME: 'common2'}},
-        {'type': 'prop-default', 'value': {POSPEECH: NOUN}, 'endow': {'number': 'singular', CASE: NOMINATIVE}},
-        {'type': 'prop-update', 'value': {'base': 'mi', POSPEECH: ADJECTIVE}, 'endow': {POSPEECH: PRONOUN, 'category': 'possessive'}},  # притяжательное иестоимение
+        {'type': 'prop-default', 'value': {POSPEECH: ADJECTIVE}, 'endow': {NUMBER: SINGULAR, CASE: NOMINATIVE, NAME: 'common2'}},
+        {'type': 'prop-default', 'value': {POSPEECH: NOUN}, 'endow': {NUMBER: SINGULAR, CASE: NOMINATIVE}},
+        {'type': 'prop-update', 'value': {'base': 'mi', POSPEECH: ADJECTIVE}, 'endow': {POSPEECH: PRONOUN, CATEGORY: POSSESSIVE}},  # притяжательное иестоимение
     ],
     [
         {'type': 'function-update', 'value': is_numeral, 'endow': {'_isnumeral': 'yes'}},
         {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: ADJECTIVE}, 'endow': {POSPEECH: NUMERAL, 'class': 'ordinal'}},
-        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: ADVERB}, 'endow': {'derivative': NUMERAL, 'class': 'cardinal'}},
-        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: VERB}, 'endow': {'derivative': NUMERAL, 'class': 'cardinal'}},
-        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: NOUN}, 'endow': {'derivative': NUMERAL, 'class': 'cardinal'}},
+        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: ADVERB}, 'endow': {DERIVATIVE: NUMERAL, 'class': 'cardinal'}},
+        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: VERB}, 'endow': {DERIVATIVE: NUMERAL, 'class': 'cardinal'}},
+        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: NOUN}, 'endow': {DERIVATIVE: NUMERAL, 'class': 'cardinal'}},
         {'type': 'prop-delete', 'value': {'_isnumeral': 'yes'}, 'endow': ['_isnumeral']},
         {'type': 'prop-update', 'value': {'notword': 'figure'}, 'endow': {POSPEECH: NUMERAL, 'class': 'cardinal'}},
         {'type': 'prop-function', 'value': {'notword': 'figure'}, 'endow': convert_figure},

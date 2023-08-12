@@ -22,7 +22,12 @@
 На четвёртом шаге перед выполнением функций необходио сформировать внутренний язык. Функции выполнятся в модуле логики.
 """
 from manspy.utils.constants import (
-    CASE, CIRCUMSTANCE, DEFINITION, DIRECT_SUPPLEMENT, MOSENTENCE, NOUN, NUMERAL, POSPEECH, SUBJECT, SUPPLEMENT,
+    CASE, CIRCUMSTANCE,
+    DEFINITION, DERIVATIVE, DIRECT_SUPPLEMENT,
+    MOSENTENCE,
+    NOUN, NUMERAL,
+    POSPEECH,
+    SUBJECT, SUPPLEMENT,
 )
 from manspy.utils.unit import Sentence
 
@@ -49,7 +54,7 @@ def count_wordargs(constwordexample, fasif, language):
 def compare_word(word, index, argument, argworddescr, finded_args):
     if word[MOSENTENCE] in [DIRECT_SUPPLEMENT, SUPPLEMENT, SUBJECT]:
         if argworddescr[POSPEECH] != word[POSPEECH]:
-            if not (argworddescr[POSPEECH] == NUMERAL and word['derivative'] == NUMERAL and word[POSPEECH] in [NOUN]):
+            if not (argworddescr[POSPEECH] == NUMERAL and word[DERIVATIVE] == NUMERAL and word[POSPEECH] in [NOUN]):
                 return False
         elif not (not argument.getControl(index) or argworddescr[CASE] == word[CASE]):
             return False  # для первого дополнения падеж не учитывается
