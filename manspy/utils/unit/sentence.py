@@ -109,15 +109,16 @@ class Sentence(BaseUnit):
         if inclusive: homogeneous.append(index)
         return homogeneous
 
-    def getIndexesOfFirstWords(self):
-        ''' Возвращает индексы первых слов. Первыми являютсмя те слова в предложении,
-            на которые никто не ссылается. Возврашщает список индексов однородных слов.'''
-        indexes = []
-        for index, word in self.subunit_info.items():
-            if not self.getControl(index):
-                indexes.append(index)
+    def get_indexes_of_first_words(self):
+        """ Возвращает первые слова. Первыми являютсмя те слова в предложении, на которые никто не ссылается.
+            Возврашщает список однородных слов.
+        """
+        words = []
+        for word in self.subunit_info.values():
+            if not self.getControl(word.index):
+                words.append(word)
 
-        return indexes
+        return words
 
     def addCombineWord(self, type_combine_word, *indexes):
         word = self.subunit_info[indexes.pop()]

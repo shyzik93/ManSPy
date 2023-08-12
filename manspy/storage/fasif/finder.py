@@ -90,18 +90,19 @@ def jump_to_obient(sentence, index_word, index_obient):
 
 def compare_fasif_word_combination(fasif, argument, finded_args, language):
     _argument = Sentence(None, imports=fasif['wcomb'][language])
-    first_index = _argument.getIndexesOfFirstWords()
-    if first_index:
-        first_index = first_index[0]  # однородные слова должны обработаться в следующем цикле
+    first_words = _argument.get_indexes_of_first_words()
+    if first_words:
+        first_word = first_words[0]  # однородные слова должны обработаться в следующем цикле
 
-    _argument_iter = Sentence(None, imports=fasif['wcomb'][language]).iterFromByIndex(first_index)
+    _argument_iter = Sentence(None, imports=fasif['wcomb'][language]).iterFromByIndex(first_word.index)
 
-    first_index = argument.getIndexesOfFirstWords()
-    if first_index:
-        first_index = first_index[0]  # однородные слова должны обработаться в следующем цикле
+    first_words = argument.get_indexes_of_first_words()
+    if first_words:
+        first_word = first_words[0]  # однородные слова должны обработаться в следующем цикле
     else:
         return False  # "закольцованный" актант - на каждое слово ссылается другое слово.
-    for word in argument.iterFromByIndex(first_index):
+
+    for word in argument.iterFromByIndex(first_word.index):
         _word = next(_argument_iter)
 
         # "Проходимся" по дополнениям (прямые, косвенные, а также подлежащие)

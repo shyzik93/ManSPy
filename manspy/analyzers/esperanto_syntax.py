@@ -101,20 +101,20 @@ def setLinks(word, sentence):
         sentence.position = old_position
 
 
-def goThrowLinks(index, sentence, indexes=None):
+def go_throw_links(word, sentence, words=None):
+    if words is None:
+        words = []
 
-    if indexes is None:
-        indexes = []
-
-    if index not in indexes:
-        indexes.append(index)
+    if word not in words:
+        words.append(word)
     
-        for index_link in sentence[index]['link']:
-            goThrowLinks(index_link, sentence, indexes)
-        for index_link in sentence[index]['homogeneous_link']:
-            goThrowLinks(index_link, sentence, indexes)    
+        for index_link in word['link']:
+            go_throw_links(sentence[index_link], sentence, words)
 
-    return indexes
+        for index_link in word['homogeneous_link']:
+            go_throw_links(sentence[index_link], sentence, words)
+
+    return words
 
 
 # TODO: функция недописана
@@ -124,9 +124,7 @@ def split_sentence(sentence):
     # manspy2 exec --synt "se dolara kurzo de laboro estas kvaro"
     # manspy2 exec --synt "se dolara kurzo de laboro estas 4"
 
-    first_indexes = sentence.getIndexesOfFirstWords()
-    #first_words = [sentence(i, 'word') for i in first_indexes]
-    #print('        Root words of the sentence:', [sentence(i, 'word') for i in first_indexes])
+    first_words = sentence.get_indexes_of_first_words()
 
     conjunctions = []
     subjects = []
@@ -134,20 +132,20 @@ def split_sentence(sentence):
 
     _sentences = []
 
-    for first_index in first_indexes:
-        if sentence[first_index][POSPEECH] == CONJUNCTION:
-            conjunctions.append(first_index) # сочинённых союзов между однородными членами должны исчезнуть в предыдущих шагах.
-        if sentence[first_index][MOSENTENCE] == SUBJECT:
-            subjects.append(first_index)
-        if sentence[first_index][MOSENTENCE] == PREDICATE:
-            predicates.append(first_index)    
+    for first_word in first_words:
+        if first_word[POSPEECH] == CONJUNCTION:
+            conjunctions.append(first_word) # сочинённых союзов между однородными членами должны исчезнуть в предыдущих шагах.
+        if first_word[MOSENTENCE] == SUBJECT:
+            subjects.append(first_word)
+        if first_word[MOSENTENCE] == PREDICATE:
+            predicates.append(first_word)
 
     for subject in subjects:
-        _sentences.append(goThrowLinks(subject, sentence))
+        _sentences.append(go_throw_links(subject, sentence))
 
     # определяем, в каком 
-    for conjunction_index in conjunctions:
-        sentence.jumpByIndex(conjunction_index)
+    for conjunction in conjunctions:
+        sentence.jumpByIndex(conjunction.index)
         left, right = sentence.getNeighbours()
 
     #for index, word in sentence:
