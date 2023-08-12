@@ -1,8 +1,10 @@
 from typing import Optional, Union
 
+from manspy.utils.constants import ADJECTIVE, ADVERB, NOUN, VERB
+
 
 class Database:
-    dct_speeches = {'noun': 1, 'verb': 2, 'adjective': 3, 'adverb': 4}
+    dct_speeches = {NOUN: 1, VERB: 2, ADJECTIVE: 3, ADVERB: 4}
     fasifs = {}
     word_by_id = {}
     id_by_word = {}

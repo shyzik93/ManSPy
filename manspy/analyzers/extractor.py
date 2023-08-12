@@ -1,3 +1,6 @@
+from manspy.utils.constants import DIRECT_SUPPLEMENT, MOSENTENCE, PREDICATE, SUBJECT, SUPPLEMENT
+
+
 def collect_by_link(sentence, word):
     """
     Вынимает все слова по ссылкам
@@ -15,11 +18,11 @@ def collect_by_link(sentence, word):
 
 
 def separate_argument(sentence, word, arguments, argument_indexes_for_delete):
-    if word['MOSentence'] == 'direct supplement':
+    if word[MOSENTENCE] == DIRECT_SUPPLEMENT:
         argument = collect_by_link(sentence, word)
         arguments.append(argument)
         argument_indexes_for_delete.extend(list(argument.keys()))
-    elif word['MOSentence'] == 'supplement':
+    elif word[MOSENTENCE] == SUPPLEMENT:
         argument = collect_by_link(sentence, word)
         arguments.append(argument)
         argument_indexes_for_delete.extend(list(argument.keys()))
@@ -44,13 +47,13 @@ def _extract(sentence):
     subjects = None
     orphan_words = []
     for index, word in sentence.itemsUnit():
-        if word['MOSentence'] == 'subject':
+        if word[MOSENTENCE] == SUBJECT:
             subjects = []
             subjects_by_predicate.append(subjects)
             subject = collect_by_link(sentence, word)
             subjects.append(subject)
             subject_indexes_for_delete.extend(list(subject.keys()))
-        elif word['MOSentence'] == 'predicate':
+        elif word[MOSENTENCE] == PREDICATE:
             current_predicate_index = index
             arguments = []
             arguments_by_predicate.append(arguments)

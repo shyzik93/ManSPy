@@ -1,9 +1,12 @@
+from manspy.utils.constants import CASE, COMMON, MOSENTENCE, NOMINATIVE, NOUN, POSPEECH
+
+
 words = {
     'kurzo': {
         'graphmath': {
             'around_pmark': [],
             'base': '',
-            'case': '',
+            CASE: '',
             'combine_words': [],
             'end': '',
             'end_orig': '',
@@ -20,10 +23,10 @@ words = {
             'word': 'kurzo'
         },
         'morph': {
-            'POSpeech': 'noun',
+            POSPEECH: NOUN,
             'around_pmark': [],
             'base': 'kurz',
-            'case': 'nominative',
+            CASE: NOMINATIVE,
             'combine_words': [],
             'end': '',
             'end_orig': '',
@@ -33,7 +36,7 @@ words = {
             'index': 0,
             'link': [],
             'max_index': 4,
-            'name': 'common',
+            NAME: COMMON,
             'notword': '',
             'number': 'singular',
             'start_pmark': [],
@@ -42,10 +45,10 @@ words = {
             'word': 'kurzo'
         },
         'postmorph': {
-            'POSpeech': 'noun',
+            POSPEECH: NOUN,
             'around_pmark': [],
             'base': 'kurz',
-            'case': 'nominative',
+            CASE: NOMINATIVE,
             'combine_words': [],
             'end': '',
             'end_orig': '',
@@ -55,7 +58,7 @@ words = {
             'index': 0,
             'link': [],
             'max_index': 4,
-            'name': 'common',
+            NAME: COMMON,
             'notword': '',
             'number': 'singular',
             'start_pmark': [],
@@ -64,11 +67,11 @@ words = {
             'word': 'kurzo'
         },
         'synt': {
-            'MOSentence': 'subject',
-            'POSpeech': 'noun',
+            MOSENTENCE: PREDICATE,
+            POSPEECH: NOUN,
             'around_pmark': [],
             'base': 'kurz',
-            'case': 'nominative',
+            CASE: NOMINATIVE,
             'combine_words': [],
             'end': '',
             'end_orig': '',
@@ -78,7 +81,7 @@ words = {
             'index': 0,
             'link': [],
             'max_index': 4,
-            'name': 'common',
+            NAME: COMMON,
             'notword': '',
             'number': 'singular',
             'start_pmark': [],

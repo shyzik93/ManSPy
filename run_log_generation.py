@@ -3,6 +3,7 @@ import json
 
 from manspy.utils import unit
 from manspy.api import API
+from manspy.utils.constants import CASE, MOSENTENCE, POSPEECH
 from manspy.utils.settings import Settings
 
 TEMPLATE_HTML_WORD = '<span class="{MOSentence}" title="{title}">{word}</span>'
@@ -50,10 +51,10 @@ HTML_HEADER = '''<!DOCTYPE html>
 def word_to_html(word):
     properties = [
         'base',
-        'case',
+        CASE,
         'number',
-        'MOSentence',
-        'POSpeech',
+        MOSENTENCE,
+        POSPEECH,
         'end',
         'end_orig'
         'end_pmark',
@@ -61,7 +62,7 @@ def word_to_html(word):
         'around_pmark',
         'category',
         'give_case',
-        'coordinating',
+        COORDINATING,
         'derivative',
         'antonym',
         'number_value',
@@ -76,7 +77,7 @@ def word_to_html(word):
 
     return TEMPLATE_HTML_WORD.format(
         word=word['word'] + word['end'],
-        MOSentence=word['MOSentence'].replace(' ', '_') if 'MOSentence' in word else '',
+        MOSentence=word[MOSENTENCE].replace(' ', '_') if MOSENTENCE in word else '',
         title='\n'.join(title)
     )
 
@@ -148,7 +149,7 @@ with open('history.html', 'w', encoding='utf-8') as f:
             #         row['_message_nl'] += """ <span onclick="show_word_data(this)" class="word{MOSentence}" data-word='{data_word}'>{word}</span>""".format(
             #             word=word['word']+word['end_orig'],
             #             data_word=json.dumps(word.getUnit('dict'), sort_keys=True, indent=4).replace('"', ''),
-            #             MOSentence=' '+word['MOSentence'].replace(' ', '_') if 'MOSentence' in word else ''
+            #             MOSentence=' '+word[MOSENTENCE].replace(' ', '_') if MOSENTENCE in word else ''
             #         )
 
             # row['a_graphmath'] = json.dumps(row['a_graphmath'].getUnit('dict'), sort_keys=True, indent=4).replace('"', '')

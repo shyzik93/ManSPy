@@ -4,30 +4,37 @@
     По завершению удаляются все служебные части речи.
     Можно приступать к синтаксичекому анализу предложения.
     '''
+from manspy.utils.constants import (
+    ADJECTIVE, ADVERB, ARTICLE,
+    CASE, CONJUNCTION, COORDINATING,
+    NOUN, NUMERAL,
+    POSPEECH, PREPOSITION, PRONOUN,
+    VALUE, VERB,
+)
 
 
 def process_article(word, sentence):
-    if word['POSpeech'] == 'article':
+    if word[POSPEECH] == ARTICLE:
         sentence.delByStep()  # пока только удаляем
 
 
 def process_preposition(word, sentence):
-    if word['POSpeech'] != 'preposition':
+    if word[POSPEECH] != PREPOSITION:
         return
 
     left, right = sentence.getNeighbours()
     if right is None:
         sentence.delByStep()
 
-    elif right['POSpeech'] in ['noun', 'pronoun', 'numeral']:
-        sentence.getByStep(1)['case'] = word['give_case']
+    elif right[POSPEECH] in [NOUN, PRONOUN, NUMERAL]:
+        sentence.getByStep(1)[CASE] = word['give_case']
         sentence.delByStep()
     else:
         sentence.error.add("postmorph", 'After preposition "'+word['word']+'" must be a noun or a pronoun or a cardinal numeral! Found '+str(sentence.getByStep(1)), 0)
 
 
 def process_conjunction(word, sentence):
-    if word['POSpeech'] != 'conjunction' or word['value'] != 'coordinating':
+    if word[POSPEECH] != CONJUNCTION or word[VALUE] != COORDINATING:
         return
 
     left, right = sentence.getNeighbours()
@@ -37,20 +44,20 @@ def process_conjunction(word, sentence):
     # сочинительный союз
     #if word['word'] == 'kaj': # заменить логическими символами (kaj = &)
     #print word['base']
-    if left['POSpeech'] == right['POSpeech'] or \
-         (left['POSpeech'] == 'noun' and right['POSpeech'] == 'pronoun' and right['category'] != 'possessive') or (right['POSpeech'] == 'noun' and left['POSpeech'] == 'pronoun' and left['category'] != 'possessive') or \
-         ((left['POSpeech'] == 'pronoun' and left['category'] == 'possessive') and right['POSpeech'] == 'adjective') or ((right['POSpeech'] == 'pronoun' and right['category'] == 'possessive') and left['POSpeech'] == 'adjective') or \
-         (left['POSpeech'] == 'noun' and 'praMOSentence' in right and right['praMOSentence'] == 'freemember' and right['POSpeech'] == 'numeral'):
-         #((left['POSpeech'] in ['pronoun', 'adjective'] and ('category' in left and left['category'] == 'possessive')) and right['POSpeech'] in ['pronoun', 'adjective']):
-    #if ('case' in left and 'case' in right) and left['case'] == right['case']:
-        if ('case' in right and right['case'] == 'accusative') and ('case' in left and left['case'] != 'accusative'):
+    if left[POSPEECH] == right[POSPEECH] or \
+         (left[POSPEECH] == NOUN and right[POSPEECH] == PRONOUN and right['category'] != 'possessive') or (right[POSPEECH] == NOUN and left[POSPEECH] == PRONOUN and left['category'] != 'possessive') or \
+         ((left[POSPEECH] == PRONOUN and left['category'] == 'possessive') and right[POSPEECH] == ADJECTIVE) or ((right[POSPEECH] == PRONOUN and right['category'] == 'possessive') and left[POSPEECH] == ADJECTIVE) or \
+         (left[POSPEECH] == NOUN and 'praMOSentence' in right and right['praMOSentence'] == 'freemember' and right[POSPEECH] == NUMERAL):
+         #((left[POSPEECH] in [PRONOUN, ADJECTIVE] and ('category' in left and left['category'] == 'possessive')) and right[POSPEECH] in [PRONOUN, ADJECTIVE]):
+    #if (CASE in left and CASE in right) and left[CASE] == right[CASE]:
+        if (CASE in right and right[CASE] == 'accusative') and (CASE in left and left[CASE] != 'accusative'):
             sentence.delByStep(jump_step=0)
             return
 
         # устанавливаем однородность
         sentence.addHomogeneous(-1, 1) # для дополнений
         sentence.delByStep() # удаляем союз
-    #elif left['POSpeech'] == 'noun' and right['POSpeech'] == 'preposition':
+    #elif left[POSPEECH] == NOUN and right[POSPEECH] == PREPOSITION:
     # Однородности нужны лишь для дополнения связей. В коверторе должны фигурировать лишь связи, но не однородности!
 
 
@@ -65,7 +72,7 @@ def process_definition(word, sentence, indexes=None):
     if indexes is None:
         indexes = []
     #print 'findDefinition:', word['word'], index, len(sentence.subunit_info)
-    if word['POSpeech'] == 'adjective' or (word['POSpeech'] == 'pronoun' and word['category'] == 'possessive') or word['POSpeech']=='numeral':
+    if word[POSPEECH] == ADJECTIVE or (word[POSPEECH] == PRONOUN and word['category'] == 'possessive') or word[POSPEECH]==NUMERAL:
         indexes.append(sentence.currentIndex())
         if sentence.isLast():
             mark_freemembers(sentence, indexes)
@@ -73,7 +80,7 @@ def process_definition(word, sentence, indexes=None):
 
         sentence.jumpByStep()
         process_definition(sentence.getByStep(), sentence, indexes)
-    elif word['POSpeech'] in ['noun'] and indexes: # если перед существительным стояли прилагательные
+    elif word[POSPEECH] in [NOUN] and indexes: # если перед существительным стояли прилагательные
         sentence.addFeature(sentence.currentIndex(), *indexes)
         sentence.jumpByStep(-len(indexes))
     else:
@@ -85,18 +92,18 @@ def checkAdverbBefore(sentence):
         return False  # т. е. является последним
 
     # if adverb['base'] == u'ankaŭ': # стоит перед словом, к которому относится
-    return sentence.getByStep(1)['POSpeech'] in ['verb', 'adjective', 'adverb']
+    return sentence.getByStep(1)[POSPEECH] in [VERB, ADJECTIVE, ADVERB]
 
 
 def checkAdverbAfter(sentence):
     if sentence.isFirst():
         return False
 
-    return sentence.getByStep(-1)['POSpeech'] in ('verb', 'adjective', 'adverb')
+    return sentence.getByStep(-1)[POSPEECH] in (VERB, ADJECTIVE, ADVERB)
 
 
 def process_adverb(word, sentence):
-    if sentence.getByStep()['POSpeech'] != 'adverb':
+    if sentence.getByStep()[POSPEECH] != ADVERB:
         return
 
     index = sentence.currentIndex()
@@ -114,7 +121,7 @@ def process_adverb(word, sentence):
     else:
         old_position = sentence.position
         for word in sentence:  # "свободноплавающее" нарчие. Добавим его к глаголу.
-            if word['POSpeech'] == 'verb':
+            if word[POSPEECH] == VERB:
                 sentence.addFeature(word.index, index) #EX_ERROR если последний  index2, то возникает интересная рекурсивная ошибка.
                 break
 
@@ -129,8 +136,8 @@ def exchangeDataBetweenHomo(sentence):
             continue
 
         for index_homo in word['homogeneous_link']:
-            if 'case' in word:
-                sentence[index_homo]['case'] = word['case']
+            if CASE in word:
+                sentence[index_homo][CASE] = word[CASE]
 
             done_indexes.append(index_homo)
 
@@ -169,7 +176,7 @@ def process_numeral(word, sentence, indexes=None):
     if indexes is None:
         indexes = []
 
-    if word['POSpeech'] == 'numeral' or (word['POSpeech'] == 'noun' and 'derivative' in word and word['derivative'] == 'numeral'):
+    if word[POSPEECH] == NUMERAL or (word[POSPEECH] == NOUN and 'derivative' in word and word['derivative'] == NUMERAL):
         indexes.append(sentence.currentIndex())
         if not sentence.isLast():
             sentence.jumpByStep()

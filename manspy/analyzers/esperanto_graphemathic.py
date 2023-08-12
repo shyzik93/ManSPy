@@ -1,11 +1,12 @@
 """ Графематический анализ текста.
-    Словарь символа: {'symbol': Символ, 'type': 'letter' OR 'punctuation_mark' OR 'other'}
+    Словарь символа: {'symbol': Символ, TYPE: LETTER OR 'punctuation_mark' OR 'other'}
     Словарь слова: {'word': СписокСимволов}
     Задача модуля: выдать предложение, состоящее из слов и неслов. Неслова - это текст в кавычках, имена файлов, адреса и прочее, что может испортить последущие анализы.
     Благодаря чему морфологический модуль будет уже знать, где слово, а где - не слово..
 """
 import re
 from manspy.utils import unit
+from manspy.utils.constants import LETTER, TYPE
 
 low_letters = u"ABCĈDEFGĜHĤIJĴKLMNOPRSŜTUŬVZ"
 up_letters =  u"abcĉdefgĝhĥijĵklmnoprsŝtuŭvz"
@@ -19,9 +20,9 @@ ReplacedLetters = {u'cx' :u'ĉ', u'gx': u'ĝ', u'hx': u'ĥ',
 def define_type_symbol(word):
     """ Устанавливаем тип символа в слове """
     for symbol in word:
-        if symbol['symbol'] in letters: symbol['type'] = 'letter'
-        elif symbol['symbol'] in punctuation_marks: symbol['type'] = 'pmark'
-        else: symbol['type'] = 'other'
+        if symbol['symbol'] in letters: symbol[TYPE] = LETTER
+        elif symbol['symbol'] in punctuation_marks: symbol[TYPE] = 'pmark'
+        else: symbol[TYPE] = 'other'
 
 def strip_end_of_word(word, symbols):
     """ Обрезает сивмолы `symbols` с конца слова"""

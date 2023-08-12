@@ -4,6 +4,7 @@ import inspect
 
 from manspy.storage.relation import Relation
 from manspy.utils import importer
+from manspy.utils.constants import CASE
 from manspy.runners.only_lingvo import runner
 
 
@@ -52,7 +53,7 @@ def process_word_combination(fasif, obj_relation, settings):
                 {'argname': arg_name},
                 setstring='subiv:noignore',
                 base=argwords['name'].get('base'),
-                case=argwords['name'].get('case')
+                case=argwords['name'].get(CASE)
             )
             argword = list(wcomb.getByValues(setstring='subiv:noignore', argname=arg_name))[0]
             bases = [argword[1] if argword[1] else argword[2][0]]

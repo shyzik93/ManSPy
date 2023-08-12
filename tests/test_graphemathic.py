@@ -2,18 +2,19 @@ import unittest
 
 from manspy.analyzers import esperanto_graphemathic
 from manspy.utils import unit
+from manspy.utils.constants import LETTER, TYPE
 
 
 @unittest.skip
 class TestGraphemathicalAnalysis(unittest.TestCase):
     def test_define_type_symbol(self):
         word = unit.Word('montru')
-        word(0, 'type', 'letter')
-        word(1, 'type', 'letter')
-        word(2, 'type', 'letter')
-        word(3, 'type', 'letter')
-        word(4, 'type', 'letter')
-        word(5, 'type', 'letter')
+        word(0, TYPE, LETTER)
+        word(1, TYPE, LETTER)
+        word(2, TYPE, LETTER)
+        word(3, TYPE, LETTER)
+        word(4, TYPE, LETTER)
+        word(5, TYPE, LETTER)
 
         word_result = unit.Word('montru')
         result = esperanto_graphemathic.define_type_symbol(word_result)

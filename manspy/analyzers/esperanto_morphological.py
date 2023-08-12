@@ -22,6 +22,16 @@ Esperanto some letters: ĉ ĝ ĥ ĵ ŝ ŭ
 """
 import re
 
+from manspy.utils.constants import (
+    ADJECTIVE, ADVERB, ARTICLE,
+    CASE, COMMON, CONJUNCTION, COORDINATING,
+    GENETIVE,
+    NAME, NOMINATIVE, NOUN, NUMERAL,
+    PARTICLE, POSPEECH, PREPOSITION, PRONOUN, PROPER,
+    SUBORDINATING,
+    VALUE, VERB,
+)
+
 
 numeral_dict = {  # порядок числительных НЕ МЕНЯТЬ!
     'nul': 0, 'unu':  1, 'du':   2, 'tri':  3, 'kvar': 4, 'kvin': 5, 'ses':  6, 'sep':  7, 'ok':   8, 'naŭ':  9,
@@ -69,123 +79,123 @@ signs = [
     # 'type' - Категория признака, 'value' - Значение признака, 'endow' - Наделяет свойством
     [
         # непроизводные наречия
-        {'type': 'word', 'value': 'la', 'endow': {'POSpeech': 'article', 'value': 'defined'}},
-        {'type': 'word', 'value': 'ankaŭ', 'endow': {'POSpeech': 'adverb'}},  # также, тоже, и (стоит непосредственно перед словыом, к которому относится)
-        {'type': 'word', 'value': 'hodiaŭ', 'endow': {'POSpeech': 'adverb'}},  # сегодня
-        {'type': 'word', 'value': 'tre', 'endow': {'POSpeech': 'adverb'}},  # очень
-        {'type': 'word', 'value': 'morgaŭ', 'endow': {'POSpeech': 'adverb'}},  # завтра
-        {'type': 'word', 'value': 'nun', 'endow': {'POSpeech': 'adverb'}},  # теперь, сейчас
-        {'type': 'word', 'value': 'multe', 'endow': {'POSpeech': 'adverb'}},  # много
-        {'type': 'word', 'value': 'ankoraŭ', 'endow': {'POSpeech': 'adverb'}},  # ещё
-        {'type': 'word', 'value': 'jam', 'endow': {'POSpeech': 'adverb'}},  # уже
-        {'type': 'word', 'value': 'certe', 'endow': {'POSpeech': 'adverb'}},  # уверенно, точно; конечно, несомненно, верно (прилагательное certa - уверенный, несомненный, определённый, точный)
-        {'type': 'word', 'value': 'baldaŭ', 'endow': {'POSpeech': 'adverb'}},  # вскоре, скоро
-        {'type': 'word', 'value': 'hieraŭ', 'endow': {'POSpeech': 'adverb'}},  # вчера
-        {'type': 'word', 'value': 'neniam', 'endow': {'POSpeech': 'adverb'}},  # никогда
-        {'type': 'word', 'value': 'apenaŭ', 'endow': {'POSpeech': 'adverb'}},  # едва, еле
-        {'type': 'word', 'value': 'tuj', 'endow': {'POSpeech': 'adverb'}},  # сейчас, тотчас, сразу, немедленно
-        {'type': 'word', 'value': 'nepre', 'endow': {'POSpeech': 'adverb'}},  # непременно, обязательно
-        {'type': 'word', 'value': 'ĉiam', 'endow': {'POSpeech': 'adverb'}},  # всегда
-        {'type': 'word', 'value': 'for', 'endow': {'POSpeech': 'adverb'}},  # прочь (прилагательное fora - далёкий)
-        {'type': 'word', 'value': 'preskaŭ', 'endow': {'POSpeech': 'adverb'}},  # почти
-        {'type': 'word', 'value': 'tro', 'endow': {'POSpeech': 'adverb'}},  # слишком
+        {'type': 'word', 'value': 'la', 'endow': {POSPEECH: ARTICLE, 'value': 'defined'}},
+        {'type': 'word', 'value': 'ankaŭ', 'endow': {POSPEECH: ADVERB}},  # также, тоже, и (стоит непосредственно перед словыом, к которому относится)
+        {'type': 'word', 'value': 'hodiaŭ', 'endow': {POSPEECH: ADVERB}},  # сегодня
+        {'type': 'word', 'value': 'tre', 'endow': {POSPEECH: ADVERB}},  # очень
+        {'type': 'word', 'value': 'morgaŭ', 'endow': {POSPEECH: ADVERB}},  # завтра
+        {'type': 'word', 'value': 'nun', 'endow': {POSPEECH: ADVERB}},  # теперь, сейчас
+        {'type': 'word', 'value': 'multe', 'endow': {POSPEECH: ADVERB}},  # много
+        {'type': 'word', 'value': 'ankoraŭ', 'endow': {POSPEECH: ADVERB}},  # ещё
+        {'type': 'word', 'value': 'jam', 'endow': {POSPEECH: ADVERB}},  # уже
+        {'type': 'word', 'value': 'certe', 'endow': {POSPEECH: ADVERB}},  # уверенно, точно; конечно, несомненно, верно (прилагательное certa - уверенный, несомненный, определённый, точный)
+        {'type': 'word', 'value': 'baldaŭ', 'endow': {POSPEECH: ADVERB}},  # вскоре, скоро
+        {'type': 'word', 'value': 'hieraŭ', 'endow': {POSPEECH: ADVERB}},  # вчера
+        {'type': 'word', 'value': 'neniam', 'endow': {POSPEECH: ADVERB}},  # никогда
+        {'type': 'word', 'value': 'apenaŭ', 'endow': {POSPEECH: ADVERB}},  # едва, еле
+        {'type': 'word', 'value': 'tuj', 'endow': {POSPEECH: ADVERB}},  # сейчас, тотчас, сразу, немедленно
+        {'type': 'word', 'value': 'nepre', 'endow': {POSPEECH: ADVERB}},  # непременно, обязательно
+        {'type': 'word', 'value': 'ĉiam', 'endow': {POSPEECH: ADVERB}},  # всегда
+        {'type': 'word', 'value': 'for', 'endow': {POSPEECH: ADVERB}},  # прочь (прилагательное fora - далёкий)
+        {'type': 'word', 'value': 'preskaŭ', 'endow': {POSPEECH: ADVERB}},  # почти
+        {'type': 'word', 'value': 'tro', 'endow': {POSPEECH: ADVERB}},  # слишком
         # частицы
-        {'type': 'word', 'value': 'jes', 'endow': {'POSpeech': 'particle'}},  # да
-        {'type': 'word', 'value': 'ne', 'endow': {'POSpeech': 'particle'}},  # не, нет
-        {'type': 'word', 'value': 'nur', 'endow': {'POSpeech': 'particle'}},  # только, (всего) лишь
-        {'type': 'word', 'value': 'ĉu', 'endow': {'POSpeech': 'particle'}},  # ли (вопросительная)
-        {'type': 'word', 'value': 'jen', 'endow': {'POSpeech': 'particle'}},  # вот (прилагательное jena - вот этот, следующий)
-        {'type': 'word', 'value': 'eĉ', 'endow': {'POSpeech': 'particle'}},  # даже
-        {'type': 'word', 'value': 'do', 'endow': {'POSpeech': 'particle'}},  # итак, следовательно, же
-        {'type': 'word', 'value': 'nek', 'endow': {'POSpeech': 'particle'}},  # ни (употребляется в паре с некоторыми другими отрицательными словами)
-        {'type': 'word', 'value': 'ĉi', 'endow': {'POSpeech': 'particle'}},  # обозначает близость
+        {'type': 'word', 'value': 'jes', 'endow': {POSPEECH: PARTICLE}},  # да
+        {'type': 'word', 'value': 'ne', 'endow': {POSPEECH: PARTICLE}},  # не, нет
+        {'type': 'word', 'value': 'nur', 'endow': {POSPEECH: PARTICLE}},  # только, (всего) лишь
+        {'type': 'word', 'value': 'ĉu', 'endow': {POSPEECH: PARTICLE}},  # ли (вопросительная)
+        {'type': 'word', 'value': 'jen', 'endow': {POSPEECH: PARTICLE}},  # вот (прилагательное jena - вот этот, следующий)
+        {'type': 'word', 'value': 'eĉ', 'endow': {POSPEECH: PARTICLE}},  # даже
+        {'type': 'word', 'value': 'do', 'endow': {POSPEECH: PARTICLE}},  # итак, следовательно, же
+        {'type': 'word', 'value': 'nek', 'endow': {POSPEECH: PARTICLE}},  # ни (употребляется в паре с некоторыми другими отрицательными словами)
+        {'type': 'word', 'value': 'ĉi', 'endow': {POSPEECH: PARTICLE}},  # обозначает близость
         # местоимения личные
-        {'type': 'word', 'value': 'li', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  # он
-        {'type': 'word', 'value': 'mi', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  # я
-        {'type': 'word', 'value': 'vi', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  # ты, вы
-        {'type': 'word', 'value': 'ni', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  # мы
-        {'type': 'word', 'value': 'ŝi', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  # она
-        {'type': 'word', 'value': 'ĝi', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  # неодушёвлённый, животное, или лица, пол которого неизвестен (он, оно, она)
-        {'type': 'word', 'value': 'ili', 'endow': {'POSpeech': 'pronoun', 'case': 'nominative', 'category': 'personal'}},  # они
+        {'type': 'word', 'value': 'li', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, 'category': 'personal'}},  # он
+        {'type': 'word', 'value': 'mi', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, 'category': 'personal'}},  # я
+        {'type': 'word', 'value': 'vi', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, 'category': 'personal'}},  # ты, вы
+        {'type': 'word', 'value': 'ni', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, 'category': 'personal'}},  # мы
+        {'type': 'word', 'value': 'ŝi', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, 'category': 'personal'}},  # она
+        {'type': 'word', 'value': 'ĝi', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, 'category': 'personal'}},  # неодушёвлённый, животное, или лица, пол которого неизвестен (он, оно, она)
+        {'type': 'word', 'value': 'ili', 'endow': {POSPEECH: PRONOUN, CASE: NOMINATIVE, 'category': 'personal'}},  # они
         # местоимения возвратные
-        {'type': 'word', 'value': 'si', 'endow': {'case': 'nominative', 'category': 'reflexive'}},  # себя
-        {'type': 'word', 'value': 'mem', 'endow': {'case': 'nominative', 'category': 'reflexive'}},  # сам
+        {'type': 'word', 'value': 'si', 'endow': {CASE: NOMINATIVE, 'category': 'reflexive'}},  # себя
+        {'type': 'word', 'value': 'mem', 'endow': {CASE: NOMINATIVE, 'category': 'reflexive'}},  # сам
         # местоимения неопределённо-личные
-        {'type': 'word', 'value': 'oni', 'endow': {'case': 'nominative', 'category': ''}},  # люди, многие, некто
+        {'type': 'word', 'value': 'oni', 'endow': {CASE: NOMINATIVE, 'category': ''}},  # люди, многие, некто
         # предлоги
-        {'type': 'word', 'value': 'je', 'endow': {'POSpeech': 'preposition', 'give_case': 'undefined'}},  # с неопределённым значением. Употребляется, когда не ясно, какой предлог использовать (Je via sano! - За ваше здоровье!)
-        {'type': 'word', 'value': 'al', 'endow': {'POSpeech': 'preposition', 'give_case': 'dative'}},  # к. Или не переводится (дательный падеж) (направление движения к цели)
-        {'type': 'word', 'value': 'da', 'endow': {'POSpeech': 'preposition', 'give_case': 'genetive'}},  # не переводится (русский родительный падеж). для чего(кого)-либо не имеющих чётких границ для разделения (жидкости, материалы)
-        {'type': 'word', 'value': 'de', 'endow': {'POSpeech': 'preposition', 'give_case': 'genetive'}},  # не переводится (русский родительный падеж)
-        {'type': 'word', 'value': 'en', 'endow': {'POSpeech': 'preposition', 'give_case': 'locative'}},  # в
-        {'type': 'word', 'value': 'el', 'endow': {'POSpeech': 'preposition', 'give_case': 'ablative'}},  # из
-        {'type': 'word', 'value': 'ĉe', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # у, при
-        {'type': 'word', 'value': 'por', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # для, за, с целью, для того чтобы
-        {'type': 'word', 'value': 'dum', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # во время, в течение, пока, в то время как (производное наречие dume - тем временем, пока)
-        {'type': 'word', 'value': 'kun', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # с
-        {'type': 'word', 'value': 'sen', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # без
-        {'type': 'word', 'value': 'sur', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # на
-        {'type': 'word', 'value': 'per', 'endow': {'POSpeech': 'preposition', 'give_case': 'instrumental'}},  # не перводится, но иногда: посредством, с помощью (творительный падеж)
-        {'type': 'word', 'value': 'pri', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # о
-        {'type': 'word', 'value': 'tra', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # через, сквозь (направление движения к цели)
-        {'type': 'word', 'value': 'ĝis', 'endow': {'POSpeech': 'preposition', 'give_case': 'dative'}},  # до (направление движения к цели)
-        {'type': 'word', 'value': 'post', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # после, через, за
-        {'type': 'word', 'value': 'inter', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # между, среди
-        {'type': 'word', 'value': 'antaŭ', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # перед
-        {'type': 'word', 'value': 'ĉirkaŭ', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # вокруг
-        {'type': 'word', 'value': 'sub', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # под
-        {'type': 'word', 'value': 'ekster', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # вне, за
-        {'type': 'word', 'value': 'apud', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # около, возле
-        {'type': 'word', 'value': 'trans', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # за, через, по ту сторону
-        {'type': 'word', 'value': 'super', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # над
-        {'type': 'word', 'value': 'kontraŭ', 'endow': {'POSpeech': 'preposition', 'give_case': ''}},  # против, о
+        {'type': 'word', 'value': 'je', 'endow': {POSPEECH: PREPOSITION, 'give_case': 'undefined'}},  # с неопределённым значением. Употребляется, когда не ясно, какой предлог использовать (Je via sano! - За ваше здоровье!)
+        {'type': 'word', 'value': 'al', 'endow': {POSPEECH: PREPOSITION, 'give_case': 'dative'}},  # к. Или не переводится (дательный падеж) (направление движения к цели)
+        {'type': 'word', 'value': 'da', 'endow': {POSPEECH: PREPOSITION, 'give_case': GENETIVE}},  # не переводится (русский родительный падеж). для чего(кого)-либо не имеющих чётких границ для разделения (жидкости, материалы)
+        {'type': 'word', 'value': 'de', 'endow': {POSPEECH: PREPOSITION, 'give_case': GENETIVE}},  # не переводится (русский родительный падеж)
+        {'type': 'word', 'value': 'en', 'endow': {POSPEECH: PREPOSITION, 'give_case': 'locative'}},  # в
+        {'type': 'word', 'value': 'el', 'endow': {POSPEECH: PREPOSITION, 'give_case': 'ablative'}},  # из
+        {'type': 'word', 'value': 'ĉe', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # у, при
+        {'type': 'word', 'value': 'por', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # для, за, с целью, для того чтобы
+        {'type': 'word', 'value': 'dum', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # во время, в течение, пока, в то время как (производное наречие dume - тем временем, пока)
+        {'type': 'word', 'value': 'kun', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # с
+        {'type': 'word', 'value': 'sen', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # без
+        {'type': 'word', 'value': 'sur', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # на
+        {'type': 'word', 'value': 'per', 'endow': {POSPEECH: PREPOSITION, 'give_case': 'instrumental'}},  # не перводится, но иногда: посредством, с помощью (творительный падеж)
+        {'type': 'word', 'value': 'pri', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # о
+        {'type': 'word', 'value': 'tra', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # через, сквозь (направление движения к цели)
+        {'type': 'word', 'value': 'ĝis', 'endow': {POSPEECH: PREPOSITION, 'give_case': 'dative'}},  # до (направление движения к цели)
+        {'type': 'word', 'value': 'post', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # после, через, за
+        {'type': 'word', 'value': 'inter', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # между, среди
+        {'type': 'word', 'value': 'antaŭ', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # перед
+        {'type': 'word', 'value': 'ĉirkaŭ', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # вокруг
+        {'type': 'word', 'value': 'sub', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # под
+        {'type': 'word', 'value': 'ekster', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # вне, за
+        {'type': 'word', 'value': 'apud', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # около, возле
+        {'type': 'word', 'value': 'trans', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # за, через, по ту сторону
+        {'type': 'word', 'value': 'super', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # над
+        {'type': 'word', 'value': 'kontraŭ', 'endow': {POSPEECH: PREPOSITION, 'give_case': ''}},  # против, о
         # союзы
-        {'type': 'word', 'value': 'kaj', 'endow': {'POSpeech': 'conjunction', 'value': 'coordinating'}},  # и, а # сочинительные союзы
-        {'type': 'word', 'value': 'sed', 'endow': {'POSpeech': 'conjunction', 'value': 'coordinating'}},  # но, а
-        {'type': 'word', 'value': 'aŭ', 'endow': {'POSpeech': 'conjunction', 'value': 'coordinating'}},  # или, либо
-        {'type': 'word', 'value': 'ke', 'endow': {'POSpeech': 'conjunction', 'value': 'subordinating'}},  # что, чтобы (с помощью него дополнительное придаточное предложение присоединяется к главному - Li diris, ke li lernis la lecionon)# подчинительные союзы
-        {'type': 'word', 'value': 'ĉar', 'endow': {'POSpeech': 'conjunction', 'value': 'subordinating'}},  # потому что, так как, поскольку, ибо # подчинительные союзы
-        {'type': 'word', 'value': 'se', 'endow': {'POSpeech': 'conjunction', 'value': ''}},  # если
-        {'type': 'word', 'value': 'kvankam', 'endow': {'POSpeech': 'conjunction', 'value': ''}},  # хотя
+        {'type': 'word', 'value': 'kaj', 'endow': {POSPEECH: CONJUNCTION, VALUE: COORDINATING}},  # и, а # сочинительные союзы
+        {'type': 'word', 'value': 'sed', 'endow': {POSPEECH: CONJUNCTION, VALUE: COORDINATING}},  # но, а
+        {'type': 'word', 'value': 'aŭ', 'endow': {POSPEECH: CONJUNCTION, VALUE: COORDINATING}},  # или, либо
+        {'type': 'word', 'value': 'ke', 'endow': {POSPEECH: CONJUNCTION, VALUE: SUBORDINATING}},  # что, чтобы (с помощью него дополнительное придаточное предложение присоединяется к главному - Li diris, ke li lernis la lecionon)# подчинительные союзы
+        {'type': 'word', 'value': 'ĉar', 'endow': {POSPEECH: CONJUNCTION, VALUE: SUBORDINATING}},  # потому что, так как, поскольку, ибо # подчинительные союзы
+        {'type': 'word', 'value': 'se', 'endow': {POSPEECH: CONJUNCTION, VALUE: ''}},  # если
+        {'type': 'word', 'value': 'kvankam', 'endow': {POSPEECH: CONJUNCTION, VALUE: ''}},  # хотя
         # числительные
         {'type': 'function', 'value': is_numeral, 'endow': {'_isnumeral': 'yes'}},
-        {'type': 'prop-update', 'value': {'_isnumeral': 'yes'}, 'endow': {'POSpeech': 'numeral', 'class': 'cardinal'}},
+        {'type': 'prop-update', 'value': {'_isnumeral': 'yes'}, 'endow': {POSPEECH: NUMERAL, 'class': 'cardinal'}},
     ],
     [
-        {'type': 'end', 'value': 'n', 'endow': {'case': 'accusative'}, 'if-not': [{'POSpeech': 'preposition'}]},
+        {'type': 'end', 'value': 'n', 'endow': {CASE: 'accusative'}, 'if-not': [{POSPEECH: PREPOSITION}]},
     ],
     [
-        {'type': 'end', 'value': 'j', 'endow': {'number': 'plural'}, 'if-not': [{'POSpeech': 'conjunction'}]},
+        {'type': 'end', 'value': 'j', 'endow': {'number': 'plural'}, 'if-not': [{POSPEECH: CONJUNCTION}]},
     ],
     [
-        {'type': 'end', 'value': 'i', 'endow': {'POSpeech': 'verb', 'mood': 'infinitive'}, 'if-not': [{'POSpeech': 'numeral'}]},
-        {'type': 'end', 'value': 'u', 'endow': {'POSpeech': 'verb', 'mood': 'imperative'}},
-        {'type': 'end', 'value': 'as', 'endow': {'POSpeech': 'verb', 'mood': 'indicative', 'tense': 'present'}},
-        {'type': 'end', 'value': 'is', 'endow': {'POSpeech': 'verb', 'mood': 'indicative', 'tense': 'past'}},
-        {'type': 'end', 'value': 'os', 'endow': {'POSpeech': 'verb', 'mood': 'infinitive', 'tense': 'future'}},
-        {'type': 'end', 'value': 'us', 'endow': {'POSpeech': 'verb', 'mood': 'subjunctive'}},
-        {'type': 'end', 'value': 'o', 'endow': {'POSpeech': 'noun'}},
-        {'type': 'end', 'value': 'e', 'endow': {'POSpeech': 'adverb'}, 'if-not': [{'POSpeech': 'preposition'}]},
-        {'type': 'end', 'value': 'a', 'endow': {'POSpeech': 'adjective'}},
+        {'type': 'end', 'value': 'i', 'endow': {POSPEECH: VERB, 'mood': 'infinitive'}, 'if-not': [{POSPEECH: NUMERAL}]},
+        {'type': 'end', 'value': 'u', 'endow': {POSPEECH: VERB, 'mood': 'imperative'}},
+        {'type': 'end', 'value': 'as', 'endow': {POSPEECH: VERB, 'mood': 'indicative', 'tense': 'present'}},
+        {'type': 'end', 'value': 'is', 'endow': {POSPEECH: VERB, 'mood': 'indicative', 'tense': 'past'}},
+        {'type': 'end', 'value': 'os', 'endow': {POSPEECH: VERB, 'mood': 'infinitive', 'tense': 'future'}},
+        {'type': 'end', 'value': 'us', 'endow': {POSPEECH: VERB, 'mood': 'subjunctive'}},
+        {'type': 'end', 'value': 'o', 'endow': {POSPEECH: NOUN}},
+        {'type': 'end', 'value': 'e', 'endow': {POSPEECH: ADVERB}, 'if-not': [{POSPEECH: PREPOSITION}]},
+        {'type': 'end', 'value': 'a', 'endow': {POSPEECH: ADJECTIVE}},
 
         {'type': 'prefix', 'value': 'mal', 'endow': {'antonym': True}},
 
-        {'type': 'case_of_first_letter', 'value': 'upper', 'endow': {'name': 'proper'}},
-        {'type': 'case_of_first_letter', 'value': 'lower', 'endow': {'name': 'common'}},
+        {'type': 'case_of_first_letter', 'value': 'upper', 'endow': {NAME: PROPER}},
+        {'type': 'case_of_first_letter', 'value': 'lower', 'endow': {NAME: COMMON}},
     ],
     [
-        {'type': 'prop-default', 'value': {'POSpeech': 'adjective'}, 'endow': {'number': 'singular', 'case': 'nominative', 'name': 'common2'}},
-        {'type': 'prop-default', 'value': {'POSpeech': 'noun'}, 'endow': {'number': 'singular', 'case': 'nominative'}},
-        {'type': 'prop-update', 'value': {'base': 'mi', 'POSpeech': 'adjective'}, 'endow': {'POSpeech': 'pronoun', 'category': 'possessive'}},  # притяжательное иестоимение
+        {'type': 'prop-default', 'value': {POSPEECH: ADJECTIVE}, 'endow': {'number': 'singular', CASE: NOMINATIVE, NAME: 'common2'}},
+        {'type': 'prop-default', 'value': {POSPEECH: NOUN}, 'endow': {'number': 'singular', CASE: NOMINATIVE}},
+        {'type': 'prop-update', 'value': {'base': 'mi', POSPEECH: ADJECTIVE}, 'endow': {POSPEECH: PRONOUN, 'category': 'possessive'}},  # притяжательное иестоимение
     ],
     [
         {'type': 'function-update', 'value': is_numeral, 'endow': {'_isnumeral': 'yes'}},
-        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', 'POSpeech': 'adjective'}, 'endow': {'POSpeech': 'numeral', 'class': 'ordinal'}},
-        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', 'POSpeech': 'adverb'}, 'endow': {'derivative': 'numeral', 'class': 'cardinal'}},
-        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', 'POSpeech': 'verb'}, 'endow': {'derivative': 'numeral', 'class': 'cardinal'}},
-        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', 'POSpeech': 'noun'}, 'endow': {'derivative': 'numeral', 'class': 'cardinal'}},
+        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: ADJECTIVE}, 'endow': {POSPEECH: NUMERAL, 'class': 'ordinal'}},
+        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: ADVERB}, 'endow': {'derivative': NUMERAL, 'class': 'cardinal'}},
+        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: VERB}, 'endow': {'derivative': NUMERAL, 'class': 'cardinal'}},
+        {'type': 'prop-update', 'value': {'_isnumeral': 'yes', POSPEECH: NOUN}, 'endow': {'derivative': NUMERAL, 'class': 'cardinal'}},
         {'type': 'prop-delete', 'value': {'_isnumeral': 'yes'}, 'endow': ['_isnumeral']},
-        {'type': 'prop-update', 'value': {'notword': 'figure'}, 'endow': {'POSpeech': 'numeral', 'class': 'cardinal'}},
+        {'type': 'prop-update', 'value': {'notword': 'figure'}, 'endow': {POSPEECH: NUMERAL, 'class': 'cardinal'}},
         {'type': 'prop-function', 'value': {'notword': 'figure'}, 'endow': convert_figure},
     ],
 ]

@@ -121,7 +121,7 @@ def il_build_func_value(data_func, language, verb_id_group=None, check_verb=Fals
         if verb_id_group not in data_func['verbs'][language]:
             if try_antonym:
                 # TODO: добавить антонимы для примера через глагол-связку. Здесь затем искать по id группы антонимов
-                # verb_synonym_group_id = R.R.get_words_from_samegroup('antonym', 'verb', 'synonym', id_group)
+                # verb_synonym_group_id = R.R.get_words_from_samegroup('antonym', VERB, 'synonym', id_group)
                 id_antonym = verb_id_group
                 if id_antonym not in data_func['verbs'][language]:
                     return True

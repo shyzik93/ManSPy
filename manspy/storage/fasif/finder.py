@@ -21,6 +21,9 @@
 
 На четвёртом шаге перед выполнением функций необходио сформировать внутренний язык. Функции выполнятся в модуле логики.
 """
+from manspy.utils.constants import (
+    CASE, CIRCUMSTANCE, DEFINITION, DIRECT_SUPPLEMENT, MOSENTENCE, NOUN, NUMERAL, POSPEECH, SUBJECT, SUPPLEMENT,
+)
 from manspy.utils.unit import Sentence
 
 
@@ -44,14 +47,14 @@ def count_wordargs(constwordexample, fasif, language):
 
 
 def compare_word(word, index, argument, argworddescr, finded_args):
-    if word['MOSentence'] in ['direct supplement', 'supplement', 'subject']:
-        if argworddescr['POSpeech'] != word['POSpeech']:
-            if not (argworddescr['POSpeech'] == 'numeral' and word['derivative'] == 'numeral' and word['POSpeech'] in ['noun']):
+    if word[MOSENTENCE] in [DIRECT_SUPPLEMENT, SUPPLEMENT, SUBJECT]:
+        if argworddescr[POSPEECH] != word[POSPEECH]:
+            if not (argworddescr[POSPEECH] == NUMERAL and word['derivative'] == NUMERAL and word[POSPEECH] in [NOUN]):
                 return False
-        elif not (not argument.getControl(index) or argworddescr['case'] == word['case']):
+        elif not (not argument.getControl(index) or argworddescr[CASE] == word[CASE]):
             return False  # для первого дополнения падеж не учитывается
-    elif word['MOSentence'] in ['definition', 'circumstance']:
-        if argworddescr['POSpeech'] != word['POSpeech']:
+    elif word[MOSENTENCE] in [DEFINITION, CIRCUMSTANCE]:
+        if argworddescr[POSPEECH] != word[POSPEECH]:
             return False  # для первого дополнения падеж не учитывается
     else:
         return False

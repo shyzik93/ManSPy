@@ -104,7 +104,7 @@ def dict_wcomb2formule_wcomb(dict_wcomb, args):
                 _MORE = MORE_ZERO if args[dict_word['base']][isreq] == 'n' else MORE_ONE
                 if args[dict_word['base']][isreq] == 'n': count_req += 1
                 formule_wcomb += _MORE % dict_word2formule_word(dict_word) + MORE_ZERO % ANY_DEFINITION
-        elif 'supplement' in dict_word['MOSentence'] or 'subject' in dict_word['MOSentence']:
+        elif 'supplement' in dict_word[MOSENTENCE] or PREDICATE in dict_word['MOSentence']:
             formule_wcomb += ONLY_ONE % dict_word2formule_word(dict_word)
     # додумать с учётом констант
     return r'(?:%s)+' % formule_wcomb if count_req == 0 else ONLY_ONE % formule_wcomb
@@ -129,7 +129,7 @@ def to_formule(_dict_argument, isreg=True, _args=None): # третий аргу�
     # копируем словосочетание с нужными свойствами слов
     for index, _dict_word in _dict_argument.items():
         if _dict_word['MOSentence'] in ['definition', 'circumstance']: _dict_argument[index] = copy_word(_dict_word, 'MOSentence', 'base')
-        elif _dict_word['MOSentence'] in ['direct supplement', 'supplement', 'subject']: _dict_argument[index] = copy_word(_dict_word, 'MOSentence', 'base', 'case')
+        elif _dict_word['MOSentence'] in ['direct supplement', 'supplement', 'subject']: _dict_argument[index] = copy_word(_dict_word, 'MOSentence', 'base', CASE)
     #pprint(_dict_wcomb)
 
     if isreg:
@@ -143,7 +143,7 @@ def to_formule(_dict_argument, isreg=True, _args=None): # третий аргу�
     # Обрабатываем первое дополнение
     for index, dword in _dict_argument.items():
         if dword['MOSentence'] in ['direct supplement', 'supplement', 'subject']:
-            del dword['case'] # падеж любой может быть
+            del dword[CASE] # падеж любой может быть
             if isreg: dword['MOSentence'] = r'(?:direct supplement|supplement|subject)'
             break
 
@@ -152,7 +152,7 @@ def to_formule(_dict_argument, isreg=True, _args=None): # третий аргу�
         index = 0
         for _index, dword in _dict_argument.items():
             if dword['base'] in args:
-                #if 'case' in keys and dword['case'] != args[value]['case']: continue # если есть падеж, то учитываем его
+                #if CASE in keys and dword[CASE] != args[value][CASE]: continue # если есть падеж, то учитываем его
                 dword['base'] = ur'[a-zа-яёĉĝĥĵŝŭ]+'
             dict_argument[index] = dword
             index += 1
@@ -180,12 +180,12 @@ def to_formule(_dict_argument, isreg=True, _args=None): # третий аргу�
 '''def copy_word(dct_word, absent=[]):
   _dct_word = {}
   for characteristic, value in dct_word.items():
-    if characteristic not in ['MOSentence', 'POSpeech', 'case', 'feature', 'base']: continue
+    if characteristic not in ['MOSentence', 'POSpeech', CASE, 'feature', 'base']: continue
     if characteristic in absent: continue # absent - те характеристики, которые должны исключится из списка нужных
     if characteristic == 'feature':
       value = copy.deepcopy(value)
       for fea_index, fea_word in enumerate(value):
-        value[fea_index] = copy_word(fea_word, ['case', 'POSpeech'])
+        value[fea_index] = copy_word(fea_word, [CASE, 'POSpeech'])
     _dct_word[characteristic] = value
   return _dct_word
 
@@ -193,7 +193,7 @@ def to_hash(dct_sentence):
   dct_sentence = word_combination.getUnit('dict', 'members', 'info')
   _dct_sentence = {}
   # падеж и член предложения первого чдена не учитывается (они могут иметь разные падежи членства)
-  _dct_sentence[0] = copy_word(dct_sentence[0], ['case', 'MOSentence'])
+  _dct_sentence[0] = copy_word(dct_sentence[0], [CASE, 'MOSentence'])
 
   for index, dct_word in dct_sentence.items()[1:]:
     _dct_sentence[index] = copy_word(dct_word)

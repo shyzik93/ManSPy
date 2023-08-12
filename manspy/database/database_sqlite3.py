@@ -2,12 +2,14 @@ import json
 import sqlite3
 from typing import Optional, Union
 
+from manspy.utils.constants import ADJECTIVE, ADVERB, NOUN, VERB
+
 
 class Database:
     SQL_INSERT_DESCR_RELATION = (
         'INSERT INTO descr_relation (count_members, type_relation, type_group, name_for_member, name_for_group) VALUES (?,?,?,?,?)'
     )
-    dct_speeches = {'noun': 1, 'verb': 2, 'adjective': 3, 'adverb': 4}
+    dct_speeches = {NOUN: 1, VERB: 2, ADJECTIVE: 3, ADVERB: 4}
     c = None
     cu = None
 

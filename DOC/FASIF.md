@@ -170,7 +170,7 @@ Russian
  'type_sentence': 'run', 
  # Если глагол 1-го типа, то common_fucntion = None (изменение состояния). Вызываем функцию у словосочетания
  # Если глагол 2-го типа, то common_fucntion = функции (получение состояний). Вызваем функцию и словосочетаний и результаты передаём данной функции
- 'verb': {
+ VERB: {
      'func_common': None,
      'used_antonym': None,
      'answer_type': None,

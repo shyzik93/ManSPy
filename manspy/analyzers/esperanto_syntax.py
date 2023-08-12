@@ -1,89 +1,101 @@
 # -*- coding: utf-8 -*-
-''' Модуль выполняет синтаксический анализ предложения
+''' Модуль выполняет синтаксический анализ предложения.
 
-  Определяются члены предложения и устанавливаются связи слов.
+  Определяются члены предложения, и устанавливаются связи слов.
 '''
+
+from manspy.utils.constants import (
+    ADJECTIVE, ADVERB,
+    CASE, CIRCUMSTANCE, CONJUNCTION,
+    DEFINITION, DIRECT_SUPPLEMENT,
+    MOSENTENCE,
+    NOMINATIVE, NOUN, NUMERAL,
+    POSPEECH, PREDICATE, PRONOUN,
+    SUBJECT, SUPPLEMENT,
+    VERB,
+)
+
 
 def forPronounAndNoun(word):
     ''' Определяет член предложения для имени существительного
         и притяжательного местоимепния по падежу '''
-    if word['case'] == 'accusative':
-        return 'direct supplement'
-    elif word['case'] == 'nominative':
-        return 'subject'
-    return 'supplement'
+    if word[CASE] == 'accusative':
+        return DIRECT_SUPPLEMENT
+    elif word[CASE] == NOMINATIVE:
+        return SUBJECT
+    return SUPPLEMENT
 
 
 def setMOS_ToSign(features):
     """ Определение члена предложения у признаков:
         прилагательного, наречия, """
     for feature in features:
-        if feature['POSpeech'] == 'adjective' or (feature['POSpeech'] == 'pronoun' and feature['category'] == 'possessive') or feature['POSpeech'] == 'numeral':
-            feature['MOSentence'] = 'definition'
-        elif feature['POSpeech'] == 'adverb':
-            feature['MOSentence'] = 'circumstance'
+        if feature[POSPEECH] == ADJECTIVE or (feature[POSPEECH] == PRONOUN and feature['category'] == 'possessive') or feature[POSPEECH] == NUMERAL:
+            feature[MOSENTENCE] = DEFINITION
+        elif feature[POSPEECH] == ADVERB:
+            feature[MOSENTENCE] = CIRCUMSTANCE
         if feature['feature']:
             setMOS_ToSign(feature['feature'])
 
 
 def setMOSentence(word):
-    if word['POSpeech'] == 'verb':
-        word['MOSentence'] = 'predicate'
+    if word[POSPEECH] == VERB:
+        word[MOSENTENCE] = PREDICATE
         if word['feature']:
             setMOS_ToSign(word['feature'])
 
     #ATTENTION обстоятельства, выраженные существительным, определяются в модуле
     # промежуточного анализа как наречие.
-    elif word['POSpeech'] == 'noun' or (word['POSpeech'] == 'numeral' and word['class'] == 'cardinal'):
-        word['MOSentence'] = forPronounAndNoun(word)
+    elif word[POSPEECH] == NOUN or (word[POSPEECH] == NUMERAL and word['class'] == 'cardinal'):
+        word[MOSENTENCE] = forPronounAndNoun(word)
         if word['feature']:
             setMOS_ToSign(word['feature'])
 
-    elif word['POSpeech'] == 'pronoun':
+    elif word[POSPEECH] == PRONOUN:
         if word['category'] == 'possessive':
-            word['MOSentence'] = 'definition'  # ? Появилось определение
+            word[MOSENTENCE] = DEFINITION  # ? Появилось определение
         elif word['category'] == 'personal':
-            word['MOSentence'] = forPronounAndNoun(word)
+            word[MOSENTENCE] = forPronounAndNoun(word)
         else:
-            word['MOSentence'] = ''  # не притяжательное и не личное местоимение
+            word[MOSENTENCE] = ''  # не притяжательное и не личное местоимение
 
     # прилагательное без существительного
     elif 'praPOSpeech' in word and word['praMOSentence'] == 'freemember':
-        word['MOSentence'] = 'supplement'
-    #elif word['POSpeech'] == 'adjective': word['MOSentence'] = 'definition'  
+        word[MOSENTENCE] = SUPPLEMENT
+    #elif word[POSPEECH] == ADJECTIVE: word[MOSENTENCE] = DEFINITION
     else:
-        word['MOSentence'] = ''
+        word[MOSENTENCE] = ''
 
 
 def setLinks(word, sentence):
     ''' Устанавливает связи членов предложения. Обстоятельства и определения
         спрятаны в тех, к кому они относятся. Работаем лишь со сказуемым,
         подлежащим и дополнением. '''
-    if word['MOSentence'] == 'predicate':
+    if word[MOSENTENCE] == PREDICATE:
         # линкуем сказуемое и прямое дополнение
         old_position = sentence.position
         for word2 in sentence.iterFromByStep(1):
-            if word2['MOSentence'] == 'direct supplement':
+            if word2[MOSENTENCE] == DIRECT_SUPPLEMENT:
                 sentence.addLink(word, word2)
-            elif word2['MOSentence'] == 'predicate':
+            elif word2[MOSENTENCE] == PREDICATE:
                 break
 
         sentence.position = old_position
 
     #  TODO: если у прямого дополнения нескеолько дополнений, то они проигнорируются
-    elif word['MOSentence'] in ['direct supplement', 'supplement', 'subject']:
+    elif word[MOSENTENCE] in [DIRECT_SUPPLEMENT, SUPPLEMENT, SUBJECT]:
         # линкуем прямое дополнение и следующее после него косвенное дополнение
         old_position = sentence.position
         case = None
         for word2 in sentence.iterFromByStep(1):
-            if word2['MOSentence'] == 'supplement':# and word2['case'] != "":
+            if word2[MOSENTENCE] == SUPPLEMENT:# and word2[CASE] != "":
                 """# остальные падежи, вероятно, будут означать, что косв. дополнение -
                 # это обстоятельство, то есть относится к сказуемому.
-                #if sentence(index2, 'case') in ['genetive']: sentence.addLink(index, index2)#word['link'].append(index2)"""
+                #if sentence(index2, CASE) in [GENETIVE]: sentence.addLink(index, index2)#word['link'].append(index2)"""
                 if not case:
-                    case = word['case']
+                    case = word[CASE]
                 sentence.addLink(word, word2)
-            elif word2['MOSentence'] in ['direct supplement', 'subject']:
+            elif word2[MOSENTENCE] in [DIRECT_SUPPLEMENT, SUBJECT]:
                 break  # это другой актант уже пойдёт.
 
         sentence.position = old_position
@@ -123,11 +135,11 @@ def split_sentence(sentence):
     _sentences = []
 
     for first_index in first_indexes:
-        if sentence[first_index]['POSpeech'] == 'conjuction':
+        if sentence[first_index][POSPEECH] == CONJUNCTION:
             conjunctions.append(first_index) # сочинённых союзов между однородными членами должны исчезнуть в предыдущих шагах.
-        if sentence[first_index]['POSentence'] == 'subject':
+        if sentence[first_index]['POSentence'] == SUBJECT:
             subjects.append(first_index)
-        if sentence[first_index]['POSentence'] == 'predicate':
+        if sentence[first_index]['POSentence'] == PREDICATE:
             predicates.append(first_index)    
 
     for subject in subjects:
