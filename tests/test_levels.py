@@ -17,8 +17,8 @@ def mock_action(path):
 
 
 def sort_text_dict(text):
-    for sentence_index, sentence in text['unit'].items():
-        for word_index, word in sentence['unit'].items():
+    for sentence_index, sentence in text['subunits'].items():
+        for word_index, word in sentence['subunits'].items():
             unit_info = {}
             for k in sorted(word['unit_info'].keys()):
                 unit_info[k] = word['unit_info'][k]

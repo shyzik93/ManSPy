@@ -65,7 +65,7 @@ class BaseUnit:
     def __init__(self, subunits=None, unit_info=None, imports=None):
         self.unit_info = {'max_index': -1, 'index': None}
         self.subunit_info = {}
-        self.full_info = {'unit_info': self.unit_info, 'unit': self.subunit_info}
+        self.full_info = {'unit_info': self.unit_info, 'subunits': self.subunit_info}
         self.position = 0
         self.keys = []
         self.subunits_copy = {}
@@ -88,18 +88,18 @@ class BaseUnit:
                 _subunit.import_unit(subunit)
                 data['unit_info']['feature'][index] = _subunit
 
-        for index, subunit in data['unit'].items():
+        for index, subunit in data['subunits'].items():
             if 'unit_type' not in subunit or subunit['unit_type'] == 'dict':
                 _subunit = subunit
             else:
                 _subunit = locals()[subunit['unit_type']]({})
                 _subunit.import_unit(subunit)
 
-            data['unit'][index] = _subunit
+            data['subunits'][index] = _subunit
 
         self.full_info = copy.deepcopy(data)
         self.unit_info = self.full_info['unit_info']
-        self.subunit_info = {int(index): unit for index, unit in self.full_info['unit'].items()}
+        self.subunit_info = {int(index): unit for index, unit in self.full_info['subunits'].items()}
         self.keys = list(self.subunit_info.keys())
 
     def export_unit(self, ignore_units=None):
@@ -111,14 +111,14 @@ class BaseUnit:
             for index, subunit in enumerate(data['unit_info']['feature']):
                 data['unit_info']['feature'][index] = subunit.export_unit(ignore_units)
 
-        if ignore_units and data['unit'] and isinstance(list(data['unit'].values())[0], ignore_units):
-            data['unit'].clear()
+        if ignore_units and data['subunits'] and isinstance(list(data['subunits'].values())[0], ignore_units):
+            data['subunits'].clear()
 
-        for index, subunit in data['unit'].items():
+        for index, subunit in data['subunits'].items():
             if isinstance(subunit, dict):
                 break
 
-            data['unit'][index] = subunit.export_unit(ignore_units)
+            data['subunits'][index] = subunit.export_unit(ignore_units)
 
         return data
 
