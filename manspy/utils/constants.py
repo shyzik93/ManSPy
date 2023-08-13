@@ -1,6 +1,16 @@
+def generate_properties(str_properties_names):
+    properties_names = str_properties_names.strip().split()
+    for index_property, property_name in enumerate(properties_names):
+        globals()[property_name] = index_property
+
+    return len(properties_names)
+
+
 # Названия свойств символа
 
 TYPE = '1'
+
+# SYMBOL_PROPERTIES_LENGTH = generate_properties("TYPE")
 
 # Значения свойств символа: TYPE
 
@@ -8,18 +18,23 @@ LETTER = 1
 
 # Названия свойств слова
 
-MOSENTENCE = 0
-POSPEECH = 1
-NAME = 2
-CONJUNCTION_VALUE = 3
-DERIVATIVE = 4  # значения идентичны значениям POSPEECH
-CATEGORY = 5
-NUMBER = 6
-ARTICLE_VALUE = 7
-CLASS = 8
-TENSE = 9
-MOOD = 10
-CASE = 11
+MOSENTENCE = None
+POSPEECH = None
+NAME = None
+CONJUNCTION_VALUE = None
+DERIVATIVE = None  # значения свойства аналогичны POSPEECH
+CATEGORY = None
+NUMBER = None
+ARTICLE_VALUE = None
+CLASS = None
+TENSE = None
+MOOD = None
+CASE = None
+
+str_word_properties_names = """
+MOSENTENCE POSPEECH NAME CONJUNCTION_VALUE DERIVATIVE CATEGORY NUMBER ARTICLE_VALUE CLASS TENSE MOOD CASE
+"""
+WORD_PROPERTIES_LENGTH = generate_properties(str_word_properties_names)
 
 # Значения свойств слова: MOSENTENCE
 

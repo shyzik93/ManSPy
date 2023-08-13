@@ -1,4 +1,4 @@
-from manspy.utils.constants import TYPE
+from manspy.utils.constants import TYPE, WORD_PROPERTIES_LENGTH
 from manspy.utils.unit.base_unit import BaseUnit
 from manspy.utils.unit.list_of_subunits import ListOfSubunits
 
@@ -42,7 +42,7 @@ class Word(BaseUnit):
             'start_pmark': [], 'end_pmark': [], 'around_pmark': [],
             'combine_words': [],
         }
-        BaseUnit.__init__(self, symbols, unit_info, count_properties=12)
+        BaseUnit.__init__(self, symbols, unit_info, count_properties=WORD_PROPERTIES_LENGTH)
 
     @property
     def parent(self):
