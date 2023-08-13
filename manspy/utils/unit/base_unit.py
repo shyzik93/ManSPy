@@ -65,7 +65,8 @@ class BaseUnit:
     def __init__(self, subunits=None, unit_info=None, imports=None):
         self.unit_info = {'max_index': -1, 'index': None}
         self.subunit_info = {}
-        self.full_info = {'unit_info': self.unit_info, 'subunits': self.subunit_info}
+        self.properties = []
+        self.full_info = {'unit_info': self.unit_info, 'subunits': self.subunit_info, 'props': self.properties}
         self.position = 0
         self.keys = []
         self.subunits_copy = {}
@@ -101,6 +102,7 @@ class BaseUnit:
         self.unit_info = self.full_info['unit_info']
         self.subunit_info = {int(index): unit for index, unit in self.full_info['subunits'].items()}
         self.keys = list(self.subunit_info.keys())
+        self.properties = self.full_info['props']
 
     def export_unit(self, ignore_units=None):
         data = copy.deepcopy(self.full_info)
