@@ -1,5 +1,6 @@
 from manspy.utils.constants import TYPE
 from manspy.utils.unit.base_unit import BaseUnit
+from manspy.utils.unit.list_of_subunits import ListOfSubunits
 
 
 class Word(BaseUnit):
@@ -37,11 +38,26 @@ class Word(BaseUnit):
             'link': [],
             'homogeneous_link': [],  # ссылки на однородные члены
             'type': 'real',
-            # действительное слов. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
+            # Действительное слово. Есть ещё мнимое - такое слово, которое добавляется для удобства анализа.
             'start_pmark': [], 'end_pmark': [], 'around_pmark': [],
             'combine_words': [],
         }
         BaseUnit.__init__(self, symbols, unit_info)
+
+    @property
+    def parent(self):
+        return self._parent
+
+    @parent.setter
+    def parent(self, parent):
+        self._parent = parent
+        if parent:
+            self.links = ListOfSubunits(parent, self.unit_info['link'])
+            self.homogeneous_links = ListOfSubunits(parent, self.unit_info['homogeneous_link'])
+
+    @property
+    def features(self):
+        return self.unit_info['feature']
 
     def hasSymbol(self, symbol):
         return symbol in self.str_word

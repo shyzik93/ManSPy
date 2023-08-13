@@ -129,17 +129,18 @@ def process_adverb(word, sentence):
         #Error print index бесконечный цикл, если в предложении одни только наречия. Решение - сделать добавление мнимых слов.
 
 
-def exchangeDataBetweenHomo(sentence):
-    done_indexes = []
+def exchange_data_between_homo(sentence):
+    """Копирует характеристики с первого однородного слово ко последующим ему однородным."""
+    done_words = []
     for word in sentence:
-        if word.index in done_indexes:
+        if word in done_words:
             continue
 
-        for index_homo in word['homogeneous_link']:
+        for homo_word in word.homogeneous_links:
             if CASE in word:
-                sentence[index_homo][CASE] = word[CASE]
+                homo_word[CASE] = word[CASE]
 
-            done_indexes.append(index_homo)
+            done_words.append(homo_word)
 
 
 def numeral2number(words):
@@ -211,7 +212,8 @@ def analyze(message):
         for processor in processors:
             for word in sentence:
                 processor(word, sentence)
-        exchangeDataBetweenHomo(sentence)  # копируем характеристики с первого однородного ко последующим ему однородным.
+
+        exchange_data_between_homo(sentence)
 
         # здесь нужно найти однородные косвенные дополнения, чтобы им установить однородность.
         # При синтаксическом анализе на них будет ссылаться их родитель.

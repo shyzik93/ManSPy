@@ -26,30 +26,30 @@ def forPronounAndNoun(word):
     return SUPPLEMENT
 
 
-def setMOS_ToSign(features):
+def setMOS_ToSign(feature_words):
     """ Определение члена предложения у признаков:
         прилагательного, наречия, """
-    for feature in features:
+    for feature in feature_words:
         if feature[POSPEECH] == ADJECTIVE or (feature[POSPEECH] == PRONOUN and feature[CATEGORY] == POSSESSIVE) or feature[POSPEECH] == NUMERAL:
             feature[MOSENTENCE] = DEFINITION
         elif feature[POSPEECH] == ADVERB:
             feature[MOSENTENCE] = CIRCUMSTANCE
-        if feature['feature']:
-            setMOS_ToSign(feature['feature'])
 
+        if feature.features:
+            setMOS_ToSign(feature.features)
 
 def setMOSentence(word):
     if word[POSPEECH] == VERB:
         word[MOSENTENCE] = PREDICATE
-        if word['feature']:
-            setMOS_ToSign(word['feature'])
+        if word.features:
+            setMOS_ToSign(word.features)
 
     #ATTENTION обстоятельства, выраженные существительным, определяются в модуле
     # промежуточного анализа как наречие.
     elif word[POSPEECH] == NOUN or (word[POSPEECH] == NUMERAL and word[CLASS] == CARDINAL):
         word[MOSENTENCE] = forPronounAndNoun(word)
-        if word['feature']:
-            setMOS_ToSign(word['feature'])
+        if word.features:
+            setMOS_ToSign(word.features)
 
     elif word[POSPEECH] == PRONOUN:
         if word[CATEGORY] == POSSESSIVE:
@@ -91,7 +91,7 @@ def setLinks(word, sentence):
             if word2[MOSENTENCE] == SUPPLEMENT:# and word2[CASE] != "":
                 """# остальные падежи, вероятно, будут означать, что косв. дополнение -
                 # это обстоятельство, то есть относится к сказуемому.
-                #if sentence(index2, CASE) in [GENETIVE]: sentence.addLink(index, index2)#word['link'].append(index2)"""
+                #if sentence(index2, CASE) in [GENETIVE]: sentence.addLink(index, index2)#word.links.append(index2)"""
                 if not case:
                     case = word[CASE]
                 sentence.addLink(word, word2)
@@ -101,18 +101,18 @@ def setLinks(word, sentence):
         sentence.position = old_position
 
 
-def go_throw_links(word, sentence, words=None):
+def go_throw_links(word, words=None):
     if words is None:
         words = []
 
     if word not in words:
         words.append(word)
     
-        for index_link in word['link']:
-            go_throw_links(sentence[index_link], sentence, words)
+        for link_word in word.links:
+            go_throw_links(link_word, words)
 
-        for index_link in word['homogeneous_link']:
-            go_throw_links(sentence[index_link], sentence, words)
+        for homogeneous_link in word.homogeneous_links:
+            go_throw_links(homogeneous_link, words)
 
     return words
 
@@ -141,7 +141,7 @@ def split_sentence(sentence):
             predicates.append(first_word)
 
     for subject in subjects:
-        _sentences.append(go_throw_links(subject, sentence))
+        _sentences.append(go_throw_links(subject))
 
     # определяем, в каком 
     for conjunction in conjunctions:
