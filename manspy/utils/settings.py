@@ -8,7 +8,7 @@ DEFAULT_PATH_MODULES = os.path.dirname(os.path.dirname(os.path.dirname(__file__)
 DEFAULT_PATHS_IMPORT = [
     ('logger', 'manspy.loggers.logger_db'),
     ('logger', 'manspy.loggers.logger_plain_text'),
-    ('database', 'manspy.database.database_sqlite3'),  # модуль базы должен быть перед модулем действий
+    ('database', 'manspy.database.database_sqlite3'),
 ]
 
 
