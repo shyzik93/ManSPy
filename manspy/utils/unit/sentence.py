@@ -56,9 +56,6 @@ class Sentence(BaseUnit):
             word['feature'].append(feature_word)
             feature_word.remove()
 
-    def getFeature(self, index):
-        return self.subunit_info[index]['feature']
-
     def addLink(self, word_parent, word_obient): # parent = control
         """ Устанавливает ссылку """
         if word_obient.index not in self.subunit_info[word_parent.index]["link"]:

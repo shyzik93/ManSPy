@@ -9,11 +9,11 @@ class ListOfSubunits:
         self.indexes = list_of_indexes
 
     def __getitem__(self, position: int):
-        return self.unit[self.indexes[position]]
+        return self.unit.subunit_info[self.indexes[position]]
 
     def __iter__(self):
         for index in self.indexes:
-            yield self.unit[index]
+            yield self.unit.subunit_info[index]
 
     def __bool__(self):
         return bool(self.indexes)

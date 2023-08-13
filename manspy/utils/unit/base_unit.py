@@ -45,9 +45,9 @@ class BaseUnit:
     - `unit.position` - текущая позиция юнита в момент перебора родителя
     - `step` - шаг, то есть смещение относительно текущей позиции. Может быть отрицательным.
 
-    - `unit[index]` - извлечение подъюнита
-    - `unit[index][name]` - извлечение характеристики подъюнита
-    - `unit[index][name]` = value - изменение характеристики подъюнита
+    - `unit[index]` - извлечение подъюнита (возможность удалена)
+    - `unit[index][name]` - извлечение характеристики подъюнита (возможность удалена)
+    - `unit[index][name]` = value - изменение характеристики подъюнита (возможность удалена)
 
     - `unit[name]` - извлечение характеристики юнита
     - `unit[name] = value` - изменение характеристики юнита
@@ -173,10 +173,8 @@ class BaseUnit:
         :param key: имя свойства либо индекс подъюнита
         :return: значение свойства юнита, если key - строка; подъюнит, если key - целое число.
         """
-        if isinstance(key, str):
+        if isinstance(key, (str, int)):
             return self.unit_info.get(key)
-        elif isinstance(key, int):  # типа getByIndex()
-            return self.subunit_info[key]
         else:
             raise Exception('unknown type of item key')
 
@@ -186,10 +184,8 @@ class BaseUnit:
         :param key: имя свойства либо индекс подъюнита
         :return: значение свойства юнита, если key - строка; подъюнит, если key - целое число.
         """
-        if isinstance(key, str):
+        if isinstance(key, (str, int)):
             del self.unit_info[key]
-        elif isinstance(key, int):
-            del self.subunit_info[key]
         else:
             raise Exception('unknown type of item key')
 
@@ -221,6 +217,10 @@ class BaseUnit:
     @property
     def previous_sibling(self):
         return self.subunit_info[self.index - 1]
+
+    @property
+    def first_child(self):
+        return self.subunit_info[self.keys[0]]
 
     # Итератор
     def __iter__(self,
@@ -259,9 +259,6 @@ class BaseUnit:
 
     def getByStep(self, step=0):
         return self.subunit_info[self.keys[self.position + step]]
-
-    def getByPos(self, position):
-        return self.subunit_info[self.keys[position]]
 
     # Текущая позиция
     def isOutLeft(self, step=0):
