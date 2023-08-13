@@ -42,7 +42,7 @@ class Word(BaseUnit):
             'start_pmark': [], 'end_pmark': [], 'around_pmark': [],
             'combine_words': [],
         }
-        BaseUnit.__init__(self, symbols, unit_info)
+        BaseUnit.__init__(self, symbols, unit_info, count_properties=12)
 
     @property
     def parent(self):

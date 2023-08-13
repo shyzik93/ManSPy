@@ -8,18 +8,18 @@ LETTER = 1
 
 # Названия свойств слова
 
-MOSENTENCE = '0'
-POSPEECH = '1'
-NAME = '2'
-CONJUNCTION_VALUE = '3'
-DERIVATIVE = '4'  # значения идентичны значениям POSPEECH
-CATEGORY = '5'
-NUMBER = '6'
-ARTICLE_VALUE = '7'
-CLASS = '8'
-TENSE = '9'
-MOOD = '10'
-CASE = '11'
+MOSENTENCE = 0
+POSPEECH = 1
+NAME = 2
+CONJUNCTION_VALUE = 3
+DERIVATIVE = 4  # значения идентичны значениям POSPEECH
+CATEGORY = 5
+NUMBER = 6
+ARTICLE_VALUE = 7
+CLASS = 8
+TENSE = 9
+MOOD = 10
+CASE = 11
 
 # Значения свойств слова: MOSENTENCE
 

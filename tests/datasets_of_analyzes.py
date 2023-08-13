@@ -197,7 +197,7 @@ dataset_verb_and_repeated_actants = {
                     'subjects_word_combinations': []
                 }
             },
-            'morphological': {'unit_info': {'max_index': 0, 'index': None}, 'subunits': {0: {'unit_info': {'max_index': 7, 'index': 0, 'end': ''}, 'subunits': {0: {'unit_info': {'max_index': 5, 'index': 0, 'word': 'montru', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'montr', 'word_lower': 'montru', POSPEECH: VERB, MOOD: IMPERATIVE, NAME: COMMON}, 'subunits': {}, 'props': [], 'unit_type': 'Word'}, 1: {'unit_info': {'max_index': 6, 'index': 1, 'word': 'dolaran', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'dolar', 'word_lower': 'dolaran', CASE: ACCUSATIVE, POSPEECH: ADJECTIVE, NAME: COMMON, NUMBER: SINGULAR}, 'subunits': {}, 'props': [], 'unit_type': 'Word'}, 2: {'unit_info': {'max_index': 2, 'index': 2, 'word': 'kaj', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'kaj', 'word_lower': 'kaj', POSPEECH: CONJUNCTION, CONJUNCTION_VALUE: COORDINATING, NAME: COMMON}, 'subunits': {}, 'props': [], 'unit_type': 'Word'}, 3: {'unit_info': {'max_index': 6, 'index': 3, 'word': 'dolaran', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'dolar', 'word_lower': 'dolaran', CASE: ACCUSATIVE, POSPEECH: ADJECTIVE, NAME: COMMON, NUMBER: SINGULAR}, 'subunits': {}, 'props': [], 'unit_type': 'Word'}, 4: {'unit_info': {'max_index': 5, 'index': 4, 'word': 'kurzon', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'kurz', 'word_lower': 'kurzon', CASE: ACCUSATIVE, POSPEECH: NOUN, NAME: COMMON, NUMBER: SINGULAR}, 'subunits': {}, 'props': [], 'unit_type': 'Word'}, 5: {'unit_info': {'max_index': 1, 'index': 5, 'word': 'de', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'de', 'word_lower': 'de', POSPEECH: PREPOSITION, 'give_case': GENETIVE, NAME: COMMON}, 'subunits': {}, 'props': [], 'unit_type': 'Word'}, 6: {'unit_info': {'max_index': 4, 'index': 6, 'word': 'rusia', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'rusi', 'word_lower': 'rusia', POSPEECH: ADJECTIVE, NAME: COMMON, NUMBER: SINGULAR, CASE: NOMINATIVE}, 'subunits': {}, 'props': [], 'unit_type': 'Word'}, 7: {'unit_info': {'max_index': 4, 'index': 7, 'word': 'banko', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'bank', 'word_lower': 'banko', POSPEECH: NOUN, NAME: COMMON, NUMBER: SINGULAR, CASE: NOMINATIVE}, 'subunits': {}, 'props': [], 'unit_type': 'Word'}}, 'props': [], 'unit_type': 'Sentence'}}, 'props': [], 'unit_type': 'Text'},
+            'morphological': {'unit_info': {'max_index': 0, 'index': None}, 'subunits': {0: {'unit_info': {'max_index': 7, 'index': 0, 'end': ''}, 'subunits': {0: {'unit_info': {'max_index': 5, 'index': 0, 'word': 'montru', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'montr', 'word_lower': 'montru', POSPEECH: VERB, MOOD: IMPERATIVE, NAME: COMMON}, 'subunits': {}, 'props': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'unit_type': 'Word'}, 1: {'unit_info': {'max_index': 6, 'index': 1, 'word': 'dolaran', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'dolar', 'word_lower': 'dolaran', CASE: ACCUSATIVE, POSPEECH: ADJECTIVE, NAME: COMMON, NUMBER: SINGULAR}, 'subunits': {}, 'props': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'unit_type': 'Word'}, 2: {'unit_info': {'max_index': 2, 'index': 2, 'word': 'kaj', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'kaj', 'word_lower': 'kaj', POSPEECH: CONJUNCTION, CONJUNCTION_VALUE: COORDINATING, NAME: COMMON}, 'subunits': {}, 'props': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'unit_type': 'Word'}, 3: {'unit_info': {'max_index': 6, 'index': 3, 'word': 'dolaran', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'dolar', 'word_lower': 'dolaran', CASE: ACCUSATIVE, POSPEECH: ADJECTIVE, NAME: COMMON, NUMBER: SINGULAR}, 'subunits': {}, 'props': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'unit_type': 'Word'}, 4: {'unit_info': {'max_index': 5, 'index': 4, 'word': 'kurzon', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'kurz', 'word_lower': 'kurzon', CASE: ACCUSATIVE, POSPEECH: NOUN, NAME: COMMON, NUMBER: SINGULAR}, 'subunits': {}, 'props': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'unit_type': 'Word'}, 5: {'unit_info': {'max_index': 1, 'index': 5, 'word': 'de', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'de', 'word_lower': 'de', POSPEECH: PREPOSITION, 'give_case': GENETIVE, NAME: COMMON}, 'subunits': {}, 'props': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'unit_type': 'Word'}, 6: {'unit_info': {'max_index': 4, 'index': 6, 'word': 'rusia', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'rusi', 'word_lower': 'rusia', POSPEECH: ADJECTIVE, NAME: COMMON, NUMBER: SINGULAR, CASE: NOMINATIVE}, 'subunits': {}, 'props': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'unit_type': 'Word'}, 7: {'unit_info': {'max_index': 4, 'index': 7, 'word': 'banko', 'symbol_map': {}, 'feature': [], 'link': [], 'homogeneous_link': [], 'type': 'real', 'start_pmark': [], 'end_pmark': [], 'around_pmark': [], 'combine_words': [], 'end': '', 'end_orig': '', 'base': 'bank', 'word_lower': 'banko', POSPEECH: NOUN, NAME: COMMON, NUMBER: SINGULAR, CASE: NOMINATIVE}, 'subunits': {}, 'props': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'unit_type': 'Word'}}, 'props': [], 'unit_type': 'Sentence'}}, 'props': [], 'unit_type': 'Text'},
             'r_text_construct': ['USD-Russia', 'USD-Russia'],
         },
         {
@@ -701,7 +701,7 @@ dataset_numbers_and_simple_math = {
                                     NAME: COMMON,
                                 },
                                 'subunits': {},
-                                'props': [],
+                                'props': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                                 'unit_type': 'Word'
                             },
                             1: {
@@ -730,7 +730,7 @@ dataset_numbers_and_simple_math = {
                                     CLASS: ORDINAL,
                                 },
                                 'subunits': {},
-                                'props': [],
+                                'props': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                                 'unit_type': 'Word'
                             },
                             2: {
@@ -757,7 +757,7 @@ dataset_numbers_and_simple_math = {
                                     NAME: COMMON,
                                 },
                                 'subunits': {},
-                                'props': [],
+                                'props': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                                 'unit_type': 'Word'
                             },
                             3: {
@@ -783,7 +783,7 @@ dataset_numbers_and_simple_math = {
                                     NAME: COMMON
                                 },
                                 'subunits': {},
-                                'props': [],
+                                'props': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                                 'unit_type': 'Word'
                             },
                             4: {
@@ -813,7 +813,7 @@ dataset_numbers_and_simple_math = {
                                     DERIVATIVE: NUMERAL,
                                 },
                                 'subunits': {},
-                                'props': [],
+                                'props': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                                 'unit_type': 'Word',
                             },
                         },
@@ -1060,7 +1060,7 @@ dataset_proper = {
                                     CATEGORY: POSSESSIVE,
                                 },
                                 'subunits': {},
-                                'props': [],
+                                'props': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                                 'unit_type': 'Word'
                             },
                             1: {
@@ -1087,7 +1087,7 @@ dataset_proper = {
                                     NUMBER: SINGULAR,
                                 },
                                 'subunits': {},
-                                'props': [],
+                                'props': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                                 'unit_type': 'Word'
                             },
                             2: {
@@ -1114,7 +1114,7 @@ dataset_proper = {
                                     NAME: COMMON
                                 },
                                 'subunits': {},
-                                'props': [],
+                                'props': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                                 'unit_type': 'Word'
                             },
                             3: {
@@ -1141,7 +1141,7 @@ dataset_proper = {
                                     MOOD: INFINITIVE,
                                 },
                                 'subunits': {},
-                                'props': [],
+                                'props': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                                 'unit_type': 'Word'
                             }
                         },
@@ -1181,6 +1181,29 @@ datasets = (
     dataset_proper,
 
 )
+
+
+def check_props(unit):
+    unit_info = unit.get('unit_info')
+    if unit_info:
+        delete_keys = []
+        for key in unit_info.keys():
+            if isinstance(key, int):
+                unit['props'][key] = unit_info[key]
+                delete_keys.append(key)
+
+        for key in delete_keys:
+            del unit_info[key]
+
+        for subunit in unit['subunits'].values():
+            check_props(subunit)
+
+
+for dataset in datasets:
+    for example in dataset['examples']:
+        morphological = example.get('morphological')
+        if morphological:
+            check_props(morphological)
 
 
 # TODO: рассортировать, добавить примеры условий

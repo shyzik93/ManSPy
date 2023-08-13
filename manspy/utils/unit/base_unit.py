@@ -62,10 +62,10 @@ class BaseUnit:
     Если значение характеристики равно None, то такая характеристика считается несуществующей.
     """
 
-    def __init__(self, subunits=None, unit_info=None, imports=None):
+    def __init__(self, subunits=None, unit_info=None, imports=None, count_properties=0):
         self.unit_info = {'max_index': -1, 'index': None}
         self.subunit_info = {}
-        self.properties = []
+        self.properties = [0] * count_properties
         self.full_info = {'unit_info': self.unit_info, 'subunits': self.subunit_info, 'props': self.properties}
         self.position = 0
         self.keys = []
@@ -163,6 +163,10 @@ class BaseUnit:
     # Работа с информацией о юните в целом
 
     def __setitem__(self, key, value):
+        if isinstance(key, int):
+            self.properties[key] = 0 if value is None else value
+            return
+
         if key in self.unit_info and value is None:
             del self.unit_info[key]
             return
@@ -175,8 +179,11 @@ class BaseUnit:
         :param key: имя свойства либо индекс подъюнита
         :return: значение свойства юнита, если key - строка; подъюнит, если key - целое число.
         """
-        if isinstance(key, (str, int)):
+        if isinstance(key, str):
             return self.unit_info.get(key)
+        elif isinstance(key, int):
+            value = self.properties[key]
+            return None if value == 0 else value
         else:
             raise Exception('unknown type of item key')
 
@@ -186,12 +193,17 @@ class BaseUnit:
         :param key: имя свойства либо индекс подъюнита
         :return: значение свойства юнита, если key - строка; подъюнит, если key - целое число.
         """
-        if isinstance(key, (str, int)):
+        if isinstance(key, str):
             del self.unit_info[key]
+        elif isinstance(key, int):
+            self.properties[key] = 0
         else:
             raise Exception('unknown type of item key')
 
     def __contains__(self, name):
+        if isinstance(name, int):
+            return self.properties[name] > 0
+
         return self.unit_info.get(name) is not None
 
     def __repr__(self):
@@ -201,7 +213,8 @@ class BaseUnit:
         return self.unit_info.items()
 
     def update(self, _dict):
-        self.unit_info.update(_dict)
+        for key, value in _dict.items():
+            self.__setitem__(key, value)
 
     # Работа с информацией о составляющих юнит (подюнитов)
     def __len__(self):

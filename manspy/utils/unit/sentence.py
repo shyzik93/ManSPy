@@ -101,6 +101,7 @@ class Sentence(BaseUnit):
                   self.subunit_info[index]['homogeneous_link'].append(_index)
 
     def getHomogeneous(self, index, inclusive=False): # inclusive - включительно с поданным индексом
+        # TODO: удалить функцию
         """ Возвращает слова, однородные переданному """
         homogeneous = self.subunit_info[index]['homogeneous_link']
         if inclusive: homogeneous.append(index)
