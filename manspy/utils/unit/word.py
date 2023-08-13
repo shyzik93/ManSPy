@@ -59,5 +59,5 @@ class Word(BaseUnit):
     def features(self):
         return self.unit_info['feature']
 
-    def hasSymbol(self, symbol):
+    def has_symbol(self, symbol):
         return symbol in self.str_word

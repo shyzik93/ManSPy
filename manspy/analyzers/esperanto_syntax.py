@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
 ''' Модуль выполняет синтаксический анализ предложения.
 
   Определяются члены предложения, и устанавливаются связи слов.
 '''
-
 from manspy.utils.constants import (
     ADJECTIVE, ADVERB, ACCUSATIVE,
     CASE, CARDINAL, CATEGORY, CIRCUMSTANCE, CLASS, CONJUNCTION,
@@ -16,7 +14,7 @@ from manspy.utils.constants import (
 )
 
 
-def forPronounAndNoun(word):
+def for_pronoun_and_noun(word):
     ''' Определяет член предложения для имени существительного
         и притяжательного местоимепния по падежу '''
     if word[CASE] == ACCUSATIVE:
@@ -26,7 +24,7 @@ def forPronounAndNoun(word):
     return SUPPLEMENT
 
 
-def setMOS_ToSign(feature_words):
+def set_mos_to_tign(feature_words):
     """ Определение члена предложения у признаков:
         прилагательного, наречия, """
     for feature in feature_words:
@@ -36,26 +34,27 @@ def setMOS_ToSign(feature_words):
             feature[MOSENTENCE] = CIRCUMSTANCE
 
         if feature.features:
-            setMOS_ToSign(feature.features)
+            set_mos_to_tign(feature.features)
 
-def setMOSentence(word):
+
+def set_mossentence(word):
     if word[POSPEECH] == VERB:
         word[MOSENTENCE] = PREDICATE
         if word.features:
-            setMOS_ToSign(word.features)
+            set_mos_to_tign(word.features)
 
     #ATTENTION обстоятельства, выраженные существительным, определяются в модуле
     # промежуточного анализа как наречие.
     elif word[POSPEECH] == NOUN or (word[POSPEECH] == NUMERAL and word[CLASS] == CARDINAL):
-        word[MOSENTENCE] = forPronounAndNoun(word)
+        word[MOSENTENCE] = for_pronoun_and_noun(word)
         if word.features:
-            setMOS_ToSign(word.features)
+            set_mos_to_tign(word.features)
 
     elif word[POSPEECH] == PRONOUN:
         if word[CATEGORY] == POSSESSIVE:
             word[MOSENTENCE] = DEFINITION  # ? Появилось определение
         elif word[CATEGORY] == PERSONAL:
-            word[MOSENTENCE] = forPronounAndNoun(word)
+            word[MOSENTENCE] = for_pronoun_and_noun(word)
         else:
             word[MOSENTENCE] = ''  # не притяжательное и не личное местоимение
 
@@ -67,7 +66,7 @@ def setMOSentence(word):
         word[MOSENTENCE] = ''
 
 
-def setLinks(word, sentence):
+def set_links(word, sentence):
     ''' Устанавливает связи членов предложения. Обстоятельства и определения
         спрятаны в тех, к кому они относятся. Работаем лишь со сказуемым,
         подлежащим и дополнением. '''
@@ -156,10 +155,10 @@ def analyze(message):
     for sentence in message.text:
         # определяет члены предложения
         for word in sentence:
-            setMOSentence(word)
+            set_mossentence(word)
         # устанавливает связи членов предложения
         for word in sentence:
-            setLinks(word, sentence)
+            set_links(word, sentence)
 
         # разделяем сложноподчинённые и сложносочинённые предложения
         split_sentence(sentence)
