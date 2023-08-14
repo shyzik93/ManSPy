@@ -11,7 +11,7 @@ class ComplexEncoder(json.JSONEncoder):
             return str(obj)
 
 
-class Logger:
+class LoggerDb:
     def connect_to_db(self, settings):
         self.c, self.cu = settings.c, settings.cu
 

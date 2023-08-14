@@ -13,7 +13,7 @@ def make_dialog_plain_line(text: str, direction: str, ifname: str):
     )
 
 
-class Logger:
+class LoggerPlainText:
     def __init__(self):
         self.f_history = None
     
@@ -74,4 +74,5 @@ class Logger:
             f.write('\n')
 
     def close(self):
-        self.f_history.close()
+        if self.f_history:
+            self.f_history.close()

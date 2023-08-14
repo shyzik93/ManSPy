@@ -13,10 +13,10 @@ class Database:
     c = None
     cu = None
 
-    def __init__(self, database_settings):
+    def __init__(self, path_to_db=':memory:'):
         sqlite3.enable_callback_tracebacks(True)
         if not self.c:
-            self.c = sqlite3.connect(database_settings['path'])
+            self.c = sqlite3.connect(path_to_db)
             self.c.row_factory = sqlite3.Row
             self.cu = self.c.cursor()
 

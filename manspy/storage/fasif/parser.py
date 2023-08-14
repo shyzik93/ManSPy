@@ -10,7 +10,7 @@ from manspy.runners.only_lingvo import runner
 
 def get_is_required(func):
     if not func.__code__.co_argcount:
-        raise Exception('The function must have 1 or more arguments')
+        raise Exception(f'The function "{func.__name__}" must have 1 or more arguments')
 
     first_arg_name = func.__code__.co_varnames[0]
     signature = inspect.signature(func)
@@ -24,16 +24,17 @@ def get_is_required(func):
     return is_required
 
 
-def get_dword(word, settings):
-    text = runner(word, settings, pipeline=':postmorph')
+def get_dword(str_word, settings):
+    text = runner(str_word, settings, pipeline=':postmorph')
     return text.first_child.first_child
 
 
 def process_verb(fasif, obj_relation, settings):
-    for language, verbs in fasif['verbs'].items():
-        if language in settings.languages:
-            words = [get_dword(word_verb, settings) for word_verb in verbs]
-            id_group = obj_relation.set_relation('synonym', None, *words)
+    for language in settings.supported_languages:
+        verbs = fasif['verbs'].get(language)
+        if verbs:
+            verbs = (get_dword(str_verb, settings) for str_verb in verbs)
+            id_group = obj_relation.set_relation('synonym', None, *verbs)
             fasif['verbs'][language] = id_group
 
     return fasif
@@ -43,8 +44,12 @@ def process_word_combination(fasif, obj_relation, settings):
     not_to_db = ['nombr', 'cifer']
 
     fasif['argdescr'] = {}
-    for language in settings.languages:
-        wcomb = runner(fasif['wcomb'][language], settings, pipeline=':synt').first_child
+    for language in settings.supported_languages:
+        str_wcomb = fasif['wcomb'][language]
+        if not str_wcomb:
+            continue
+
+        wcomb = runner(str_wcomb, settings, pipeline=':synt').first_child
 
         for arg_name, args in fasif['args'].items():
             argwords = args['argwords'][language]
@@ -69,24 +74,20 @@ def process_word_combination(fasif, obj_relation, settings):
                 if word_hyperonym['base'] not in not_to_db:
                     obj_relation.set_relation('hyperonym', word_hyperonym, *bases)
 
-        get_condition_is_required = None
-        change_condition_is_required = None
-        for destination, value in fasif['functions'].items():
-            verbs = value['verbs'].setdefault(language, [])
-            for index, word_verb in enumerate(verbs):
-                verbs[index] = obj_relation.set_relation('synonym', None, get_dword(word_verb, settings))
+        is_required = None
+        for value in fasif['functions'].values():
+            str_verbs = value['verbs'].setdefault(language, [])
+            for index, word_verb in enumerate(str_verbs):
+                str_verbs[index] = obj_relation.set_relation('synonym', None, get_dword(word_verb, settings))
 
             function = importer.import_action(value['function'])
-            if destination == 'getCondition':
-                get_condition_is_required = get_is_required(function)
-            elif destination == 'changeCondition':
-                get_condition_is_required = get_is_required(function)
-
-        if None not in (get_condition_is_required, change_condition_is_required):
-            if get_condition_is_required != change_condition_is_required:
-                raise Exception('arguments for `get_condition` and `change_condition` must be equals')
-
-        is_required = get_condition_is_required or change_condition_is_required
+            current_is_required = get_is_required(function)
+            if is_required is None:
+                is_required = current_is_required
+            elif is_required != current_is_required:
+                raise Exception(
+                    'Count and requirement of arguments for `get_condition` and `change_condition` must be equals',
+                )
 
         fasif['argdescr'][language] = {}
         for argname, data in fasif['args'].items():

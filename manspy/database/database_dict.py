@@ -14,7 +14,7 @@ class Database:
     id_descr_relation_by_member_names = {}
     id_descr_relation_by_group_names = {}
 
-    def __init__(self, database_settings):
+    def __init__(self):
         pass
 
     def close(self):
