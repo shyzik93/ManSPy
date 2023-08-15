@@ -1,9 +1,10 @@
 import os
+from pathlib import Path
 
 from manspy.database.database_sqlite3 import Database
 from manspy.storage.fasif.parser import fasif_parser
 
-DEFAULT_PATH_MODULES = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+DEFAULT_PATH_MODULES = Path(__file__).resolve().parent.parent.parent
 
 
 class Settings:
@@ -36,7 +37,7 @@ class InitSettings:
             raise Exception('You should init `InitSettings` only one!')
 
         self._IS_ENTERED = True
-        fasif_parser(os.path.join(DEFAULT_PATH_MODULES, 'manspy/action/'), Settings(history=False))
+        fasif_parser(DEFAULT_PATH_MODULES / 'manspy/action/', Settings(history=False))
 
     def __exit__(self, Type, Value, Trace):
         for module in Settings.loggers:

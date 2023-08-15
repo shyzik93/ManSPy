@@ -1,0 +1,20 @@
+- type: verb
+  function: manspy.action.smart_home:printToIF
+  verbs:
+    esperanto: [montri]
+    english: ["to print"]
+    russian: [показывать]
+
+- type: verb
+  function: manspy.action.smart_home:add
+  verbs:
+    esperanto: [adicii]
+    english: [to add]
+    russian: [складывать]
+
+- type: verb
+  function: manspy.action.smart_home:multiply
+  verbs:
+    esperanto: [multigi, obligi]
+    english: [to multiply]
+    russian: [умножать]

@@ -1,0 +1,106 @@
+- type: word_combination
+  functions:
+    getCondition:
+      function: manspy.action.CurrencyLoader:GetCourse
+      verbs: {}
+  args:
+    currency:
+      argtable:
+        esperanto:
+          dolara: USD
+          rubla: RUB
+          euxra: EUR
+          hrivna: UAH
+        russian:
+          доллара: USD
+      argwords:
+        esperanto:
+          name: dolara
+          hyperonyms: [mono]
+        russian:
+          name: доллара
+          hyperonyms: [валюта]
+    country:
+      argtable:
+        esperanto:
+          rusia: Russia
+          belarusia: Belarus
+          ukrainia: Ukraine
+          kartvela: Georgia
+      argwords:
+        esperanto:
+          name: rusia
+          hyperonyms: [lando]
+        russian:
+          name: русскому
+          hyperonyms: [страна, национальность]
+  wcomb:
+    esperanto: dolara kurzo de rusia banko
+    russian: курс доллара согласно русскому банку
+
+- type: word_combination
+  functions:
+    changeCondition:
+      function: manspy.action.smart_home:LightOn
+      verbs:
+        esperanto: [sxalti]
+        english: ["to turn on"]
+        russian: [включать]
+  args:
+    room:
+      argtable:
+        esperanto:
+          dormĉambro: bedroom
+      argwords:
+        esperanto:
+          name: en dormcxambro
+          hyperonyms: [cxambro]
+        russian:
+          name: спальне
+          hyperonyms: [комната]
+    device:
+      argtable:
+        esperanto:
+          tabla: '0'
+      argwords:
+        esperanto:
+          name: tabla
+          hyperonyms: [meblaro]
+        russian:
+          name: настольный
+          hyperonyms: [мебель, местонахождение]
+  wcomb:
+    esperanto: tabla lampo en dormcxambro
+    russian:  настольный свет в спальне
+
+- type: word_combination
+  functions:
+    getCondition:
+      function: manspy.action.smart_home:showAddress
+      verbs: {}
+  args:
+    device:
+      argtable:
+        esperanto:
+          komputilo: computer
+      argwords:
+        esperanto:
+          name: de komputilo
+          hyperonyms: [aparato]
+  wcomb:
+    esperanto: adreso de komputilo
+
+- type: word_combination
+  functions:
+    getCondition:
+      function: manspy.action.smart_home:get
+      verbs: {}
+  args:
+    a:
+      argtable: {}
+      argwords:
+        esperanto:
+          name: kvin
+          hyperonyms: [nombro]
+  wcomb:
+    esperanto:  kvin

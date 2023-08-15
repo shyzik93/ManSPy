@@ -1,6 +1,7 @@
 import os
-import json
 import inspect
+
+import yaml
 
 from manspy.storage.relation import Relation
 from manspy.utils import importer
@@ -106,10 +107,9 @@ def process_word_combination(fasif, obj_relation, settings):
 def fasif_parser(path_import, settings):
     obj_relation = Relation(settings)  # TODO: вместо этого получать отношения, вызывая методы слова
     for fasif_file_name in os.listdir(path_import):
-        if fasif_file_name.endswith('.json'):
+        if fasif_file_name.endswith('.yaml'):
             with open(os.path.join(path_import, fasif_file_name), encoding='utf-8') as fasif_file:
-                fasifs = json.load(fasif_file)
-                for fasif in fasifs:
+                for fasif in yaml.safe_load(fasif_file):
                     fasif_processor = 'process_{}'.format(fasif["type"])
                     fasif_processor = globals()[fasif_processor]
                     fasif = fasif_processor(fasif, obj_relation, settings)
