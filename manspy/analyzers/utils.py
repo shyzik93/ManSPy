@@ -139,7 +139,6 @@ def get_func_wcomb(argument, settings, relation, verb_id_group):
         # Вынимаем функцию получения/изменения состояния.
 
         data_get_value = fasif['functions'].get('getCondition')
-        finded_get_by_antonym = il_build_func_value(data_get_value, settings.language)
         data_set_value = fasif['functions'].get('changeCondition')
         finded_set_by_antonym = il_build_func_value(data_set_value, settings.language, verb_id_group, check_verb=True)
         return (

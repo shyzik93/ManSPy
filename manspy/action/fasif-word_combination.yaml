@@ -104,3 +104,29 @@
           hyperonyms: [nombro]
   wcomb:
     esperanto:  kvin
+
+#- type: word_combination
+#  functions:
+#    changeCondition:
+#      function: manspy.action.system:add_group
+#      verbs:
+#        esperanto: [memori]
+#    getCondition:
+#      function: manspy.action.system:get_group
+#      verbs: {}
+#  args:
+#    group:
+#      argtable: {}
+#      argwords:
+#        esperanto:
+#          name: de cambio
+#          hyperonyms: [dato]
+#    word:
+#      argtable: {}
+#      argwords:
+#        esperanto:
+#          name: dolaro
+#          hyperonyms: [mono]
+#  wcomb:
+#    # parto - семантическое отношение (часть, синоним, антоним, гипероним, тождество и т. п.)
+#    esperanto: dolaro estas parto de cambio

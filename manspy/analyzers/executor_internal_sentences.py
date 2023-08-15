@@ -31,7 +31,6 @@ def execute_internal_sentence(internal_sentence):
     :return: генератор с ответами
     """
     if internal_sentence['type_sentence'] == 'run':
-
         arg0 = {
             'antonym': internal_sentence['verb']['used_antonym'],
             # только для функции изменения состояния и ф-ции глагола

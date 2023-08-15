@@ -16,7 +16,6 @@ class errorManager:
             self.errors[group_name] = errors
 
     def add(self, group_name, message, power_level):
-        print(group_name, message, power_level)
         self.errors[group_name][power_level].append(message)
 
     def get(self, group_name, power_level):
