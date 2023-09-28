@@ -56,24 +56,31 @@ class Relation:
     def get_groups_by_word(self, id_type, isword, id_word, id_speech=None):
         return self.db.get_groups_by_word(id_type, isword, id_word, id_speech)
 
-    def _isRelBetween(self, relation, *words):
-      ''' Is the relation 'relation' between word1 and word2 ?
-          Являются ли слова word1 и word2 relation'ами (синониами, антонимаими, гиперонимом и гипонимом соответственно, холонимом и меронимом соответственно) ?
-      '''
-      if isinstance(relation, dict): descr, relation = (relation, relation['id_relation'])
-      else: descr = self.db.get_descr_relation(relation)
+    def is_rel_between(self, relation, *words):
+        ''' Is the relation 'relation' between word1 and word2 ?
+        Являются ли слова word1 и word2 relation'ами (синониами, антонимаими, гиперонимом и гипонимом соответственно, холонимом и меронимом соответственно) ?
+        '''
+        if isinstance(relation, dict):
+            descr = relation
+            relation = relation['id_relation']
+        else:
+            descr = self.db.get_descr_relation(relation)
 
-      if descr['type_relation'] == 'line':
-          _words = [[word, 0] for word in words]
-          return self.get_commongroups(relation, None, *words)
-      elif descr['type_relation'] == 'tree':
-          #res = {words.pop(0):{'parent': None}}
-          for index, word in enumerate(words):
-              if index == 0: continue
-              if not self.is_word_in_group(relation, words[index-1], word, 0, None): return False
-          return True
+        if descr['type_relation'] == 'line':
+            _words = [[word, 0] for word in words]
+            return bool(self.get_commongroups(relation, None, *words))
+        elif descr['type_relation'] == 'tree':
+            if len(words) < 2:
+                raise Exception('count words must be 2 or more')
 
-    def _isAnyRelBetween(self, word1, words2):
+            source_word = words[0]
+            for word in words[1:]:
+                if not self.is_word_in_group(relation, source_word, word, 0, None):
+                    return False
+
+            return True
+
+    def _isAnyRelBetween(self, word1, word2):
         ''' Is any relation 'relation' between word1 and word2 ?
             Есть ли какие-либо отношения между словами word1 и word2 ?
         '''
@@ -81,7 +88,9 @@ class Relation:
         descrs = self.db.get_all_descr_relations()
         for descr in descrs:
             relation = descr['id_relation']
-            if self.isRelBetween(relation, word1, word2): relations.append(relation)
+            if self.is_rel_between(relation, word1, word2):
+                relations.append(relation)
+
         return relations
 
     def _whomRelBetween(self, relation, word1):
@@ -96,36 +105,22 @@ class Relation:
 
     def _getRelation(self, relation, word1, word2=None):
         ''' Первое слово для иерархиских отношений должно быть выше уровня  '''
-        if relation is not None: descr = self.db.get_descr_relation(relation)
+        if relation:
+            descr = self.db.get_descr_relation(relation)
 
-        if word1 is not None and word2 is not None:
-
-            if relation is not None: # Is the relation between word1 and word2 ?
-                return self.isRelBetween(relation, word1, word2)
-            elif relation is None: # Is any relation between word1 and word2 ?
+        if word1 and word2:
+            if relation: # Is the relation between word1 and word2 ?
+                return self.is_rel_between(relation, word1, word2)
+            else: # Is any relation between word1 and word2 ?
                 pass
 
-        elif word1 is not None and word2 is None:
-
-            if relation is not None: # With who does word1 have the relation ?
+        elif word1 and not word2:
+            if relation: # With who does word1 have the relation ?
                 pass
-            elif relation is None: # With who does word1 have any relation ?
+            else: # With who does word1 have any relation ?
                 pass
 
     # Временные функции-обёртки, для понимания задачи.
-    def isRelBetween(self, relation, word1, word2):
-        ''' Is the relation 'relation' between word1 and word2 ?
-            Являются ли слова word1 и word2 relation'ами (синониами, антонимаими, гиперонимом и гипонимом соответственно, холонимом и меронимом соответственно) ?
-            @return bool
-        '''
-        if relation == 'hyperonym':
-            return self.is_word_in_group('hyperonym', word1, word2, 0, None)
-        elif relation == 'synonym':
-            pass
-        elif relation == 'antonym':
-            antonyms = self.whomRelBetween('antonym', word1)
-            return word2 in antonyms
-
     def isAnyRelBetween(self, word1, words2):
         ''' Is any relation 'relation' between word1 and word2 ?
             Есть ли какие-либо отношения между словами word1 и word2 ?
@@ -145,11 +140,16 @@ class Relation:
         '''
         if relation == 'synonym':
             return self.db.convert(self.get_words_from_samegroup('synonym', None, 0, word1))
+
         elif relation == 'antonym':
             syn_groups = self.db.get_groups_by_word('synonym', 0, word1, None)
-            if not syn_groups: return []
+            if not syn_groups:
+                return []
+
             syn_groups = self.get_words_from_samegroup('antonym', None, self.dct_types['synonym'], syn_groups[0])
-            if not syn_groups: return []
+            if not syn_groups:
+                return []
+
             return self.db.convert(self.db.get_words_by_group('synonym', syn_group, 0, None))
 
     def set_relation(self, type_relation: str, group: Optional[Union[int, Word]], *members: List[Union[int, Word]]) -> int:

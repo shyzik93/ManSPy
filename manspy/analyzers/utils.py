@@ -48,7 +48,7 @@ def is_in_hyperonym(hyperonyms, argvalue, relation):
     is_argvalue_integer = isinstance(argvalue, (int, float, complex))
     for hyperonym_word in hyperonyms:
         hyperonym = hyperonym_word['unit_info']['base']
-        if (hyperonym in not_to_db and is_argvalue_integer) or relation.isRelBetween('hyperonym', hyperonym, argvalue):
+        if (hyperonym in not_to_db and is_argvalue_integer) or relation.is_rel_between('hyperonym', hyperonym, argvalue):
             return True
 
 
