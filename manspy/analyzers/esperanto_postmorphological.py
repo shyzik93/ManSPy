@@ -43,15 +43,17 @@ def process_conjunction(word, sentence):
         sentence.delByStep()
 
     # сочинительный союз
-    #if word['word'] == 'kaj': # заменить логическими символами (kaj = &)
-    #print word['base']
-    if left[POSPEECH] == right[POSPEECH] or \
-         (left[POSPEECH] == NOUN and right[POSPEECH] == PRONOUN and right[CATEGORY] != POSSESSIVE) or (right[POSPEECH] == NOUN and left[POSPEECH] == PRONOUN and left[CATEGORY] != POSSESSIVE) or \
-         ((left[POSPEECH] == PRONOUN and left[CATEGORY] == POSSESSIVE) and right[POSPEECH] == ADJECTIVE) or ((right[POSPEECH] == PRONOUN and right[CATEGORY] == POSSESSIVE) and left[POSPEECH] == ADJECTIVE) or \
-         (left[POSPEECH] == NOUN and 'praMOSentence' in right and right['praMOSentence'] == 'freemember' and right[POSPEECH] == NUMERAL):
-         #((left[POSPEECH] in [PRONOUN, ADJECTIVE] and (CATEGORY in left and left[CATEGORY] == POSSESSIVE)) and right[POSPEECH] in [PRONOUN, ADJECTIVE]):
-    #if (CASE in left and CASE in right) and left[CASE] == right[CASE]:
-        if (CASE in right and right[CASE] == ACCUSATIVE) and (CASE in left and left[CASE] != ACCUSATIVE):
+    condition = (
+        left[POSPEECH] == right[POSPEECH]
+        or (left[POSPEECH] == NOUN and right[POSPEECH] == PRONOUN and right[CATEGORY] != POSSESSIVE)
+        or (right[POSPEECH] == NOUN and left[POSPEECH] == PRONOUN and left[CATEGORY] != POSSESSIVE)
+        or ((left[POSPEECH] == PRONOUN and left[CATEGORY] == POSSESSIVE) and right[POSPEECH] == ADJECTIVE)
+        or ((right[POSPEECH] == PRONOUN and right[CATEGORY] == POSSESSIVE) and left[POSPEECH] == ADJECTIVE)
+        or (left[POSPEECH] == NOUN and right['praMOSentence'] == 'freemember' and right[POSPEECH] == NUMERAL)
+        # ((left[POSPEECH] in [PRONOUN, ADJECTIVE] and (left[CATEGORY] == POSSESSIVE)) and right[POSPEECH] in [PRONOUN, ADJECTIVE]):
+    )
+    if condition:
+        if right[CASE] == ACCUSATIVE and left[CASE] != ACCUSATIVE:
             sentence.delByStep(jump_step=0)
             return
 

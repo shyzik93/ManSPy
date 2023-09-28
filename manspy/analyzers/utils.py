@@ -41,56 +41,32 @@ def dproduct2(dparent1):
     l = [([k], v) for k, v in dparent1.items()]
     l = [[i for i in itertools.product(*subl)] for subl in l]
     l = [i for i in itertools.product(*l)]
-    l = [dict(i) for i in l]
-    return l
+    return [dict(i) for i in l]
 
 
 def is_in_hyperonym(hyperonyms, argvalue, relation):
-    for hyperonym in hyperonyms:
-        if (hyperonym in not_to_db and isinstance(argvalue, (int, float, complex))) or \
-                relation.isRelBetween('hyperonym', hyperonym, argvalue):
+    is_argvalue_integer = isinstance(argvalue, (int, float, complex))
+    for hyperonym_word in hyperonyms:
+        hyperonym = hyperonym_word['unit_info']['base']
+        if (hyperonym in not_to_db and is_argvalue_integer) or relation.isRelBetween('hyperonym', hyperonym, argvalue):
             return True
 
-    return False
 
+def filter_and_convert_args(finded_vargs, argsdescr, relation):
+    req_argnames = {argname for argname, argdescr in argsdescr.items() if argdescr['isreq']}
+    for finded_varg in finded_vargs:
+        # Фильтруем по наличию в абстрактной группе
+        for argname, argvalue in list(finded_varg.items()):
+            if not is_in_hyperonym(argsdescr[argname]['hyperonyms'], argvalue, relation):
+                del finded_varg[argname]
 
-def convert_by_argtable(argdescr, argname, argvalue):
-    if argvalue not in argdescr[argname]['argtable']:
-        return argvalue
+        # Фильтруем по отсутствию обязательных аргументных слов
+        if req_argnames <= set(finded_varg.keys()):
+            # Конвертируем аргументные слова по таблице из фасифа
+            for argname, argvalue in finded_varg.items():
+                finded_varg[argname] = argsdescr[argname]['argtable'].get(argvalue, argvalue)
 
-    return argdescr[argname]['argtable'][argvalue]
-
-
-def check_args(finded_args, fasif, relation, language):
-    # Проверка на наличие в абстрактной группе
-    hyperonyms = {}
-    for argname, data in fasif['argdescr'][language].items():
-        # пока только основные гиперонимы вытягиваем
-        hyperonyms[argname] = [word['unit_info']['base'] for word in data['hyperonyms']]
-    for finded_arg in finded_args:
-        for argname, argvalue in list(finded_arg.items()):
-            if not is_in_hyperonym(hyperonyms[argname], argvalue, relation):
-                del finded_arg[argname]
-
-    # Проверка на отсутствие обязательных аргументных слов
-    checked_args = []
-    for finded_arg in finded_args:
-        isright = True
-        for argname, argdescr in fasif['argdescr'][language].items():
-            if argname not in finded_arg and argdescr['isreq']:  # если отсутствует обязательный аргумент
-                isright = False
-                break
-
-        if isright:
-            checked_args.append(finded_arg)
-
-    # Конвертирование аргументных слов по таблице из фасифа
-    for checked_arg in checked_args:
-        for argname, argvalue in checked_arg.items():
-            # TODO: раскрыть функцию convert_by_argtable
-            checked_arg[argname] = convert_by_argtable(fasif['argdescr'][language], argname, argvalue)
-
-    return checked_args
+            yield finded_varg
 
 
 def get_func_common(relation, base, settings):
@@ -126,15 +102,13 @@ def il_build_func_value(data_func, language, verb_id_group=None, check_verb=Fals
                 if id_antonym not in data_func['verbs'][language]:
                     return True
 
-    return False
-
 
 def get_func_wcomb(argument, settings, relation, verb_id_group):
     compared_fasifs = find(settings, 'word_combination', argument, settings.language)
     if compared_fasifs:
         finded_args, fasif = compared_fasifs[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
         finded_args = dproduct(finded_args)
-        finded_args = check_args(finded_args, fasif, relation, settings.language)
+        finded_args = list(filter_and_convert_args(finded_args, fasif['argdescr'][settings.language], relation))
 
         # Вынимаем функцию получения/изменения состояния.
 
