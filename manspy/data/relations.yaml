@@ -1,0 +1,17 @@
+- name_for_member: hyperonym
+  type_relation: tree
+  count_members: INFINITY
+  type_member: word
+  name_for_group: hyponym
+
+- name_for_member: antonym
+  type_relation: tree
+  count_members: 2
+  type_member: group
+  name_for_group:
+
+- name_for_member: synonym
+  type_relation: line
+  count_members: INFINITY
+  type_member: word
+  name_for_group:

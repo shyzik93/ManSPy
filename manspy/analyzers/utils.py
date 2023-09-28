@@ -73,7 +73,7 @@ def get_func_common(relation, base, settings):
     id_group = relation.get_groups_by_word('synonym', 0, base)
     id_group = id_group[0] if id_group else None
     if id_group is not None:
-        compared_fasifs = find(settings, 'verb', id_group, settings.language)
+        compared_fasifs = find(settings, 'verb', id_group)
         if compared_fasifs:
             return id_group, compared_fasifs[0][0][0]
         else:
@@ -104,7 +104,7 @@ def il_build_func_value(data_func, language, verb_id_group=None, check_verb=Fals
 
 
 def get_func_wcomb(argument, settings, relation, verb_id_group):
-    compared_fasifs = find(settings, 'word_combination', argument, settings.language)
+    compared_fasifs = find(settings, 'word_combination', argument)
     if compared_fasifs:
         finded_args, fasif = compared_fasifs[0]  # если фасифов несколько, то необходимо отсеть лишние в этом месте (отдельной функцией)
         finded_args = dproduct(finded_args)

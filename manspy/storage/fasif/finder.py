@@ -142,12 +142,12 @@ def compare_fasif_word_combination(fasif, argument, finded_args, language):
     return True
 
 
-def find(settings, type_fasif, argument, language='esperanto'):
+def find(settings, type_fasif, argument):
     compared_fasifs = []
     for fasif in settings.database.get_fasif(type_fasif):
         finded_args = {}
         compare_fasif = globals()[f'compare_fasif_{type_fasif}']
-        if compare_fasif(fasif, argument, finded_args, language):
+        if compare_fasif(fasif, argument, finded_args, settings.language):
             compared_fasifs.append([finded_args, fasif])
 
     return compared_fasifs

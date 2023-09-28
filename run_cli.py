@@ -53,9 +53,8 @@ class CLI:
 
 
 def run(args_list=None):
+    cli = CLI()
     with InitSettings():
-        cli = CLI()
-
         parser = argparse.ArgumentParser(description='ManSPy')
         parser.add_argument('--version', action='version', version='%(prog)s 0.0.0')
 

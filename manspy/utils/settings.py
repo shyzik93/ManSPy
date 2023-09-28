@@ -1,8 +1,9 @@
-import os
 from pathlib import Path
 
+import yaml
+
 from manspy.database.database_sqlite3 import Database
-from manspy.storage.fasif.parser import fasif_parser
+from manspy.storage.fasif.parser import parse
 
 DEFAULT_PATH_MODULES = Path(__file__).resolve().parent.parent.parent
 
@@ -37,7 +38,15 @@ class InitSettings:
             raise Exception('You should init `InitSettings` only one!')
 
         self._IS_ENTERED = True
-        fasif_parser(DEFAULT_PATH_MODULES / 'manspy/action/', Settings(history=False))
+        with open(DEFAULT_PATH_MODULES / 'manspy/data/relations.yaml', encoding='utf-8') as relations_file:
+            for relation_dict in yaml.safe_load(relations_file):
+                if relation_dict['count_members'] == 'INFINITY':
+                    relation_dict['count_members'] = 0
+
+                Settings.database.add_descr_relation(**relation_dict)
+
+        parse(DEFAULT_PATH_MODULES / 'manspy/data/fasif-verb.yaml', Settings(history=False))
+        parse(DEFAULT_PATH_MODULES / 'manspy/data/fasif-word_combination.yaml', Settings(history=False))
 
     def __exit__(self, Type, Value, Trace):
         for module in Settings.loggers:

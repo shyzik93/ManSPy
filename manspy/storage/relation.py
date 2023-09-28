@@ -11,9 +11,6 @@ class Relation:
 
     def __init__(self, settings):
         self.db = settings.database
-        self.db.add_descr_relation(type_relation='line', count_members=self.INFINITY, type_member='word',  name_for_member='synonym',   name_for_group=None)
-        self.db.add_descr_relation(type_relation='line', count_members=2, type_member='group', name_for_member='antonym',   name_for_group=None)
-        self.db.add_descr_relation(type_relation='tree', count_members=self.INFINITY, type_member='word',  name_for_member='hyperonym', name_for_group='hyponym')
 
     ### Составные функции для таблицы relations (работают с идентификаторами)
 

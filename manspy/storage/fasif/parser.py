@@ -1,4 +1,3 @@
-import os
 import inspect
 
 import yaml
@@ -104,14 +103,12 @@ def process_word_combination(fasif, obj_relation, settings):
     return fasif
 
 
-def fasif_parser(path_import, settings):
+def parse(fasif_path, settings):
     obj_relation = Relation(settings)  # TODO: вместо этого получать отношения, вызывая методы слова
-    for fasif_file_name in os.listdir(path_import):
-        if fasif_file_name.endswith('.yaml'):
-            with open(os.path.join(path_import, fasif_file_name), encoding='utf-8') as fasif_file:
-                for fasif in yaml.safe_load(fasif_file):
-                    fasif_processor = 'process_{}'.format(fasif["type"])
-                    fasif_processor = globals()[fasif_processor]
-                    fasif = fasif_processor(fasif, obj_relation, settings)
-                    if fasif:
-                        settings.database.save_fasif(fasif["type"], fasif)
+    with open(fasif_path, encoding='utf-8') as fasif_file:
+        for fasif in yaml.safe_load(fasif_file):
+            fasif_processor = 'process_{}'.format(fasif["type"])
+            fasif_processor = globals()[fasif_processor]
+            fasif = fasif_processor(fasif, obj_relation, settings)
+            if fasif:
+                settings.database.save_fasif(fasif["type"], fasif)
