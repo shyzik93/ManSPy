@@ -33,10 +33,9 @@ from manspy.utils.unit import Sentence
 
 
 def compare_fasif_verb(fasif, verb_base, finded_args, language):
-    if verb_base != fasif['verbs'][language]:
-        return False
-    finded_args[0] = fasif['function']
-    return True
+    if verb_base == fasif['verbs'][language]:
+        finded_args[0] = fasif['function']
+        return True
 
 
 def count_wordargs(constwordexample, fasif, language):
@@ -63,29 +62,22 @@ def compare_word(word, index, argument, argworddescr, finded_args):
             return False  # для первого дополнения падеж не учитывается
     else:
         return False
-    # flog.write(u'Example: "%s". Found: "%s"\n' % (argworddescr['base'], word['base']))
+
     if 'argname' not in argworddescr:  # если константное слово
-        # flog.write(u'    type: constant word\n')
-        if argworddescr['base'] != word['base']:
-            return False
-    else:
-        # flog.write('    type: argument word\n    argname: "%s".\n' % argworddescr['argname'])
-        if argworddescr['argname'] not in finded_args:
-            finded_args[argworddescr['argname']] = []
-        if 'number_value' in word:
-            argvalue = word['number_value']
-        else:
-            argvalue = word['base']
-        finded_args[argworddescr['argname']].append(argvalue)  # TODO: #UNIQ_ARGS Нужны ли нам дубли аргументов?
+        return argworddescr['base'] == word['base']
+
+    argname = argworddescr['argname']
+    argvalue = word.get('number_value', word['base'])
+    finded_args.setdefault(argname, []).append(argvalue)  # TODO: #UNIQ_ARGS Нужны ли нам дубли аргументов?
     return True
 
 
-def jump_to_obient(sentence, index_word, index_obient):
+def jump_to_obient(sentence, index_word):
     indexes = sentence.getObient(index_word)
     if indexes:
-        sentence.jumpByIndex(indexes[index_obient])
+        sentence.jumpByIndex(indexes[0])
         sentence.jumpByStep(-1)
-    return True if indexes else False
+        return True
 
 
 def compare_fasif_word_combination(fasif, argument, finded_args, language):
@@ -95,7 +87,6 @@ def compare_fasif_word_combination(fasif, argument, finded_args, language):
         first_word = first_words[0]  # однородные слова должны обработаться в следующем цикле
 
     _argument_iter = Sentence(None, imports=fasif['wcomb'][language]).iterFromByIndex(first_word.index)
-
     first_words = argument.get_indexes_of_first_words()
     if first_words:
         first_word = first_words[0]  # однородные слова должны обработаться в следующем цикле
@@ -114,16 +105,16 @@ def compare_fasif_word_combination(fasif, argument, finded_args, language):
             if (not req and not noreq) or req:  # если это константное слово без аргументных слов среди определений или есть обязательные аргументный слова среди определений
                 # flog.write('    "%s" is not native between native members. Not native members can only be in the end of sentence.\n' % word['base'])
                 return False  # если посреди связей чужой член - актант не соответсвует фасифу
-            else:  # если всен аргументные слова - необязательные, то константа может быть пропущена
-                argument.jumpByStep(-1)
-                _indexes = jump_to_obient(_argument, _word['index'], 0)
-                if not _indexes: 
-                    # flog.write('    "%s" - has %s obients. \n' % (_word['base'], str(_indexes)))
-                    break
+
+            # если всен аргументные слова - необязательные, то константа может быть пропущена
+            argument.jumpByStep(-1)
+            _has_obient = jump_to_obient(_argument, _word['index'])
+            if not _has_obient:
+                break
 
         # flog.write('    Result of comparing word is right: index - %i, base - "%s".\n' % (index, word['base']))
-        indexes = jump_to_obient(argument, word.index, 0)
-        _indexes = jump_to_obient(_argument, _word['index'], 0)
+        has_obient = jump_to_obient(argument, word.index)
+        _has_obient = jump_to_obient(_argument, _word['index'])
         # "Проходимся" по обстоятельствам и определениям
         features = word['feature']
         _features = _word['feature']
@@ -136,7 +127,7 @@ def compare_fasif_word_combination(fasif, argument, finded_args, language):
         # "Проходимся" по однородным дополнениям (прямые, косвенные, а также подлежащие), если это не первый член
   
         # игнорируем лишние косвенные дополнения (на хвосте)
-        if not (indexes and _indexes):
+        if not has_obient or not _has_obient:
             break
 
     return True

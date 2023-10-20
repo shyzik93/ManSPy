@@ -208,6 +208,15 @@ class BaseUnit:
     def __repr__(self):
         return self.__class__.__name__ + "(" + str(self.unit_info) + ")"
 
+    def get(self, key, default=None):
+        if isinstance(key, str):
+            return self.unit_info.get(key, default)
+        elif isinstance(key, int):
+            value = self.properties[key]
+            return default if value == 0 else value
+        else:
+            raise Exception('unknown type of item key')
+
     def itemsInfo(self):
         return self.unit_info.items()
 
