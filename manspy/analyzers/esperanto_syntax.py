@@ -123,7 +123,7 @@ def split_sentence(sentence):
     # manspy2 exec --synt "se dolara kurzo de laboro estas kvaro"
     # manspy2 exec --synt "se dolara kurzo de laboro estas 4"
 
-    first_words = sentence.get_indexes_of_first_words()
+    first_words = sentence.get_first_words()
 
     conjunctions = []
     subjects = []

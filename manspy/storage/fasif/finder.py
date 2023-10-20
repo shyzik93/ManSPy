@@ -55,7 +55,7 @@ def compare_word(word, index, argument, argworddescr, finded_args):
         if argworddescr[POSPEECH] != word[POSPEECH]:
             if not (argworddescr[POSPEECH] == NUMERAL and word[DERIVATIVE] == NUMERAL and word[POSPEECH] in [NOUN]):
                 return False
-        elif not (not argument.getControl(index) or argworddescr[CASE] == word[CASE]):
+        elif argument.getControl(index) and argworddescr[CASE] != word[CASE]:
             return False  # для первого дополнения падеж не учитывается
     elif word[MOSENTENCE] in [DEFINITION, CIRCUMSTANCE]:
         if argworddescr[POSPEECH] != word[POSPEECH]:
@@ -72,8 +72,8 @@ def compare_word(word, index, argument, argworddescr, finded_args):
     return True
 
 
-def jump_to_obient(sentence, index_word):
-    indexes = sentence.getObient(index_word)
+def jump_to_obient(sentence, word):
+    indexes = sentence.getObient(word)
     if indexes:
         sentence.jumpByIndex(indexes[0])
         sentence.jumpByStep(-1)
@@ -82,18 +82,18 @@ def jump_to_obient(sentence, index_word):
 
 def compare_fasif_word_combination(fasif, argument, finded_args, language):
     _argument = Sentence(None, imports=fasif['wcomb'][language])
-    first_words = _argument.get_indexes_of_first_words()
+    first_words = _argument.get_first_words()
     if first_words:
         first_word = first_words[0]  # однородные слова должны обработаться в следующем цикле
 
-    _argument_iter = Sentence(None, imports=fasif['wcomb'][language]).iterFromByIndex(first_word.index)
-    first_words = argument.get_indexes_of_first_words()
+    _argument_iter = Sentence(None, imports=fasif['wcomb'][language]).iterFromByWord(first_word)
+    first_words = argument.get_first_words()
     if first_words:
         first_word = first_words[0]  # однородные слова должны обработаться в следующем цикле
     else:
         return False  # "закольцованный" актант - на каждое слово ссылается другое слово.
 
-    for word in argument.iterFromByIndex(first_word.index):
+    for word in argument.iterFromByWord(first_word):
         _word = next(_argument_iter)
 
         # "Проходимся" по дополнениям (прямые, косвенные, а также подлежащие)
@@ -108,13 +108,13 @@ def compare_fasif_word_combination(fasif, argument, finded_args, language):
 
             # если всен аргументные слова - необязательные, то константа может быть пропущена
             argument.jumpByStep(-1)
-            _has_obient = jump_to_obient(_argument, _word['index'])
+            _has_obient = jump_to_obient(_argument, _word)
             if not _has_obient:
                 break
 
         # flog.write('    Result of comparing word is right: index - %i, base - "%s".\n' % (index, word['base']))
-        has_obient = jump_to_obient(argument, word.index)
-        _has_obient = jump_to_obient(_argument, _word['index'])
+        has_obient = jump_to_obient(argument, word)
+        _has_obient = jump_to_obient(_argument, _word)
         # "Проходимся" по обстоятельствам и определениям
         features = word['feature']
         _features = _word['feature']

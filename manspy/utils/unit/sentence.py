@@ -61,10 +61,9 @@ class Sentence(BaseUnit):
         if word_obient.index not in self.subunit_info[word_parent.index]["link"]:
             self.subunit_info[word_parent.index]["link"].append(word_obient.index)
 
-    def getObient(self, index):
-        """ Возвращает индексы тех слов, которые подчиняются слову по
-            переданому индексу"""
-        return self.subunit_info[index]['link']
+    def getObient(self, word):
+        """ Возвращает индексы тех слов, которые подчиняются переданному слову"""
+        return self.subunit_info[word.index]['link']
 
     def getControl(self, index):
         """ Возвращает индексы тех слов, которым подчинено слово по
@@ -107,7 +106,7 @@ class Sentence(BaseUnit):
         if inclusive: homogeneous.append(index)
         return homogeneous
 
-    def get_indexes_of_first_words(self):
+    def get_first_words(self):
         """ Возвращает первые слова. Первыми являютсмя те слова в предложении, на которые никто не ссылается.
             Возврашщает список однородных слов.
         """

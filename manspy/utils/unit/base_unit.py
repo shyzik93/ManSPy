@@ -260,8 +260,8 @@ class BaseUnit:
         position = self.position + step if step != None else 0
         return self.__iter__(position)
 
-    def iterFromByIndex(self, index):
-        position = list(self.keys).index(index)
+    def iterFromByWord(self, word):
+        position = list(self.keys).index(word.index)
         return self.__iter__(position)
 
     def jumpByStep(self, step=1):
