@@ -3,5 +3,5 @@ cssselect==1.2.0
 lxml==4.9.3
 #future
 #eonums --install-option="--no-compile"
-pytest==7.4.0
+pytest==9.0.3
 pyyaml==6.0.1
